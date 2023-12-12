@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 
 import java.io.IOException;
 
@@ -19,11 +19,12 @@ import java.io.IOException;
  * @since 2019-11-14
  */
 @RequiredArgsConstructor
+@Setter @Getter
 public class WingsCookieFilter extends OncePerRequestFilter implements Ordered {
 
-    @Setter @Getter
-    private int order = OrderedSlardarConst.WebFilterReCookie;
+    public static final int ORDER = WingsOrdered.Lv4Application + 2_000;
 
+    private int order = ORDER;
     private final WingsCookieInterceptor interceptor;
 
     @Override

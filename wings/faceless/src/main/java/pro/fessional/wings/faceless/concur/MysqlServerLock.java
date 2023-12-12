@@ -99,7 +99,7 @@ public class MysqlServerLock implements Lock {
             log.warn("unlock not owned lock, name={}", lockName);
         }
         else {
-            log.info("unlock lock, name={}", lockName);
+            log.debug("unlock lock, name={}", lockName);
         }
     }
 

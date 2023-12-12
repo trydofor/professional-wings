@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.json;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +32,7 @@ class JsonConversionTest {
     private final JsonConversion conversionService = new JsonConversion();
 
     @Test
+    @TmsLink("C13015")
     void canConvert() {
         Assertions.assertTrue(conversionService.canConvert(String.class, Map.class));
         Assertions.assertTrue(conversionService.canConvert(Map.class, String.class));
@@ -58,6 +60,7 @@ class JsonConversionTest {
     }
 
     @Test
+    @TmsLink("C13016")
     void convert() {
         Dto dto = new Dto();
         Map<String, String> map = new HashMap<>();
@@ -90,6 +93,7 @@ class JsonConversionTest {
     }
 
     @Test
+    @TmsLink("C13017")
     void parse() {
         Dto dto = new Dto();
         R<Dto> rd = R.okData(dto);

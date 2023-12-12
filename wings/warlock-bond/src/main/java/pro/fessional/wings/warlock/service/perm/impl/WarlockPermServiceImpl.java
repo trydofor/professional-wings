@@ -92,7 +92,7 @@ public class WarlockPermServiceImpl implements WarlockPermService {
                     .where(t.getOnlyLive())
                     .fetch()
                     .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
-            log.info("loadPermAll size={}", all.size());
+            log.debug("loadPermAll size={}", all.size());
             return all;
         }
 
@@ -104,7 +104,7 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         public boolean evictPermAllCache(@Nullable TableChangeEvent event) {
             final String tb = CacheEventHelper.receiveTable(event, EventTables);
             if (tb != null) {
-                log.info("evictPermAllCache by {}, {}", tb, event);
+                log.debug("evictPermAllCache by {}, {}", tb, event);
                 return true;
             }
 

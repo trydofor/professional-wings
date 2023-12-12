@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -22,7 +23,8 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
  * @since 2023-08-28
  */
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "wings.warlock.security.anonymous=true")
 @Slf4j
 class AccessDeny403Test {
 
@@ -33,6 +35,7 @@ class AccessDeny403Test {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C14042")
     public void testAnonymous() {
         final RestTemplate tmpl = new RestTemplate();
 
@@ -84,6 +87,7 @@ class AccessDeny403Test {
      * system.perm.create
      */
     @Test
+    @TmsLink("C14043")
     public void testLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         final Response r0 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
@@ -121,6 +125,7 @@ class AccessDeny403Test {
     }
 
     @Test
+    @TmsLink("C14044")
     public void testLogout() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         final Response r0 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()

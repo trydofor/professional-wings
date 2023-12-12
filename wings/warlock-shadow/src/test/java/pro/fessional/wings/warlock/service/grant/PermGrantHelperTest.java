@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.service.grant;
 
 import com.google.common.collect.Sets;
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PermGrantHelperTest {
 
     @Test
+    @TmsLink("C14056")
     void canInherit() {
         assertTrue(PermGrantHelper.canInherit("*", "read"));
         assertTrue(PermGrantHelper.canInherit(".*", "system.read"));
@@ -31,6 +33,7 @@ class PermGrantHelperTest {
     }
 
     @Test
+    @TmsLink("C14057")
     void grantRole() {
         Map<Long, String> roleMap = new HashMap<>();
         roleMap.put(1L, "ROLE_1");

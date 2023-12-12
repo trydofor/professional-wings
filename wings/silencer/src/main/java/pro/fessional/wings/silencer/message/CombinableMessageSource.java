@@ -1,11 +1,11 @@
 package pro.fessional.wings.silencer.message;
 
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractMessageSource;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
 import java.text.MessageFormat;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,16 +58,6 @@ public class CombinableMessageSource extends AbstractMessageSource {
         }
     }
 
-    private <T extends Map<Locale, ?>> void remove(Map<String, T> map, String code, Locale locale) {
-        Map<Locale, ?> mapStr = map.get(code);
-        if (mapStr != null) {
-            mapStr.remove(locale);
-            if (mapStr.isEmpty()) {
-                map.remove(code);
-            }
-        }
-    }
-
     public void addMessage(String code, Locale locale, String msg) {
         Assert.notNull(code, "Code must not be null");
         Assert.notNull(locale, "Locale must not be null");
@@ -85,14 +74,15 @@ public class CombinableMessageSource extends AbstractMessageSource {
         }
     }
 
-    public void addMessages(Map<String, String> messages, Locale locale) {
+    public void addMessage(Map<?, ?> messages, Locale locale) {
         Assert.notNull(messages, "Messages Map must not be null");
-        messages.forEach((code, msg) -> addMessage(code, locale, msg));
-    }
-
-    public void addMessages(Properties messages, Locale locale) {
-        Assert.notNull(messages, "Properties must not be null");
-        messages.forEach((code, msg) -> addMessage(code.toString(), locale, msg.toString()));
+        for (Map.Entry<?, ?> en : messages.entrySet()) {
+            Object key = en.getKey();
+            Object value = en.getValue();
+            if (key != null && value != null) {
+                addMessage(key.toString(), locale, value.toString());
+            }
+        }
     }
 
     @Override
@@ -115,7 +105,7 @@ public class CombinableMessageSource extends AbstractMessageSource {
      * @param messageSource other messageSource
      * @param order         order Integer#MIN_VALUE means remove
      */
-    public void addMessages(HierarchicalMessageSource messageSource, int order) {
+    public void addMessage(HierarchicalMessageSource messageSource, int order) {
         Assert.notNull(messageSource, "messageSource must not be null");
         synchronized (orderedBrotherSources) {
             final int size = orderedBrotherSources.size();
@@ -148,18 +138,21 @@ public class CombinableMessageSource extends AbstractMessageSource {
      *
      * @param messageSource to be removed
      */
-    public void removeMessages(HierarchicalMessageSource messageSource) {
-        addMessages(messageSource, Integer.MIN_VALUE);
+    public void removeMessage(HierarchicalMessageSource messageSource) {
+        addMessage(messageSource, Integer.MIN_VALUE);
     }
 
 
-    private static class OrderedMessageSource {
-        private OrderedMessageSource(HierarchicalMessageSource source, int order) {
-            this.order = order;
-            this.source = source;
+    private <T extends Map<Locale, ?>> void remove(Map<String, T> map, String code, Locale locale) {
+        Map<Locale, ?> mapStr = map.get(code);
+        if (mapStr != null) {
+            mapStr.remove(locale);
+            if (mapStr.isEmpty()) {
+                map.remove(code);
+            }
         }
+    }
 
-        private final int order;
-        private final HierarchicalMessageSource source;
+    private record OrderedMessageSource(HierarchicalMessageSource source, int order) {
     }
 }

@@ -1,9 +1,11 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
@@ -12,6 +14,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @since 2019-06-10
  */
 @SpringBootTest(properties = ["debug = true"])
+@DependsOnDatabaseInitialization
 class SqlSegmentParserTest {
 
     @Autowired
@@ -21,6 +24,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
+    @TmsLink("C12059")
     @Disabled("Use for debugging in case of parsing problems")
     fun test1ManualCheck() {
         val scan = FlywaveRevisionScanner.scanMaster()
@@ -37,7 +41,7 @@ class SqlSegmentParserTest {
             }
         }
 
-        val trg = sqlSegmentProcessor.parse(sqlStatementParser, SqlSegmentParserTest::class.java.getResourceAsStream("/sql/ddl-dml.sql").bufferedReader().readText())
+        val trg = sqlSegmentProcessor.parse(sqlStatementParser, SqlSegmentParserTest::class.java.getResourceAsStream("/sql/ddl-dml.sql")!!.bufferedReader().readText())
         println("1009===========")
         for (stm in trg) {
             printSegment(1009, stm)
@@ -53,6 +57,7 @@ class SqlSegmentParserTest {
     }
 
     @Test
+    @TmsLink("C12060")
     fun test2RenameShadow() {
         val segs = sqlSegmentProcessor.parse(sqlStatementParser, "ALTER TABLE `table_a` RENAME TO `table_b`")
         val segment = segs[0]

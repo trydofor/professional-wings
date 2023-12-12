@@ -72,7 +72,7 @@ public class AuthStateBuilder {
             final byte[] bytes = JSON.toJSONBytes(paraMap, FastJsonHelper.DefaultWriter());
             final byte[] encode = aes.encode(bytes);
             final String state = Base64.encode(encode);
-            log.info("AuthStateBuilder, buildState={}", state);
+            log.debug("AuthStateBuilder, buildState={}", state);
             return uuid + state;
         }
     }
@@ -107,7 +107,7 @@ public class AuthStateBuilder {
         if (args.length > 0) {
             final String fmt = safeState.get(args[0]);
             final String rst = FormatUtil.message(fmt, (Object[]) args);
-            log.info("AuthStateBuilder, parseParam={}", rst);
+            log.debug("AuthStateBuilder, parseParam={}", rst);
             return rst;
         }
         else {

@@ -1,0 +1,91 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockShadowAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockExceptionConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockExceptionConfiguration.defaultExceptionResolver", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration.terminalJournalService", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJustAuthConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJustAuthConfiguration.authStateCache", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJustAuthConfiguration.justAuthRequestBuilder", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJustAuthConfiguration.justAuthRequestSuccessHandler", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOauthTicketConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOauthTicketConfiguration.warlockOauthService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOauthTicketConfiguration.warlockTicketService", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOtherBeanConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOtherBeanConfiguration$BindingErrorScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOtherBeanConfiguration$MvcRestScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockOtherBeanConfiguration.righterSecretProvider", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatching2Configuration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatching2Configuration.slowResponseInterceptor", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockSecurityAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.accessDeniedHandler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.authAppPermChecker", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.authenticationEventPublisher", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.authStateBuilder", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.authZonePermChecker", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.comboWarlockAuthnService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.comboWarlockAuthzService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.comboWingsAuthCheckService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.defaultPermRoleCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.defaultUserAuthnAutoReg", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.defaultUserDetailsCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.grantedAuthorityDefaults", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.justAuthLoginPageCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.justAuthUserAuthnAutoReg", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.justAuthUserDetailsCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.listAllLoginPageCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.loginFailureHandler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.loginFailureHandlerDefault", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.loginSuccessHandler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.logoutSuccessHandler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.memoryTypedAuthzCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.memoryUserDetailsCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.nonceUserDetailsCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.warlockFailedLoginListener", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.warlockPermNormalizer", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.warlockSuccessLoginListener", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.wingsAuthDetailsSource", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.wingsAuthPageHandler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.wingsAuthTypeParser", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityBeanConfiguration.wingsUserDetailsService", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.securityFilterChain", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-http-chain for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.warlockSecurityAuthHttpConfigure", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-http-auth for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.warlockSecurityAutoHttpConfigure", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-http-auto for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.warlockSecurityBindHttpConfigure", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-http-bind for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.warlockSecurityHttpBaseConfigure", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-http-base for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityConfConfiguration.warlockWebCustomizer", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.sec-web-auto for short."},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.dummy-service for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockGrantService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockPermService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockRoleService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockUserAuthnService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockUserBasisService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration.warlockUserLoginService", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.admin.AdminTweakController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-tweak for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.auth.LoginPageController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-login for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.auth.LoginProcController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-proc for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.auth.SimpleOauthController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-oauth for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.mock.MockSampleController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-mock for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.test.TestEnvsController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-test for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.controller.user.AuthedUserController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-user for short."}
+  ],
+  "hints": []
+}

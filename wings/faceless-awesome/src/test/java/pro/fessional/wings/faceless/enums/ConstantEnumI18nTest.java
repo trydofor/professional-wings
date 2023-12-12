@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.enums;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
@@ -10,19 +11,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pro.fessional.wings.testing.database.ExecSql.execWingsSql;
 
 /**
  * @author trydofor
  * @since 2020-06-10
  */
 
-@SpringBootTest(properties = {"spring.wings.faceless.enabled.enumi18n=true"})
+@SpringBootTest
 @TestMethodOrder(MethodName.class)
 public class ConstantEnumI18nTest {
 
@@ -39,6 +40,7 @@ public class ConstantEnumI18nTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
+    @TmsLink("C12006")
     public void test3Code() {
         StandardLanguage zhCN = StandardLanguage.ZH_CN;
         StandardTimezone tzUs = StandardTimezone.AMERICA_CHICAGO;
@@ -47,6 +49,7 @@ public class ConstantEnumI18nTest {
     }
 
     @Test
+    @TmsLink("C12007")
     public void test4I18n() {
         execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
         execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
@@ -63,26 +66,11 @@ public class ConstantEnumI18nTest {
     }
 
     @Test
+    @TmsLink("C12008")
     public void printAllBean() {
         int i = 1;
         for (String bean : applicationContext.getBeanDefinitionNames()) {
             System.out.printf("[%d] %s\n", i++, bean);
-        }
-    }
-
-    public void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
-        String sqls = InputStreams.readText(this.getClass().getResourceAsStream("/wings-flywave/" + path));
-        for (String sql : sqls.split(
-                ";+[ \\t]*[\\r\\n]+"
-                + "|"
-                + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
-                + "|"
-                + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
-        )) {
-            String s = sql.trim();
-            if (!s.isEmpty()) {
-                jdbcTemplate.execute(s);
-            }
         }
     }
 }

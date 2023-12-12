@@ -48,7 +48,8 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
     }
 
 
-    @Override public boolean notIntercept() {
+    @Override
+    public boolean notIntercept() {
         return prefix == null
                && coder == Coder.Nop
                && aliasEnc.isEmpty()
@@ -60,52 +61,60 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
                && domain.isEmpty();
     }
 
-    @Override public Cookie read(Cookie cookie) {
+    @Override
+    public Cookie read(Cookie cookie) {
         if (cookie == null) return null;
 
-        boolean did = false;
+        boolean dirty = false;
         String name = cookie.getName();
         // handle prefix of name
         if (prefix != null && name.startsWith(prefix)) {
             name = name.substring(prefix.length());
-            did = true;
+            dirty = true;
         }
 
         // handle alias of name
         final String n = aliasDec.get(name);
         if (n != null) {
             name = n;
-            did = true;
+            dirty = true;
         }
 
         // decode value
         String value = cookie.getValue();
+        if (value == null) return cookie;
+
         if (codeAes.contains(name)) {
-            value = aes.decode64(value);
-            did = true;
+            if (value.length() >= 16) {
+                value = aes.decode64(value);
+                dirty = true;
+            }
         }
         else if (codeB64.contains(name)) {
-            value = Base64.de2str(value);
-            did = true;
+            if (value.length() >= 2) {
+                value = Base64.de2str(value);
+                dirty = true;
+            }
         }
         else if (codeNop.contains(name)) {
             DummyBlock.empty();
         }
         else {
-            if (coder == Coder.Aes) {
+            if (coder == Coder.Aes && value.length() >= 16) {
                 value = aes.decode64(value);
-                did = true;
+                dirty = true;
             }
-            else if (coder == Coder.B64) {
+            else if (coder == Coder.B64 && value.length() >= 2) {
                 value = Base64.de2str(value);
-                did = true;
+                dirty = true;
             }
         }
 
-        return did ? copyCookie(cookie, name, value) : cookie;
+        return dirty ? copyCookie(cookie, name, value) : cookie;
     }
 
-    @Override public Cookie write(Cookie cookie) {
+    @Override
+    public Cookie write(Cookie cookie) {
         if (cookie == null) return null;
 
         boolean did = false;
@@ -169,7 +178,8 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         return did ? copyCookie(cookie, name, value) : cookie;
     }
 
-    @NotNull private Cookie copyCookie(Cookie cookie, String name, String value) {
+    @NotNull
+    private Cookie copyCookie(Cookie cookie, String name, String value) {
         Cookie nc = new Cookie(name, value);
         final String domain = cookie.getDomain();
         if (domain != null) {

@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.webmvc;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class CodeExceptionHandlerTest {
     private MockMvc mockMvc;
 
     @Test
+    @TmsLink("C14071")
     public void testCodeExceptionEn() throws Exception {
         mockMvc.perform(get("/test/code-exception.json")
                        .header("Accept-Language", "en_US"))
@@ -31,6 +33,7 @@ public class CodeExceptionHandlerTest {
     }
 
     @Test
+    @TmsLink("C14072")
     public void testCodeExceptionCn() throws Exception {
         mockMvc.perform(get("/test/code-exception.json")
                        .header("Accept-Language", "zh_CN"))
@@ -39,6 +42,7 @@ public class CodeExceptionHandlerTest {
     }
 
     @Test
+    @TmsLink("C14073")
     public void testMessageExceptionEn() throws Exception {
         mockMvc.perform(get("/test/message-exception.json")
                        .header("Accept-Language", "en_US"))
@@ -47,6 +51,7 @@ public class CodeExceptionHandlerTest {
     }
 
     @Test
+    @TmsLink("C14074")
     public void testMessageExceptionCn() throws Exception {
         mockMvc.perform(get("/test/message-exception.json")
                        .header("Accept-Language", "zh_CN"))
@@ -55,6 +60,7 @@ public class CodeExceptionHandlerTest {
     }
 
     @Test
+    @TmsLink("C14075")
     public void testFutureExceptionCn() throws Exception {
         mockMvc.perform(get("/test/future-exception.json")
                        .header("Accept-Language", "zh_CN"))

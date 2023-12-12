@@ -15,7 +15,7 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.Disabled
 
 /**
  * CUD listener settings for jooq.
- * spring-wings-enabled-79.properties
+ * wings-jooq-cud-79.properties
  *
  * @author trydofor
  * @see #Key

@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.val;
 import org.jooq.Field;
@@ -8,15 +9,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import pro.fessional.wings.faceless.WingsTestHelper;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -25,9 +27,9 @@ import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 
@@ -37,6 +39,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  */
 
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @ActiveProfiles("init")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Tag("init")
@@ -55,6 +58,7 @@ public class WingsJooqDaoAliasImplTest {
     private final LocalDateTime now = LocalDateTime.now();
 
     @Test
+    @TmsLink("C12081")
     public void test0DropAndInit() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
@@ -63,6 +67,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12082")
     public void test1BatchLoadSeeLog() {
         if (WingsJooqEnv.daoBatchMysql) {
             testcaseNotice("Skip the inefficient SQL and use mysql `replace into` syntax, see batchMerge");
@@ -81,6 +86,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12083")
     public void test2BatchInsertSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(304L, now, now, now, 9L, "batch load 304", "", ZH_CN),
@@ -93,6 +99,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12084")
     public void test3BatchMergeSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(307L, now, now, now, 9L, "batch load 307", "", ZH_CN),
@@ -114,6 +121,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12085")
     public void test4BatchStoreSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(310L, now, now, now, 9L, "batch load 310", "", ZH_CN),
@@ -126,6 +134,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12086")
     public void test5BatchUpdateSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(309L, now, now, now, 9L, "batch load 309", "update", ZH_CN),
@@ -141,6 +150,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12087")
     public void test6SingleMergeSeeLog() {
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         TstSharding pojo = new TstSharding(312L, now, now, now, 9L, "batch load 312", "update-bymerge", ZH_CN);
@@ -149,6 +159,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12088")
     public void test7BatchMergeSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(313L, now, now, now, 9L, "batch 313-merge", "update-merge", ZH_CN),
@@ -161,6 +172,7 @@ public class WingsJooqDaoAliasImplTest {
     }
 
     @Test
+    @TmsLink("C12089")
     public void test8LogicDeleteSeeLog() {
         dao.fetchById(1L);
         dao.fetchOneById(1L);

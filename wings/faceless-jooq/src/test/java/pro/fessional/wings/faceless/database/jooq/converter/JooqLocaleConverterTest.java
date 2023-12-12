@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq.converter;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,7 @@ import java.util.Locale;
 class JooqLocaleConverterTest {
 
     @Test
+    @TmsLink("C12080")
     void from() {
         JooqLocaleConverter jlc = new JooqLocaleConverter();
         final Locale lc = jlc.from("en-us");

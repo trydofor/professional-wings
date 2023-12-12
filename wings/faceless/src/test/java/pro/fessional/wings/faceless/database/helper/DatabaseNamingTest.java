@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.helper;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 class DatabaseNamingTest {
 
     @Test
+    @TmsLink("C12003")
     void tableName() {
         Assertions.assertEquals("database_naming_test", DatabaseNaming.tableName(DatabaseNamingTest.class));
         Assertions.assertEquals("ab_cd_efg", DatabaseNaming.lowerSnake("AbCdEFG"));

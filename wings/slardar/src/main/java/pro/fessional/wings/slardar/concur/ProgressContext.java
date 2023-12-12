@@ -6,11 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static pro.fessional.wings.slardar.cache.cache2k.Cache2kSlot.H24M5;
 
 /**
  * @author trydofor
@@ -18,45 +17,19 @@ import static pro.fessional.wings.slardar.cache.cache2k.Cache2kSlot.H24M5;
  */
 public class ProgressContext {
 
-    private static final AtomicLong count = new AtomicLong(0);
-    private static final LeapCode leapCode = new LeapCode();
+    private static final Cache<Object, Bar> Cache = WingsCache2k
+            .builder(ProgressContext.class, "bar", 0, 24 * 3600, 0, Object.class, Bar.class)
+            .build();
 
-    /**
-     * Get the progress bar by inside key
-     */
-    @Nullable
-    public static Bar get(String key) {
-        if (key == null) return null;
-        int pos = key.indexOf("-");
-        if (pos <= 0) return null;
-
-        final long second = leapCode.decode(key, 0, pos);
-        return get(key, (int) second);
-    }
+    private static final AtomicLong Counter = new AtomicLong(0);
+    private static final LeapCode Encoder = new LeapCode();
 
     /**
      * Get the progress bar by outside key and ttl second.
      */
     @Nullable
-    public static Bar get(Object key, int second) {
-        if (key == null) return null;
-
-        final Cache<Object, Object> cache = H24M5.getCache(second);
-        final Object obj = cache.get(key);
-        if (obj instanceof Bar) {
-            return (Bar) obj;
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Get cache by ttl second
-     */
-    @NotNull
-    public static Cache<Object, Object> get(int second) {
-        return H24M5.getCache(second);
+    public static Bar get(Object key) {
+        return key == null ? null : Cache.get(key);
     }
 
     /**
@@ -72,11 +45,17 @@ public class ProgressContext {
      */
     @NotNull
     public static Bar gen(Object key, long started, int second) {
-        final Cache<Object, Object> cache = H24M5.getCache(second);
-        Bar bar = new Bar(key(started, second), started);
-        cache.put(bar.key, bar);
+        final Bar bar = new Bar(key(started, second), started);
+        Cache.mutate(bar.key, entry -> {
+            entry.setValue(bar);
+            entry.setExpiryTime(entry.getStartTime() + second * 1000L);
+        });
+
         if (key != null) {
-            cache.put(key, bar);
+            Cache.mutate(key, entry -> {
+                entry.setValue(bar);
+                entry.setExpiryTime(entry.getStartTime() + second * 1000L);
+            });
         }
         return bar;
     }
@@ -86,17 +65,17 @@ public class ProgressContext {
      */
     @NotNull
     public static String key(long started, int second) {
-        StringBuilder sb = new StringBuilder(30);
-        sb.append(leapCode.encode26(second, 5));
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(Encoder.encode26(second, 5));
         sb.append('-');
-        sb.append(leapCode.encode26(started, 10));
-        long cnt = count.incrementAndGet();
+        sb.append(Encoder.encode26(started, 10));
+        long cnt = Counter.incrementAndGet();
         while (cnt <= 0) {
-            count.set(0);
-            cnt = count.incrementAndGet();
+            Counter.set(0);
+            cnt = Counter.incrementAndGet();
         }
         sb.append('-');
-        sb.append(leapCode.encode26(cnt, 5));
+        sb.append(Encoder.encode26(cnt, 5));
         return sb.toString();
     }
 

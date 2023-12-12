@@ -3,15 +3,13 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.HandlerMapping;
 import pro.fessional.mirana.text.Wildcard;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
@@ -29,15 +27,15 @@ import java.util.function.Supplier;
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$domainExtend, havingValue = "true")
-@AutoConfigureOrder(OrderedSlardarConst.DomainExtendConfiguration)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$domainx, value = false)
 public class SlardarDomainExtendConfiguration {
 
     private final static Log log = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
 
     @Bean
-    public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, ApplicationContext context) {
-        log.info("SlardarWebmvc spring-bean wingsDomainFilter");
+    @ConditionalWingsEnabled
+    public WingsDomainExtendFilter wingsDomainExtendFilter(DomainExtendProp config, ApplicationContext context) {
+        log.info("SlardarWebmvc spring-bean wingsDomainExtendFilter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
             Set<String> vs = entry.getValue();

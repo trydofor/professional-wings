@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ class DataSourceContextTest {
     private DataSourceContext sourceContext;
 
     @Test
+    @TmsLink("C12004")
     void test() {
         assertNotNull(sourceContext);
         final DataSource primary = sourceContext.getCurrent();

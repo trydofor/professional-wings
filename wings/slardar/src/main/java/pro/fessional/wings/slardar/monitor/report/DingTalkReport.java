@@ -36,17 +36,17 @@ public class DingTalkReport implements WarnReport {
         final DingTalkConf conf = dingTalkNotice.provideConfig(dingConfig, true);
         final String host = conf.getValidWebhook();
         if (host == null) {
-            log.info("bad webhook, skip");
+            log.debug("bad webhook, skip");
             return Sts.Skip;
         }
 
         if (host.contains("${")) {
-            log.info("accessToken has placeholder, skip");
+            log.debug("accessToken has placeholder, skip");
             return Sts.Skip;
         }
 
         if (warn.isEmpty()) {
-            log.info("warning is empty, skip");
+            log.debug("warning is empty, skip");
             return Sts.Skip;
         }
 

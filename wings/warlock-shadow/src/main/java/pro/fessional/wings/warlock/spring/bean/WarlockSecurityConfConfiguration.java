@@ -1,13 +1,10 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,22 +19,28 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
+import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
+import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper.MatcherHelper;
 import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -45,21 +48,15 @@ import java.util.TreeMap;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
-@RequiredArgsConstructor
-@AutoConfigureOrder(OrderedWarlockConst.SecurityConfConfiguration)
+@ConditionalWingsEnabled
 public class WarlockSecurityConfConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityConfConfiguration.class);
 
-    private final SessionRegistry sessionRegistry;
-    private final WarlockSecurityProp securityProp;
-
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
-    public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secWebAuto)
+    public WebSecurityCustomizer warlockWebCustomizer(WarlockSecurityProp securityProp, ObjectProvider<HttpFirewall> httpFirewall) {
         log.info("WarlockShadow spring-bean warlockWebCustomizer");
-        MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
         return web -> {
             if (securityProp.isWebDebug()) {
                 log.info("WarlockShadow conf WebSecurity, WebDebug=true");
@@ -72,7 +69,7 @@ public class WarlockSecurityConfConfiguration {
             if (!webIgnore.isEmpty()) {
                 final Set<String> ignores = CommonPropHelper.onlyValue(webIgnore.values());
                 log.info("WarlockShadow conf WebSecurity, ignoring=" + String.join("\n,", ignores));
-                web.ignoring().requestMatchers(SecurityConfigHelper.requestMatchers(mvc, ignores));
+                web.ignoring().requestMatchers(ignores.toArray(String[]::new));
             }
 
             final HttpFirewall firewall = httpFirewall.getIfAvailable();
@@ -84,9 +81,11 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityBindHttp)
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpBind)
+    @Order(WingsOrdered.Lv4Application + 200)
     public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
+            WarlockSecurityProp securityProp,
+            SessionRegistry sessionRegistry,
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
             ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
@@ -142,10 +141,16 @@ public class WarlockSecurityConfConfiguration {
                             HttpServletResponse response = event.getResponse();
                             ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
                         })
-                );
+                )
+                .anonymous(conf -> {
+                    if (!securityProp.isAnonymous()) {
+                        log.info("WarlockShadow conf HttpSecurity, disable anonymous");
+                        conf.disable();
+                    }
+                });
 
             final AccessDeniedHandler deniedHandler = accessDeniedHandler.getIfAvailable();
-            if(deniedHandler != null){
+            if (deniedHandler != null) {
                 log.info("WarlockShadow conf exceptionHandling, accessDeniedHandler=" + deniedHandler.getClass());
                 http.exceptionHandling().accessDeniedHandler(deniedHandler);
             }
@@ -153,25 +158,25 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityAuthHttp)
-    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpAuth)
+    @Order(WingsOrdered.Lv4Application + 300)
+    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(WarlockSecurityProp securityProp) {
         log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
-        MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
+
         return http -> {
-            val conf = http.authorizeHttpRequests();
+            final var conf = http.authorizeHttpRequests();
             // 1 PermitAll
             final Set<String> permed = CommonPropHelper.onlyValue(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
-                conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, permed)).permitAll();
+                conf.requestMatchers(permed.toArray(String[]::new)).permitAll();
             }
 
             // 2 Authenticated
             final Set<String> authed = CommonPropHelper.onlyValue(securityProp.getAuthenticated().values());
             if (!authed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
-                conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, authed)).authenticated();
+                conf.requestMatchers(authed.toArray(String[]::new)).authenticated();
             }
 
             // 3 Authority
@@ -192,23 +197,23 @@ public class WarlockSecurityConfConfiguration {
                     final String url = en.getKey();
                     final Set<String> pms = CommonPropHelper.onlyValue(en.getValue());
                     log.info("WarlockShadow conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
-                    conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, url)).hasAnyAuthority(pms.toArray(Null.StrArr));
+                    conf.requestMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }
             }
         };
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityHttpBase)
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpBase)
+    @Order(WingsOrdered.Lv4Application + 100)
     public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
         log.info("WarlockShadow spring-bean warlockSecurityHttpBaseConfigure");
         return HttpSecurity::httpBasic;
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityAutoHttp)
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpAuto)
+    @Order(WingsOrdered.Lv4Application + 400)
     public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
             ObjectProvider<CsrfTokenRepository> csrf,
             ObjectProvider<RequestCache> cache) {
@@ -258,9 +263,9 @@ public class WarlockSecurityConfConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpChain, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityFilterChain)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpChain)
+    @Order(WingsOrdered.Lv4Application + 900)
+    public SecurityFilterChain securityFilterChain(WarlockSecurityProp securityProp, HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
         log.info("WarlockShadow conf securityFilterChain, begin");
         for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
             log.info("WarlockShadow conf securityFilterChain, bean=" + en.getKey());
@@ -271,7 +276,7 @@ public class WarlockSecurityConfConfiguration {
         if (StringUtils.hasText(anyRequest)) {
             log.info("WarlockShadow conf securityFilterChain, anyRequest=" + anyRequest);
             String str = anyRequest.trim();
-            if ("permitAll".equalsIgnoreCase(str)) {
+            if (!StringUtils.hasText(str) || "permitAll".equalsIgnoreCase(str)) {
                 http.authorizeHttpRequests().anyRequest().permitAll();
             }
             else if ("authenticated".equalsIgnoreCase(str)) {
@@ -289,5 +294,124 @@ public class WarlockSecurityConfConfiguration {
         }
         log.info("WarlockShadow conf securityFilterChain, done");
         return http.build();
+    }
+
+
+    @Bean
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secCheckUrl)
+    public ApplicationRunnerOrdered securityCheckUrlRunner(WarlockSecurityProp securityProp, ApplicationContext ctx) {
+        log.info("WarlockShadow spring-runs securityCheckUrlRunner");
+        return new ApplicationRunnerOrdered(WingsOrdered.Lv1Config, ignored -> {
+            log.info("WarlockShadow check security url config");
+            Map<String, String> matchers = new LinkedHashMap<>();
+            Map<String, FakeHttpServletRequest> requests = new LinkedHashMap<>();
+
+            for (var en : securityProp.getWebIgnore().entrySet()) {
+                String ptn = en.getValue();
+                if (!StringUtils.hasText(ptn)) continue;
+                matchers.put("WebIgnore:" + en.getKey(), ptn);
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+            }
+            for (var en : securityProp.getPermitAll().entrySet()) {
+                String ptn = en.getValue();
+                if (!StringUtils.hasText(ptn)) continue;
+                matchers.put("PermitAll:" + en.getKey(), ptn);
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+            }
+            for (var en : securityProp.getAuthenticated().entrySet()) {
+                String ptn = en.getValue();
+                if (!StringUtils.hasText(ptn)) continue;
+                matchers.put("Authenticated:" + en.getKey(), ptn);
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+            }
+            for (var en : securityProp.getAuthority().entrySet()) {
+                int c = 0;
+                String k = en.getKey();
+                for (String ptn : en.getValue()) {
+                    if (!StringUtils.hasText(ptn)) continue;
+                    matchers.put("Authority:" + k + "[" + (c++) + "]", ptn);
+                    requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+                }
+            }
+            final AtomicReference<RequestMatcher> opt = new AtomicReference<>();
+            MatcherHelper matcherHelper = MatcherHelper.of(ctx, opt);
+
+            // check including
+            for (var en : matchers.entrySet()) {
+                String ptn = en.getValue();
+                requests.remove(ptn);
+                if (requests.isEmpty()) break;
+
+                matcherHelper.requestMatchers(ptn);
+                RequestMatcher mt = opt.get();
+                for (var er : requests.entrySet()) {
+                    if (mt.matches(er.getValue())) {
+                        log.warn(en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                    }
+                }
+            }
+            matchers.clear();
+            requests.clear();
+
+            // check auth url
+            String loginPage = securityProp.getLoginPage();
+            if (StringUtils.hasText(loginPage)) {
+                requests.put(loginPage, SecurityConfigHelper.fakeMatcherRequest(loginPage));
+            }
+            String logoutUrl = securityProp.getLogoutUrl();
+            if (StringUtils.hasText(logoutUrl)) {
+                requests.put(logoutUrl, SecurityConfigHelper.fakeMatcherRequest(logoutUrl));
+            }
+            String loginProcUrl = securityProp.getLoginProcUrl();
+            if (StringUtils.hasText(loginProcUrl)) {
+                requests.put(loginProcUrl, SecurityConfigHelper.fakeMatcherRequest(loginProcUrl));
+            }
+
+            StringBuilder err = new StringBuilder();
+            for (var en : securityProp.getWebIgnore().entrySet()) {
+                String ptn = en.getValue();
+                if (!StringUtils.hasText(ptn)) continue;
+                matcherHelper.requestMatchers(ptn);
+                RequestMatcher mt = opt.get();
+                for (var e : requests.entrySet()) {
+                    if (mt.matches(e.getValue())) {
+                        err.append("\nWebIgnore:").append(en.getKey()).append(" should exclude ").append(e.getKey());
+                    }
+                }
+            }
+
+            String anyRequest = securityProp.getAnyRequest();
+            if (!StringUtils.hasText(anyRequest)
+                || "permitAll".equalsIgnoreCase(anyRequest)
+                || "anonymous".equalsIgnoreCase(anyRequest)) {
+                for (var en : securityProp.getPermitAll().entrySet()) {
+                    String ptn = en.getValue();
+                    if (!StringUtils.hasText(ptn)) continue;
+                    if (requests.isEmpty()) break;
+
+                    matcherHelper.requestMatchers(ptn);
+                    RequestMatcher mt = opt.get();
+                    for (var it = requests.entrySet().iterator(); it.hasNext(); ) {
+                        var er = it.next();
+                        if (mt.matches(er.getValue())) {
+                            log.debug("WarlockShadow security url permit all include " + er.getKey());
+                            it.remove();
+                        }
+                    }
+                }
+                if (!requests.isEmpty()) {
+                    err.append("\nPermitAll should include urls: ").append(String.join(", ", requests.keySet()));
+                }
+            }
+
+            if (!err.isEmpty()) {
+                String msg = err.toString();
+                log.error(msg);
+                throw new IllegalStateException(
+                        "\nWarlockSecurityConfConfiguration has security url conflict to fix." +
+                        "\nor disable checking by `wings.enabled.warlock.sec-check-url=false`" +
+                        msg);
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.controller.api;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -43,6 +44,7 @@ class OkHttpTokenizeTest {
     private final String secret = "wings-trydofor-secret";
 
     @Test
+    @TmsLink("C14028")
     public void testOauthAuthorizationCode() {
         OkHttpTokenizeOauth tokenize = new OkHttpTokenizeOauth();
         tokenize.setClientId(client);
@@ -65,6 +67,7 @@ class OkHttpTokenizeTest {
     }
 
     @Test
+    @TmsLink("C14029")
     public void testOauthClientCredentials() {
         OkHttpTokenizeOauth tokenize = new OkHttpTokenizeOauth();
         tokenize.setClientId(client);
@@ -84,6 +87,7 @@ class OkHttpTokenizeTest {
     }
 
     @Test
+    @TmsLink("C14030")
     public void testFormLogin() {
         OkHttpTokenizeLogin tokenize = new OkHttpTokenizeLogin();
         tokenize.setLoginUrl(host + "/auth/username/login.json");

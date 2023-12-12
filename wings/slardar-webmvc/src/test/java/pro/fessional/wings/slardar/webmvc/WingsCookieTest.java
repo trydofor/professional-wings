@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.TmsLink;
 import jakarta.servlet.http.Cookie;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pro.fessional.mirana.bits.Aes;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.wings.silencer.encrypt.Aes256Provider;
-import pro.fessional.wings.slardar.controller.TestCookieController.Ins;
+import pro.fessional.wings.slardar.app.controller.TestCookieController.Ins;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +41,7 @@ import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLIC
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.cookie=true",
+                "wings.enabled.slardar.cookie=true",
                 "wings.slardar.cookie.prefix=" + WingsCookieTest.PREFIX,
                 "wings.slardar.cookie.coder=aes",
                 "wings.slardar.cookie.alias[ck2]=" + WingsCookieTest.CK2OTH,
@@ -80,11 +81,13 @@ public class WingsCookieTest {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C13115")
     public void test1Cookie() throws Exception {
         mockMvcCookie("/test/cookie.json");
     }
 
     @Test
+    @TmsLink("C13116")
     public void test2Cookie() throws Exception {
         // Must use client, do NOT mock
         httpClient("/test/cookie-forward.json");

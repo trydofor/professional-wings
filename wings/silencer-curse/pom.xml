@@ -19,10 +19,6 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>aegis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer</artifactId>
         </dependency>
         <dependency>

@@ -33,7 +33,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
         for (Combo<?> combo : combos) {
             userDetails = combo.loadOrNull(username, authType, authDetail);
             if (userDetails != null) {
-                log.info("loadUserByUsername by combo={}", combo.getClass());
+                log.debug("loadUserByUsername by combo={}", combo.getClass());
                 break;
             }
         }
@@ -42,7 +42,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
             for (Combo<?> combo : combos) {
                 userDetails = combo.postAudit(userDetails, username, authType, authDetail);
                 if (userDetails == null) {
-                    log.info("postAudit deny by combo={}", combo.getClass());
+                    log.debug("postAudit deny by combo={}", combo.getClass());
                     break;
                 }
             }

@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -30,6 +31,7 @@ class NonceLoginTest {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C14050")
     public void testTestNyLogin() {
 
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=test_ny"), false);

@@ -1,0 +1,14 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FacelessShardAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessShardingSphereConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessShardingSphereConfiguration.shardingDataSourceContext", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessShardingSphereConfiguration.writeRouteOnlyAround", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

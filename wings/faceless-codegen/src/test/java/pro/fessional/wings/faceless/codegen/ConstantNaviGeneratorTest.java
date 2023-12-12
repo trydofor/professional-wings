@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.codegen;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.codegen.ConstantNaviGenerator.Entry;
@@ -15,6 +16,7 @@ import java.util.Collection;
 class ConstantNaviGeneratorTest {
 
     @Test
+    @TmsLink("C12018")
     void generate() {
         Collection<Entry> entries = new ArrayList<>();
         entries.add(create(1000L, "root", "super privilege, NOT for external use"));

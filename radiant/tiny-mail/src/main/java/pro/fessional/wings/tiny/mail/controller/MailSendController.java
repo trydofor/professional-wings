@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.Data;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
@@ -20,7 +20,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
  * @since 2023-01-13
  */
 @RestController
-@ConditionalOnProperty(name = TinyMailEnabledProp.Key$controllerSend, havingValue = "true")
+@ConditionalWingsEnabled(abs = TinyMailEnabledProp.Key$mvcSend)
 public class MailSendController {
 
     @Setter(onMethod_ = {@Autowired})

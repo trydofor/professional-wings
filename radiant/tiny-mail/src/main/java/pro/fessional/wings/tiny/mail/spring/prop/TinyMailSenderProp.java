@@ -18,6 +18,14 @@ public class TinyMailSenderProp {
     public static final String Key = "wings.tiny.mail.sender";
 
     /**
+     * whether to dry run, log only without actually send
+     *
+     * @see #Key$dryrun
+     */
+    private boolean dryrun = false;
+    public static final String Key$dryrun = Key + ".dryrun";
+
+    /**
      * biz-id Header to locate mail by business, default mail id.
      *
      * @see #Key$bizId

@@ -1,12 +1,14 @@
 package pro.fessional.wings.slardar.concur.impl;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,18 +19,17 @@ import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.DefaultUserId;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -44,7 +45,7 @@ import java.util.concurrent.locks.Lock;
  * @since 2021-03-09
  */
 @Aspect
-@Order(OrderedSlardarConst.AopDoubleKillAround)
+@Order(WingsOrdered.Lv3Service)
 @Slf4j
 public class DoubleKillAround {
 
@@ -117,7 +118,7 @@ public class DoubleKillAround {
             }
         }
         else {
-            final ProgressContext.Bar bar = ProgressContext.get(arrKey, ttl);
+            final ProgressContext.Bar bar = ProgressContext.get(arrKey);
             if (bar == null) {
                 throw new DoubleKillException("", 0); // Never here, Defensive
             }
@@ -154,6 +155,7 @@ public class DoubleKillAround {
     }
 
     // //////
+    @Getter
     public static class Root {
         private final Method method;
         private final Object[] args;
@@ -167,25 +169,10 @@ public class DoubleKillAround {
             this.targetClass = target.getClass();
         }
 
-        public Method getMethod() {
-            return method;
-        }
-
         public String getMethodName() {
             return method.getName();
         }
 
-        public Object[] getArgs() {
-            return args;
-        }
-
-        public Object getTarget() {
-            return target;
-        }
-
-        public Class<?> getTargetClass() {
-            return targetClass;
-        }
     }
 
     public static class Evaluator extends CachedExpressionEvaluator {

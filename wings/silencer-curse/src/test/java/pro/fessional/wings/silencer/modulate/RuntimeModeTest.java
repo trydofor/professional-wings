@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.modulate;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class RuntimeModeTest {
 
     @Test
+    @TmsLink("C11011")
     void isRunMode() {
         final RunMode rm = RuntimeMode.getRunMode();
         Assertions.assertEquals(RunMode.Local, rm);
@@ -25,6 +27,7 @@ public class RuntimeModeTest {
     }
 
     @Test
+    @TmsLink("C11012")
     void isApiMode() {
         final ApiMode am = RuntimeMode.getApiMode();
         Assertions.assertEquals(ApiMode.Nothing, am);

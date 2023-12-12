@@ -1,0 +1,21 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarCacheAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastConfigConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastConfigConfiguration.wingsHazelcastAloneCustomizer", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.hazelcast-standalone for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastConfigConfiguration.wingsHazelcastCacheCustomizer", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration$FlakeIdServiceBean", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration$GlobalPublisherWired", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration.hazelcastCacheManager", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration.hazelcastGlobalLock", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration.hzLightIdProvider", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooqgen;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
@@ -11,6 +12,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 class WingsJooqGenHelperTest {
 
     @Test
+    @TmsLink("C12020")
     public void testReplaceDaoJavaSimple(){
         StringBuilder java = new StringBuilder("""
                 /*
@@ -94,6 +96,7 @@ class WingsJooqGenHelperTest {
                 )
                 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
                 @Repository
+                @ConditionalWingsEnabled
                 public class TstShardingDao extends WingsJooqDaoAliasImpl<TstShardingTable, TstShardingRecord, TstSharding, Long> {
 
                     /**
@@ -136,8 +139,10 @@ class WingsJooqGenHelperTest {
                     }
                 }
                 """,repl);
-    }    @Test
+    }
 
+    @Test
+    @TmsLink("C12021")
     public void testReplaceDaoJavaEmbeddable(){
         StringBuilder java = new StringBuilder("""
                 /*
@@ -224,6 +229,7 @@ class WingsJooqGenHelperTest {
                 )
                 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
                 @Repository
+                @ConditionalWingsEnabled
                 public class TstShardingDao extends WingsJooqDaoAliasImpl<TstShardingTable, TstShardingRecord, TstSharding, Long> {
 
                     /**

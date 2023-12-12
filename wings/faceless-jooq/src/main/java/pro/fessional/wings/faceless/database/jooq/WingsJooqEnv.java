@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WingsJooqEnv {
     /**
      * Whether mysql's efficient `insert ignore` and `replace into` are supported in Dao.
-     * spring.wings.faceless.jooq.enabled.batch-mysql=true
+     * wings.faceless.jooq.conf.batch-mysql=true
      */
     public static volatile boolean daoBatchMysql = true;
 

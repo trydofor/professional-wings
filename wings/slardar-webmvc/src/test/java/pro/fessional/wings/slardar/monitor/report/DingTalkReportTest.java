@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.monitor.report;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class DingTalkReportTest {
     private DingTalkNotice dingTalkNotice;
 
     @Test
+    @TmsLink("C13078")
     void postReport() {
         Map<String, List<WarnMetric.Warn>> warns = new TreeMap<>();
         List<WarnMetric.Warn> list = new ArrayList<>();
@@ -46,6 +48,7 @@ class DingTalkReportTest {
     }
 
     @Test
+    @TmsLink("C13079")
     void postNotice() {
         final DingTalkConf conf = dingTalkNotice.provideConfig("monitor", true);
         conf.setNoticeMobiles(Map.of("a9", "155XXXX1992"));

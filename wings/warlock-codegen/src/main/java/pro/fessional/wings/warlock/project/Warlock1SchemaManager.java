@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 /**
  * Provides a convenient version management of common scenarios.
- * spring.wings.faceless.flywave.enabled.module=true
+ * wings.enabled.faceless.flywave=true
  *
  * @author trydofor
  * @since 2021-02-20

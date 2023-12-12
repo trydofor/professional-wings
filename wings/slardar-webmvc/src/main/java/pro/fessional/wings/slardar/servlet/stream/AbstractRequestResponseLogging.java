@@ -175,6 +175,6 @@ public abstract class AbstractRequestResponseLogging implements RequestResponseL
     }
 
     protected void logging(@NotNull String message) {
-        log.info(message);
+        log.debug(message);
     }
 }

@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.jooqgen;
 
-import lombok.val;
 import org.jooq.codegen.DefaultGeneratorStrategy;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.meta.ColumnDefinition;
@@ -22,7 +21,7 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
     @Override
     public List<String> getJavaClassImplements(Definition definition, Mode mode) {
 
-        val impls = super.getJavaClassImplements(definition, mode);
+        var impls = super.getJavaClassImplements(definition, mode);
         if (!(definition instanceof TableDefinition)) return impls;
 
         List<ColumnDefinition> columns = ((TableDefinition) definition).getColumns();

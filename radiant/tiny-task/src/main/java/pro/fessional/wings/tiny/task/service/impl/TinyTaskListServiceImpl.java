@@ -12,6 +12,7 @@ import pro.fessional.mirana.page.PageResult;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
@@ -30,6 +31,7 @@ import java.util.Set;
  * @since 2022-12-26
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyTaskListServiceImpl implements TinyTaskListService {
 

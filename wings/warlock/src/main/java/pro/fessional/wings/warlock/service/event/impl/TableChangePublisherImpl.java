@@ -22,7 +22,7 @@ public class TableChangePublisherImpl implements TableChangePublisher {
     @Override
     public void publish(@NotNull TableChangeEvent event) {
         if (event.hasSource(EVENT_SRC)) {
-            log.info("skip published event, table={}, change={}", event.getTable(), event.getChange());
+            log.debug("skip published event, table={}, change={}", event.getTable(), event.getChange());
         }
         else {
             log.debug("publish event={}", event);

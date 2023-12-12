@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.flakeid.impl;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,6 +29,7 @@ class FlakeIdHazelcastImplTest {
     private FlakeIdService flakeIdService;
 
     @Test
+    @TmsLink("C14055")
     void getId() throws InterruptedException {
         assertTrue(flakeIdService instanceof FlakeIdHazelcastImpl);
         val threadCnt = 100;

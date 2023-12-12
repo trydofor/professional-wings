@@ -1,7 +1,6 @@
 package pro.fessional.wings.warlock.controller.test;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
@@ -18,7 +18,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
  * @since 2022-07-22
  */
 @RestController
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTest, havingValue = "true")
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcTest)
 public class TestEnvsController {
 
     @Operation(summary = "Get RunMode", description = """

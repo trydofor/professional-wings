@@ -19,15 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-hazel-caching</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-hazel-session</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-webmvc</artifactId>
         </dependency>
         <!-- security -->
         <dependency>
@@ -54,6 +46,12 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
             <optional>true</optional>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

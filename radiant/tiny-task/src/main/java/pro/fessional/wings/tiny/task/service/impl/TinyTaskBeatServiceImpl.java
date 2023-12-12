@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @since 2022-12-26
  */
 @Service
+@ConditionalWingsEnabled
 @TinyTasker.Auto
 @Slf4j
 public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
@@ -54,7 +56,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
                 .from(tr)
                 .fetchInto(Long.class);
         if (tid.isEmpty()) {
-            log.info("no task result to clean");
+            log.debug("no task result to clean");
             return 0;
         }
 
@@ -73,7 +75,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
                 .collect(Collectors.toList());
 
         if (cond.isEmpty()) {
-            log.info("no task condition to clean");
+            log.debug("no task condition to clean");
             return 0;
         }
 
@@ -104,7 +106,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         final StringBuilder mis = new StringBuilder();
 
         for (WinTaskDefine r : tks) {
-            log.info("check health task id={}, name={}", r.getId(), r.getTaskerName());
+            log.debug("check health task id={}, name={}", r.getId(), r.getTaskerName());
             int beat = r.getTimingBeat();
             if (beat <= 0) {
                 beat = Math.max(r.getTimingRate(), r.getTimingIdle());

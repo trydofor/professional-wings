@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooqgen;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.TableDefinition;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -51,6 +52,7 @@ public class WingsJooqGenHelper {
     };
 
 
+    private static final Pattern daoSpringRepo = Pattern.compile("(\n[ \t]*)(@Repository\\b)", Pattern.MULTILINE);
     private static final Pattern daoExtends = Pattern.compile("public class (\\S+)Dao extends (DAOImpl<)");
     private static final Pattern daoFetchBody = Pattern.compile("\n[^\n]+ fetch[^(]+\\([^}]+\\}\n", Pattern.MULTILINE);
     private static final Pattern daoFetchLive = Pattern.compile("(fetch[^(]*)\\(");
@@ -63,7 +65,12 @@ public class WingsJooqGenHelper {
 
         final String tmp = java.toString();
         final Matcher me = daoExtends.matcher(tmp); // "public class SysStandardI18nDao extends DAOImpl<"
-        final String dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
+
+        String dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
+        final Matcher mr = daoSpringRepo.matcher(dao);
+        if (mr.find()) {
+            dao = mr.replaceFirst("$0$1@" + ConditionalWingsEnabled.class.getSimpleName());
+        }
 
         // Reset the Content, Regexp Replacement
         java.setLength(0);
@@ -77,10 +84,10 @@ public class WingsJooqGenHelper {
 
             String body = md.group();
             // vararg and Collection
-            Matcher mr = daoFetchVars.matcher(body);
-            if (mr.find()) {
-                String type = mr.group(1);
-                String vrg = mr.replaceAll("(Collection<? extends $1> values)");
+            Matcher mv = daoFetchVars.matcher(body);
+            if (mv.find()) {
+                String type = mv.group(1);
+                String vrg = mv.replaceAll("(Collection<? extends $1> values)");
                 int p0 = vrg.indexOf("[values.length];"); // 16 chars
                 if (p0 > 0) {
                     int p1 = p0 + 16;

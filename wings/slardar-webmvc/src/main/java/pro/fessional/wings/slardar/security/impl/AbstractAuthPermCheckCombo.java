@@ -36,7 +36,7 @@ public abstract class AbstractAuthPermCheckCombo implements ComboWingsAuthCheckS
             }
         }
 
-        log.info("reject login, require any permit {}", permit);
+        log.debug("reject login, require any permit {}", permit);
         return false;
     }
 

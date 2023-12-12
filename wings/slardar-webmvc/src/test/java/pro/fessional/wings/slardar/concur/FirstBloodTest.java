@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -24,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.first-blood-image=false",
-                "spring.wings.slardar.enabled.first-blood-image-test=true",
+                "wings.enabled.pro.fessional.wings.slardar.app.conf.SlardarFirstBloodTestConfiguration=true",
+                "wings.enabled.slardar.first-blood=true",
+                "wings.enabled.slardar.first-blood-image=false",
                 "wings.slardar.first-blood.http-status=202",
                 "wings.slardar.first-blood.content-type=text/plain",
                 "wings.slardar.first-blood.response-body=first-blood",
@@ -43,11 +45,13 @@ class FirstBloodTest {
     private Call.Factory okHttpClient;
 
     @Test
+    @TmsLink("C13040")
     public void testFirstBlood0() {
         checkFirstBlood(firstBloodUrl0);
     }
 
     @Test
+    @TmsLink("C13041")
     public void testFirstBlood30() throws InterruptedException {
         new Thread(() -> {
             try (Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false)) {
@@ -69,8 +73,8 @@ class FirstBloodTest {
             assertNotNull(ck);
             assertTrue(ct.contains("text/plain"));
             assertEquals("first-blood", OkHttpClientHelper.extractString(r2, false));
-            assertTrue(ck.contains(tk));
             log.warn("get client-ticket = " + tk);
+            assertTrue(ck.contains(tk));
         }
 
         final String code;

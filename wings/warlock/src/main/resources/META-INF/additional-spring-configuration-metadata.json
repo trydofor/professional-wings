@@ -1,0 +1,26 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration.databaseCheckerRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration.registerEnumUtilRunner", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.databaseGlobalLock", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.jvmStaticGlobalLock", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration.tableChangePublisher", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration.wingsTableCudHandler", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.watching for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration.slowSqlJooqListener", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration.watchingAround", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

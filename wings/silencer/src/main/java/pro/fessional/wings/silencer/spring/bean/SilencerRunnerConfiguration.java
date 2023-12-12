@@ -3,19 +3,14 @@ package pro.fessional.wings.silencer.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.Ordered;
-import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
-import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import java.util.Map;
 
@@ -27,70 +22,27 @@ import java.util.Map;
  * @since 2023-02-06
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@ConditionalWingsEnabled
 public class SilencerRunnerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerRunnerConfiguration.class);
 
-    @EventListener
-    public void applicationStartedEventRunner(ApplicationStartedEvent startedEvent) {
-        final ConfigurableApplicationContext context = startedEvent.getApplicationContext();
-        final Map<String, ApplicationStartedEventRunner> beans = context.getBeansOfType(ApplicationStartedEventRunner.class);
-        if (beans.isEmpty()) {
-            log.info("===>>> Silencer applicationStartedEventRunner empty");
-            return;
-        }
-
-        log.info("===>>> Silencer applicationStartedEventRunner size=" + beans.size());
-        final ApplicationArguments args = context.getBean(ApplicationArguments.class);
-        for (Map.Entry<String, ApplicationStartedEventRunner> en : beans.entrySet()) {
-            log.info(">>> started=" + en.getKey());
-            try {
-                en.getValue().run(args);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        log.info("===<<< Silencer applicationStartedEventRunner");
-    }
-
-    @EventListener
-    public void applicationReadyEventRunner(ApplicationReadyEvent startedEvent) {
-        final ConfigurableApplicationContext context = startedEvent.getApplicationContext();
-        final Map<String, ApplicationReadyEventRunner> beans = context.getBeansOfType(ApplicationReadyEventRunner.class);
-        if (beans.isEmpty()) {
-            log.info("===>>> Silencer applicationReadyEventRunner empty");
-            return;
-        }
-
-        log.info("===>>> Silencer applicationReadyEventRunner size=" + beans.size());
-        final ApplicationArguments args = context.getBean(ApplicationArguments.class);
-        for (Map.Entry<String, ApplicationReadyEventRunner> en : beans.entrySet()) {
-            log.info(">>> ready=" + en.getKey());
-            try {
-                en.getValue().run(args);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        log.info("===<<< Silencer applicationReadyEventRunner");
-    }
-
-    @Bean
-    public ApplicationRunnerOrdered applicationInspectRunner(ApplicationContext context) {
-        log.info("Silencer spring-runs applicationInspectRunner");
-        return new ApplicationRunnerOrdered(Ordered.LOWEST_PRECEDENCE, args -> {
-            final Map<String, ApplicationInspectRunner> beans = context.getBeansOfType(ApplicationInspectRunner.class);
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalWingsEnabled
+    public static class ReadyEvent {
+        @EventListener
+        public void on(ApplicationReadyEvent event) {
+            final ConfigurableApplicationContext context = event.getApplicationContext();
+            final Map<String, ApplicationReadyEventRunner> beans = context.getBeansOfType(ApplicationReadyEventRunner.class);
             if (beans.isEmpty()) {
-                log.info("===>>> Silencer applicationInspectRunner empty");
+                log.info("===>>> Silencer applicationReadyEventRunner empty");
                 return;
             }
-            log.info("===>>> Silencer applicationInspectRunner size=" + beans.size());
-            for (Map.Entry<String, ApplicationInspectRunner> en : beans.entrySet()) {
-                final String name = en.getKey();
-                log.info(">>> inspect=" + name);
+
+            log.info("===>>> Silencer applicationReadyEventRunner size=" + beans.size());
+            final ApplicationArguments args = context.getBean(ApplicationArguments.class);
+            for (Map.Entry<String, ApplicationReadyEventRunner> en : beans.entrySet()) {
+                log.info(">>> ready=" + en.getKey());
                 try {
                     en.getValue().run(args);
                 }
@@ -98,7 +50,34 @@ public class SilencerRunnerConfiguration {
                     throw new RuntimeException(e);
                 }
             }
-            log.info("===<<< Silencer applicationInspectRunner");
-        });
+            log.info("===<<< Silencer applicationReadyEventRunner");
+        }
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalWingsEnabled
+    public static class StartedEvent {
+        @EventListener
+        public void on(ApplicationStartedEvent startedEvent) {
+            final ConfigurableApplicationContext context = startedEvent.getApplicationContext();
+            final Map<String, ApplicationStartedEventRunner> beans = context.getBeansOfType(ApplicationStartedEventRunner.class);
+            if (beans.isEmpty()) {
+                log.info("===>>> Silencer applicationStartedEventRunner empty");
+                return;
+            }
+
+            log.info("===>>> Silencer applicationStartedEventRunner size=" + beans.size());
+            final ApplicationArguments args = context.getBean(ApplicationArguments.class);
+            for (Map.Entry<String, ApplicationStartedEventRunner> en : beans.entrySet()) {
+                log.info(">>> started=" + en.getKey());
+                try {
+                    en.getValue().run(args);
+                }
+                catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.info("===<<< Silencer applicationStartedEventRunner");
+        }
     }
 }

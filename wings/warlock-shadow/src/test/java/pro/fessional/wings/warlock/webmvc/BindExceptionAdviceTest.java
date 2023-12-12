@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.webmvc;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,8 @@ public class BindExceptionAdviceTest {
     private MockMvc mockMvc;
 
     @Test
-    public void bindingErrorFrom() throws Exception {
+    @TmsLink("C14067")
+    public void bindingErrorName() throws Exception {
         mockMvc.perform(post("/test/binding-error-from.json")
                                 .header("Accept-Language", "en_US")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -37,6 +39,7 @@ public class BindExceptionAdviceTest {
     }
 
     @Test
+    @TmsLink("C14068")
     public void bindingErrorEmail() throws Exception {
         mockMvc.perform(post("/test/binding-error-from.json")
                                 .header("Accept-Language", "en_US")
@@ -49,6 +52,7 @@ public class BindExceptionAdviceTest {
     }
 
     @Test
+    @TmsLink("C14069")
     public void bindingErrorJson() throws Exception {
         mockMvc.perform(post("/test/binding-error-json.json")
                                 .header("Accept-Language", "en_US")
@@ -60,6 +64,7 @@ public class BindExceptionAdviceTest {
 
     @SuppressWarnings("all")
     @Test
+    @TmsLink("C14070")
     public void bindingErrorJsonBad() throws Exception {
         mockMvc.perform(post("/test/binding-error-json.json")
                                 .header("Accept-Language", "en_US")

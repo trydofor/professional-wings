@@ -28,7 +28,7 @@ public class WarlockFailedLoginListener implements ApplicationListener<Authentic
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
         final Object source = event.getSource();
         if (!(source instanceof WingsBindAuthToken src)) {
-            log.info("skip non-wings-source, type={}", source.getClass().getName());
+            log.debug("skip non-wings-source, type={}", source.getClass().getName());
             return;
         }
 

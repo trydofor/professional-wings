@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.spring.bean;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ class WarlockJournalConfigurationTest {
     protected JournalService journalService;
 
     @Test
+    @TmsLink("C14066")
     void terminalJournalService() {
         Assertions.assertTrue(journalService instanceof TerminalJournalService);
     }

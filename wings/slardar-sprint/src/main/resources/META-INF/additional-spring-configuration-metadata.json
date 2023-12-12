@@ -1,0 +1,31 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarBootAdminAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminClientConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminClientConfiguration.registrationClient", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfiguration.basicAuthHttpHeadersProvider", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfiguration.bootAdminMappingOrderPostProcessor", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfiguration.dingTalkNotifier", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarSprintAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarActuatorConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarActuatorConfiguration.slardarCacheManageEndpoint", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.httpSessionEventPublisher", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.localeContextHolderTerminalContextListener", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.passsaltEncoder", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.passwordEncoder", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.terminalContextListenerRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration.wingsSecBeanInitConfigurer", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

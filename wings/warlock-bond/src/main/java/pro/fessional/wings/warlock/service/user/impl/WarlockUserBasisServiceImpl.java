@@ -12,8 +12,10 @@ import pro.fessional.mirana.data.Z;
 import pro.fessional.wings.faceless.database.helper.DaoAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.event.EventPublishHelper;
+import pro.fessional.wings.slardar.event.attr.AttributeRidEvent;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasis;
@@ -52,32 +54,32 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
         if (winUserBasisDao.notTableExist()) return;
 
         log.info("warlock conf SaltByUid for GlobalAttributeHolder");
-        GlobalAttributeHolder.regLoader(SaltByUid, k -> {
+        AttributeHolder.regLoader(SaltByUid, k -> {
             final WinUserBasisTable t = winUserBasisDao.getTable();
             return winUserBasisDao.ctx()
                                   .select(t.Passsalt)
                                   .from(t)
-                                  .where(t.Id.eq(k.key))
+                                  .where(t.Id.eq(k))
                                   .fetchOneInto(String.class);
         });
 
         log.info("warlock conf LocaleByUid for GlobalAttributeHolder");
-        GlobalAttributeHolder.regLoader(LocaleByUid, k -> {
+        AttributeHolder.regLoader(LocaleByUid, k -> {
             final WinUserBasisTable t = winUserBasisDao.getTable();
             return winUserBasisDao.ctx()
                                   .select(t.Locale)
                                   .from(t)
-                                  .where(t.Id.eq(k.key))
+                                  .where(t.Id.eq(k))
                                   .fetchOneInto(Locale.class);
         });
 
         log.info("warlock conf ZoneIdByUid for GlobalAttributeHolder");
-        GlobalAttributeHolder.regLoader(ZoneIdByUid, k -> {
+        AttributeHolder.regLoader(ZoneIdByUid, k -> {
             final WinUserBasisTable t = winUserBasisDao.getTable();
             return winUserBasisDao.ctx()
                                   .select(t.Zoneid)
                                   .from(t)
-                                  .where(t.Id.eq(k.key))
+                                  .where(t.Id.eq(k))
                                   .fetchOneInto(ZoneId.class);
         });
     }
@@ -92,7 +94,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             po.setNickname(user.getNickname());
 
             final String passsalt = RandCode.human(40);
-            GlobalAttributeHolder.putAttr(SaltByUid, uid, passsalt);
+            AttributeHolder.putAttr(SaltByUid, uid, passsalt);
             po.setPasssalt(passsalt);
 
             po.setAvatar(Z.notNullSafe(Null.Str, user.getAvatar()));
@@ -126,5 +128,10 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
         });
 
         DaoAssert.assertEq1(rc, CommonErrorEnum.DataNotFound);
+
+        AttributeRidEvent event = new AttributeRidEvent();
+        event.rid(LocaleByUid, userId);
+        event.rid(ZoneIdByUid, userId);
+        EventPublishHelper.AsyncWidely.publishEvent(event);
     }
 }

@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -14,6 +15,7 @@ class SqlSegmentProcessorTest {
     val parser = MySqlStatementParser()
 
     @Test
+    @TmsLink("C12061")
     fun applyNut() {
         val mt = processor.parse(parser, """
             /* apply
@@ -44,6 +46,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12062")
     fun applyLog() {
         val mt = processor.parse(parser, """
             /* apply@log error@skip */
@@ -71,6 +74,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12063")
     fun parseCmd0() {
         val mt = SqlSegmentProcessor.parseCmd(
                 """ /* wgs_order
@@ -91,6 +95,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12064")
     fun parseCmd1() {
         val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // other comment","--")
         assertNotNull(mt)
@@ -104,6 +109,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12065")
     fun parseCmd2() {
         val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // other comment","--")
         assertNotNull(mt)
@@ -116,6 +122,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12066")
     fun parseCmd3() {
         val mt = SqlSegmentProcessor.parseCmd("-- error@skip // other comment","--")
         assertNotNull(mt)
@@ -128,6 +135,7 @@ class SqlSegmentProcessorTest {
     }
 
     @Test
+    @TmsLink("C12067")
     fun parseCmd4() {
         val mt = SqlSegmentProcessor.parseCmd("/* ask@danger // other comment */","/*")
         assertNotNull(mt)

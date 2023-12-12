@@ -1,14 +1,16 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
-import pro.fessional.wings.faceless.WingsTestHelper
-import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.faceless.helper.WingsTestHelper
+import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.helper.WingsTestHelper.breakpointDebug
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -22,6 +24,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
         "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
     ]
 )
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
 
@@ -37,6 +40,7 @@ open class SchemaRevisionMangerTest {
     private val schemaVersion = "win_schema_version"
 
     @Test
+    @TmsLink("C12047")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
@@ -54,12 +58,14 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12048")
     fun test1Publish520() {
         breakpointDebug("Publish to REVISION_2ND_IDLOGS💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
+    @TmsLink("C12049")
     fun test2CurrentRevi() {
         breakpointDebug("Check current revision💰")
         val databaseVersion = schemaRevisionManager.currentRevision()
@@ -69,6 +75,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12050")
     fun test2ReviLine() {
         breakpointDebug("Check current revision line💰")
         val databaseVersion = schemaRevisionManager.statusRevisions()
@@ -85,10 +92,11 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12051")
     fun test3DownThenUp() {
         breakpointDebug("Downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
-        breakpointDebug("Upgrade to 2st💰")
+        breakpointDebug("Upgrade to 2nd💰")
         schemaRevisionManager.publishRevision(revi2IdLog, -1)
         breakpointDebug("Again downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
@@ -97,6 +105,7 @@ open class SchemaRevisionMangerTest {
     private val test3rdRevision = 20190615_01L
 
     @Test
+    @TmsLink("C12052")
     fun test4Force615() {
         breakpointDebug("Force to add 615💰, but do NOT publish")
         schemaRevisionManager.forceUpdateSql(
@@ -123,6 +132,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12053")
     fun test5ForceBreak() {
         breakpointDebug("Publish 615💰")
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
@@ -135,6 +145,7 @@ open class SchemaRevisionMangerTest {
 
 
     @Test
+    @TmsLink("C12054")
     fun test6Republish520() {
         breakpointDebug("Publish 520💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
@@ -145,6 +156,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12055")
     fun test7ForceExecSql() {
         breakpointDebug("Force to execute the Sql💰")
         schemaRevisionManager.forceExecuteSql(
@@ -161,6 +173,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12056")
     fun test8PublishBranch() {
         breakpointDebug("scan branch feature/01-enum-i18n💰")
         val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
@@ -170,6 +183,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    @TmsLink("C12057")
     fun test9MaintainBreak() {
         breakpointDebug("Prepare a breakpoint revision to mock a failure💰")
         schemaRevisionManager.forceExecuteSql(

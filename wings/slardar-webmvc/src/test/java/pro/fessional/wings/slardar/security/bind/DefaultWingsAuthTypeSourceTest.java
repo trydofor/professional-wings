@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.bind;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPattern;
@@ -19,6 +20,7 @@ class DefaultWingsAuthTypeSourceTest {
     private final PathPatternParser patternParser = PathPatternParser.defaultInstance;
 
     @Test
+    @TmsLink("C13080")
     void parse1() {
         final PathPattern ptn = patternParser.parse("/auth/{authType}/login.json");
         final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username/login.json"));
@@ -30,6 +32,7 @@ class DefaultWingsAuthTypeSourceTest {
     }
 
     @Test
+    @TmsLink("C13081")
     void parse2() {
         final PathPattern ptn = patternParser.parse("/auth/{authType:[^-]+}{splitter:-?}{authZone:[^-]*}/login.json");
         final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username-admin/login.json"));

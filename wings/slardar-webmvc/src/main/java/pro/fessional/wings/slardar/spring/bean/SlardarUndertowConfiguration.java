@@ -6,9 +6,7 @@ import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.undertow.UndertowDeploymentInfoCustomizer;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
@@ -16,8 +14,7 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.unit.DataSize;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 /**
  * @author trydofor
@@ -26,7 +23,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Undertow.class)
-@AutoConfigureOrder(OrderedSlardarConst.UndertowConfiguration)
+@ConditionalWingsEnabled
 public class SlardarUndertowConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarUndertowConfiguration.class);
@@ -35,7 +32,7 @@ public class SlardarUndertowConfiguration {
      * UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
      */
     @Bean
-    @ConditionalOnProperty(name = SlardarEnabledProp.Key$undertowWs, havingValue = "true")
+    @ConditionalWingsEnabled
     public WebServerFactoryCustomizer<UndertowServletWebServerFactory> ut026010Customizer(ServerProperties properties) {
         log.info("SlardarWebmvc spring-bean ut026010Customizer");
 

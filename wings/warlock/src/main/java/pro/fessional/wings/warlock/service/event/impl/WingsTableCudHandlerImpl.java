@@ -17,11 +17,14 @@ import java.util.function.Supplier;
  * @author trydofor
  * @since 2021-06-19
  */
-@Slf4j public class WingsTableCudHandlerImpl implements WingsTableCudHandler {
+@Slf4j
+public class WingsTableCudHandlerImpl implements WingsTableCudHandler {
 
-    @Setter(onMethod_ = {@Autowired}) protected TableChangePublisher tableChangePublisher;
+    @Setter(onMethod_ = {@Autowired})
+    protected TableChangePublisher tableChangePublisher;
 
-    @Getter protected final LinkedHashMap<Class<? extends Auto>, Auto> autoMap = new LinkedHashMap<>();
+    @Getter
+    protected final LinkedHashMap<Class<? extends Auto>, Auto> autoMap = new LinkedHashMap<>();
 
     @Override
     public void register(@NotNull Auto auto) {
@@ -32,7 +35,7 @@ import java.util.function.Supplier;
     public void handle(@NotNull Class<?> source, @NotNull Cud cud, @NotNull String table, @NotNull Supplier<Map<String, List<?>>> field) {
         for (Auto auto : autoMap.values()) {
             if (auto.accept(source, cud, table)) {
-                log.debug("skip handle, source={}, cud={}, table={}", source, cud, table);
+                log.debug("skip auto handled, source={}, cud={}, table={}", source, cud, table);
                 return;
             }
         }

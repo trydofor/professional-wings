@@ -1,0 +1,25 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockBondAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.autoRegisterCacheConst", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.defaultDaoAuthnCombo", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockDangerService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockGrantService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockPermService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockPermServiceCaching", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockRoleService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockRoleServiceCaching", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockUserAuthnService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockUserBasisService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration.warlockUserLoginService", "type": "java.lang.Boolean"},
+
+    {"name": "pro.fessional.wings.warlock.controller.admin.AdminAuthnController", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.mvc-auth for short."}
+  ],
+  "hints": []
+}

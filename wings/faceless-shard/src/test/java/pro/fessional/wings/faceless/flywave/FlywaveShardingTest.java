@@ -1,28 +1,31 @@
 package pro.fessional.wings.faceless.flywave;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
  * @since 2021-01-18
  */
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FlywaveShardingTest {
 
@@ -38,6 +41,7 @@ public class FlywaveShardingTest {
     private WingsTestHelper wingsTestHelper;
 
     @Test
+    @TmsLink("C12131")
     public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
@@ -45,6 +49,7 @@ public class FlywaveShardingTest {
     }
 
     @Test
+    @TmsLink("C12132")
     public void test1Single() {
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "tst_sharding");
@@ -57,6 +62,7 @@ public class FlywaveShardingTest {
     }
 
     @Test
+    @TmsLink("C12133")
     public void test2Sharding() {
         schemaShardingManager.publishShard("sys_schema_journal", 2);
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
@@ -66,6 +72,7 @@ public class FlywaveShardingTest {
     }
 
     @Test
+    @TmsLink("C12134")
     public void test3ShardMove() {
         schemaShardingManager.publishShard("tst_sharding", 5);
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "tst_sharding",

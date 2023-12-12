@@ -27,5 +27,10 @@
             <artifactId>slardar-webmvc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>testing-database</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

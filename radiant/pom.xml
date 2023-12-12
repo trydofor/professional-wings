@@ -17,7 +17,8 @@
     <description>Radiant components under GhostShip Model</description>
 
     <modules>
-        <module>devs-mvndep</module>
+        <module>devs-codegen</module>
+        <module>devs-mvndeps</module>
         <module>tiny-autogen</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
@@ -71,6 +72,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.other;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.bits.HmacHelp;
 import pro.fessional.mirana.bits.Md5;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class Md5HmacSha256Test {
 
     @Test
+    @TmsLink("C14033")
     public void postJson() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
         queryString.put("query", "string"); // normal param
@@ -58,6 +60,7 @@ public class Md5HmacSha256Test {
     }
 
     @Test
+    @TmsLink("C14034")
     public void postFile() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
         queryString.put("query", "string"); // normal param

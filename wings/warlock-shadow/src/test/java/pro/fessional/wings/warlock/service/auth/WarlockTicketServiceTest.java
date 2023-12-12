@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.auth;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.SimpleTerm;
@@ -11,8 +12,8 @@ import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Term;
  */
 class WarlockTicketServiceTest {
 
-
     @Test
+    @TmsLink("C14054")
     public void testTerm() {
         Term t0 = new SimpleTerm();
         t0.setUserId(10086L);

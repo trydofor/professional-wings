@@ -5,7 +5,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.Righter;
@@ -30,9 +30,9 @@ import java.util.Set;
  * @since 2021-10-19
  */
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcMock)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerMock, havingValue = "true")
 public class MockSampleController {
 
     @Operation(summary = "Get captcha image, handle by interceptor", description = """

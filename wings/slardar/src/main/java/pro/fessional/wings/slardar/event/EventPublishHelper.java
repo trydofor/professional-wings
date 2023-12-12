@@ -1,11 +1,12 @@
 package pro.fessional.wings.slardar.event;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
-import pro.fessional.mirana.best.AssertState;
 
 import java.util.concurrent.Executor;
 
@@ -28,6 +29,7 @@ import java.util.concurrent.Executor;
  * @since 2021-06-07
  */
 
+@Slf4j
 public class EventPublishHelper {
 
     /**
@@ -44,10 +46,20 @@ public class EventPublishHelper {
      * Wrap Hazelcast (HazelcastTopic)topic to SpringEvent.
      * fire and forget, async and unordered by default.
      * If the event needs to be ordered, set globalOrderEnabled=true.
+     * <p>
+     * throws IllegalStateException if no globalPublisher
      *
      * @see #hasAsyncGlobal
      */
-    public static final ApplicationEventPublisher AsyncGlobal = new GlobalPub();
+    public static final ApplicationEventPublisher AsyncGlobal = new GlobalPub(true);
+
+    /**
+     * try to publish widely, prefer AsyncGlobal, else AsyncSpring with warn
+     *
+     * @see #AsyncGlobal
+     * @see #AsyncSpring
+     */
+    public static final ApplicationEventPublisher AsyncWidely = new GlobalPub(false);
 
     private static Executor executor;
     private static ApplicationEventPublisher springPublisher;
@@ -85,12 +97,25 @@ public class EventPublishHelper {
         }
     }
 
+    @RequiredArgsConstructor
     private static class GlobalPub implements ApplicationEventPublisher {
+
+        private final boolean strict;
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            AssertState.notNull(globalPublisher, "no globalPublisher, use #hasAsyncGlobal to test");
-            executor.execute(() -> globalPublisher.publishEvent(event));
+            if (globalPublisher != null) {
+                executor.execute(() -> globalPublisher.publishEvent(event));
+            }
+            else {
+                if (strict) {
+                    throw new IllegalStateException("no globalPublisher, use #hasAsyncGlobal to test");
+                }
+                else {
+                    log.warn("no globalPublisher, publish by spring async in no strict");
+                }
+                executor.execute(() -> springPublisher.publishEvent(event));
+            }
         }
     }
 }

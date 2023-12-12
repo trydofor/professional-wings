@@ -1,48 +1,97 @@
 {
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarAsyncAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration.applicationTaskExecutor", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration.slardarHeavyScheduler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration.taskExecutor", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration.taskScheduler", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration.taskSchedulerHelper", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarCacheAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration$CacheAop", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration$CacheMgr", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration.cache2kCacheManager", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.localDateStringConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.localDateTimeStringConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.localTimeStringConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.offsetDateTimeStringConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.stringLocalDateConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.stringLocalDateTimeConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.stringLocalTimeConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.stringOffsetDateTimeConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.stringZonedDateTimeConverter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration.zonedDateTimeStringConverter", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDingNoticeConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDingNoticeConfiguration.dingTalkNotice", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDoubleKillConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.double-kill for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDoubleKillConfiguration.doubleKillAround", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration.attributeEventListener", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration.eventPublishHelperRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration.slardarEventExecutor", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarI18nConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarI18nConfiguration.autoDtoHelperRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarI18nConfiguration.localValidatorFactoryBean", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration.emptyValuePropertyFilter", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration.i18nResultPropertyFilter", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration$LogMonitor", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.monitor-log for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration.dingTalkReport", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration.jvmMonitor", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.monitor-jvm for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration.monitorTask", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpClient", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpClientBuilder", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpConnectionPool", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpHelperRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpHostCookieJar", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpRedirectNopInterceptor", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarTweakConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarTweakConfiguration.okhttpTweakLogInterceptor", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarTweakConfiguration.tweakEventListener", "type": "java.lang.Boolean"}
+  ],
   "hints": [
     {
       "name": "wings.slardar.cache.primary",
       "values": [
-        {
-          "value": "Memory",
-          "description": "jvm cache, cache2k by default."
-        },
-        {
-          "value": "Server",
-          "description": "server/distributed cache, hazelcast by default."
-        }
+        {"value": "Memory", "description": "jvm cache, cache2k by default."},
+        {"value": "Server", "description": "server/distributed cache, hazelcast by default."}
       ]
     },
     {
       "name": "wings.slardar.cache.level.keys",
       "values": [
-        {
-          "value": "program",
-          "description": "program level caching, ttl available in app running."
-        },
-        {
-          "value": "general",
-          "description": "general level 24 hours."
-        },
-        {
-          "value": "service",
-          "description": "service level 1 hour."
-        },
-        {
-          "value": "session",
-          "description": "session, 10 minutes."
-        }
+        {"value": "program", "description": "program level caching, ttl available in app running."},
+        {"value": "general", "description": "general level 24 hours."},
+        {"value": "service", "description": "service level 1 hour."},
+        {"value": "session", "description": "session, 10 minutes."}
       ]
     },
     {
       "name": "wings.slardar.cache.level.values",
       "providers": [
-        {
-          "name": "handle-as",
-          "parameters": {
-            "target": "pro.fessional.wings.slardar.spring.prop.SlardarCacheProp$Conf"
-          }
-        }
+        {"name": "handle-as", "parameters": {"target": "pro.fessional.wings.slardar.spring.prop.SlardarCacheProp$Conf"}}
       ]
     }
   ]

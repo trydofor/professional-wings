@@ -29,5 +29,9 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>testing-database</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>silencer-test</artifactId>
+        </dependency>
     </dependencies>
 </project>

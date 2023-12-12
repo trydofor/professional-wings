@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.jaxb;
 
+import io.qameta.allure.TmsLink;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -41,6 +42,7 @@ public class StringMapXmlWriterTest {
     }
 
     @Test
+    @TmsLink("C11023")
     public void map() throws JAXBException {
         JAXBContext contextObj = JAXBContext.newInstance(TestXml.class);
         Marshaller marshallerObj = contextObj.createMarshaller();
@@ -55,6 +57,7 @@ public class StringMapXmlWriterTest {
     }
 
     @Test
+    @TmsLink("C11024")
     public void xml() throws JAXBException {
         JAXBContext contextObj = JAXBContext.newInstance(TestXml.class);
 

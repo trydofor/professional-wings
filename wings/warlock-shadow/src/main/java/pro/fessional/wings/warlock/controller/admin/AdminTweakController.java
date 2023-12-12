@@ -1,12 +1,12 @@
 package pro.fessional.wings.warlock.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.event.tweak.TweakClockEvent;
 import pro.fessional.wings.slardar.event.tweak.TweakLoggerEvent;
 import pro.fessional.wings.slardar.event.tweak.TweakStackEvent;
@@ -20,7 +20,7 @@ import static pro.fessional.wings.slardar.event.EventPublishHelper.SyncSpring;
  * @since 2022-10-31
  */
 @RestController
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTweak, havingValue = "true")
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcTweak, value = false)
 public class AdminTweakController {
 
     @Operation(summary = "Tweak the logging level at the thread level", description = """
