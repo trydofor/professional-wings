@@ -55,8 +55,8 @@ public class SlardarBootAdminServerConfiguration {
         return new BeanPostProcessor() {
             @Override
             public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (bean instanceof AdminControllerHandlerMapping) {
-                    ((AdminControllerHandlerMapping) bean).setOrder(-1);
+                if (bean instanceof AdminControllerHandlerMapping ob) {
+                    ob.setOrder(-1);
                 }
                 return bean;
             }

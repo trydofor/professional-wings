@@ -53,8 +53,8 @@ public class WingsRemoteResolver {
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
         Object atr = request.getAttribute(AttrRemoteIp);
-        if (atr instanceof String) {
-            return (String) atr;
+        if (atr instanceof String ip) {
+            return ip;
         }
 
         String ip = null;
@@ -89,8 +89,8 @@ public class WingsRemoteResolver {
     @NotNull
     public String resolveAgentInfo(HttpServletRequest request) {
         Object atr = request.getAttribute(AttrAgentInfo);
-        if (atr instanceof String) {
-            return (String) atr;
+        if (atr instanceof String ai) {
+            return ai;
         }
 
         StringBuilder sb = new StringBuilder();

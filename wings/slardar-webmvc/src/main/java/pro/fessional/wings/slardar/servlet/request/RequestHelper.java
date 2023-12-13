@@ -47,8 +47,8 @@ public class RequestHelper {
 
         for (ObjectError err : error.getAllErrors()) {
             sb.append("\n");
-            if (err instanceof FieldError) {
-                sb.append(((FieldError) err).getField()).append("=");
+            if (err instanceof FieldError fe) {
+                sb.append(fe.getField()).append("=");
             }
             sb.append(err.getDefaultMessage());
         }

@@ -73,8 +73,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
                 if (hdc != null) {
                     log.debug("find handler={}, in {}", hdc.getClass(), hm.getClass());
                     Object hd = hdc.getHandler();
-                    if (hd instanceof ResourceHttpRequestHandler) {
-                        if (existResource((ResourceHttpRequestHandler) hd, wrapper)) {
+                    if (hd instanceof ResourceHttpRequestHandler rrh) {
+                        if (existResource(rrh, wrapper)) {
                             matchedUrl.put(domainUrl, Boolean.TRUE);
                             return wrapper;
                         }

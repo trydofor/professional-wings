@@ -53,8 +53,8 @@ public interface WingsSessionHelper {
         else if (Boolean.TRUE.equals(obj)) {
             return true;
         }
-        else if (obj instanceof String) {
-            return "true".equalsIgnoreCase(obj.toString());
+        else if (obj instanceof String str) {
+            return "true".equalsIgnoreCase(str);
         }
 
         return false;
