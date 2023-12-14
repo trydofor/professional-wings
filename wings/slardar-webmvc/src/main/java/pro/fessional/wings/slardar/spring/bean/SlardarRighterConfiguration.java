@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.impl.RighterExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
@@ -23,7 +22,7 @@ public class SlardarRighterConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public HandlerExceptionResolver righterExceptionResolver(SlardarRighterProp prop) {
+    public RighterExceptionResolver righterExceptionResolver(SlardarRighterProp prop) {
         log.info("SlardarWebmvc spring-bean righterExceptionResolver");
         return new RighterExceptionResolver(prop);
     }

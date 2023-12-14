@@ -8,7 +8,6 @@ import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.tk.TicketHelp;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.impl.SimpleTicketServiceImpl;
 import pro.fessional.wings.warlock.service.auth.impl.WarlockOauthServiceImpl;
@@ -29,7 +28,7 @@ public class WarlockOauthTicketConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockOauthService warlockOauthService(WarlockTicketProp warlockTicketProp) {
+    public WarlockOauthServiceImpl warlockOauthService(WarlockTicketProp warlockTicketProp) {
         log.info("WarlockShadow spring-bean warlockOauthService");
         WarlockOauthServiceImpl bean = new WarlockOauthServiceImpl();
         bean.setAuthCodeTtl(warlockTicketProp.getCodeTtl());
@@ -40,7 +39,7 @@ public class WarlockOauthTicketConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockTicketService warlockTicketService(WarlockTicketProp warlockTicketProp, SecretProvider secretProvider) {
+    public SimpleTicketServiceImpl warlockTicketService(WarlockTicketProp warlockTicketProp, SecretProvider secretProvider) {
         log.info("WarlockShadow spring-bean warlockTicketService");
         SimpleTicketServiceImpl bean = new SimpleTicketServiceImpl();
         bean.setAuthorizeCodeMax(warlockTicketProp.getCodeMax());

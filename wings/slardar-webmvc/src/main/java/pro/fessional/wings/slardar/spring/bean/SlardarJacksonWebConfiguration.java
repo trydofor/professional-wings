@@ -241,7 +241,7 @@ public class SlardarJacksonWebConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public FilterProvider jacksonFilterProvider(List<AutoRegisterPropertyFilter> filters) {
+    public SimpleFilterProvider jacksonFilterProvider(List<AutoRegisterPropertyFilter> filters) {
         log.info("SlardarWebmvc spring-bean jacksonFilterProvider");
         final SimpleFilterProvider bean = new SimpleFilterProvider();
         for (AutoRegisterPropertyFilter filter : filters) {

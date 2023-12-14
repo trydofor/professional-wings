@@ -106,7 +106,7 @@ public class FlywaveConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
+    public MySqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             log.info("FacelessFlywave spring-bean sqlStatementParser");
             return new MySqlStatementParser();
@@ -143,7 +143,7 @@ public class FlywaveConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
+    public MysqlDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             log.info("FacelessFlywave spring-bean schemaDefinitionLoader");
             return new MysqlDefinitionLoader();

@@ -8,7 +8,6 @@ import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
 import de.codecentric.boot.admin.server.domain.events.InstanceStatusChangedEvent;
 import de.codecentric.boot.admin.server.domain.values.StatusInfo;
 import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
-import de.codecentric.boot.admin.server.notify.Notifier;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider.InstanceCredentials;
 import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
@@ -65,7 +64,7 @@ public class SlardarBootAdminServerConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
+    public AbstractStatusChangeNotifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
         log.info("SlardarSprint spring-bean dingTalkNotifier of BootAdmin server");
         final DingTalkReport reporter = reportProvider.getIfAvailable();
         final AbstractStatusChangeNotifier bean = new AbstractStatusChangeNotifier(repository) {

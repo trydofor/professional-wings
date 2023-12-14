@@ -9,13 +9,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJdbc;
-import pro.fessional.wings.faceless.service.flakeid.FlakeIdService;
 import pro.fessional.wings.faceless.service.flakeid.impl.FlakeIdLightIdImpl;
-import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.journal.impl.DefaultJournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.service.wini18n.impl.StandardI18nServiceJdbc;
 import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -90,28 +87,28 @@ public class FacelessConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public StandardI18nService standardI18nService(JdbcTemplate jdbcTemplate) {
+    public StandardI18nServiceJdbc standardI18nService(JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean standardI18nService");
         return new StandardI18nServiceJdbc(jdbcTemplate);
     }
 
     @Bean
     @ConditionalWingsEnabled(abs = FacelessEnabledProp.Key$simpleFlakeid)
-    public FlakeIdService flakeIdService(LightIdService lightIdService) {
+    public FlakeIdLightIdImpl flakeIdService(LightIdService lightIdService) {
         log.info("Faceless spring-bean flakeIdService");
         return new FlakeIdLightIdImpl(lightIdService);
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public CommitJournalModify commitJournalModify(JdbcTemplate jdbcTemplate) {
+    public CommitJournalModifyJdbc commitJournalModify(JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean commitJournalModify");
         return new CommitJournalModifyJdbc(jdbcTemplate);
     }
 
     @Bean
     @ConditionalWingsEnabled(abs = FacelessEnabledProp.Key$simpleJournal)
-    public JournalService journalService(LightIdService lightIdService, BlockIdProvider blockIdProvider, CommitJournalModify journalModify) {
+    public DefaultJournalService journalService(LightIdService lightIdService, BlockIdProvider blockIdProvider, CommitJournalModify journalModify) {
         log.info("Faceless spring-bean journalService");
         return new DefaultJournalService(lightIdService, blockIdProvider, journalModify);
     }

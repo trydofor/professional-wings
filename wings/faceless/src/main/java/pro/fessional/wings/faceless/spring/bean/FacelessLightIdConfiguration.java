@@ -18,7 +18,6 @@ import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.impl.LightSequenceSelectJdbc;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
-import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.lightid.impl.BlockingLightIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdMysqlLoader;
@@ -81,7 +80,7 @@ public class FacelessLightIdConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public LightSequenceSelect lightSequenceSelect(LightIdProviderProp prop, JdbcTemplate jdbcTemplate) {
+    public LightSequenceSelectJdbc lightSequenceSelect(LightIdProviderProp prop, JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean lightSequenceSelect");
         return new LightSequenceSelectJdbc(
                 jdbcTemplate,
@@ -92,14 +91,14 @@ public class FacelessLightIdConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public LightSequenceModify lightSequenceModify(LightIdProviderProp providerProp, JdbcTemplate jdbcTemplate) {
+    public LightSequenceModifyJdbc lightSequenceModify(LightIdProviderProp providerProp, JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean lightSequenceModify");
         return new LightSequenceModifyJdbc(jdbcTemplate, providerProp.getSequenceInsert(), providerProp.getSequenceUpdate());
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public LightIdProvider.Loader lightIdLoader(LightSequenceSelect lightSequenceSelect,
+    public LightIdMysqlLoader lightIdLoader(LightSequenceSelect lightSequenceSelect,
                                                 LightSequenceModify lightSequenceModify,
                                                 LightIdInsertProp insertProp) {
         log.info("Faceless spring-bean lightIdLoader");
@@ -109,7 +108,7 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalWingsEnabled
     @ConditionalOnProperty(name = LightIdProviderProp.Key$monotonic, havingValue = "jvm")
-    public LightIdProvider jvmLightIdProvider(LightIdProvider.Loader loader,
+    public LightIdBufferedProvider jvmLightIdProvider(LightIdProvider.Loader loader,
                                               LightIdProviderProp prop,
                                               ObjectProvider<LightIdProvider.Generator> generator) {
         log.info("Faceless spring-bean jvmLightIdProvider");
@@ -127,7 +126,7 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalWingsEnabled
     @ConditionalOnProperty(name = LightIdProviderProp.Key$monotonic, havingValue = "db")
-    public LightIdProvider dbLightIdProvider(LightIdProvider.Loader loader, LightIdProviderProp prop) {
+    public BlockingLightIdProvider dbLightIdProvider(LightIdProvider.Loader loader, LightIdProviderProp prop) {
         log.info("Faceless spring-bean dbLightIdProvider");
 
         // avg=10.723ms
@@ -139,7 +138,7 @@ public class FacelessLightIdConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public LightIdService lightIdService(LightIdProvider lightIdProvider,
+    public LightIdServiceImpl lightIdService(LightIdProvider lightIdProvider,
                                          BlockIdProvider blockIdProvider) {
         log.info("Faceless spring-bean lightIdService");
         return new LightIdServiceImpl(lightIdProvider, blockIdProvider);

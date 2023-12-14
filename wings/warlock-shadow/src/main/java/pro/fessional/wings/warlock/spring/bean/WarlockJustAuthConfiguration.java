@@ -1,7 +1,6 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import com.xkcoding.http.config.HttpConfig;
-import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +39,7 @@ public class WarlockJustAuthConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public AuthStateCache authStateCache(WarlockJustAuthProp justAuthProp) {
+    public JustAuthStateCache authStateCache(WarlockJustAuthProp justAuthProp) {
         log.info("WarlockShadow spring-bean authStateCache");
         return new JustAuthStateCache(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
