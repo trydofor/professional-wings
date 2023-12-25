@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.12</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <version>3.2.1</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -21,15 +21,15 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>3.0.12</revision>
+        <revision>3.2.1</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
         <changelist>300-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/3.0.3/reference/html/dependency-versions.html -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
-        <java.version>17</java.version>
-        <!-- <kotlin.version>1.7.22</kotlin.version> -->
+        <java.version>21</java.version>
+        <kotlin.version>1.9.21</kotlin.version>
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -41,33 +41,34 @@
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
-        <guava.version>32.1.3-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.14.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <guava.version>33.0.0-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.15.1</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
-        <commons-text.version>1.10.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
+        <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
         <mirana.version>2.6.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.14-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <shardingsphere.version>5.3.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.41</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.44</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.5.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.14.3</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
-        <bouncycastle.version>1.76</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
-        <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <transmittable.version>2.14.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <bouncycastle.version>1.77</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
+        <justauth.version>1.16.6</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <!-- sharding jdbc -->
+        <shardingsphere.version>5.4.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
         <servicecomb.version>2.8.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <springdoc.version>2.1.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <boot-admin.version>3.0.4</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>6.23.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
+        <springdoc.version>2.3.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
+        <boot-admin.version>3.2.0</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>7.1.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
-        <allure.version>2.24.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
+        <allure.version>2.25.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
         <!-- mvn-build-plugin -->
-        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases/tag -->
-        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
+        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
+        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <testing-json>{}</testing-json>
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
@@ -542,26 +543,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
                         <parameters>true</parameters>
-                        <compilerArgs>
-                            <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
-                            <arg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</arg> <!-- FastJson2 -->
-                            <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/java.net=ALL-UNNAMED</arg> <!-- Gson -->
-                            <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
-                            <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/sun.security.x509=ALL-UNNAMED</arg> <!-- Boot -->
-                            <arg>--add-exports=java.management/sun.management=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
-                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg> <!-- Boot -->
-                            <arg>--add-exports=jdk.management/com.sun.management.internal=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg> <!-- Boot -->
-                        </compilerArgs>
                         <annotationProcessorPaths>
                             <!--  find annotationProcessors in the following paths -->
                             <path>
@@ -621,7 +603,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${revision}</version>
+                    <version>${spring-boot.version}</version>
                     <configuration>
                         <skip>${spring-boot.repackage.skip}</skip>
                         <executable>${spring-boot.repackage.executable}</executable>
@@ -707,6 +689,12 @@
                     <configuration>
                         <jvmTarget>${java.version}</jvmTarget>
                         <javaParameters>true</javaParameters>
+                        <args>
+                            <arg>-Xjsr305=strict</arg>
+                        </args>
+                        <compilerPlugins>
+                            <plugin>spring</plugin>
+                        </compilerPlugins>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -720,7 +708,7 @@
                 <plugin>
                     <groupId>io.github.git-commit-id</groupId>
                     <artifactId>git-commit-id-maven-plugin</artifactId>
-                    <version>${git-commit-id-plugin.version}</version>
+                    <version>${git-commit-id-maven-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>get-the-git-infos</id>
@@ -806,9 +794,6 @@
                                         <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                         <sourceDir>${project.basedir}/src/test/java</sourceDir>
                                     </sourceDirs>
-                                    <compilerPlugins>
-                                        <plugin>spring</plugin>
-                                    </compilerPlugins>
                                 </configuration>
                             </execution>
                         </executions>
@@ -868,12 +853,6 @@
                                         <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
                                         <sourceDir>${project.basedir}/src/main/java</sourceDir>
                                     </sourceDirs>
-                                    <args>
-                                        <arg>-Xjsr305=strict</arg>
-                                    </args>
-                                    <compilerPlugins>
-                                        <plugin>spring</plugin>
-                                    </compilerPlugins>
                                 </configuration>
                             </execution>
                         </executions>
