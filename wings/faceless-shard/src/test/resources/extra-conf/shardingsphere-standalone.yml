@@ -66,3 +66,6 @@ rules:
         type: INLINE
         props:
           algorithm-expression: tst_sharding_$->{id % 5}
+  - !SINGLE
+    tables:
+      - "*.*"
