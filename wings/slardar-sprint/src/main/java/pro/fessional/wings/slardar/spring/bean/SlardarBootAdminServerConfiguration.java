@@ -36,19 +36,19 @@ import java.util.Objects;
 
 
 /**
+ * <a href="https://github.com/trydofor/professional-wings/issues/170">without short-circuit logic</a>
  * @author trydofor
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(SpringBootAdminServerEnabledCondition.class)
-@Conditional(SpringBootAdminServerEnabledCondition.class)
 public class SlardarBootAdminServerConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminServerConfiguration.class);
 
-
     @Bean
     @ConditionalWingsEnabled
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
     public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
         log.info("SlardarSprint spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
         return new BeanPostProcessor() {
@@ -64,6 +64,7 @@ public class SlardarBootAdminServerConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
     public AbstractStatusChangeNotifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
         log.info("SlardarSprint spring-bean dingTalkNotifier of BootAdmin server");
         final DingTalkReport reporter = reportProvider.getIfAvailable();
@@ -96,6 +97,7 @@ public class SlardarBootAdminServerConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
     public BasicAuthHttpHeaderProvider basicAuthHttpHeadersProvider(AdminServerProperties adminProp, SlardarPasscoderProp passProp) {
         log.info("SlardarSprint spring-bean basicAuthHttpHeadersProvider of BootAdmin server");
         AdminServerProperties.InstanceAuthProperties instanceAuth = adminProp.getInstanceAuth();
