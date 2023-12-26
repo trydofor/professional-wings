@@ -21,15 +21,15 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>3.2.1</revision>
+        <revision>3.2</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
         <changelist>300-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/3.0.3/reference/html/dependency-versions.html -->
-        <spring-boot.version>${revision}</spring-boot.version>
+        <!-- https://docs.spring.io/spring-boot/docs/3.2.1/reference/html/dependency-versions.html -->
+        <spring-boot.version>${revision}.1</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <java.version>21</java.version>
-        <kotlin.version>1.9.21</kotlin.version>
+        <!-- <kotlin.version>1.9.21</kotlin.version> -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
