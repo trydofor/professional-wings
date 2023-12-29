@@ -89,7 +89,7 @@ class ExecutorServiceTest {
         log.info("== done=");
 
         al.stop();
-        Assertions.assertTrue(al.assertAllTrue());
+        Assertions.assertTrue(al.assertCount(1), al::messageCount);
         al.uninstall();
     }
 }

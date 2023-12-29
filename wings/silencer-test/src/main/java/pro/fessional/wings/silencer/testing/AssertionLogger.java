@@ -62,11 +62,19 @@ public class AssertionLogger extends AppenderBase<ILoggingEvent> {
         return c == null ? 0 : c;
     }
 
-    public boolean assertAllTrue() {
+    public boolean assertCount(int min) {
         for (Integer c : count.values()) {
-            if (c == null || c <= 0) return false;
+            if (c == null || c < min) return false;
         }
         return true;
+    }
+
+    public String messageCount() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Integer> en : count.entrySet()) {
+            sb.append(",").append(en.getKey()).append(":").append(en.getValue());
+        }
+        return sb.isEmpty() ? "" : sb.substring(1);
     }
 
 
