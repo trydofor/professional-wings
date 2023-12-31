@@ -1,0 +1,79 @@
+name: Release-To-OssRh
+run-name: Deploy ${{github.event.release.tag_name}} to Sonatype by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Release to Sonatype
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ${{github.event.release.tag_name}}
+        uses: actions/checkout@v4
+      ## chache asdf/, m2/repository
+      - name: Cache Sdk & Repo
+        id: cache-sdk-repo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.asdf/
+            ~/.m2/repository/
+          key: asdf-m2-repo-${{hashFiles('.tool-versions')}}
+
+      ## install jdk and maven
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v2
+        with:
+          skip_install: ${{steps.cache-sdk-repo.outputs.cache-hit == 'true'}}
+
+      ## write settings.xml
+      - name: Maven settings.xml
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << "EOF"
+          <settings>
+            <interactiveMode>false</interactiveMode>
+            <servers>
+              <server>
+                <id>ossrh</id>
+                <username>${MVN_OSS_USER}</username>
+                <password>${MVN_OSS_PASS}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+      ## get JAVA_HOME
+      - name: Env JAVA_HOME
+        id: java-env
+        run: echo "JAVA_HOME=$(asdf where java)" >> "$GITHUB_OUTPUT"
+      ## get revision if tag_name
+      - name: Opt revision
+        id: opt-revision
+        run: echo "OPT_REVISION=-Drevision=${{github.event.release.tag_name}}" >> "$GITHUB_OUTPUT"
+        if: github.event.release.tag_name != ''
+      ## info deploy
+      - name: Info Deploy
+        run: |
+          mvn -v ${{ steps.opt-revision.outputs.OPT_REVISION }}
+          git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
+        env:
+          JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
+      ## maven deploy
+      - name: Maven Deploy
+        run: >
+          mvn 
+          -P ossrh
+          ${{ steps.opt-revision.outputs.OPT_REVISION }}
+          -Dgpg.passphrase=${MVN_GPG_PASS}
+          -Dgpg.skip=false
+          -Dmaven.test.skip=true
+          clean deoply
+        env:
+          JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
+          MVN_OSS_USER: ${{ secrets.MVN_OSS_USER }}
+          MVN_OSS_PASS: ${{ secrets.MVN_OSS_PASS }}
+          MVN_GPG_PASS: ${{ secrets.MVN_GPG_PASS }}

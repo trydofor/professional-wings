@@ -12,7 +12,7 @@
 
     <groupId>pro.fessional.wings</groupId>
     <artifactId>ancient</artifactId>
-    <version>${revision}.${changelist}</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>Ancient::</name>
@@ -20,13 +20,11 @@
     <url>https://wings.fessional.pro</url>
 
     <properties>
-        <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>3.2</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
-        <changelist>300-SNAPSHOT</changelist>
+        <revision>3.2.100-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/3.2.1/reference/html/dependency-versions.html -->
-        <spring-boot.version>${revision}.1</spring-boot.version>
-        <wings.version>${revision}.${changelist}</wings.version>
+        <spring-boot.version>3.2.1</spring-boot.version>
+        <wings.version>${revision}</wings.version>
         <!-- project -->
         <java.version>21</java.version>
         <!-- <kotlin.version>1.9.21</kotlin.version> -->
@@ -69,6 +67,7 @@
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
+        <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
         <testing-json>{}</testing-json>
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
@@ -636,6 +635,17 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>${build-helper-maven-plugin.version}</version>
@@ -742,23 +752,15 @@
     <repositories>
         <repository>
             <id>oss-sonatype</id>
-            <name>oss-sonatype</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     <profiles>
         <profile>
             <id>wings-kotlin-1test</id>
@@ -877,6 +879,32 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>ossrh</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <!-- https://central.sonatype.org/publish/publish-maven/ -->
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
         </profile>
     </profiles>
 </project>

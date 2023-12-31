@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional.wings</groupId>
         <artifactId>radiant</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>tiny-autogen</artifactId>

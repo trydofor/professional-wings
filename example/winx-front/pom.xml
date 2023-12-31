@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.moilioncircle.wings</groupId>
         <artifactId>example</artifactId>
-        <version>${revision}-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>winx-front</artifactId>
