@@ -38,7 +38,7 @@ import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 
 
 @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
-@SpringBootTest
+@SpringBootTest//(properties = "spring.docker.compose.enabled=false")
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j

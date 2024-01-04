@@ -50,6 +50,8 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
 
 
 @SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
         "wings.faceless.jooq.conf.auto-qualify=true",
         "wings.faceless.jooq.conf.render-table=ALWAYS",
 //        "wings.faceless.jooq.conf.auto-qualify=false",

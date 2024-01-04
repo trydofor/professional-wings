@@ -31,8 +31,9 @@ import java.util.Set;
  * @since 2022-03-09
  */
 @SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
         "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
-        "logging.level.root=debug"
 })
 class RuntimeConfServiceTest {
 

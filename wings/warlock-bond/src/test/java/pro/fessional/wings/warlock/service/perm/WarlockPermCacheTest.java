@@ -14,7 +14,10 @@ import pro.fessional.wings.silencer.testing.AssertionLogger;
  * @since 2021-06-19
  */
 @Slf4j
-@SpringBootTest
+@SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
+})
 class WarlockPermCacheTest {
 
     @Setter(onMethod_ = {@Autowired})
