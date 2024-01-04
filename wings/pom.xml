@@ -46,13 +46,8 @@
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
-        <module>testing-database</module>
+        <module>testing-docker</module>
     </modules>
-
-    <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-    </properties>
 
     <dependencies>
         <!-- dev tools-->

@@ -1,5 +1,9 @@
 # WingsBoot wins bigger
 
+![Maven Central](https://img.shields.io/maven-central/v/pro.fessional/wings?color=00DD00)
+![Sonatype Snapshots](https://img.shields.io/nexus/s/pro.fessional/wings?server=https%3A%2F%2Foss.sonatype.org)
+[![Coverage Status](https://coveralls.io/repos/github/trydofor/professional-wings/badge.svg)](https://coveralls.io/github/trydofor/professional-wings)
+
 > WingsBoot=BKB + BootsOfTravel + SpringBoot. if you've liked Dota, you know.   
 > We advocate defensive programming, May The `false` Be With You !
 >

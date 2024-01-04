@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>testing-database</artifactId>
+            <artifactId>testing-docker</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

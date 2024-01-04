@@ -32,9 +32,8 @@
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.install.skip>false</maven.install.skip>
-        <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
-        <gpg.skip>true</gpg.skip>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
@@ -45,8 +44,8 @@
         <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
-        <mirana.version>2.6.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
-        <meepo.version>1.4.14-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
+        <mirana.version>2.6.4</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <meepo.version>1.5.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <fastjson2.version>2.0.44</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
@@ -68,6 +67,8 @@
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
+        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <testing-json>{}</testing-json>
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
@@ -268,7 +269,7 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>testing-database</artifactId>
+                <artifactId>testing-docker</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->
@@ -881,7 +882,39 @@
             </build>
         </profile>
         <profile>
+            <!-- -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} -->
+            <id>ci</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>${coveralls-maven-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>ossrh</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

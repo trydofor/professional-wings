@@ -1,5 +1,9 @@
 # WingsBoot 纹丝不忒
 
+![Maven Central](https://img.shields.io/maven-central/v/pro.fessional/wings?color=00DD00)
+![Sonatype Snapshots](https://img.shields.io/nexus/s/pro.fessional/wings?server=https%3A%2F%2Foss.sonatype.org)
+[![Coverage Status](https://coveralls.io/repos/github/trydofor/professional-wings/badge.svg)](https://coveralls.io/github/trydofor/professional-wings)
+
 > WingsBoot(代号神翼)=BKB+飞鞋+SpringBoot，若你也喜欢过Dota，你懂的。  
 > 我们主张防御式编程，May The `false` Be With You !
 > 

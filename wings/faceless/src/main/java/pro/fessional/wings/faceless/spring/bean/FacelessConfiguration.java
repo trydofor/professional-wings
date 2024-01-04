@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
@@ -19,9 +20,7 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import javax.sql.DataSource;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author trydofor
@@ -34,9 +33,10 @@ public class FacelessConfiguration {
     private static final Log log = LogFactory.getLog(FacelessConfiguration.class);
 
     @Bean
+    @Lazy
     @ConditionalWingsEnabled
     public DataSourceContext dataSourceContext(
-            ObjectProvider<DataSource> dataSources,
+            DataSource dataSource,
             ObjectProvider<DataSourceContext.Customizer> modifiers) {
 
         final DataSourceContext ctx = new DataSourceContext();
@@ -57,31 +57,23 @@ public class FacelessConfiguration {
             log.info("Faceless spring-bean dataSourceContext's inuse, by modifier skipOthers=" + skipOther.get());
         }
         else {
-            Optional<DataSource> ds = dataSources.orderedStream().findFirst();
-            if (ds.isPresent()) {
-                log.info("Faceless spring-bean dataSourceContext by 1st data-source");
-                ctx.setCurrent(ds.get());
-            }
-            else {
-                throw new IllegalStateException("can not find any data-source");
-            }
+            log.info("Faceless spring-bean dataSourceContext by 1st data-source");
+            ctx.setCurrent(dataSource);
         }
 
-        final int ps = ctx.getBackends().size();
-        if (ps > 0) {
-            log.info("Faceless spring-bean dataSourceContext's plains, by modifier, count=" + ps);
-        }
-        else {
-            AtomicInteger cnt = new AtomicInteger(0);
-            dataSources.orderedStream().forEach(it -> ctx.addBackend("ds-" + cnt.incrementAndGet(), it));
-            log.info("Faceless spring-bean dataSourceContext's plains, by all datasource, count=" + cnt.get());
-        }
-
-        for (Map.Entry<String, DataSource> e : ctx.getBackends().entrySet()) {
+        log.info("Faceless🦄 database-current-url=" + ctx.cacheJdbcUrl(ctx.getCurrent()));
+        Map<String, DataSource> backends = ctx.getBackends();
+        for (Map.Entry<String, DataSource> e : backends.entrySet()) {
             log.info("Faceless🦄 database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
         }
-        log.info("Faceless🦄 database-current-url=" + ctx.cacheJdbcUrl(ctx.getCurrent()));
 
+        if (!backends.containsValue(dataSource)) {
+            String name = "Current";
+            for (int i = 1; backends.containsKey(name); i++) {
+                name = "Current" + i;
+            }
+            ctx.addBackend(name, dataSource);
+        }
         return ctx;
     }
 

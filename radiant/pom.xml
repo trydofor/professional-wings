@@ -24,11 +24,6 @@
         <module>tiny-task</module>
     </modules>
 
-    <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-    </properties>
-
     <dependencies>
         <!-- dev tools-->
         <dependency>

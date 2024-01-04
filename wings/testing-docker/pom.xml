@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>testing-database</artifactId>
+    <artifactId>testing-docker</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Testing:Database</name>
+    <name>Wings::Testing:Docker</name>
     <description>MySql and H2 profiles for testing</description>
 
     <dependencies>
@@ -41,6 +41,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
         </dependency>
     </dependencies>
 </project>
