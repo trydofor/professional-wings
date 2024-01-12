@@ -1,10 +1,10 @@
 package pro.fessional.wings.devs;
 
 import lombok.Setter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ import java.util.List;
  * @author trydofor
  * @since 2023-01-23
  */
-@Disabled("Automatic code generation, manual initialization")
+@EnabledIfSystemProperty(named = "test-gen-code", matches = "true")
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenDependencyTest {

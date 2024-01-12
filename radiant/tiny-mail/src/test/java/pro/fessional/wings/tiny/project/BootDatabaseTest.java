@@ -2,8 +2,8 @@ package pro.fessional.wings.tiny.project;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,8 +30,9 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_
 @SpringBootTest(properties = {
         "wings.enabled.faceless.flywave=true",
         "wings.faceless.flywave.checker=false",
+        "testing.dbname=wings_tiny"
 })
-@Disabled("manual initialization")
+@EnabledIfSystemProperty(named = "test-init-database", matches = "true")
 public class BootDatabaseTest {
     @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;

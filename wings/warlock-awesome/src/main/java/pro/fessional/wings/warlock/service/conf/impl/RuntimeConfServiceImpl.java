@@ -140,7 +140,10 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
     @Cacheable
     @SuppressWarnings("unchecked")
     public <T> T getObjectCache(String key, TypeDescriptor type) {
-        if (winConfRuntimeDao.notTableExist()) return null;
+        if (winConfRuntimeDao.notTableExist()){
+            log.warn("winConfRuntimeDao.notTableExist, key={}", key);
+            return null;
+        }
 
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
         final Record2<String, String> r2 = winConfRuntimeDao

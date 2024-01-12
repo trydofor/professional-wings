@@ -18,7 +18,7 @@ import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
         "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration]=false",
         "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration]=false",
 })
-@Disabled("Run separately to avoid impact")
+@Disabled("Investigate: Run separately to avoid impact")
 public class WingsEnabledTopFalseTest {
 
     @Setter(onMethod_ = {@Autowired(required = false)})

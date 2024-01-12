@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -63,8 +64,8 @@ public class DataSourceContext {
      * Get all DataSource and its name
      */
     @NotNull
-    public Map<String, DataSource> getBackends() {
-        return new LinkedHashMap<>(backendMap);
+    public LinkedHashMap<String, DataSource> getBackends() {
+        return backendMap;
     }
 
     /**
@@ -89,6 +90,10 @@ public class DataSourceContext {
     @NotNull
     public static String extractUrl(DataSource ds) {
         try {
+            if (knownJdbcUrl(ds) instanceof String url) {
+                return url;
+            }
+            // for database
             return JdbcUtils.extractDatabaseMetaData(ds, it -> {
                 try {
                     return (String) DatabaseMetaData.class.getMethod("getURL").invoke(it);
@@ -101,6 +106,30 @@ public class DataSourceContext {
         catch (MetaDataAccessException e) {
             return "unknown";
         }
+    }
+
+    /**
+     * com.zaxxer.hikari.HikariConfig.getJdbcUrl()
+     * com.alibaba.druid.pool.DruidDataSource.getUrl()
+     *
+     * @return String or null
+     */
+    public static Object knownJdbcUrl(@NotNull DataSource ds) {
+        try {
+            for (Method md : ds.getClass().getMethods()) {
+                String name = md.getName();
+                if ("getJdbcUrl".equals(name)) {
+                    return md.invoke(ds);
+                }
+                if ("getUrl".equals(name)) {
+                    return md.invoke(ds);
+                }
+            }
+        }
+        catch (Exception e) {
+            // ignore it
+        }
+        return null;
     }
 
     @Override

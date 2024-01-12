@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 @SpringBootTest
-@Disabled("List Web RequestMapping")
+@Disabled("Project: List Web RequestMapping")
 @Slf4j
 public class Devops7RequestMapperTest {
 

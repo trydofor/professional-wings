@@ -18,7 +18,7 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
         "wings.faceless.flywave.checker=false",
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("Code gen, managed by devops")
+@Disabled("Deprecated: Code gen, managed by devops")
 public class TinyMailCodeGenTest {
 
     @Setter(onMethod_ = {@Autowired})

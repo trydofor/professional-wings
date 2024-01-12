@@ -1,17 +1,16 @@
 package pro.fessional.wings.warlock.security.userdetails;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
@@ -35,11 +34,11 @@ import java.util.Set;
  */
 @Slf4j
 @Setter @Getter
+@RequiredArgsConstructor
 public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
-    private CacheManager cacheManager;
-    private String cacheName;
-    private Set<Enum<?>> acceptNonceType = Collections.emptySet();
+    private final @NotNull Cache cache;
+    private @NotNull Set<Enum<?>> acceptNonceType = Collections.emptySet();
 
     @Setter(onMethod_ = {@Autowired})
     protected PasswordEncoder passwordEncoder;
@@ -51,11 +50,11 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     @Override
     @Nullable
     public UserDetails postAudit(@NotNull UserDetails useDetail, String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+        log.warn("DEBUG_ONLY postAudit, this={}, cache={}, user={}, type={}", System.identityHashCode(this), System.identityHashCode(cache), username, authType);
         if (authType != Null.Enm && !acceptNonceType.contains(authType)) {
             return useDetail;
         }
 
-        final Cache cache = getCache();
         final String key = cacheKey(authType, useDetail.getUsername());
         final WarlockNonceSendEvent event = cache.get(key, WarlockNonceSendEvent.class);
         if (event == null) return useDetail;
@@ -67,6 +66,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
         }
 
         if (useDetail instanceof DefaultWingsUserDetails details) {
+            log.debug("nonce change password, username={}", useDetail.getUsername());
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             details.setPassword(helper.hash(event.getNonce(), details.getPasssalt()));
         }
@@ -76,19 +76,13 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
     @EventListener
     public void handleNonceSendEvent(WarlockNonceSendEvent event) {
-        final Cache cache = getCache();
         String key = cacheKey(event.getAuthType(), event.getUsername());
         cache.put(key, event);
-        log.info("put WarlockNonceSendEvent to cache={}, key={}", cacheName, key);
+        log.warn("DEBUG_ONLY handleNonceSendEvent, this={}, cache={}, event={}", System.identityHashCode(this), System.identityHashCode(cache), event);
+        log.info("put WarlockNonceSendEvent to cache={}, key={}", cache.getName(), key);
     }
 
     private String cacheKey(Enum<?> authType, String username) {
         return username + "@" + authTypeParser.parse(authType);
-    }
-
-    private Cache getCache() {
-        final Cache cache = cacheManager.getCache(cacheName);
-        AssertState.notNull(cache, "can not find cache={}", cacheName);
-        return cache;
     }
 }

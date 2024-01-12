@@ -2,7 +2,8 @@ package pro.fessional.wings.faceless.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import pro.fessional.wings.faceless.helper.WingsTestHelper;
+import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.testing.database.WingsTestHelper;
 
 /**
  * @author trydofor
@@ -12,8 +13,8 @@ import pro.fessional.wings.faceless.helper.WingsTestHelper;
 public class FacelessTestAutoConfiguration {
 
     @Bean
-    public WingsTestHelper wingsTestHelper() {
-        return new WingsTestHelper();
+    public WingsTestHelper wingsTestHelper(DataSourceContext context) {
+        return new WingsTestHelper(context.getCurrent(), context.getBackends());
     }
 
 }

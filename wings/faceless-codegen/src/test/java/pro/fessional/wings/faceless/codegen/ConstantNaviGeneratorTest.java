@@ -12,7 +12,7 @@ import java.util.Collection;
  * @author trydofor
  * @since 2021-03-05
  */
-@Disabled("Mock permission tree, generate Constant, use db instead")
+@Disabled("Deprecated: Mock permission tree, generate Constant, use db instead")
 class ConstantNaviGeneratorTest {
 
     @Test

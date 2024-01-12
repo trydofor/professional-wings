@@ -1,18 +1,16 @@
-package pro.fessional.wings.faceless.helper;
+package pro.fessional.wings.testing.database;
 
-import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Diff;
-import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.mirana.io.InputStreams;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,36 +28,48 @@ public class WingsTestHelper {
 
     private static final Logger log = LoggerFactory.getLogger(WingsTestHelper.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private DataSourceContext dataSourceContext;
+    private final DataSource current;
+    private final Map<String, DataSource> backends;
 
-    private final HashMap<DataSource, Boolean> isH2Map = new HashMap<>();
+    private final boolean hasH2;
 
-    public boolean isH2() {
-        for (DataSource ds : dataSourceContext.getBackends().values()) {
-            Boolean h2 = isH2Map.computeIfAbsent(ds, dataSource -> {
-                String s = dataSourceContext.cacheJdbcUrl(dataSource);
-                return s.contains(":h2:") || s.contains(":H2:");
-            });
-            if (h2) return true;
+    public WingsTestHelper(DataSource current, Map<String, DataSource> backends) {
+        this.current = current;
+        this.backends = backends;
+        boolean h2 = false;
+        for (String s : backends.keySet()) {
+            if (s.contains(":h2:") || s.contains(":H2:")) {
+                h2 = true;
+                break;
+            }
         }
-        return false;
+        hasH2 = h2;
+    }
+
+    public boolean hasH2() {
+        return hasH2;
     }
 
     public void cleanTable() {
+        // load table early for shardingsphere caching
+        testcaseNotice("show tables of current");
+        if (current != null) {
+            new JdbcTemplate(current).execute("SHOW TABLES");
+        }
+
         /*
          DROP DATABASE IF EXISTS wings;
          CREATE DATABASE `wings` DEFAULT CHARACTER SET utf8mb4;
          */
-        dataSourceContext.getBackends().forEach((k, v) -> {
-            testcaseNotice("clean database " + k);
-            JdbcTemplate tmpl = new JdbcTemplate(v);
+        for (Map.Entry<String, DataSource> en : backends.entrySet()) {
+            testcaseNotice("clean database " + en.getKey());
+            JdbcTemplate tmpl = new JdbcTemplate(en.getValue());
             tmpl.query("SHOW TABLES", rs -> {
                 String tbl = rs.getString(1);
                 testcaseNotice("drop table " + tbl);
                 tmpl.execute("DROP TABLE `" + tbl + "`");
             });
-        });
+        }
     }
 
     public enum Type {
@@ -124,17 +134,13 @@ public class WingsTestHelper {
     }
 
     private Map<String, Set<String>> fetchAllColumn1(String sql) {
-        return dataSourceContext
-                .getBackends().entrySet().stream()
-                .collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey,
-                                e -> new HashSet<>(new JdbcTemplate(e.getValue())
-                                        .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase())
-                                )
-                        )
-                );
-
+        Map<String, Set<String>> result = new LinkedHashMap<>();
+        for (Map.Entry<String, DataSource> en : backends.entrySet()) {
+            List<String> col = new JdbcTemplate(en.getValue())
+                    .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase());
+            result.put(en.getKey(), new LinkedHashSet<>(col));
+        }
+        return result;
     }
 
     public static void testcaseNotice(String... mes) {
@@ -145,5 +151,21 @@ public class WingsTestHelper {
 
     public static void breakpointDebug(String... mes) {
         Arrays.stream(mes).forEach(s -> log.debug(">>=>🐶🐶🐶 " + s + " 🐶🐶🐶<=<<"));
+    }
+
+    public static void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
+        String sqls = InputStreams.readText(WingsTestHelper.class.getResourceAsStream("/wings-flywave/" + path));
+        for (String sql : sqls.split(
+                ";+[ \\t]*[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
+        )) {
+            String s = sql.trim();
+            if (!s.isEmpty()) {
+                jdbcTemplate.execute(s);
+            }
+        }
     }
 }

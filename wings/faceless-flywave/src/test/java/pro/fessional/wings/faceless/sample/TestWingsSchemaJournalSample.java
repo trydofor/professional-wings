@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @SpringBootTest
-@Disabled("Manage trace table, use to maintain data")
+@Disabled("Sample: manage trace table, use to maintain data")
 @Slf4j
 public class TestWingsSchemaJournalSample {
 

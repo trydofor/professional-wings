@@ -20,16 +20,16 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShard
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
-import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor

@@ -3,6 +3,27 @@ run-name: Deploy ${{github.event.release.tag_name}} to Sonatype by @${{ github.a
 
 on:
   workflow_dispatch:
+    inputs:
+      testCoverReport:
+        description: 'test and coveralls report?'
+        default: true
+        type: boolean
+        required: false
+      testFailureIgnore:
+        description: 'test failure.ignore?'
+        default: false
+        type: boolean
+        required: false
+      testLoggerLevel:
+        description: 'test logger level'
+        default: WARN
+        type: choice
+        options:
+          - DEBUG
+          - INFO
+          - WARN
+          - ERROR
+        required: false
   release:
     types: [published]
 
@@ -10,6 +31,10 @@ jobs:
   release:
     name: Release to Sonatype
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: -Xmx2g
+      LOG_LEVEL: ${{ inputs.testLoggerLevel }}
+      WINGS_HOME: ${{ github.workspace }}
 
     steps:
       - name: Checkout ${{github.event.release.tag_name}}
@@ -66,15 +91,23 @@ jobs:
           JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
       ## ci report if not release
       - name: Coveralls Report
-        if: github.event.release.tag_name == ''
+        if: inputs.testCoverReport
         run: >
-          mvn --quiet
+          mvn 
           -P ci
+          --quiet
+          -Duser.timezone=Asia/Shanghai
+          -Dtesting-json='{
+          "debug":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
+          "test-verbose":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
+          "sentry.logging.enabled":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
+          "spring.wings.silencer.enabled.verbose":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
+          "logging.level.root":"${{ inputs.testLoggerLevel }}",
+          "logging.level.org.springframework.web":"${{ inputs.testLoggerLevel }}",
+          "logging.level.org.jooq":"${{ inputs.testLoggerLevel }}"
+          }'
+          -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }}
           -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
-          -Dtest-verbose=false
-          -Dmaven.test.skip=false
-          -Dlogging.level.root=WARN
-          -Ddebug=false
           clean test jacoco:report coveralls:report
         env:
           JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
@@ -91,7 +124,6 @@ jobs:
           -P ossrh
           ${{ steps.opt-revision.outputs.OPT_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
-          -Dmaven.test.skip=true
           clean deploy
         env:
           JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}

@@ -28,7 +28,7 @@ class PasswordEncoderTest {
 
     @Test
     @TmsLink("C14053")
-    @Disabled("Output password to the log")
+    @Disabled("Print: password to the log")
     void printPassword() {
         final String md5h = Md5.sum("moilioncircle");
         log.info("md5={}", md5h);

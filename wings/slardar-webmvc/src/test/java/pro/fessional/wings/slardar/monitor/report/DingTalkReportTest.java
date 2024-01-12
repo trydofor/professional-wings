@@ -23,7 +23,7 @@ import java.util.TreeMap;
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}",
         "wings.slardar.ding-notice.default.notice-mobiles.god9=155XXXX1991",
 })
-@Disabled("Avoid frequent calls")
+@Disabled("3rdService: avoid frequent calls")
 class DingTalkReportTest {
 
     @Setter(onMethod_ = {@Autowired})

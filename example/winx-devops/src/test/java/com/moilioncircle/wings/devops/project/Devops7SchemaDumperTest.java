@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @SpringBootTest
-@Disabled("Dump database")
+@Disabled("Project: Dump database")
 @Slf4j
 public class Devops7SchemaDumperTest {
 

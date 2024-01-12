@@ -24,7 +24,7 @@ import java.util.List;
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
 })
-@Disabled("Journal Manage")
+@Disabled("Project: Journal Manage")
 @Slf4j
 public class Devops5JournalManagerTest {
 

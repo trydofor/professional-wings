@@ -25,26 +25,25 @@
             <artifactId>tiny-autogen</artifactId>
         </dependency>
         <dependency>
-            <!-- controller-->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-codegen</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- version check and code gen -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-codegen</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- test -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>testing-docker</artifactId>

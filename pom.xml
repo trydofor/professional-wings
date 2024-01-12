@@ -63,6 +63,7 @@
         <sentry.version>7.1.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
         <allure.version>2.25.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
+        <druid.version>1.2.20</druid.version> <!-- https://github.com/alibaba/druid/releases -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
@@ -70,6 +71,7 @@
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <testing-json>{}</testing-json>
+        <argLine></argLine>
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
@@ -488,6 +490,11 @@
                 <artifactId>allure-java-commons</artifactId>
                 <version>${allure.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
             <!-- do NOT import any BOM -->
         </dependencies>
     </dependencyManagement>
@@ -509,7 +516,7 @@
                         <systemPropertyVariables>
                             <SPRING_APPLICATION_JSON>${testing-json}</SPRING_APPLICATION_JSON>
                         </systemPropertyVariables>
-                        <argLine>@{wings.java-opens}</argLine>
+                        <argLine>-Xmx2g @{wings.java-opens} @{argLine} @{surefireArgLine}</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -886,6 +893,9 @@
             <id>ci</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
+                <surefire.timeout>0</surefire.timeout> <!-- going to kill self fork JVM -->
+                <surefire.exitTimeout>180</surefire.exitTimeout>
+                <surefire.useSystemClassLoader>false</surefire.useSystemClassLoader> <!-- The forked VM terminated without properly saying goodbye -->
             </properties>
             <build>
                 <plugins>
@@ -893,6 +903,13 @@
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
                         <version>${coveralls-maven-plugin.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>2.3.1</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -904,6 +921,9 @@
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>surefireArgLine</propertyName>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.silencer.watch.Watches;
@@ -28,6 +29,7 @@ import pro.fessional.wings.warlock.app.service.WatchingService;
                 "wings.warlock.watching.controller-threshold=0",
         })
 @Slf4j
+@DependsOnDatabaseInitialization
 public class WarlockWatchingTest {
 
     @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
@@ -52,6 +54,6 @@ public class WarlockWatchingTest {
         Assertions.assertTrue(del);
         // async in async task pool
         Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
-        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"Need init database via BootDatabaseTest");
+        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty());
     }
 }

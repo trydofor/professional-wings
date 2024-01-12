@@ -19,7 +19,7 @@ import java.util.List;
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("Batch send mails, manual")
+@Disabled("3rdService: batch send mails, manual")
 @Slf4j
 public class MailSenderManagerTest {
 

@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledFuture;
         "logging.level.root=DEBUG",
 })
 @Slf4j
-@Disabled("Simulate batch, check manually")
+@Disabled("Simulate: batch, check manually")
 class ExecutorServiceTest {
 
     @Test

@@ -112,7 +112,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * -1:Unchecked | 0:Not exist | 1:Exists
+     * -N:Unchecked | 0:Not exist | 1:Exists
      *
      * @param type -1|0|1
      */
@@ -134,13 +134,13 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                         ctx().connection(conn -> tableExist = DatabaseChecker.existTable(conn, table.getName()) ? 1 : 0);
                     }
                     catch (Exception e) {
-                        tableExist = 0;
+                        tableExist++;
                     }
                 }
             }
         }
         //
-        return tableExist == 0;
+        return tableExist <= 0;
     }
 
     /**

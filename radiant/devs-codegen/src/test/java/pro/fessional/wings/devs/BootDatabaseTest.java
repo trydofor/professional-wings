@@ -1,8 +1,8 @@
 package pro.fessional.wings.devs;
 
 import lombok.Setter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,7 +30,7 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_
         "wings.enabled.faceless.flywave=true",
         "wings.faceless.flywave.checker=false",
 })
-@Disabled("manual initialization")
+@EnabledIfSystemProperty(named = "test-init-database", matches = "true")
 public class BootDatabaseTest {
 
     @Setter(onMethod_ = {@Autowired})

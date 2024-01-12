@@ -36,15 +36,14 @@ public class FacelessShardingSphereConfiguration {
             return ignored -> false;
         }
 
-//        final byte[] yamlBytes = ShardingSphereDriverURLManager.getContent(jdbcUrl);
         final byte[] yamlBytes = ShardingSphereURLManager.getContent(jdbcUrl, "jdbc:shardingsphere:");
         YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
         final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
         final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
-        log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
-
         return (ctx) -> {
-            ctx.clearBackend().addBackend(dsMap);
+            log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
+            ctx.clearBackend();
+            ctx.addBackend(dsMap);
             return true;
         };
     }

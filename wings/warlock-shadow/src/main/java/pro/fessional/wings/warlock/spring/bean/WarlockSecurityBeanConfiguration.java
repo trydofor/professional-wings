@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.LocaleResolver;
+import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.bits.Aes;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -165,15 +167,6 @@ public class WarlockSecurityBeanConfiguration {
         return new DefaultPermRoleCombo();
     }
 
-    @Bean
-    @ConditionalWingsEnabled
-    public DefaultUserDetailsCombo defaultUserDetailsCombo(WarlockSecurityProp prop) {
-        log.info("WarlockShadow spring-bean defaultUserDetailsCombo");
-        final DefaultUserDetailsCombo bean = new DefaultUserDetailsCombo();
-        bean.setAutoRegisterType(prop.mapAutoregAuthEnum());
-        return bean;
-    }
-
     public static final int OrderJustAuthUserAuthnAutoReg = WingsOrdered.Lv3Service + 100;
 
     /**
@@ -196,25 +189,6 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     ///////// UserDetails /////////
-
-    public static final int OrderNonceUserDetailsCombo = WingsOrdered.Lv3Service + 200;
-
-    /**
-     * @see #OrderNonceUserDetailsCombo
-     */
-    @Bean
-    @ConditionalWingsEnabled
-    public NonceUserDetailsCombo nonceUserDetailsCombo(WarlockSecurityProp prop, ApplicationContext context) {
-        log.info("WarlockShadow spring-bean nonceUserDetailsCombo");
-        final NonceUserDetailsCombo bean = new NonceUserDetailsCombo();
-        bean.setOrder(OrderNonceUserDetailsCombo);
-        bean.setAcceptNonceType(prop.mapNonceAuthEnum());
-        final String cn = WingsCache.Naming.join(prop.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
-        bean.setCacheName(cn);
-        final CacheManager cm = context.getBean(prop.getNonceCacheManager(), CacheManager.class);
-        bean.setCacheManager(cm);
-        return bean;
-    }
 
     public static final int OrderMemoryUserDetailsCombo = WingsOrdered.Lv3Service + 100;
 
@@ -253,6 +227,51 @@ public class WarlockSecurityBeanConfiguration {
         return bean;
     }
 
+
+    public static final int OrderNonceUserDetailsCombo = WingsOrdered.Lv3Service + 200;
+
+    /**
+     * @see #OrderNonceUserDetailsCombo
+     */
+    @Bean
+    @ConditionalWingsEnabled
+    public NonceUserDetailsCombo nonceUserDetailsCombo(WarlockSecurityProp prop, Map<String, CacheManager> managers) {
+        log.info("WarlockShadow spring-bean nonceUserDetailsCombo");
+        final String cn = WingsCache.Naming.join(prop.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
+        final CacheManager cm = managers.get(prop.getNonceCacheManager());
+        AssertState.notNull(cn, "nonce cache name must not be null");
+        AssertState.notNull(cm, "nonce cache manager must not be null");
+        final Cache cache = cm.getCache(cn);
+        AssertState.notNull(cache, "nonce cache must not be null");
+        final NonceUserDetailsCombo bean = new NonceUserDetailsCombo(cache);
+        bean.setOrder(OrderNonceUserDetailsCombo);
+        bean.setAcceptNonceType(prop.mapNonceAuthEnum());
+        return bean;
+    }
+
+    public static final int OrderJustAuthUserDetailsCombo = WingsOrdered.Lv3Service + 300;
+
+    /**
+     * @see #OrderJustAuthUserDetailsCombo
+     */
+    @Bean
+    @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
+    public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
+        log.info("WarlockShadow spring-bean justAuthUserDetailsCombo");
+        final JustAuthUserDetailsCombo bean = new JustAuthUserDetailsCombo();
+        bean.setOrder(OrderJustAuthUserDetailsCombo);
+        return bean;
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    public DefaultUserDetailsCombo defaultUserDetailsCombo(WarlockSecurityProp prop) {
+        log.info("WarlockShadow spring-bean defaultUserDetailsCombo");
+        final DefaultUserDetailsCombo bean = new DefaultUserDetailsCombo();
+        bean.setAutoRegisterType(prop.mapAutoregAuthEnum());
+        return bean;
+    }
+
     @Bean
     @ConditionalWingsEnabled
     public AuthZonePermChecker authZonePermChecker(WarlockSecurityProp prop) {
@@ -287,20 +306,6 @@ public class WarlockSecurityBeanConfiguration {
         final List<ComboWingsAuthCheckService.Combo> list = combos.orderedStream().collect(Collectors.toList());
         final ComboWingsAuthCheckService bean = new ComboWingsAuthCheckService();
         bean.setCombos(list);
-        return bean;
-    }
-
-    public static final int OrderJustAuthUserDetailsCombo = WingsOrdered.Lv3Service + 300;
-
-    /**
-     * @see #OrderJustAuthUserDetailsCombo
-     */
-    @Bean
-    @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
-    public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
-        log.info("WarlockShadow spring-bean justAuthUserDetailsCombo");
-        final JustAuthUserDetailsCombo bean = new JustAuthUserDetailsCombo();
-        bean.setOrder(OrderJustAuthUserDetailsCombo);
         return bean;
     }
 

@@ -29,8 +29,8 @@ class DataSourceContextTest {
         assertNotNull(sourceContext);
         final DataSource primary = sourceContext.getCurrent();
         assertNotNull(primary);
-        final Map<String, DataSource> plains = sourceContext.getBackends();
-        assertEquals(1, plains.size());
-        assertTrue(plains.containsValue(primary));
+        final Map<String, DataSource> backends = sourceContext.getBackends();
+        assertEquals(1, backends.size());
+        assertTrue(backends.containsValue(primary));
     }
 }

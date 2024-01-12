@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
-import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.util.SortedMap;
 
@@ -26,7 +26,7 @@ import java.util.SortedMap;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
 })
-@Disabled("Init database, have handled by devs")
+@Disabled("Sample: init database, have handled by devs")
 public class TestWingsSchemaGeneratorSample {
 
     @Setter(onMethod_ = {@Autowired})

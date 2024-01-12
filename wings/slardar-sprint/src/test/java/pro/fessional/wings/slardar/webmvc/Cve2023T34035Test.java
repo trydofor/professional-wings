@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         })
 @AutoConfigureMockMvc
 @Slf4j
-@Disabled("springboot 3.2.0 with security 6.2.1")
+@Disabled("Fixed: OK in springboot 3.2.0 with security 6.2.1")
 public class Cve2023T34035Test {
 
     @Autowired
