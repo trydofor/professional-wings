@@ -9,18 +9,11 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.service.auth.WarlockDangerService;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultDaoAuthnCombo;
 import pro.fessional.wings.warlock.service.auth.impl.WarlockDangerServiceImpl;
-import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
-import pro.fessional.wings.warlock.service.perm.WarlockPermService;
-import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 import pro.fessional.wings.warlock.service.perm.impl.WarlockPermServiceImpl;
 import pro.fessional.wings.warlock.service.perm.impl.WarlockRoleServiceImpl;
-import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
-import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
-import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceImpl;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceImpl;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceImpl;
@@ -49,7 +42,7 @@ public class WarlockBondBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockDangerService warlockDangerService(WarlockDangerProp prop) {
+    public WarlockDangerServiceImpl warlockDangerService(WarlockDangerProp prop) {
         log.info("WarlockBond spring-bean warlockDangerService");
         return new WarlockDangerServiceImpl(prop.getCacheSize(), (int) prop.getCacheTtl().toSeconds());
     }
@@ -63,7 +56,7 @@ public class WarlockBondBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockGrantService warlockGrantService() {
+    public WarlockGrantServiceImpl warlockGrantService() {
         // not needed if subclass bean exists e.g. JustAuthUserAuthnAutoReg
         log.info("WarlockBond spring-bean warlockGrantService");
         return new WarlockGrantServiceImpl();
@@ -79,7 +72,7 @@ public class WarlockBondBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockPermService warlockPermService(WarlockPermServiceImpl.Caching caching) {
+    public WarlockPermServiceImpl warlockPermService(WarlockPermServiceImpl.Caching caching) {
         log.info("WarlockBond spring-bean warlockPermService");
         return new WarlockPermServiceImpl(caching);
     }
@@ -93,14 +86,14 @@ public class WarlockBondBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockRoleService warlockRoleService(WarlockRoleServiceImpl.Caching caching) {
+    public WarlockRoleServiceImpl warlockRoleService(WarlockRoleServiceImpl.Caching caching) {
         log.info("WarlockBond spring-bean warlockRoleService");
         return new WarlockRoleServiceImpl(caching);
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockUserAuthnService warlockUserAuthnService() {
+    public WarlockUserAuthnServiceImpl warlockUserAuthnService() {
         log.info("WarlockBond spring-bean warlockUserAuthnService");
         return new WarlockUserAuthnServiceImpl();
     }
@@ -108,7 +101,7 @@ public class WarlockBondBeanConfiguration {
     ///////// UserDetails /////////
     @Bean
     @ConditionalWingsEnabled
-    public WarlockUserBasisService warlockUserBasisService() {
+    public WarlockUserBasisServiceImpl warlockUserBasisService() {
         log.info("WarlockBond spring-bean warlockUserBasisService");
         return new WarlockUserBasisServiceImpl();
     }
@@ -117,7 +110,7 @@ public class WarlockBondBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WarlockUserLoginService warlockUserLoginService() {
+    public WarlockUserLoginServiceImpl warlockUserLoginService() {
         log.info("WarlockBond spring-bean warlockUserLoginService");
         return new WarlockUserLoginServiceImpl();
     }

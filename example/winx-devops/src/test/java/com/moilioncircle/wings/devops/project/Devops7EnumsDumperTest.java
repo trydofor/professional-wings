@@ -17,7 +17,7 @@ import java.util.Map;
  */
 
 @SpringBootTest
-@Disabled("Dump Enums")
+@Disabled("Project: Dump Enums")
 public class Devops7EnumsDumperTest {
 
     @Setter(onMethod_ = {@Autowired})

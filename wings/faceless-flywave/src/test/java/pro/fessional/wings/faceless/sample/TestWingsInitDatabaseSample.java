@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
 
 /**
  * @author trydofor
@@ -19,7 +19,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
  */
 
 @SpringBootTest
-@Disabled("Init database, have handled by devs")
+@Disabled("Sample: init database, have handled by devs")
 public class TestWingsInitDatabaseSample {
 
     @Setter(onMethod_ = {@Autowired})

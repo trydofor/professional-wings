@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <groupId>pro.fessional.wings</groupId>

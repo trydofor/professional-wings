@@ -44,4 +44,17 @@
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
+  <template name="wgito" value="for( Iterator&lt;$TYPE$&gt; it = $ITER$.iterator(); it.hasNext(); ){&#10;    $TYPE$ en = it.next();&#10;    it.remove();&#10;}" description="old iter loop and remove" toReformat="true" toShortenFQNames="true">
+    <variable name="ITER" expression="iterableVariable()" defaultValue="" alwaysStopAt="false" />
+    <variable name="TYPE" expression="guessElementType(ITER)" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="wgit" value="for( var it = $ITER$.iterator(); it.hasNext(); ){&#10;    var en = it.next();&#10;    it.remove();&#10;}" description="old iter loop and remove" toReformat="true" toShortenFQNames="true">
+    <variable name="ITER" expression="iterableVariable()" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
 </templateSet>

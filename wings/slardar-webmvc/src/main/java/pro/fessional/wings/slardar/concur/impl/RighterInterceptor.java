@@ -60,9 +60,9 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
-        if (!(handler instanceof HandlerMethod)) return true;
+        if (!(handler instanceof HandlerMethod hm)) return true;
 
-        final Righter anno = ((HandlerMethod) handler).getMethod().getAnnotation(Righter.class);
+        final Righter anno = hm.getMethod().getAnnotation(Righter.class);
         if (anno == null) return true;
 
         // Delete before use

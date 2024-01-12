@@ -14,7 +14,7 @@ import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.USER;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("Code generation, managed by devops")
+@Disabled("Sample: Code generation, managed by devops")
 class TestWarlock2CodeGeneratorSample {
 
     @Test

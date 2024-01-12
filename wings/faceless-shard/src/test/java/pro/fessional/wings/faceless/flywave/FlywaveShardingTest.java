@@ -10,21 +10,22 @@ import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializat
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
-import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.database.TestingDataSource;
+import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
  * @since 2021-01-18
  */
-@SpringBootTest
+@SpringBootTest//(properties = "spring.docker.compose.enabled=false")
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FlywaveShardingTest {
@@ -82,6 +83,9 @@ public class FlywaveShardingTest {
                 "tst_sharding_3",
                 "tst_sharding_4");
         assertEquals(20, countRecords("writer", "tst_sharding"));
+        if (dataSourceContext.getCurrent() instanceof TestingDataSource tds) {
+            tds.reopen();
+        }
         schemaShardingManager.shardingData("tst_sharding", true);
         // delete from main table
         assertEquals(0, countRecords("writer", "tst_sharding"), "If it fails, run the entire class individually to avoid interference.");
@@ -93,14 +97,14 @@ public class FlywaveShardingTest {
         assertEquals(4, countRecords("writer", "tst_sharding_4"));
 
         // form 5.x, shardingsphere will SELECT count(*) FROM tst_sharding_0 UNION ALL SELECT count(*) FROM tst_sharding_#
-        Integer cnt = shardingJdbcTemplate.queryForObject("SELECT count(*) FROM tst_sharding", Integer.class);
+        Integer cnt = shardingJdbcTemplate.queryForObject("SELECT COUNT(*) FROM tst_sharding", Integer.class);
 //        testcaseNotice("The writer and reader are not actually configured to synchronize, so reading from db is 0");
         assertEquals(20, cnt);
     }
 
     public int countRecords(String db, String tbl) {
         final Integer cnt = new JdbcTemplate(dataSourceContext.getBackends().get(db))
-                .queryForObject("SELECT count(*) FROM "+tbl, Integer.class);
+                .queryForObject("SELECT count(*) FROM " + tbl, Integer.class);
         return cnt == null ? 0 : cnt;
     }
 }

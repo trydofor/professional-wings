@@ -6,11 +6,11 @@
     <parent>
         <groupId>pro.fessional.wings</groupId>
         <artifactId>ancient</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>radiant</artifactId>
-    <version>${revision}.${changelist}</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>Radiant::</name>
@@ -23,11 +23,6 @@
         <module>tiny-mail</module>
         <module>tiny-task</module>
     </modules>
-
-    <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-    </properties>
 
     <dependencies>
         <!-- dev tools-->

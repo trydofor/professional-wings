@@ -13,8 +13,8 @@ java_cur=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
 IFS='.' read -r -a ptj <<<"$java_cur"
 if ((ptj[0] < 17)); then
   echo -e "\033[31mREQUIRE java 17+, but $java_cur \033[0m"
-  echo "sdk ls java | grep installed"
-  echo "sdk use java 17.0.6-tem"
+  echo "asdf list java"
+  echo "asdf shell java 17.0.6-tem"
   exit
 fi
 

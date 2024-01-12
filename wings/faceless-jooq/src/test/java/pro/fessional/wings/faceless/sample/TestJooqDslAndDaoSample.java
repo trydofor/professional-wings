@@ -24,7 +24,9 @@ import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
+import pro.fessional.wings.faceless.spring.prop.FacelessJooqConfProp;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.silencer.testing.AssertionLogger;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -32,13 +34,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -46,7 +49,14 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
  */
 
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
+        "wings.faceless.jooq.conf.auto-qualify=true",
+        "wings.faceless.jooq.conf.render-table=ALWAYS",
+//        "wings.faceless.jooq.conf.auto-qualify=false",
+//        "wings.faceless.jooq.conf.render-table=WHEN_MULTIPLE_TABLES",
+})
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
@@ -57,6 +67,9 @@ public class TestJooqDslAndDaoSample {
 
     @Setter(onMethod_ = {@Autowired})
     private TstShardingDao dao;
+
+    @Setter(onMethod_ = {@Autowired})
+    private FacelessJooqConfProp prop;
 
     @Test
     @TmsLink("C12112")
@@ -69,17 +82,26 @@ public class TestJooqDslAndDaoSample {
     @Test
     @TmsLink("C12113")
     public void test1Dao() {
+        final AssertionLogger al = AssertionLogger.install();
+        final Pattern alias = prop.isAutoQualify()
+                              ? Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`\\1`.`id` > \\? and `\\1`.`commit_id` < \\?\\)")
+                              : Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`id` > \\? and `commit_id` < \\?\\)");
+        al.rule("alias-count", event -> alias.matcher(event.getFormattedMessage()).find());
+        al.rule("table-select", event -> event.getFormattedMessage().contains("from `tst_sharding` where (`id` > ? and `commit_id` < ?)"));
+        al.rule("table-update1", event -> event.getFormattedMessage().contains("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?"));
+        al.rule("table-update2", event -> event.getFormattedMessage().contains("update `tst_sharding` set `commit_id` = ?, `login_info` = ? where `id` = ?"));
+        al.start();
 
         testcaseNotice("Use alias");
         val a = dao.getAlias();
         val c = a.Id.gt(1L).and(a.CommitId.lt(200L));
 
-        testcaseNotice("select count(*) from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
+//        testcaseNotice("select count(*) from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
         val i = dao.count(a, c);
-        testcaseNotice("select * from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
+//        testcaseNotice("select * from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
         val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
         log.info("============count {}, ft2'size={}", i, ft1.size());
-        testcaseNotice("select id, commit_id  from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
+//        testcaseNotice("select `id`, `commit_id` from `tst_sharding` where (`id` > ? and `commit_id` < ?) order by `id` desc limit ? offset ?");
         val ft2 = dao.fetch(0, 2, (t, w) -> w
                 .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
                 .query(t.Id, t.CommitId, t.Id.desc()));
@@ -88,19 +110,23 @@ public class TestJooqDslAndDaoSample {
         // table
         testcaseNotice("Use table");
         val t = dao.getTable();
-        val setter = new HashMap<>();
-        setter.put(t.LoginInfo, "info");
+        val setter = new LinkedHashMap<>();
         setter.put(t.CommitId, t.Id.add(1L));
-        testcaseNotice("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
+        setter.put(t.LoginInfo, "info");
+//        testcaseNotice("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
         val u1 = dao.update(t, setter, t.Id.eq(2L));
         log.info("============update {}", u1);
 
         val po = new TstSharding();
         po.setCommitId(2L);
         po.setLoginInfo("info");
-        testcaseNotice("update `tst_sharding` set `commit_id` = ?, `login_info` = ? where `id` = ?");
+//        testcaseNotice("update `tst_sharding` set `commit_id` = ?, `login_info` = ? where `id` = ?");
         val u2 = dao.update(t, po, t.Id.eq(2L));
         log.info("============update {}", u2);
+
+        al.stop();
+        Assertions.assertTrue(al.assertCount(1), al::messageCount);
+        al.uninstall();
     }
 
     @Test
@@ -121,9 +147,38 @@ public class TestJooqDslAndDaoSample {
 //                .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
                      .getSQL();
         log.info(sql);
+        Assertions.assertTrue(sql.contains("select `id` from `tst_sharding`"));
 
         testcaseNotice("plain sql delete");
         int rc = dsl.execute("DELETE FROM tst_sharding WHERE id < ?", 1L);
+
+        // https://github.com/trydofor/professional-wings/issues/172
+
+        final var t1 = TstShardingTable.TstSharding.as("t1");
+        final var t2 = TstShardingTable.TstSharding.as("t2");
+        String j1 = dsl
+                .select(t1.Id, t2.CommitId)
+                .from(t1, t2)
+                .where(t1.Id.eq(t2.CommitId))
+                .getSQL();
+
+        String j2 = dsl
+                .select(t1.Id)
+                .from(t1)
+                .where(t1.CommitId.in(dsl.select(t2.CommitId).from(t2).where(t2.Id.eq(t1.Id))))
+                .getSQL();
+
+        String j3 = dsl
+                .select(t1.Id, t2.Id)
+                .from(t1)
+                .join(t2)
+                .on(t1.Id.eq(t2.Id).and(t1.CommitId.eq(t2.CommitId)))
+                .where(t1.Id.eq(1L))
+                .getSQL();
+
+        log.info(j1);
+        log.info(j2);
+        log.info(j3);
     }
 
     @Test

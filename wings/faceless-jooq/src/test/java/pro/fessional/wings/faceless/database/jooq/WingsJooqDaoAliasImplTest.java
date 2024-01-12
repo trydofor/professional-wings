@@ -18,8 +18,8 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstShardin
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
-import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -28,9 +28,9 @@ import java.util.SortedMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
 
 
 /**

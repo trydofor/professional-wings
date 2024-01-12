@@ -23,7 +23,7 @@ import pro.fessional.wings.slardar.service.lightid.HazelcastLightIdProvider;
         "logging.level.root=WARN"
 })
 @Slf4j
-@Disabled("benchmark")
+@Disabled("Benchmark: light id provider")
 public class AllLightIdProviderPerformTest {
 
     @Setter(onMethod_ = {@Autowired})

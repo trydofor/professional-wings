@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.servlet.stream.AbstractRequestResponseLogging;
-import pro.fessional.wings.slardar.servlet.stream.RequestResponseLogging;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
 
 import java.util.Collection;
@@ -37,7 +36,7 @@ public class LoggingRequestConfiguration {
 //    }
 
     @Bean
-    public RequestResponseLogging requestResponseLogging() {
+    public AbstractRequestResponseLogging requestResponseLogging() {
         log.info("SlardarWebmvc spring-bean requestResponseLogging");
         return new AbstractRequestResponseLogging() {
             @Override

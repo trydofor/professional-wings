@@ -20,7 +20,6 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(SpringBootAdminClientEnabledCondition.class)
-@Conditional(SpringBootAdminClientEnabledCondition.class)
 public class SlardarBootAdminClientConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminClientConfiguration.class);
 
@@ -34,6 +33,7 @@ public class SlardarBootAdminClientConfiguration {
      * </pre>
      */
     @Bean
+    @Conditional(SpringBootAdminClientEnabledCondition.class)
     @ConditionalWingsEnabled
     public BlockingRegistrationClient registrationClient(RestTemplateBuilder builder, ClientProperties prop) {
         log.info("SlardarSprint spring-bean registrationClient of BootAdmin client");

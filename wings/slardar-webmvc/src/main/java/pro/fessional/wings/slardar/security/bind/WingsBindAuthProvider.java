@@ -66,13 +66,13 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        final boolean isWingsUserDetails = userDetails instanceof WingsUserDetails;
-        if (!isWingsUserDetails || !((WingsUserDetails) userDetails).isPreAuthed()) {
+
+        if (!(userDetails instanceof WingsUserDetails wud && wud.isPreAuthed())) {
             checkPassword(userDetails, authentication);
         }
 
-        if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
-            if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
+        if (wingsAuthCheckService != null && userDetails instanceof WingsUserDetails wud && authentication instanceof WingsBindAuthToken wat) {
+            if (!wingsAuthCheckService.check(wud, wat)) {
                 log.debug("Failed to post check userDetails and authentication");
                 throw new BadCredentialsException(messages.getMessage(BadCredentials.getCode(), BadCredentials.getHint()));
             }
@@ -143,8 +143,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         final UserDetails userDetails;
         final Object obj = winTkn.getDetails();
         final WingsAuthDetails winAdt;
-        if (obj instanceof WingsAuthDetails) {
-            winAdt = (WingsAuthDetails) obj;
+        if (obj instanceof WingsAuthDetails wad) {
+            winAdt = wad;
         }
         else {
             log.debug("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");

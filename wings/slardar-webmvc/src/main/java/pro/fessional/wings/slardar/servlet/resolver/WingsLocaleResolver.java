@@ -88,8 +88,8 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request, Long userId) {
 
         Object obj = request.getAttribute(AttrI18nContext);
-        if (obj instanceof TimeZoneAwareLocaleContext) {
-            return (TimeZoneAwareLocaleContext) obj;
+        if (obj instanceof TimeZoneAwareLocaleContext alc) {
+            return alc;
         }
 
         Locale locale = resolveUserLocale(request);

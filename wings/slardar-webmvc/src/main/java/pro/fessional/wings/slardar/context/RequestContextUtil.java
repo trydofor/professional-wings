@@ -21,12 +21,11 @@ public class RequestContextUtil {
     @Nullable
     public static ServletRequestAttributes getRequestAttributes() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            return (ServletRequestAttributes) requestAttributes;
+        if (requestAttributes instanceof ServletRequestAttributes sra) {
+            return sra;
         }
-        else {
-            return null;
-        }
+
+        return null;
     }
 
     @Nullable

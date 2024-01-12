@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
@@ -25,7 +24,7 @@ public class WarlockExceptionConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource, ObjectMapper objectMapper) {
+    public DefaultExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource, ObjectMapper objectMapper) {
         log.info("WarlockShadow spring-bean defaultExceptionResolver");
         return new DefaultExceptionResolver(prop.getDefaultException(), messageSource, objectMapper);
     }

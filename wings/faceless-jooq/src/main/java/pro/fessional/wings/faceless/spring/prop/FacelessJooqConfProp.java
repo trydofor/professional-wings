@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.spring.prop;
 
 import lombok.Data;
+import org.jooq.conf.RenderTable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -97,4 +98,19 @@ public class FacelessJooqConfProp {
      */
     private boolean renderSchema = false;
     public static final String Key$renderSchema = Key + ".render-schema";
+
+    /**
+     * Whether any table name qualification should be rendered at all on columns.
+     * Setting when tables aren't rendered, then implicitly, schemas and catalogs aren't rendered either.
+     * The following values are available:
+     * RenderTable.ALWAYS: The default, which should always be preferred. Columns are always qualified with their tables, where possible.
+     * RenderTable.WHEN_MULTIPLE_TABLES: The simplest option to reduce generated query verbosity, avoiding table qualification only in queries with a single table in the FROM clause.
+     * RenderTable.WHEN_AMBIGUOUS_COLUMNS: A much more expensive to compute option that checks the FROM clause for ambiguous column names, in case of which columns are qualified.
+     * RenderTable.NEVER: Always turn off table qualification.
+     * Use this when verbosity of rendered SQL is a problem.
+     *
+     * @see #Key$renderTable
+     */
+    private RenderTable renderTable = RenderTable.ALWAYS;
+    public static final String Key$renderTable = Key + ".render-table";
 }

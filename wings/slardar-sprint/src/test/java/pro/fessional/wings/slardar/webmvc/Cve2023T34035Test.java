@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.webmvc;
 
 import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,11 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "server.servlet.register-default-servlet=true",
         })
 @AutoConfigureMockMvc
-//@EnableAutoConfiguration(exclude = {
-//        HazelcastAutoConfiguration.class,
-//        SlardarHazelAutoConfiguration.class,
-//})
 @Slf4j
+@Disabled("Fixed: OK in springboot 3.2.0 with security 6.2.1")
 public class Cve2023T34035Test {
 
     @Autowired

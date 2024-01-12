@@ -22,9 +22,9 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
     public List<String> getJavaClassImplements(Definition definition, Mode mode) {
 
         var impls = super.getJavaClassImplements(definition, mode);
-        if (!(definition instanceof TableDefinition)) return impls;
+        if (!(definition instanceof TableDefinition tableDefinition)) return impls;
 
-        List<ColumnDefinition> columns = ((TableDefinition) definition).getColumns();
+        List<ColumnDefinition> columns = tableDefinition.getColumns();
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
             if (columns.stream().anyMatch(WingsJooqGenHelper.JournalAware)) {
                 impls.add(JournalAware.class.getName());

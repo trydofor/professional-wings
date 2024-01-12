@@ -31,7 +31,7 @@ public class SlardarCookieConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WingsCookieInterceptor wingsCookieInterceptor(SlardarCookieProp slardarCookieProp, SecretProvider secretProvider) {
+    public WingsCookieInterceptorImpl wingsCookieInterceptor(SlardarCookieProp slardarCookieProp, SecretProvider secretProvider) {
         final String aesKey = secretProvider.tryGet(SecretProvider.Cookie);
         if (aesKey != null && aesKey.length() > 5) {
             log.info("SlardarWebmvc spring-bean wingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "..., len=" + aesKey.length());

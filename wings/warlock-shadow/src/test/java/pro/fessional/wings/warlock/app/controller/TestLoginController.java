@@ -43,7 +43,8 @@ public class TestLoginController {
     private WingsAuthTypeParser authTypeParser;
 
     @GetMapping("/auth/console-nonce.json")
-    public String loginPageDefault(@RequestParam("username") String user, @RequestParam(value = "authtype", required = false) String type) {
+    public String consoleNonce(@RequestParam("username") String user, @RequestParam(value = "authtype", required = false) String type) {
+        // default authtype=username
         Enum<?> authType = authTypeParser.parse(type);
         String pass = RandCode.human(16);
         long expire = System.currentTimeMillis() + 300_000;
@@ -53,7 +54,7 @@ public class TestLoginController {
         event.setUsername(user);
         event.setNonce(pass);
         EventPublishHelper.AsyncSpring.publishEvent(event);
-        log.warn("{} {} nonce is {}", user, type, pass);
+        log.warn("console-nonce user={}, type={} enum={} nonce is {}", user, type, authType, pass);
         return pass;
     }
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
@@ -33,17 +33,6 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- version check and code gen -->
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-codegen</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

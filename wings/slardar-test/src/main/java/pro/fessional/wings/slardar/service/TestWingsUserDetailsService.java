@@ -39,7 +39,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
 
     @Override
     public @NotNull UserDetails loadUserByUsername(String username, @Nullable Enum<?> type, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException {
-        log.info("login type={}, username={}", type, username);
+        log.info("TestWingsUserDetailsService login type={}, username={}", type, username);
 
         DefaultWingsUserDetails ud = new DefaultWingsUserDetails();
         int idType = username.endsWith("2") ? 2 : 1;

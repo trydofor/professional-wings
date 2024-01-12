@@ -36,11 +36,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
-import pro.fessional.wings.faceless.converter.WingsEnumConverters;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.converter.WingsEnumConverters;
 import pro.fessional.wings.faceless.database.helper.RowMapperHelper;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
@@ -59,8 +59,8 @@ import java.util.Map;
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
 
 /**
  * <pre>

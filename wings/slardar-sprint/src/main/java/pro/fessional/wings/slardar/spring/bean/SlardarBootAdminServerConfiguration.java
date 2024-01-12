@@ -8,7 +8,6 @@ import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
 import de.codecentric.boot.admin.server.domain.events.InstanceStatusChangedEvent;
 import de.codecentric.boot.admin.server.domain.values.StatusInfo;
 import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
-import de.codecentric.boot.admin.server.notify.Notifier;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider.InstanceCredentials;
 import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
@@ -37,26 +36,26 @@ import java.util.Objects;
 
 
 /**
+ * <a href="https://github.com/trydofor/professional-wings/issues/170">without short-circuit logic</a>
  * @author trydofor
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(SpringBootAdminServerEnabledCondition.class)
-@Conditional(SpringBootAdminServerEnabledCondition.class)
 public class SlardarBootAdminServerConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminServerConfiguration.class);
 
-
     @Bean
     @ConditionalWingsEnabled
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
     public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
         log.info("SlardarSprint spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
         return new BeanPostProcessor() {
             @Override
             public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (bean instanceof AdminControllerHandlerMapping) {
-                    ((AdminControllerHandlerMapping) bean).setOrder(-1);
+                if (bean instanceof AdminControllerHandlerMapping ob) {
+                    ob.setOrder(-1);
                 }
                 return bean;
             }
@@ -65,7 +64,8 @@ public class SlardarBootAdminServerConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
+    public AbstractStatusChangeNotifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
         log.info("SlardarSprint spring-bean dingTalkNotifier of BootAdmin server");
         final DingTalkReport reporter = reportProvider.getIfAvailable();
         final AbstractStatusChangeNotifier bean = new AbstractStatusChangeNotifier(repository) {
@@ -97,6 +97,7 @@ public class SlardarBootAdminServerConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Conditional(SpringBootAdminServerEnabledCondition.class)
     public BasicAuthHttpHeaderProvider basicAuthHttpHeadersProvider(AdminServerProperties adminProp, SlardarPasscoderProp passProp) {
         log.info("SlardarSprint spring-bean basicAuthHttpHeadersProvider of BootAdmin server");
         AdminServerProperties.InstanceAuthProperties instanceAuth = adminProp.getInstanceAuth();

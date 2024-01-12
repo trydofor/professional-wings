@@ -1,0 +1,19 @@
+version: '3.9'
+name: professional-wings
+services:
+  mysql:
+    container_name: wings-mysql8
+    image: mysql:8.0.35
+    restart: unless-stopped
+    command:
+      - --disable-log-bin
+    environment:
+      MYSQL_DATABASE: 'test'
+      MYSQL_USER: 'trydofor'
+      MYSQL_PASSWORD: 'moilioncircle'
+      MYSQL_ROOT_PASSWORD: 'moilioncircle'
+    volumes:
+      - ./mysql/init/:/docker-entrypoint-initdb.d/
+      - ./mysql/conf/:/etc/mysql/conf.d/
+    ports:
+      - '51487:3306'

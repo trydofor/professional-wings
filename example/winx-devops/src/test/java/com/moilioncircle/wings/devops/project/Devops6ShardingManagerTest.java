@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
 })
-@Disabled("Sharding table")
+@Disabled("Project: Sharding table")
 public class Devops6ShardingManagerTest {
 
     @Setter(onMethod_ = {@Autowired})

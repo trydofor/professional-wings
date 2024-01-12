@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shardingsphere.driver.jdbc.core.driver.ShardingSphereDriverURLManager;
+import org.apache.shardingsphere.driver.jdbc.core.driver.ShardingSphereURLManager;
 import org.apache.shardingsphere.infra.util.yaml.YamlEngine;
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRootConfiguration;
 import org.apache.shardingsphere.infra.yaml.config.swapper.resource.YamlDataSourceConfigurationSwapper;
@@ -36,14 +36,14 @@ public class FacelessShardingSphereConfiguration {
             return ignored -> false;
         }
 
-        final byte[] yamlBytes = ShardingSphereDriverURLManager.getContent(jdbcUrl);
+        final byte[] yamlBytes = ShardingSphereURLManager.getContent(jdbcUrl, "jdbc:shardingsphere:");
         YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
         final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
         final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
-        log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
-
         return (ctx) -> {
-            ctx.clearBackend().addBackend(dsMap);
+            log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
+            ctx.clearBackend();
+            ctx.addBackend(dsMap);
             return true;
         };
     }

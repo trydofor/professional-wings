@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional.wings</groupId>
         <artifactId>radiant</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>tiny-task</artifactId>
@@ -25,25 +25,24 @@
             <artifactId>tiny-autogen</artifactId>
         </dependency>
         <dependency>
-            <!-- controller-->
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- version check and code gen -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-codegen</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
+        <!-- test -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>testing-database</artifactId>
+            <artifactId>testing-docker</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

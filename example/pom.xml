@@ -6,14 +6,14 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
         <relativePath>../wings/pom.xml</relativePath>
     </parent>
 
     <groupId>com.moilioncircle.wings</groupId>
     <artifactId>example</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}-SNAPSHOT</version>
+    <version>${revision}</version>
 
     <name>Example::</name>
     <description>Sample and Template</description>
@@ -42,27 +42,27 @@
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-admin</artifactId>
-                <version>${revision}-SNAPSHOT</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-front</artifactId>
-                <version>${revision}-SNAPSHOT</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-codegen</artifactId>
-                <version>${revision}-SNAPSHOT</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-common</artifactId>
-                <version>${revision}-SNAPSHOT</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-devops</artifactId>
-                <version>${revision}-SNAPSHOT</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -19,7 +19,7 @@ import static com.moilioncircle.wings.devops.project.Devops0ProjectConstant.PKG_
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("Code Gen")
+@Disabled("Project: Code Gen")
 public class Devops2CodeGeneratorTest {
 
     @Test

@@ -1,19 +1,23 @@
 # WingsBoot wins bigger
 
+![Maven Central](https://img.shields.io/maven-central/v/pro.fessional/wings?color=00DD00)
+![Sonatype Snapshots](https://img.shields.io/nexus/s/pro.fessional/wings?server=https%3A%2F%2Foss.sonatype.org)
+[![Coverage Status](https://coveralls.io/repos/github/trydofor/professional-wings/badge.svg)](https://coveralls.io/github/trydofor/professional-wings)
+
 > WingsBoot=BKB + BootsOfTravel + SpringBoot. if you've liked Dota, you know.   
 > We advocate defensive programming, May The `false` Be With You !
 >
 > English 🇺🇸 | [中文 🇨🇳](readme-zh.md)
 
-* [![SpringBoot-3.0](https://img.shields.io/badge/springboot-3.0-green?logo=springboot)](https://spring.io/projects/spring-boot) Philosophy and Conventions, Non-Intrusion Enhancement 🌱 [Apache2]
-* [![Java-17](https://img.shields.io/badge/java-17-gold)](https://adoptium.net/temurin/releases/?version=11) Main business language, OpenJDK long-time running ☕️ [GPLv2+CE]
-* [![Kotlin-1.7](https://img.shields.io/badge/kotlin-1.7-gold)](https://kotlinlang.org/docs/reference/) Assisted language, as a better Java [Apache2]
-* [![Jooq-3.17](https://img.shields.io/badge/jooq-3.17-cyan)](https://www.jooq.org/download/)  The main type-safe SqlMapping 🏅 [Apache2]
-* [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) Main business database, 8 recommended, 5.7 compatible 💡 [GPLv2]
-* [![H2Database-2.1](https://img.shields.io/badge/h2db-2.1-blue)](https://h2database.com/html/main.html) Standalone database for offline and disconnected operations [MPL2] or [EPL1]
-* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://docs.hazelcast.com/hazelcast/) Distributed caching, messaging, streaming, etc. [Apache2]
-* [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) more engineering and compact miscroservice solution [Apache2]
-* [![ShardingSphere-5.3](https://img.shields.io/badge/shardingsphere-5.3-violet)](https://shardingsphere.apache.org) Database RW splitting, data sharding and elastic scaling [Apache2]
+* [![SpringBoot-3.2](https://img.shields.io/badge/springboot-3.2-green?logo=springboot)](https://spring.io/projects/spring-boot) Philosophy and Conventions, Non-Intrusion Enhancement 🌱 [Apache2]
+* [![Java-21](https://img.shields.io/badge/java-21-gold)](https://adoptium.net/temurin/releases/?version=11) Main business language, OpenJDK long-time running ☕️ [GPLv2+CE]
+* [![Kotlin-1.9](https://img.shields.io/badge/kotlin-1.9-gold)](https://kotlinlang.org/docs/reference/) Assisted language, as a better Java [Apache2]
+* [![Jooq-3.18](https://img.shields.io/badge/jooq-3.18-cyan)](https://www.jooq.org/download/)  The main type-safe SqlMapping 🏅 [Apache2]
+* [![Mysql-8.0](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) Main business database, 8 recommended, 5.7 compatible 💡 [GPLv2]
+* [![H2Database-2.2](https://img.shields.io/badge/h2db-2.2-blue)](https://h2database.com/html/main.html) Standalone database for offline and disconnected operations [MPL2] or [EPL1]
+* [![Hazelcast-5.3](https://img.shields.io/badge/hazelcast-5.3-violet)](https://docs.hazelcast.com/hazelcast/) Distributed caching, messaging, streaming, etc. [Apache2]
+* [![ServiceComb-3.0](https://img.shields.io/badge/servicecomb-3.0-violet)](https://servicecomb.apache.org) more engineering and compact miscroservice solution [Apache2]
+* [![ShardingSphere-5.4](https://img.shields.io/badge/shardingsphere-5.4-violet)](https://shardingsphere.apache.org) Database RW splitting, data sharding and elastic scaling [Apache2]
 
 [Apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [GPLv2+CE]: https://openjdk.org/legal/gplv2+ce.html
@@ -35,12 +39,12 @@
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
 ## (2) install dependency using java8
-sdk use java 8.0.352-tem
+# asdf shell java temurin-8.0.382+5
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
-## (3) install wings using java-17
-sdk use java 17.0.6-tem
+## (3) install wings using java-21
+# asdf shell java temurin-21.0.1+12.0.LTS
 mvn package install
 ## (4) report issue
 java -jar silencer-*-SNAPSHOT.jar
