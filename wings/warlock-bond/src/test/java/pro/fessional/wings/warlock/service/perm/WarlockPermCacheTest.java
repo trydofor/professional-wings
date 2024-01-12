@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.silencer.testing.AssertionLogger;
 
@@ -14,7 +15,11 @@ import pro.fessional.wings.silencer.testing.AssertionLogger;
  * @since 2021-06-19
  */
 @Slf4j
-@SpringBootTest
+@SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
+})
+@DependsOnDatabaseInitialization
 class WarlockPermCacheTest {
 
     @Setter(onMethod_ = {@Autowired})

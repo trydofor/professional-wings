@@ -14,11 +14,11 @@ import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
-import pro.fessional.wings.faceless.helper.WingsTestHelper
-import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.helper.WingsTestHelper.breakpointDebug
-import pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.testing.database.WingsTestHelper
+import pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.testing.database.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice
 
 /**
  * Shard and trace table test
@@ -206,7 +206,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12042")
     fun test4AiTrigger() {
-        if (wingsTestHelper.isH2) {
+        if (wingsTestHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -236,7 +236,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12043")
     fun test4AuTrigger() {
-        if (wingsTestHelper.isH2) {
+        if (wingsTestHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -263,7 +263,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12044")
     fun test5BdTrigger() {
-        if (wingsTestHelper.isH2) {
+        if (wingsTestHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -289,7 +289,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12045")
     fun test6Trigger() {
-        if (wingsTestHelper.isH2) {
+        if (wingsTestHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -332,7 +332,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12046")
     fun test7AltTable() {
-        if (wingsTestHelper.isH2) {
+        if (wingsTestHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }

@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillExceptionResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarDoubleKillProp;
@@ -22,7 +21,7 @@ public class SlardarDoubleKillWebConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public HandlerExceptionResolver doubleKillExceptionResolver(SlardarDoubleKillProp prop) {
+    public DoubleKillExceptionResolver doubleKillExceptionResolver(SlardarDoubleKillProp prop) {
         log.info("SlardarWebmvc spring-bean doubleKillExceptionResolver");
         return new DoubleKillExceptionResolver(prop);
     }

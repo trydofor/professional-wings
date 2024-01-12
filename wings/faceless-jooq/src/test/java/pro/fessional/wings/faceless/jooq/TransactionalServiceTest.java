@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.app.service.TransactionalBusinessService;
 import pro.fessional.wings.faceless.app.service.TransactionalClauseService;
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
 
 /**
  * @author trydofor

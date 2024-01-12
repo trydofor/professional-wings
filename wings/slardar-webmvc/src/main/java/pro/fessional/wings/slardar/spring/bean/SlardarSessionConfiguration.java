@@ -41,7 +41,7 @@ public class SlardarSessionConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public HttpSessionIdResolver httpSessionIdResolver(
+    public WingsSessionIdResolver httpSessionIdResolver(
             ObjectProvider<ServerProperties> serverProperties,
             ObjectProvider<CookieSerializer> cookieSerializer,
             ObjectProvider<DefaultCookieSerializerCustomizer> cookieSerializerCustomizers,

@@ -16,7 +16,7 @@ import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.testing.database.ExecSql.execWingsSql;
+import static pro.fessional.wings.testing.database.WingsTestHelper.execWingsSql;
 
 /**
  * @author trydofor

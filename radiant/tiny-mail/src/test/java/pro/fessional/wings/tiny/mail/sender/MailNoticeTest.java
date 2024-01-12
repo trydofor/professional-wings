@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.sender;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -29,27 +30,29 @@ public class MailNoticeTest {
     @Setter(onMethod_ = {@Autowired})
     protected MailConfigProvider mailConfigProvider;
 
-    @Setter(onMethod_ = {@Value("${QQ_MAIL_USER}")})
+    @Setter(onMethod_ = {@Value("${QQ_MAIL_USER:}")})
     protected String mailUser;
 
-    @Setter(onMethod_ = {@Value("${QQ_MAIL_PASS}")})
+    @Setter(onMethod_ = {@Value("${QQ_MAIL_PASS:}")})
     protected String mailPass;
 
-    @Setter(onMethod_ = {@Value("${GMAIL_USER}")})
+    @Setter(onMethod_ = {@Value("${GMAIL_USER:}")})
     protected String gmailUser;
 
-    @Setter(onMethod_ = {@Value("${GMAIL_PASS}")})
+    @Setter(onMethod_ = {@Value("${GMAIL_PASS:}")})
     protected String gmailPass;
 
     @Test
     @TmsLink("C15001")
     public void testPost() {
+        if(StringUtils.isEmpty(mailPass)) return;
+
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
         Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailUser + ", pass=" + mailPass);
     }
 
     @Test
-    @Disabled("Statistics time cost")
+    @Disabled("Statis: time cost")
     @TmsLink("C15002")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
@@ -66,7 +69,7 @@ public class MailNoticeTest {
     }
 
     @Test
-    @Disabled("gmail")
+    @Disabled("3rdService: gmail")
     @TmsLink("C15003")
     public void testGmail() {
         // dynamic config

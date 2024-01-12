@@ -70,8 +70,8 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
 
     public void setCookieSerializer(CookieSerializer cookieSerializer) {
         for (HttpSessionIdResolver resolver : httpSessionIdResolvers) {
-            if (resolver instanceof CookieHttpSessionIdResolver) {
-                ((CookieHttpSessionIdResolver) resolver).setCookieSerializer(cookieSerializer);
+            if (resolver instanceof CookieHttpSessionIdResolver csr) {
+                csr.setCookieSerializer(cookieSerializer);
             }
         }
     }

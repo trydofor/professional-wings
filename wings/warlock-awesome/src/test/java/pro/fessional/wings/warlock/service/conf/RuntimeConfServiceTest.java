@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import pro.fessional.mirana.time.Sleep;
@@ -26,14 +27,17 @@ import java.util.Set;
 
 /**
  * Need init database via BootDatabaseTest
+ * Need sleep for cache evict
  *
  * @author trydofor
  * @since 2022-03-09
  */
 @SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
         "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
-        "logging.level.root=debug"
 })
+@DependsOnDatabaseInitialization
 class RuntimeConfServiceTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -65,6 +69,7 @@ class RuntimeConfServiceTest {
 
     private <T> void assertSimple(Class<T> clz, T obj) {
         runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName());
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
     }
@@ -74,6 +79,7 @@ class RuntimeConfServiceTest {
     void testCollection() {
         List<String> ls = List.of("Jan", "Fer");
         runtimeConfService.newObject(List.class, ls, "test list");
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<String> ls1 = runtimeConfService.getList(List.class, String.class);
         Assertions.assertEquals(ls, ls1);
 
@@ -81,6 +87,7 @@ class RuntimeConfServiceTest {
         map.put("Jan", true);
         map.put("Fer", false);
         runtimeConfService.newObject(Map.class, map, "test map");
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final Map<String, Boolean> map1 = runtimeConfService.getMap(Map.class, String.class, Boolean.class);
         Assertions.assertEquals(map, map1);
     }
@@ -97,7 +104,7 @@ class RuntimeConfServiceTest {
     void testJson() {
         Dto dto = new Dto();
         runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest");
-        Sleep.ignoreInterrupt(1000);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
     }
@@ -108,7 +115,7 @@ class RuntimeConfServiceTest {
         Dto dto = new Dto();
         dto.setLdt(LocalDateTime.now());
         runtimeConfService.newObject(Dto.class, dto, "test dto", RuntimeConfServiceImpl.KryoHandler);
-        Sleep.ignoreInterrupt(1000);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
     }
@@ -119,10 +126,12 @@ class RuntimeConfServiceTest {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfServiceTest.testMode";
         runtimeConfService.newObject(key, arm, "test RunMode");
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         Assertions.assertEquals(arm, arm1);
 
         runtimeConfService.setObject(key, RunMode.Develop);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final RunMode rm1 = runtimeConfService.getSimple(key, RunMode.class);
         Assertions.assertEquals(RunMode.Develop, rm1);
     }
@@ -140,6 +149,7 @@ class RuntimeConfServiceTest {
         final String key = "RuntimeConfCacheTest.testCache";
         // insert on duplicated key
         runtimeConfService.newObject(key, arm, "test RunMode");
+        Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);
 

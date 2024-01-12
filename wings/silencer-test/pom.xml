@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
@@ -20,11 +20,6 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer-curse</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -17,7 +17,6 @@ import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
@@ -54,7 +53,7 @@ public class SlardarSecurityConfiguration {
      */
     @Bean
     @ConditionalWingsEnabled
-    public PasswordEncoder passwordEncoder(SlardarPasscoderProp prop) {
+    public DelegatingPasswordEncoder passwordEncoder(SlardarPasscoderProp prop) {
         final String encoder = prop.getPassEncoder();
         final String decoder = prop.getPassDecoder();
         log.info("SlardarSprint spring-bean passwordEncoder, default encoder=" + encoder + ", decoder is " + decoder);
@@ -67,7 +66,7 @@ public class SlardarSecurityConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public PasssaltEncoder passsaltEncoder(SlardarPasscoderProp prop) {
+    public DefaultPasssaltEncoder passsaltEncoder(SlardarPasscoderProp prop) {
         final String encoder = prop.getSaltEncoder();
         log.info("SlardarSprint spring-bean passsaltEncoder, default encoder=" + encoder);
 

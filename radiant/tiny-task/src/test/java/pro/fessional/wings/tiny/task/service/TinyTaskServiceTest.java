@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.func.Lam;
 import pro.fessional.wings.tiny.app.service.TestServiceManual;
@@ -28,6 +29,7 @@ import static pro.fessional.wings.tiny.task.service.TinyTaskServiceTest.timingCr
 //        "wings.tiny.task.enabled.dryrun=true",
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}"
 })
+@DependsOnDatabaseInitialization
 class TinyTaskServiceTest {
 
     public static final boolean enabled = false;
@@ -58,7 +60,7 @@ class TinyTaskServiceTest {
     }
 
     @Test
-    @Disabled("Simulate slow process,sleep 180s")
+    @Disabled("Simulate: slow process,sleep 180s")
     @TmsLink("C15014")
     void sleep180() throws InterruptedException {
         Thread.sleep(180 * 1000L);

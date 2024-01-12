@@ -44,7 +44,7 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaJournalManager schemaJournalManager(
-            DataSourceContext facelessDs,
+            DataSourceContext sourceContext,
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader,
             FlywaveVerProp properties) {
@@ -58,20 +58,20 @@ public class FlywaveConfiguration {
                 properties.getTriggerDelete()
         );
         log.info("FacelessFlywave spring-bean schemaJournalManager");
-        return new SchemaJournalManager(facelessDs.getBackends(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
+        return new SchemaJournalManager(sourceContext.getBackends(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
     }
 
     @Bean
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DefaultRevisionManager schemaVersionManger(
-            DataSourceContext sources,
+            DataSourceContext sourceContext,
             SqlStatementParser statementParser,
             SqlSegmentProcessor segmentProcessor,
             SchemaDefinitionLoader schemaDefinitionLoader,
             FlywaveVerProp properties) {
         DefaultRevisionManager bean = new DefaultRevisionManager(
-                sources.getBackends(), sources.getCurrent(),
+                sourceContext.getBackends(), null,//sourceContext.getCurrent(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
         for (String s : new TreeSet<>(properties.getDropReg().values())) {
@@ -87,11 +87,11 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaShardingManager schemaShardingManager(
-            DataSourceContext sources,
+            DataSourceContext sourceContext,
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
         log.info("FacelessFlywave spring-bean schemaShardingManager");
-        return new SchemaShardingManager(sources.getBackends(), sources.getCurrent(),
+        return new SchemaShardingManager(sourceContext.getBackends(), sourceContext.getCurrent(),
                 statementParser, schemaDefinitionLoader);
     }
 
@@ -106,7 +106,7 @@ public class FlywaveConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
+    public MySqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             log.info("FacelessFlywave spring-bean sqlStatementParser");
             return new MySqlStatementParser();
@@ -143,7 +143,7 @@ public class FlywaveConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
+    public MysqlDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             log.info("FacelessFlywave spring-bean schemaDefinitionLoader");
             return new MysqlDefinitionLoader();
@@ -157,7 +157,7 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled(abs = FlywaveFitProp.Key$checker)
     public ApplicationRunnerOrdered revisionCheckerRunner(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
-        return new ApplicationRunnerOrdered(WingsOrdered.Lv5Supervisor, ignored -> {
+        return new ApplicationRunnerOrdered(WingsOrdered.Lv1Config, ignored -> {
             log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

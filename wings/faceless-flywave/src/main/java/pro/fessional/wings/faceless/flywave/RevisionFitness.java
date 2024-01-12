@@ -149,7 +149,7 @@ public class RevisionFitness {
         StringBuilder sb = new StringBuilder();
         sb.append("replace XXX with SKIP to skip, EXEC to exec sqls: ");
         for (String m : ms) {
-            sb.append("\n wings.faceless.flywave.fit[").append(m).append("].lost=XXX");
+            sb.append("\nwings.faceless.flywave.fit.").append(m).append(".lost=XXX");
         }
         return sb.toString();
     }

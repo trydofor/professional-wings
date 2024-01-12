@@ -5,11 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
-import pro.fessional.wings.warlock.service.event.TableChangePublisher;
 import pro.fessional.wings.warlock.service.event.impl.TableChangePublisherImpl;
 import pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl;
 
@@ -26,7 +24,7 @@ public class WarlockTableChangeConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public TableChangePublisher tableChangePublisher() {
+    public TableChangePublisherImpl tableChangePublisher() {
         log.info("Warlock spring-bean tableChangePublisher");
         final ApplicationEventPublisher publisher;
         if (EventPublishHelper.hasAsyncGlobal()) {
@@ -42,7 +40,7 @@ public class WarlockTableChangeConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public WingsTableCudHandler wingsTableCudHandler() {
+    public WingsTableCudHandlerImpl wingsTableCudHandler() {
         log.info("Warlock spring-bean wingsTableCudHandler");
         return new WingsTableCudHandlerImpl();
     }

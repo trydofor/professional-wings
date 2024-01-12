@@ -258,7 +258,7 @@ public class WingsCodeGenerator {
                 h2();
             }
             else {
-                // jdbc:mysql://localhost:3306/wings_warlock
+                // jdbc:mysql://localhost:51487/wings_warlock
                 int p3 = str.indexOf("?");
                 int p2 = p3 > 0 ? p3 : str.length();
                 int p1 = str.lastIndexOf("/", p2);

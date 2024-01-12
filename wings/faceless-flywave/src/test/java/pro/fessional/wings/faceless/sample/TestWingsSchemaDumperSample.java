@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
-@Disabled("Dump schema structure, used to backup and restore")
+@Disabled("Sample: dump schema structure, used to backup and restore")
 public class TestWingsSchemaDumperSample {
 
     @Setter(onMethod_ = {@Autowired})

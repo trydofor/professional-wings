@@ -14,10 +14,10 @@ import pro.fessional.mirana.id.LightIdBufferedProvider
 import pro.fessional.mirana.id.LightIdUtil
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
-import pro.fessional.wings.faceless.helper.WingsTestHelper
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.testing.database.WingsTestHelper
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors

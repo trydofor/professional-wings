@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.security;
+package pro.fessional.wings.warlock.security.deny;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;

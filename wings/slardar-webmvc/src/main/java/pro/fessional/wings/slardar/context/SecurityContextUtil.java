@@ -167,18 +167,18 @@ public class SecurityContextUtil {
         if (atn == null) return null;
 
         final Object pri = atn.getPrincipal();
-        if (pri instanceof WingsUserDetails) {
-            return (WingsUserDetails) pri;
+        if (pri instanceof WingsUserDetails w1) {
+            return w1;
         }
 
         final Object dtl = atn.getDetails();
-        if (dtl instanceof WingsUserDetails) {
-            return (WingsUserDetails) dtl;
+        if (dtl instanceof WingsUserDetails w2) {
+            return w2;
         }
-        else if (dtl instanceof WingsAuthDetails) {
-            final Object rd = ((WingsAuthDetails) dtl).getRealData();
-            if (rd instanceof WingsUserDetails) {
-                return (WingsUserDetails) rd;
+        else if (dtl instanceof WingsAuthDetails wad) {
+            final Object rd = wad.getRealData();
+            if (rd instanceof WingsUserDetails w3) {
+                return w3;
             }
         }
 

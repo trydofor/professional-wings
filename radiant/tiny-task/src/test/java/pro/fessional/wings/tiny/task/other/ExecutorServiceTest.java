@@ -17,9 +17,12 @@ import java.util.concurrent.ScheduledFuture;
  * @author trydofor
  * @since 2022-12-13
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
+})
 @Slf4j
-@Disabled("Simulate batch, check manually")
+@Disabled("Simulate: batch, check manually")
 class ExecutorServiceTest {
 
     @Test
@@ -89,7 +92,7 @@ class ExecutorServiceTest {
         log.info("== done=");
 
         al.stop();
-        Assertions.assertTrue(al.assertAllTrue());
+        Assertions.assertTrue(al.assertCount(1), al::messageCount);
         al.uninstall();
     }
 }

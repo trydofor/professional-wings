@@ -12,7 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author trydofor
  * @since 2023-11-01
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+        "debug=true",
+        "logging.level.root=DEBUG",
+})
 @Slf4j
 class AssertionLoggerTest {
 
@@ -26,18 +29,18 @@ class AssertionLoggerTest {
 
         //
         log.info(str);
-        Assertions.assertTrue(al.getAssertCount("info") > 0);
+        Assertions.assertTrue(al.getAssertCount("info") > 0, al::messageCount);
 
         //
         al.resetCount();
         al.stop();
         log.info(str);
-        assertEquals(0, al.getAssertCount("info"));
+        assertEquals(0, al.getAssertCount("info"), al::messageCount);
 
         al.resetCount();
         al.start();
         log.info(str);
-        Assertions.assertTrue(al.getAssertCount("info") > 0);
+        Assertions.assertTrue(al.getAssertCount("info") > 0, al::messageCount);
 
         /////
         al.resetCount();
@@ -46,6 +49,6 @@ class AssertionLoggerTest {
         al.start();
 
         log.info(str);
-        assertEquals(0, al.getAssertCount("info"));
+        assertEquals(0, al.getAssertCount("info"), al::messageCount);
     }
 }

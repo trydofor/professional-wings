@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
-        <version>${revision}.${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
@@ -20,6 +20,17 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-awesome</artifactId>
+        </dependency>
+        <!--  shardingsphere and jakarta EE #169 -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.33</version>
         </dependency>
         <!--sharding sphere-->
         <dependency>
