@@ -10,7 +10,7 @@ on:
         type: boolean
         required: false
       testFailureIgnore:
-        description: 'test failure.ignore?'
+        description: 'test ignore failure?'
         default: false
         type: boolean
         required: false
@@ -121,7 +121,7 @@ jobs:
       - name: Maven Deploy
         run: >
           mvn 
-          -P ossrh
+          -P ossrh,-example
           ${{ steps.opt-revision.outputs.OPT_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           clean deploy
