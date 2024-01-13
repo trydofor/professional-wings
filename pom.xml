@@ -71,7 +71,8 @@
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <testing-json>{}</testing-json>
-        <argLine></argLine>
+        <argLine/> <!-- surefire:argLine -->
+        <surefireArgLine/> <!-- jacoco-agent:argLine -->
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
@@ -111,7 +112,6 @@
 
     <modules>
         <module>wings</module>
-        <module>example</module>
         <module>radiant</module>
     </modules>
 
@@ -958,6 +958,15 @@
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>example</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>example</module>
+            </modules>
         </profile>
     </profiles>
 </project>
