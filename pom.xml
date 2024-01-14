@@ -80,9 +80,7 @@
         <!-- delombok: javadoc cannot find symbol  -->
         <source.srcMainDelombok>${project.build.directory}/delombok-main</source.srcMainDelombok>
         <!-- test,doc,deploy -->
-        <testing-json>{}</testing-json> <!-- springboot surefire config  -->
-        <argLine/> <!-- surefire:argLine -->
-        <surefireArgLine/> <!-- jacoco-agent:argLine -->
+        <argLine>-Xmx2g @{javaopenArgLine}</argLine> <!-- surefire and jacoco -->
         <javaopenArgLine>
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
@@ -528,12 +526,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
-                    <configuration>
-                        <systemPropertyVariables>
-                            <SPRING_APPLICATION_JSON>${testing-json}</SPRING_APPLICATION_JSON>
-                        </systemPropertyVariables>
-                        <argLine>-Xmx2g @{argLine} @{javaopenArgLine} @{surefireArgLine}</argLine>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -931,15 +923,30 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>${jacoco-maven-plugin.version}</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/moilioncircle/**</exclude>
+                                <exclude>**/codegen/**</exclude>
+                                <exclude>**/autogen/**</exclude>
+                                <exclude>**/jooqgen/**</exclude>
+                                <exclude>**/project/**</exclude>
+                                <exclude>**/testing/**</exclude>
+                                <exclude>**/*Const.*</exclude>
+                                <exclude>**/*Enum.*</exclude>
+                                <exclude>**/*Dummy.*</exclude>
+                                <exclude>**/*Event.*</exclude>
+                                <exclude>**/*Exception.*</exclude>
+                                <exclude>**/*Template.*</exclude>
+                                <exclude>**/*Database.*</exclude>
+                                <exclude>**/WhoAmI.*</exclude>
+                            </excludes>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
-                                <configuration>
-                                    <propertyName>surefireArgLine</propertyName>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

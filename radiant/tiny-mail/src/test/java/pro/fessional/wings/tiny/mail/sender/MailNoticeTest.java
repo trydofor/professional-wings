@@ -3,7 +3,6 @@ package pro.fessional.wings.tiny.mail.sender;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -30,10 +29,10 @@ public class MailNoticeTest {
     @Setter(onMethod_ = {@Autowired})
     protected MailConfigProvider mailConfigProvider;
 
-    @Setter(onMethod_ = {@Value("${QQ_MAIL_USER:}")})
+    @Setter(onMethod_ = {@Value("${spring.mail.username:}")})
     protected String mailUser;
 
-    @Setter(onMethod_ = {@Value("${QQ_MAIL_PASS:}")})
+    @Setter(onMethod_ = {@Value("${spring.mail.password:}")})
     protected String mailPass;
 
     @Setter(onMethod_ = {@Value("${GMAIL_USER:}")})
@@ -45,10 +44,8 @@ public class MailNoticeTest {
     @Test
     @TmsLink("C15001")
     public void testPost() {
-        if(StringUtils.isEmpty(mailPass)) return;
-
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
-        Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailUser + ", pass=" + mailPass);
+        Assertions.assertTrue(snd, "need env MAIL_USER, MAIL_PASS, current user=" + mailUser);
     }
 
     @Test

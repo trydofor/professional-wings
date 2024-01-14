@@ -58,7 +58,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12020 WingsJooqGenHelperTest: replace simple jooq codegen dao
 * 12021 WingsJooqGenHelperTest: replace embed jooq codegen dao
 * 12022 JooqCodeAutoGenSample: jooq codegen sample
-* 12023 ConstantEnumGeneratorSample: const enum codegen sample
+* 12023 ConstantEnumGeneratorTest: const enum codegen sample
 * 12024 TestWingsInitDatabaseSample: init database at revision TestV1 sample
 * 12025 TestWingsSchemaDumperSample: dump DDL and data to file sample
 * 12026 TestWingsSchemaGeneratorSample: init database at revision TestV2 sample
@@ -181,6 +181,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12143 JooqShardingTest: print sprint sharding batch merge
 * 12144 MockTstNormalTableTest: mock ConnectionProvider by spring
 * 12145 MockTstNormalTableTest: mock DSLContext to Dao instance
+* 12146 WingsEnumConvertersTest: enum converter
 
 ## 13 Slardar
 

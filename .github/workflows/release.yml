@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       testCoverReport:
-        description: 'test and coveralls report?'
+        description: 'test and Coverage report?'
         default: true
         type: boolean
         required: false
@@ -14,15 +14,10 @@ on:
         default: false
         type: boolean
         required: false
-      testLoggerLevel:
-        description: 'test logger level'
-        default: WARN
-        type: choice
-        options:
-          - DEBUG
-          - INFO
-          - WARN
-          - ERROR
+      deployOssrh:
+        description: 'deploy to ossrh?'
+        default: true
+        type: boolean
         required: false
   release:
     types: [published]
@@ -39,6 +34,7 @@ jobs:
     steps:
       - name: Checkout ${{github.event.release.tag_name}}
         uses: actions/checkout@v4
+
       ## chache asdf/, m2/repository
       - name: Cache Sdk & Repo
         id: cache-sdk-repo
@@ -57,7 +53,26 @@ jobs:
 
       ## write settings.xml
       - name: Maven settings.xml
+        id: settings
         run: |
+          JAVA_HOME=$(asdf where java)
+          echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_OUTPUT"
+          echo "GIT_BRANCH=$(git branch --show-current)" >> "$GITHUB_OUTPUT"
+          
+          opt=""
+          if [ "${{ github.event.release.tag_name }}" != "" ]; then
+            opt="-Drevision=${{ github.event.release.tag_name }}"
+            echo $opt
+            echo "OPT_REVISION=$opt" >> "$GITHUB_OUTPUT"
+          fi
+          
+          ver=$(mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version $opt help:evaluate)
+          echo $ver
+          echo "WINGS_VERSION=$ver" >> "$GITHUB_OUTPUT"
+          
+          mvn -v
+          git --no-pager log --graph -10 --pretty=format:'%H - %an, %ad %d : %s'
+          
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml << "EOF"
           <settings>
@@ -71,62 +86,44 @@ jobs:
             </servers>
           </settings>
           EOF
-      ## get JAVA_HOME
-      - name: Env JAVA_HOME
-        id: java-env
-        run: echo "JAVA_HOME=$(asdf where java)" >> "$GITHUB_OUTPUT"
-      ## get revision if release
-      - name: Opt revision
-        id: opt-revision
-        if: github.event.release.tag_name != ''
-        run: echo "OPT_REVISION=-Drevision=${{github.event.release.tag_name}}" >> "$GITHUB_OUTPUT"
-      ## info deploy
-      - name: Info Deploy
-        run: |
-          mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version ${{ steps.opt-revision.outputs.OPT_REVISION }} help:evaluate
-          echo
-          mvn -v
-          git --no-pager log --graph -10 --pretty=format:'%H - %an, %ad %d : %s'
-        env:
-          JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
-      ## ci report if not release
-      - name: Coveralls Report
+
+      ## report if not release
+      - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: inputs.testCoverReport
         run: >
           mvn 
-          -P test
+          -P 'test,!example'
           --quiet
           -Duser.timezone=Asia/Shanghai
-          -Dtesting-json='{
-          "debug":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
-          "test-verbose":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
-          "sentry.logging.enabled":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
-          "spring.wings.silencer.enabled.verbose":"${{ inputs.testLoggerLevel == 'DEBUG' }}",
-          "logging.level.root":"${{ inputs.testLoggerLevel }}",
-          "logging.level.org.springframework.web":"${{ inputs.testLoggerLevel }}",
-          "logging.level.org.jooq":"${{ inputs.testLoggerLevel }}"
-          }'
           -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }}
           -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
           clean test jacoco:report coveralls:report
         env:
-          JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
+          JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+
       ## import gpp private key
       - name: Import GPG key
+        if: inputs.deployOssrh
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.MVN_GPG_SKEY }}
           passphrase: ${{ secrets.MVN_GPG_PASS }}
+      
       ## maven deploy
-      - name: Maven Deploy
+      - name: Deploy ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
+        if: inputs.deployOssrh
         run: >
           mvn 
-          -P ossrh,doc,-example
-          ${{ steps.opt-revision.outputs.OPT_REVISION }}
+          -P 'ossrh,doc,!example'
+          ${{ steps.settings.outputs.OPT_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           clean deploy
         env:
-          JAVA_HOME: ${{ steps.java-env.outputs.JAVA_HOME }}
+          JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
           MVN_OSS_USER: ${{ secrets.MVN_OSS_USER }}
           MVN_OSS_PASS: ${{ secrets.MVN_OSS_PASS }}
           MVN_GPG_PASS: ${{ secrets.MVN_GPG_PASS }}

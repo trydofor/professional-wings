@@ -1,7 +1,7 @@
-package pro.fessional.wings.faceless.sample;
+package pro.fessional.wings.faceless.codegen;
 
 import io.qameta.allure.TmsLink;
-import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
+import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator.ConstantEnum;
 
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.List;
  * @author trydofor
  * @since 2020-11-11
  */
-class ConstantEnumGeneratorSample {
+public class ConstantEnumGeneratorTest {
 
-    private static List<ConstantEnum> mockPos() {
+    public static List<ConstantEnum> mockPos() {
         List<ConstantEnum> result = new ArrayList<>();
 
         result.add(new ConstantEnum(1010100, "standard_timezone", "id", "standard timezone", "classpath:/wings-tmpl/StandardTimezoneTemplate.java"));
@@ -63,10 +63,11 @@ class ConstantEnumGeneratorSample {
     }
 
     @TmsLink("C12023")
-    public static void main(String[] args) {
+    @Test
+    public void generate() {
         ConstantEnumGenerator.builder()
-                             .targetDirectory("wings/faceless/src/test/java/")
-                             .targetPackage("pro.fessional.wings.faceless.enums.autogen")
+                             .targetDirectory("target/generated-constant")
+                             .targetPackage("pro.fessional.wings.faceless.autogen.enums")
                              .generate(mockPos());
     }
 }

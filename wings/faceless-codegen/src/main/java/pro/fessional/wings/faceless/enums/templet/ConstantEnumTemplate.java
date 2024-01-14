@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
+import javax.annotation.processing.Generated;
+
 // RNA:USE /2019-09-17/now.date/
 
 /**
@@ -16,6 +18,7 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  * @since 2019-09-17
  */
 // RNA:USE /ConstantEnumTemplate/enum-class/*
+@Generated("wings faceless codegen")
 public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
 
     // RNA:EACH /1/enum-items/enum

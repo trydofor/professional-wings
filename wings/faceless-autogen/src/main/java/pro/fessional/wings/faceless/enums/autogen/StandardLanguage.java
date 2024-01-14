@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 
+import javax.annotation.processing.Generated;
 import java.util.Locale;
 
 /**
@@ -15,6 +16,7 @@ import java.util.Locale;
  * @see Locale#toString()
  * @since 2023-09-01
  */
+@Generated("wings faceless codegen")
 public enum StandardLanguage implements StandardLanguageEnum {
 
     SUPER(1020100, "standard_language", "standard language", "classpath:/wings-tmpl/StandardLanguageTemplate.java"),

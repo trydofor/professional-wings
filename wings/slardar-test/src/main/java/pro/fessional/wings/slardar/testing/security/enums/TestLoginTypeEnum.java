@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.enums;
+package pro.fessional.wings.slardar.testing.security.enums;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.CodeEnum;
@@ -7,14 +7,14 @@ import pro.fessional.mirana.data.CodeEnum;
  * @author trydofor
  * @since 2021-02-01
  */
-public enum LoginResultEnum implements CodeEnum {
-    Success("200", "Login Success"),
-    Failure("401", "Login Failure");
+public enum TestLoginTypeEnum implements CodeEnum {
+    User("200", "Password"),
+    Sms("401", "Sms Code");
 
     private final String code;
     private final String hint;
 
-    LoginResultEnum(String code, String hint) {
+    TestLoginTypeEnum(String code, String hint) {
         this.code = code;
         this.hint = hint;
     }
