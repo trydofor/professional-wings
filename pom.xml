@@ -70,10 +70,20 @@
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
-        <testing-json>{}</testing-json>
+        <dokka-maven-plugin.version>1.9.10</dokka-maven-plugin.version> <!-- https://kotlinlang.org/docs/dokka-maven.html#general-configuration -->
+        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
+        <!-- java, kotlin sources  -->
+        <source.srcMainJava>${project.basedir}/src/main/java</source.srcMainJava>
+        <source.srcMainKotlin>${project.basedir}/src/main/kotlin</source.srcMainKotlin>
+        <source.srcTestJava>${project.basedir}/src/test/java</source.srcTestJava>
+        <source.srcTestKotlin>${project.basedir}/src/test/kotlin</source.srcTestKotlin>
+        <!-- delombok: javadoc cannot find symbol  -->
+        <source.srcMainDelombok>${project.build.directory}/delombok-main</source.srcMainDelombok>
+        <!-- test,doc,deploy -->
+        <testing-json>{}</testing-json> <!-- springboot surefire config  -->
         <argLine/> <!-- surefire:argLine -->
         <surefireArgLine/> <!-- jacoco-agent:argLine -->
-        <wings.java-opens>
+        <javaopenArgLine>
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
             --add-opens=java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
@@ -89,7 +99,7 @@
             --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
             --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
             --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
-        </wings.java-opens>
+        </javaopenArgLine>
     </properties>
 
     <licenses>
@@ -450,6 +460,12 @@
             </dependency>
             <!-- dev -->
             <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${annotations.version}</version>
@@ -516,7 +532,7 @@
                         <systemPropertyVariables>
                             <SPRING_APPLICATION_JSON>${testing-json}</SPRING_APPLICATION_JSON>
                         </systemPropertyVariables>
-                        <argLine>-Xmx2g @{wings.java-opens} @{argLine} @{surefireArgLine}</argLine>
+                        <argLine>-Xmx2g @{argLine} @{javaopenArgLine} @{surefireArgLine}</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -595,19 +611,6 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
@@ -665,8 +668,8 @@
                             </goals>
                             <configuration>
                                 <sources>
-                                    <source>${project.basedir}/src/main/kotlin</source>
-                                    <source>${project.basedir}/src/main/java</source>
+                                    <source>${source.srcMainKotlin}</source>
+                                    <source>${source.srcMainJava}</source>
                                 </sources>
                             </configuration>
                         </execution>
@@ -721,6 +724,19 @@
                             <version>${kotlin.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <!-- build info -->
                 <plugin>
@@ -801,8 +817,8 @@
                                 </goals>
                                 <configuration>
                                     <sourceDirs>
-                                        <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                        <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                        <sourceDir>${source.srcTestKotlin}</sourceDir>
+                                        <sourceDir>${source.srcTestJava}</sourceDir>
                                     </sourceDirs>
                                 </configuration>
                             </execution>
@@ -860,8 +876,8 @@
                                 </goals>
                                 <configuration>
                                     <sourceDirs>
-                                        <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                        <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                                        <sourceDir>${source.srcMainKotlin}</sourceDir>
+                                        <sourceDir>${source.srcMainJava}</sourceDir>
                                     </sourceDirs>
                                 </configuration>
                             </execution>
@@ -890,7 +906,7 @@
         </profile>
         <profile>
             <!-- -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} -->
-            <id>ci</id>
+            <id>test</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
                 <surefire.timeout>0</surefire.timeout> <!-- going to kill self fork JVM -->
@@ -926,6 +942,67 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>doc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                        <version>${lombok-maven-plugin.version}</version>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>${source.srcMainJava}</sourceDirectory>
+                            <outputDirectory>${source.srcMainDelombok}</outputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>delombok</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <!--
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <sourcepath>${source.srcMainDelombok}</sourcepath>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    -->
+                    <plugin>
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
+                        <configuration>
+                            <sourceDirectories>
+                                <dir>${source.srcMainDelombok}</dir>
+                                <dir>${source.srcMainKotlin}</dir>
+                            </sourceDirectories>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
