@@ -94,7 +94,7 @@ jobs:
         if: inputs.testCoverReport
         run: >
           mvn 
-          -P ci
+          -P test
           --quiet
           -Duser.timezone=Asia/Shanghai
           -Dtesting-json='{
@@ -121,7 +121,7 @@ jobs:
       - name: Maven Deploy
         run: >
           mvn 
-          -P ossrh,-example
+          -P ossrh,doc,-example
           ${{ steps.opt-revision.outputs.OPT_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           clean deploy
