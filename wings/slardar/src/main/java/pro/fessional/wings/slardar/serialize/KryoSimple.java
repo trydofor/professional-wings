@@ -9,10 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.evil.ThreadLocalSoft;
-import pro.fessional.wings.slardar.serialize.javakaffee.SynchronizedCollectionsSerializer;
-import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsSerializer;
+
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
+ * should register Customizer before use.
+ *
  * @author trydofor
  * @since 2021-06-09
  */
@@ -35,6 +38,18 @@ public class KryoSimple {
         }
     }
 
+    private static final AtomicReference<Consumer<Kryo>> customizer = new AtomicReference<>();
+
+    /**
+     * Register custom serializer. Add User Serializer, mostly implemented by Kryo itself
+     *
+     * @param cust to customize kryo
+     * @see DefaultArraySerializers
+     */
+    public static void register(Consumer<Kryo> cust) {
+        customizer.set(cust);
+    }
+
     /** no leak, for static */
     private static final ThreadLocalSoft<Kryo> kryo;
 
@@ -48,7 +63,8 @@ public class KryoSimple {
                     ko.setRegistrationRequired(false);
                     ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                     ko.setClassLoader(Thread.currentThread().getContextClassLoader());
-                    register(ko);
+                    final var cust = customizer.get();
+                    if (cust != null) cust.accept(ko);
                     return ko;
                 }
             };
@@ -56,18 +72,6 @@ public class KryoSimple {
         catch (ThreadLocalAttention e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    /**
-     * Add User Serializer, mostly implemented by Kryo itself
-     *
-     * @param kryo type to register
-     * @see DefaultArraySerializers
-     */
-    public static void register(Kryo kryo) {
-        // KryoException: java.lang.UnsupportedOperationException
-        UnmodifiableCollectionsSerializer.registerSerializers(kryo);
-        SynchronizedCollectionsSerializer.registerSerializers(kryo);
     }
 
     public static Kryo getKryo() {

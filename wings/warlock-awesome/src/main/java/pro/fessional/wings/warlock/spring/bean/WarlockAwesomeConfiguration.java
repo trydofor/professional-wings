@@ -65,9 +65,9 @@ public class WarlockAwesomeConfiguration {
     public RuntimeConfService runtimeConfService(ObjectProvider<ConversionService> conversionProvider) {
         log.info("Warlock spring-bean runtimeConfService");
         final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
-        conversionProvider.ifAvailable(it -> bean.addHandler(RuntimeConfServiceImpl.PropHandler, it));
-        bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
-        bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
+        conversionProvider.ifAvailable(it -> bean.putHandler(RuntimeConfServiceImpl.PropHandler, it));
+        bean.putHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
+        bean.putHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
         return bean;
     }
 }
