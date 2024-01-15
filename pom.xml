@@ -932,12 +932,16 @@
                                 <exclude>**/project/**</exclude>
                                 <exclude>**/testing/**</exclude>
                                 <exclude>**/*Const.*</exclude>
+                                <exclude>**/*Const$*</exclude>
+                                <exclude>**/*Attribute.*</exclude>
+                                <exclude>**/*Attribute$*</exclude>
                                 <exclude>**/*Enum.*</exclude>
                                 <exclude>**/*Dummy.*</exclude>
                                 <exclude>**/*Event.*</exclude>
                                 <exclude>**/*Exception.*</exclude>
                                 <exclude>**/*Template.*</exclude>
                                 <exclude>**/*Database.*</exclude>
+                                <exclude>**/*Assert.*</exclude>
                                 <exclude>**/WhoAmI.*</exclude>
                             </excludes>
                         </configuration>

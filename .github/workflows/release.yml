@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout ${{github.event.release.tag_name}}
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
 
       ## chache asdf/, m2/repository
       - name: Cache Sdk & Repo
@@ -59,19 +61,19 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_OUTPUT"
           echo "GIT_BRANCH=$(git branch --show-current)" >> "$GITHUB_OUTPUT"
           
-          opt=""
-          if [ "${{ github.event.release.tag_name }}" != "" ]; then
-            opt="-Drevision=${{ github.event.release.tag_name }}"
-            echo $opt
-            echo "OPT_REVISION=$opt" >> "$GITHUB_OUTPUT"
+          _opt=$(git describe --tags --exact-match 2>/dev/null || true)
+          if [ "$_opt" != "" ]; then
+            _opt="-Drevision=$_opt"
+            echo $_opt
+            echo "MVN_REVISION=$_opt" >> "$GITHUB_OUTPUT"
           fi
           
-          ver=$(mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version $opt help:evaluate)
-          echo $ver
-          echo "WINGS_VERSION=$ver" >> "$GITHUB_OUTPUT"
+          _ver=$(mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version $_opt help:evaluate)
+          echo $_ver
+          echo "WINGS_VERSION=$_ver" >> "$GITHUB_OUTPUT"
           
           mvn -v
-          git --no-pager log --graph -10 --pretty=format:'%H - %an, %ad %d : %s'
+          git --no-pager log --graph -10 --pretty=format:'%H - %ai %d %s'
           
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml << "EOF"
@@ -119,7 +121,7 @@ jobs:
         run: >
           mvn 
           -P 'ossrh,doc,!example'
-          ${{ steps.settings.outputs.OPT_REVISION }}
+          ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           clean deploy
         env:

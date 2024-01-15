@@ -383,6 +383,9 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14075 CodeExceptionHandlerTest: CompletableFuture exception in chinese
 * 14076 JvmLightIdProviderTest: 50 instances compete for 1 db by tx
 * 14077 WarlockJournalDisableTest: disable TerminalJournalService
+* 14078 CacheEventHelperTest: table is in the tables collection
+* 14079 TerminalJournalServiceTest: submit of TerminalJournalService
+* 14080 TableChangePublisherTest: publish Insert TableChangeEvent
 
 ## 15 Tiny
 

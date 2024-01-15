@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
+/*
  * @author trydofor
- * @since 2021-03-07
+ * @since 2024-01-15
  */
 class PermGrantHelperTest {
 
