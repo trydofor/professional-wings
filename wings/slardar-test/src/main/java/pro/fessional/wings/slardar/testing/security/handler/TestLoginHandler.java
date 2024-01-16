@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.handler;
+package pro.fessional.wings.slardar.testing.security.handler;
 
 import lombok.Setter;
 import org.slf4j.Logger;

@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.sample;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -74,7 +73,7 @@ public class TestJooqDslAndDaoSample {
     @Test
     @TmsLink("C12112")
     public void test0Init() {
-        val sqls = FlywaveRevisionScanner.scanMaster();
+        final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
@@ -93,35 +92,35 @@ public class TestJooqDslAndDaoSample {
         al.start();
 
         testcaseNotice("Use alias");
-        val a = dao.getAlias();
-        val c = a.Id.gt(1L).and(a.CommitId.lt(200L));
+        final var a = dao.getAlias();
+        final var c = a.Id.gt(1L).and(a.CommitId.lt(200L));
 
 //        testcaseNotice("select count(*) from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
-        val i = dao.count(a, c);
+        final var i = dao.count(a, c);
 //        testcaseNotice("select * from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
-        val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
+        final var ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
         log.info("============count {}, ft2'size={}", i, ft1.size());
 //        testcaseNotice("select `id`, `commit_id` from `tst_sharding` where (`id` > ? and `commit_id` < ?) order by `id` desc limit ? offset ?");
-        val ft2 = dao.fetch(0, 2, (t, w) -> w
+        final var ft2 = dao.fetch(0, 2, (t, w) -> w
                 .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
                 .query(t.Id, t.CommitId, t.Id.desc()));
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
         testcaseNotice("Use table");
-        val t = dao.getTable();
-        val setter = new LinkedHashMap<>();
+        final var t = dao.getTable();
+        final var setter = new LinkedHashMap<>();
         setter.put(t.CommitId, t.Id.add(1L));
         setter.put(t.LoginInfo, "info");
 //        testcaseNotice("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
-        val u1 = dao.update(t, setter, t.Id.eq(2L));
+        final var u1 = dao.update(t, setter, t.Id.eq(2L));
         log.info("============update {}", u1);
 
-        val po = new TstSharding();
+        final var po = new TstSharding();
         po.setCommitId(2L);
         po.setLoginInfo("info");
 //        testcaseNotice("update `tst_sharding` set `commit_id` = ?, `login_info` = ? where `id` = ?");
-        val u2 = dao.update(t, po, t.Id.eq(2L));
+        final var u2 = dao.update(t, po, t.Id.eq(2L));
         log.info("============update {}", u2);
 
         al.stop();
@@ -135,17 +134,17 @@ public class TestJooqDslAndDaoSample {
         testcaseNotice("Get Dsl by dao.ctx()");
         Condition nullCond = null;
         Field<Long> nullField = null;
-//        val nullOrder: OrderField<Long>? = null
-        val emptyOrder = new OrderField[]{};
-        val t = TstShardingTable.TstSharding;
+//        final var nullOrder: OrderField<Long>? = null
+        final var emptyOrder = new OrderField[]{};
+        final var t = TstShardingTable.TstSharding;
         DSLContext dsl = dao.ctx();
-        val sql = dsl.select(t.Id, nullField) // null safe
-                     .from(t)
-                     .where(nullCond)  // null safe
-                     .orderBy(emptyOrder) // empty safe
+        final var sql = dsl.select(t.Id, nullField) // null safe
+                           .from(t)
+                           .where(nullCond)  // null safe
+                           .orderBy(emptyOrder) // empty safe
 //                .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
 //                .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
-                     .getSQL();
+                           .getSQL();
         log.info(sql);
         Assertions.assertTrue(sql.contains("select `id` from `tst_sharding`"));
 
@@ -186,32 +185,32 @@ public class TestJooqDslAndDaoSample {
     public void test3Journal() {
         testcaseNotice("Journal Feature");
 
-        val now = LocalDateTime.now();
-        val journal = new Journal(1L, now, "", "", "", "");
+        final var now = LocalDateTime.now();
+        final var journal = new Journal(1L, now, "", "", "", "");
 
-        val s1 = new HashMap<>();
-        val t = TstShardingTable.TstSharding;
+        final var s1 = new HashMap<>();
+        final var t = TstShardingTable.TstSharding;
         JournalJooqHelper.create(journal, t, s1);
         log.info("map1={}", s1);
 
-        val s2 = new HashMap<>();
+        final var s2 = new HashMap<>();
         JournalJooqHelper.modify(journal, t, s2);
         log.info("map2={}", s2);
-        val s3 = new HashMap<>();
+        final var s3 = new HashMap<>();
         JournalJooqHelper.delete(journal, t, s3);
         log.info("map3={}", s3);
 
-        val s4 = new HashMap<>();
-        val ob = new TstSharding();
-        val start1 = System.currentTimeMillis();
+        final var s4 = new HashMap<>();
+        final var ob = new TstSharding();
+        final var start1 = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
             JournalJooqHelper.create(journal, t, s4);
         }
-        val start2 = System.currentTimeMillis();
+        final var start2 = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
             journal.create(ob);
         }
-        val start3 = System.currentTimeMillis();
+        final var start3 = System.currentTimeMillis();
         log.info("cost1={}, cost2={}", start2 - start1, start3 - start2);
     }
 
@@ -219,9 +218,9 @@ public class TestJooqDslAndDaoSample {
     @TmsLink("C12116")
     public void test4DeleteDt() {
         testcaseNotice("Logic delete");
-        val c1 = dao.count();
+        final var c1 = dao.count();
         log.info("count1={}", c1);
-        val c2 = dao.count(TstShardingTable::getOnlyDied);
+        final var c2 = dao.count(TstShardingTable::getOnlyDied);
         log.info("count2={}", c2);
     }
 
@@ -230,7 +229,7 @@ public class TestJooqDslAndDaoSample {
     public void test4Shadow() {
         testcaseNotice("Shadow table");
         TstShardingTable upd = dao.newTable("", "_postfix");
-        val c1 = dao.count(upd, null);
+        final var c1 = dao.count(upd, null);
         log.info("count1={}", c1);
     }
 

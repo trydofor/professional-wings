@@ -49,9 +49,11 @@ public class MailSenderManagerTest {
     @Test
     @TmsLink("C15004")
     public void testBatch() {
+        int size = 1; // auto test 1, manual 5
+
         final TinyMailConfig config = mailConfigProvider.defaultConfig();
         final StopWatch stopWatch = new StopWatch();
-        int size = 5;
+
 
         try (final StopWatch.Watch ignored = stopWatch.start("single")) {
             for (int i = 0; i < size; i++) {

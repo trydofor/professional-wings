@@ -55,7 +55,7 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
 
     private final Map<String, ConversionService> handlerMap = new LinkedHashMap<>();
 
-    public void addHandler(String type, ConversionService handler) {
+    public void putHandler(String type, ConversionService handler) {
         handlerMap.put(type, handler);
     }
 

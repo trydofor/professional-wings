@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.convert.ApplicationConversionService;
@@ -39,7 +38,7 @@ public class SlardarDateTimeConfiguration {
     @ConditionalWingsEnabled
     public String2LocalDateConverter stringLocalDateConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalDateConverter");
-        val fmt = prop.getDate()
+        final var fmt = prop.getDate()
                       .getSupport()
                       .stream()
                       .map(DateTimeFormatter::ofPattern)
@@ -59,7 +58,7 @@ public class SlardarDateTimeConfiguration {
     @ConditionalWingsEnabled
     public String2LocalTimeConverter stringLocalTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalTimeConverter");
-        val fmt = prop.getTime()
+        final var fmt = prop.getTime()
                       .getSupport()
                       .stream()
                       .map(DateTimeFormatter::ofPattern)
@@ -79,7 +78,7 @@ public class SlardarDateTimeConfiguration {
     @ConditionalWingsEnabled
     public String2LocalDateTimeConverter stringLocalDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalDateTimeConverter");
-        val fmt = prop.getDatetime()
+        final var fmt = prop.getDatetime()
                       .getSupport()
                       .stream()
                       .map(DateTimeFormatter::ofPattern)
@@ -99,7 +98,7 @@ public class SlardarDateTimeConfiguration {
     @ConditionalWingsEnabled
     public String2ZonedDateTimeConverter stringZonedDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringZonedDateTimeConverter");
-        val fmt = prop.getZoned()
+        final var fmt = prop.getZoned()
                       .getSupport()
                       .stream()
                       .map(DateTimeFormatter::ofPattern)
@@ -119,7 +118,7 @@ public class SlardarDateTimeConfiguration {
     @ConditionalWingsEnabled
     public String2OffsetDateTimeConverter stringOffsetDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringOffsetDateTimeConverter");
-        val fmt = prop.getOffset()
+        final var fmt = prop.getOffset()
                       .getSupport()
                       .stream()
                       .map(DateTimeFormatter::ofPattern)

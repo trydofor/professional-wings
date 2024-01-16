@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
-import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
+import pro.fessional.wings.slardar.testing.security.handler.TestLoginHandler;
 
 
 /**

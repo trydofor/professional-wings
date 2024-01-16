@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 
+import javax.annotation.processing.Generated;
 import java.time.ZoneId;
 import java.util.TimeZone;
 
@@ -20,6 +21,7 @@ import java.util.TimeZone;
  * @since 2019-09-17
  */
 // RNA:USE /StandardTimezoneTemplate/enum-class/*
+@Generated("wings faceless codegen")
 public enum StandardTimezoneTemplate implements StandardTimezoneEnum {
 
     // RNA:EACH /1/enum-items/enum

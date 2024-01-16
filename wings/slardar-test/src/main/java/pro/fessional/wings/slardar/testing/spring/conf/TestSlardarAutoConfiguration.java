@@ -1,19 +1,19 @@
-package pro.fessional.wings.slardar.spring.conf;
+package pro.fessional.wings.slardar.testing.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
-import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
+import pro.fessional.wings.slardar.testing.security.handler.TestLoginHandler;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
-import pro.fessional.wings.slardar.service.TestWingsUserDetailsService;
+import pro.fessional.wings.slardar.testing.service.TestWingsUserDetailsService;
 
 /**
  * @author trydofor
  * @since 2022-01-29
  */
 @AutoConfiguration(before = UserDetailsServiceAutoConfiguration.class)
-public class SlardarTestAutoConfiguration {
+public class TestSlardarAutoConfiguration {
 
     @Bean
     public TestLoginHandler testLoginHandler() {

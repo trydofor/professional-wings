@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 
+import javax.annotation.processing.Generated;
 import java.util.Locale;
 
 // RNA:USE /2019-09-17/now.date/
@@ -20,6 +21,7 @@ import java.util.Locale;
  * @since 2019-09-17
  */
 // RNA:USE /StandardLanguageTemplate/enum-class/*
+@Generated("wings faceless codegen")
 public enum StandardLanguageTemplate implements StandardLanguageEnum {
 
     // RNA:EACH /1/enum-items/enum

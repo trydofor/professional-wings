@@ -1,6 +1,7 @@
 ## wings boot
 .flattened-pom.xml
 .pom.xml
+.run
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Maven template

@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.service;
+package pro.fessional.wings.slardar.testing.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

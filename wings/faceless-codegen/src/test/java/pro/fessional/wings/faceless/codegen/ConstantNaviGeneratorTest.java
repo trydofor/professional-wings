@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.codegen;
 
 import io.qameta.allure.TmsLink;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.codegen.ConstantNaviGenerator.Entry;
 
@@ -9,10 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * check in target/generated-constant
+ *
  * @author trydofor
  * @since 2021-03-05
  */
-@Disabled("Deprecated: Mock permission tree, generate Constant, use db instead")
 class ConstantNaviGeneratorTest {
 
     @Test
@@ -32,14 +32,14 @@ class ConstantNaviGeneratorTest {
 
 
         ConstantNaviGenerator generator = new ConstantNaviGenerator();
-        generator.setTargetDir("src/test/java");
-        generator.setPackageName("pro.fessional.wings.faceless.autogen");
+        generator.setTargetDir("target/generated-constant");
+        generator.setPackageName("pro.fessional.wings.faceless.autogen.security");
         generator.generate("PermConstant", "", entries);
         generator.generate("RoleConstant", "ROLE_", entries);
     }
 
 
-    private Entry create(long id, String name, String remark){
+    private Entry create(long id, String name, String remark) {
         Entry en = new Entry();
         en.setId(id);
         en.setName(name);

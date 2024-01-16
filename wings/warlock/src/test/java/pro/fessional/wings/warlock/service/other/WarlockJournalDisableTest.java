@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.spring.bean;
+package pro.fessional.wings.warlock.service.other;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 
 /**
  * @author trydofor
@@ -23,7 +22,7 @@ class WarlockJournalDisableTest {
     protected JournalService journalService;
 
     @Test
-    @TmsLink("C14067")
+    @TmsLink("C14077")
     void terminalJournalService() {
         Assertions.assertFalse(journalService instanceof TerminalJournalService);
     }

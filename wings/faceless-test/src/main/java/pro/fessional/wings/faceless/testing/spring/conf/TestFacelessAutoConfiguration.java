@@ -1,4 +1,4 @@
-package pro.fessional.wings.faceless.spring.conf;
+package pro.fessional.wings.faceless.testing.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import pro.fessional.wings.testing.database.WingsTestHelper;
  * @since 2023-10-23
  */
 @AutoConfiguration
-public class FacelessTestAutoConfiguration {
+public class TestFacelessAutoConfiguration {
 
     @Bean
     public WingsTestHelper wingsTestHelper(DataSourceContext context) {
