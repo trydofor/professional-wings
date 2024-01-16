@@ -22,6 +22,6 @@ class WarlockJournalConfigurationTest {
     @Test
     @TmsLink("C14066")
     void terminalJournalService() {
-        Assertions.assertTrue(journalService instanceof TerminalJournalService);
+        Assertions.assertInstanceOf(TerminalJournalService.class, journalService);
     }
 }

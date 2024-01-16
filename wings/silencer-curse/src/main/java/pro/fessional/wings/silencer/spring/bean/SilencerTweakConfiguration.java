@@ -5,7 +5,7 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
-import org.slf4j.TtlMDCAdapter;
+import org.slf4j.TweakMDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.logging.LogLevel;
@@ -18,6 +18,7 @@ import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
+import pro.fessional.wings.silencer.tweak.TtlMDCAdapter;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
 
 import java.time.Clock;
@@ -60,7 +61,7 @@ public class SilencerTweakConfiguration {
                          @Value("${trace:false}") boolean trace
         ) {
             log.info("SilencerCurse spring-auto autowireLogbackTweak, init TtlMDC");
-            TtlMDCAdapter.initMdc();// init as early as possible
+            TweakMDC.adapt(new TtlMDCAdapter());// init as early as possible
 
             if (prop.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf autowireLogbackTweak WingsMdcThresholdFilter");

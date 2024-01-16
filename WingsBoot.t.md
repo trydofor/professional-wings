@@ -33,6 +33,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11027 WingsEnabledDefaultTest: default enabled config and bean
 * 11028 WingsEnabledFalseTest: disable config and bean
 * 11029 WingsEnabledTopFalseTest: disable top config
+* 11030 TtlMDCAdapterTest: ttl MDC in multiple thread
 
 ## 12 Faceless
 

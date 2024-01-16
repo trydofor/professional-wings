@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * @author trydofor
@@ -30,7 +30,7 @@ class FlakeIdHazelcastImplTest {
     @Test
     @TmsLink("C14055")
     void getId() throws InterruptedException {
-        assertTrue(flakeIdService instanceof FlakeIdHazelcastImpl);
+        assertInstanceOf(FlakeIdHazelcastImpl.class, flakeIdService);
         final var threadCnt = 100;
         final var loopCount = 5000;
         final var idCache = new ConcurrentHashMap<Long, Long>();
