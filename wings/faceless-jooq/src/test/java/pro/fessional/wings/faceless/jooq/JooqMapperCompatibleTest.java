@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq;
 import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Setter;
-import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -47,7 +46,7 @@ public class JooqMapperCompatibleTest {
     @TmsLink("C12098")
     public void test0Init() {
         wingsTestHelper.cleanTable();
-        val sqls = FlywaveRevisionScanner.scanMaster();
+        final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);
     }

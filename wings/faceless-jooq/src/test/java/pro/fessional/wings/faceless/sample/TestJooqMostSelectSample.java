@@ -4,7 +4,6 @@ import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
@@ -88,7 +87,7 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12120")
     public void test0Init() {
-        val sqls = FlywaveRevisionScanner.scanMaster();
+        final var  sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);
     }
@@ -485,13 +484,13 @@ public class TestJooqMostSelectSample {
         testcaseNotice("use helperJooq wrap",
                 "select count(*) as `c` from (select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
-        val qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
+         final var  qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
         PageResult<TstSharding> pr4 = PageJooqHelper.use(dao, page)
                                                     .wrap(qry4, order)
                                                     .fetch()
                                                     .into(TstSharding.class);
 
-        val qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
+         final var  qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
         PageResult<TstSharding> pr5 = PageJooqHelper.use(dao, page)
                                                     .wrap(qry5, order)
                                                     .fetch()

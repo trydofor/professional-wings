@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.service.flakeid.impl;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,17 +31,17 @@ class FlakeIdHazelcastImplTest {
     @TmsLink("C14055")
     void getId() throws InterruptedException {
         assertTrue(flakeIdService instanceof FlakeIdHazelcastImpl);
-        val threadCnt = 100;
-        val loopCount = 5000;
-        val idCache = new ConcurrentHashMap<Long, Long>();
-        val service = Executors.newFixedThreadPool(threadCnt / 2);
+        final var threadCnt = 100;
+        final var loopCount = 5000;
+        final var idCache = new ConcurrentHashMap<Long, Long>();
+        final var service = Executors.newFixedThreadPool(threadCnt / 2);
 
-        val latch = new CountDownLatch(threadCnt);
+        final var latch = new CountDownLatch(threadCnt);
         final String sn = "seqName";
         for (int i = 0; i < threadCnt; i++) {
             service.submit(() -> {
                 for (int j = 0; j < loopCount; j++) {
-                    val id = flakeIdService.getId(sn);
+                    final var id = flakeIdService.getId(sn);
                     final Long old = idCache.put(id, id);
                     if (old != null) {
                         log.info(sn + ":" + old);

@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -117,7 +116,7 @@ public class JooqTableCudListenerTest {
         final long c1 = testDao.count(t, t.Id.eq(301L));
         Assertions.assertEquals(1L, c1);
 
-        val rds = Arrays.asList(
+        final var rds = Arrays.asList(
                 new TstShardingRecord(302L, now, now, now, 9L, "login-info-302", "", ZH_CN),
                 new TstShardingRecord(303L, now, now, now, 9L, "login-info-303", "", ZH_CN),
                 new TstShardingRecord(304L, now, now, now, 9L, "login-info-304", "", ZH_CN)

@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ public class TransactionalServiceTest {
     @Test
     @TmsLink("C12108")
     public void test0Init() {
-        val sqls = FlywaveRevisionScanner.scanMaster();
+        final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
