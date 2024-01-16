@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.enums;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -25,6 +26,7 @@ import static pro.fessional.wings.testing.database.WingsTestHelper.execWingsSql;
 
 @SpringBootTest
 @TestMethodOrder(MethodName.class)
+@Slf4j
 public class ConstantEnumI18nTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -70,7 +72,7 @@ public class ConstantEnumI18nTest {
     public void printAllBean() {
         int i = 1;
         for (String bean : applicationContext.getBeanDefinitionNames()) {
-            System.out.printf("[%d] %s\n", i++, bean);
+            log.info("[{}] {}", i++, bean);
         }
     }
 }

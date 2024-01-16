@@ -25,6 +25,8 @@
         <!-- https://docs.spring.io/spring-boot/docs/3.2.1/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.1</spring-boot.version>
         <wings.version>${revision}</wings.version>
+        <!--suppress UnresolvedMavenProperty fulfill by directory-maven-plugin -->
+        <wings.rootdir>${highest-basedir}</wings.rootdir>
         <!-- project -->
         <java.version>21</java.version>
         <!-- <kotlin.version>1.9.21</kotlin.version> -->
@@ -66,6 +68,7 @@
         <druid.version>1.2.20</druid.version> <!-- https://github.com/alibaba/druid/releases -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
+        <directory-maven-plugin.version>1.0</directory-maven-plugin.version> <!-- https://github.com/jdcasey/directory-maven-plugin -->
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
@@ -519,6 +522,10 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -526,6 +533,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <environmentVariables>
+                            <WINGS_HOME>${wings.rootdir}</WINGS_HOME>
+                        </environmentVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -618,6 +630,96 @@
                         </execution>
                     </executions>
                 </plugin>
+                <!--  doc  -->
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>${lombok-maven-plugin.version}</version>
+                    <configuration>
+                        <addOutputDirectory>false</addOutputDirectory>
+                        <sourceDirectory>${source.srcMainJava}</sourceDirectory>
+                        <outputDirectory>${source.srcMainDelombok}</outputDirectory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>delombok</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <!--
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <sourcepath>${source.srcMainDelombok}</sourcepath>
+                        <doclint>none</doclint>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                -->
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka-maven-plugin.version}</version>
+                    <configuration>
+                        <sourceDirectories>
+                            <dir>${source.srcMainDelombok}</dir>
+                            <dir>${source.srcMainKotlin}</dir>
+                        </sourceDirectories>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--  coverage  -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!--  deploy  -->
                 <plugin>
                     <!-- https://maven.apache.org/plugins/maven-gpg-plugin/sign-mojo.html -->
@@ -694,6 +796,23 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.commonjava.maven.plugins</groupId>
+                    <artifactId>directory-maven-plugin</artifactId>
+                    <version>${directory-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>directories</id>
+                            <goals>
+                                <goal>highest-basedir</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <property>highest-basedir</property>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!-- kotlin -->
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
@@ -716,19 +835,6 @@
                             <version>${kotlin.version}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.jetbrains.dokka</groupId>
-                    <artifactId>dokka-maven-plugin</artifactId>
-                    <version>${dokka-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>javadocJar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <!-- build info -->
                 <plugin>
@@ -908,29 +1014,10 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.eluder.coveralls</groupId>
-                        <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>${coveralls-maven-plugin.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax.xml.bind</groupId>
-                                <artifactId>jaxb-api</artifactId>
-                                <version>2.3.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacoco-maven-plugin.version}</version>
                         <configuration>
                             <excludes>
-                                <exclude>**/moilioncircle/**</exclude>
-                                <exclude>**/codegen/**</exclude>
-                                <exclude>**/autogen/**</exclude>
-                                <exclude>**/jooqgen/**</exclude>
-                                <exclude>**/project/**</exclude>
-                                <exclude>**/testing/**</exclude>
                                 <exclude>**/*Const.*</exclude>
                                 <exclude>**/*Const$*</exclude>
                                 <exclude>**/*Attribute.*</exclude>
@@ -945,14 +1032,10 @@
                                 <exclude>**/WhoAmI.*</exclude>
                             </excludes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
@@ -964,56 +1047,16 @@
                     <plugin>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok-maven-plugin</artifactId>
-                        <version>${lombok-maven-plugin.version}</version>
-                        <configuration>
-                            <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>${source.srcMainJava}</sourceDirectory>
-                            <outputDirectory>${source.srcMainDelombok}</outputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>delombok</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <!--
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <configuration>
-                            <sourcepath>${source.srcMainDelombok}</sourcepath>
-                            <doclint>none</doclint>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     -->
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <configuration>
-                            <sourceDirectories>
-                                <dir>${source.srcMainDelombok}</dir>
-                                <dir>${source.srcMainKotlin}</dir>
-                            </sourceDirectories>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

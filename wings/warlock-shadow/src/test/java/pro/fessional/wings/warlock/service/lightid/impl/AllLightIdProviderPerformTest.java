@@ -20,7 +20,7 @@ import pro.fessional.wings.slardar.service.lightid.HazelcastLightIdProvider;
  */
 @SpringBootTest(properties = {
         "debug=false",
-        "logging.level.root=WARN"
+        "logging.level.root=WARN" // quiet
 })
 @Slf4j
 @Disabled("Benchmark: light id provider")

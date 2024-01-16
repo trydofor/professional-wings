@@ -1,6 +1,7 @@
 package com.moilioncircle.wings.devops.project;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @SpringBootTest
 @Disabled("Project: Dump Enums")
+@Slf4j
 public class Devops7EnumsDumperTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -33,7 +35,7 @@ public class Devops7EnumsDumperTest {
             String grp = e.getKey().getName();
             for (Enum<?> enu : e.getValue()) {
                 CodeEnum en = (CodeEnum) enu;
-                System.out.printf("%s\t%s\t%s\t%s\n", enu.name(), en.getCode(), en.getHint(), grp);
+                log.info("{}\t{}\t{}\t{}", enu.name(), en.getCode(), en.getHint(), grp);
             }
         }
     }

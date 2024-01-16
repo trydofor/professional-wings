@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.TmsLink;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2023-01-08
  */
+@Slf4j
 public class ResourceMapTest {
 
     @Test
@@ -32,7 +34,7 @@ public class ResourceMapTest {
         final Resource urlPom = resourceLoader.getResource("file:/pom.xml");
         res1.put("pom.xml", urlPom);
 
-        Map<String, String>  urls= new LinkedHashMap<>();
+        Map<String, String> urls = new LinkedHashMap<>();
         for (Map.Entry<String, Resource> en : res1.entrySet()) {
             urls.put(en.getKey(), CommonPropHelper.toString(en.getValue()));
         }
@@ -45,13 +47,13 @@ public class ResourceMapTest {
 
         final JsonNode nodes = objectMapper.readTree(json);
         final Iterator<Map.Entry<String, JsonNode>> it = nodes.fields();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             final Map.Entry<String, JsonNode> en = it.next();
             res2.put(en.getKey(), resourceLoader.getResource(en.getValue().asText()));
         }
 
-        Assertions.assertEquals(res1,res2);
-        System.out.println(json);
+        log.info("json={}", json);
+        Assertions.assertEquals(res1, res2);
     }
 
 }

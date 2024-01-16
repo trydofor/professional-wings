@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.context;
 
 import io.qameta.allure.TmsLink;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
 @SpringBootTest(properties = {
         "wings.silencer.tweak.clock-offset = " + NowTest.Offset,
         "wings.silencer.i18n.zoneid=" + NowTest.Cn})
+@Slf4j
 class NowTest {
 
     public static final String Cn = "Asia/Shanghai";
@@ -32,7 +34,7 @@ class NowTest {
         long sysMs = System.currentTimeMillis();
         long nowMs = Now.millis();
         long ofs = nowMs - sysMs;
-        System.out.println("offset=" + ofs);
+        log.info("offset={}", ofs);
         Assertions.assertTrue(ofs >= Offset);
     }
 
@@ -51,13 +53,13 @@ class NowTest {
         ZonedDateTime szd = Now.zonedDateTime();
         ZonedDateTime czd = Now.clientZonedDateTime();
 
-        System.out.println("Asia/Shanghai szd=" + szd);
-        System.out.println("Asia/Tokyo czd=" + czd);
+        log.info("Asia/Shanghai szd={}", szd);
+        log.info("Asia/Tokyo czd={}", czd);
 
         final LocalDateTime sld = szd.toLocalDateTime();
         final LocalDateTime cld = czd.toLocalDateTime();
         final Duration dur = Duration.between(sld, cld);
-        System.out.println("PT1H dur=" + dur);
+        log.info("PT1H dur={}", dur);
 
         Assertions.assertEquals(jp, czd.getZone());
         Assertions.assertEquals(ZoneId.of(Cn), szd.getZone());

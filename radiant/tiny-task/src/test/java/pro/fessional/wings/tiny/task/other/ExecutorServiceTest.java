@@ -18,8 +18,7 @@ import java.util.concurrent.ScheduledFuture;
  * @since 2022-12-13
  */
 @SpringBootTest(properties = {
-        "debug=true",
-        "logging.level.root=DEBUG",
+        "logging.level.root=DEBUG", // AssertionLogger
 })
 @Slf4j
 @Disabled("Simulate: batch, check manually")

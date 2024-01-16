@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,6 +36,7 @@ import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.MULTIP
  * @since 2020-06-03
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Slf4j
 public class RetrofitTest {
 
     @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
@@ -110,21 +112,21 @@ public class RetrofitTest {
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");
         final String j1 = JSON.toJSONString(bad, FastJsonHelper.DefaultWriter());
-        System.out.println("fastjson:" + j1);
+        log.info("fastjson:{}", j1);
 
         final String j2 = objectMapper.writeValueAsString(bad);
-        System.out.println("jackson:" + j2);
+        log.info("jackson:{}", j2);
 
         //
         final Bad o1 = JSON.parseObject(j1, Bad.class, FastJsonHelper.DefaultReader());
-        System.out.println("fastjson-fastjson:" + o1);
+        log.info("fastjson-fastjson:{}", o1);
         final Bad o2 = objectMapper.readValue(j1, Bad.class);
-        System.out.println("fastjson-jackson:" + o2);
+        log.info("fastjson-jackson:{}", o2);
 
         final Bad o3 = JSON.parseObject(j2, Bad.class, FastJsonHelper.DefaultReader());
-        System.out.println("jackson-fastjson:" + o3);
+        log.info("jackson-fastjson:{}", o3);
         final Bad o4 = objectMapper.readValue(j2, Bad.class);
-        System.out.println("jackson-jackson:" + o4);
+        log.info("jackson-jackson:{}", o4);
 
     }
 }

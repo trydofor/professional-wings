@@ -16,8 +16,7 @@ import pro.fessional.wings.silencer.testing.AssertionLogger;
  */
 @Slf4j
 @SpringBootTest(properties = {
-        "debug=true",
-        "logging.level.root=DEBUG",
+        "logging.level.root=DEBUG", // AssertionLogger
 })
 @DependsOnDatabaseInitialization
 class WarlockPermCacheTest {

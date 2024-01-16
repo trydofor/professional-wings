@@ -33,8 +33,7 @@ import java.util.Set;
  * @since 2022-03-09
  */
 @SpringBootTest(properties = {
-        "debug=true",
-        "logging.level.root=DEBUG",
+        "logging.level.root=DEBUG", // AssertionLogger
         "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
 })
 @DependsOnDatabaseInitialization

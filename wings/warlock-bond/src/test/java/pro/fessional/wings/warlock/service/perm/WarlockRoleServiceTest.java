@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @SpringBootTest(properties = {
         "wings.faceless.jooq.cud.table[win_role_entry]=-",
-        "logging.level.root=debug"})
+})
 @DependsOnDatabaseInitialization
 class WarlockRoleServiceTest {
 
@@ -31,7 +31,7 @@ class WarlockRoleServiceTest {
         final Map<Long, String> a2 = warlockRoleService.loadRoleAll();
         Assertions.assertSame(a1, a2);
 
-        warlockRoleService.modify(1,"super user");
+        warlockRoleService.modify(1, "super user");
         Sleep.ignoreInterrupt(2_000);
 
         final Map<Long, String> a3 = warlockRoleService.loadRoleAll();

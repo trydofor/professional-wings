@@ -93,7 +93,7 @@ public class Param1ControllerTest {
                 break;
             }
         }
-        System.out.printf("fastjson=[%s], jackson=[%s]\n", ft, jk);
+        log.info("fastjson=[{}], jackson=[{}]", ft, jk);
         Assertions.assertTrue(ok, String.join(",", acc));
     }
 
