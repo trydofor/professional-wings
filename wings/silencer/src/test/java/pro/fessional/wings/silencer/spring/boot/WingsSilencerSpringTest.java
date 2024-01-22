@@ -38,11 +38,11 @@ public class WingsSilencerSpringTest {
     @TmsLink("C11009")
     public void profile() {
         assertEquals("empty", module);
-        assertEquals("wings-silencer-dev", name);
+        assertEquals("silencer-dev", name);
         assertEquals("empty", moduleTest);
         assertEquals("empty", nameTest);
         assertEquals("empty", moduleDev);
-        assertEquals("wings-silencer-dev", nameDev);
-        assertEquals("wings-silencer-empty", nameEmpty);
+        assertEquals("silencer-dev", nameDev);
+        assertEquals("silencer-empty", nameEmpty);
     }
 }

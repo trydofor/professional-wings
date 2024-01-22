@@ -18,6 +18,7 @@
 
     <modules>
         <module>devs-codegen</module>
+        <module>devs-coverage</module>
         <module>devs-mvndeps</module>
         <module>tiny-autogen</module>
         <module>tiny-mail</module>

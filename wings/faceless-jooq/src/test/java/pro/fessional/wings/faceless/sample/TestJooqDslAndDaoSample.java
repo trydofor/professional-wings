@@ -49,8 +49,7 @@ import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotic
 
 
 @SpringBootTest(properties = {
-        "debug=true",
-        "logging.level.root=DEBUG",
+        "logging.level.root=DEBUG", // AssertionLogger
         "wings.faceless.jooq.conf.auto-qualify=true",
         "wings.faceless.jooq.conf.render-table=ALWAYS",
 //        "wings.faceless.jooq.conf.auto-qualify=false",

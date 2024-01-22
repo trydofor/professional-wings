@@ -6,15 +6,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author trydofor
  * @since 2023-11-01
  */
 @SpringBootTest(properties = {
-        "debug=true",
-        "logging.level.root=DEBUG",
+        "logging.level.root=DEBUG", // AssertionLogger
 })
 @Slf4j
 class AssertionLoggerTest {

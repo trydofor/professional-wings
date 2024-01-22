@@ -15,7 +15,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2023-07-03
  */
-@SpringBootTest(properties = {"logging.level.root=debug"})
+@SpringBootTest
 @DependsOnDatabaseInitialization
 class WarlockPermServiceTest {
 

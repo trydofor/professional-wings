@@ -38,11 +38,11 @@ public class WingsSilencerProfile2Test {
     @TmsLink("C11008")
     public void profile() {
         assertEquals("Silencer-test30", moduleTest);
-        assertEquals("wings-silencer-test", nameTest);
+        assertEquals("silencer-test", nameTest);
         assertEquals("Silencer-dev", moduleDev);
-        assertEquals("wings-silencer-dev", nameDev);
-        assertEquals("wings-silencer-test", name); // spring Alphabetical order, latter taking precedence
+        assertEquals("silencer-dev", nameDev);
+        assertEquals("silencer-test", name); // spring Alphabetical order, latter taking precedence
         assertEquals("Silencer-test30", module); // Seq override
-        assertEquals("wings-silencer-empty", nameEmpty);
+        assertEquals("silencer-empty", nameEmpty);
     }
 }

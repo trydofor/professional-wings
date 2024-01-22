@@ -34,7 +34,7 @@ class AttributeHolderTest {
         Assertions.assertEquals(Integer.class, Solos.PasssaltByUid.keyType);
         Assertions.assertEquals(String.class, Solos.PasssaltByUid.valType);
 
-        System.out.println(">>>" + Solos.PasssaltByUid.regType.getName().substring(Solos.PasssaltByUid.regType.getPackageName().length() + 1));
+        log.info(">>>{}", Solos.PasssaltByUid.regType.getName().substring(Solos.PasssaltByUid.regType.getPackageName().length() + 1));
     }
 
     TypedReg<Integer, String> Expiry = new TypedReg<>() {};
