@@ -5,9 +5,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
-import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.util.List;
+
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.execWingsSql;
 
 /**
  * Customize Config
@@ -26,10 +27,10 @@ public class ConstantEnumGenSample {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(jdbc, user, pass);
         // init
         JdbcTemplate jdbcTemplate = helper.getJdbcTemplate();
-        WingsTestHelper.execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
-        WingsTestHelper.execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
-        WingsTestHelper.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
-        WingsTestHelper.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21v01-enum-i18n.sql");
+        execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
+        execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
+        execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
+        execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21v01-enum-i18n.sql");
 
         final List<ConstantEnumGenerator.ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
         ConstantEnumGenerator.builder()

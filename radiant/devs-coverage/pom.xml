@@ -15,6 +15,11 @@
     <name>Radiant::Devs::Coverage</name>
     <description>jacoco and coveralls report</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>

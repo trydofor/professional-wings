@@ -1,4 +1,4 @@
-package pro.fessional.wings.devs;
+package pro.fessional.wings.devs.init;
 
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
@@ -26,12 +26,9 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_
  * @author trydofor
  * @since 2021-02-22
  */
-@SpringBootTest(properties = {
-        "wings.enabled.faceless.flywave=true",
-        "wings.faceless.flywave.checker=false",
-})
+@SpringBootTest
 @EnabledIfSystemProperty(named = "test-init-database", matches = "true")
-public class BootDatabaseTest {
+public class DatabaseWingsTest {
 
     @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;

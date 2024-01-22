@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1
 
 /**
  * @author trydofor

@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.spring.bean.HazelcastConfigConfiguration;
+import pro.fessional.wings.slardar.spring.bean.HazelcastFacelessConfiguration;
 import pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration;
 
 /**
@@ -16,6 +17,7 @@ import pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration;
 @ConditionalWingsEnabled
 @Import({
         HazelcastConfigConfiguration.class,
+        HazelcastFacelessConfiguration.class,
         HazelcastServiceConfiguration.class,
 })
 public class SlardarHazelcastAutoConfiguration {

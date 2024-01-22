@@ -33,7 +33,7 @@ import static pro.fessional.wings.faceless.app.database.jooq.MockTstNormalTableD
 @SpringBootTest(properties = {
         "wings.faceless.testing.mock-jooq=true",
         """
-                spring.datasource.url=jdbc:h2:./${testing.dbname}\\
+                spring.datasource.url=jdbc:h2:${testing.wings.rootdir}/${testing.dbname}\\
                 ;USER=${spring.datasource.username};PASSWORD=${spring.datasource.password}\\
                 ;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;IGNORECASE=TRUE\\
                 ;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE"""

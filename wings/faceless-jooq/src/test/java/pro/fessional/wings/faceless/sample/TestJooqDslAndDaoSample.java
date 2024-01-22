@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @SpringBootTest(properties = {
-        "wings.slardar.cache.level.general.max-live=10"
+        "wings.slardar.cache.level.general.max-live=5"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
@@ -63,8 +63,8 @@ public class SlardarCacheConfigurationTest {
         c2 = cacheService.cacheServer("cacheCall");
         assertEquals(2, c2);
 
-        log.info("sleep 15 s");
-        Sleep.ignoreInterrupt(15000);
+        log.info("sleep 10 s");
+        Sleep.ignoreInterrupt(10000);
 
         c1 = cacheService.cacheMemory("cacheCall");
         c2 = cacheService.cacheServer("cacheCall");

@@ -15,22 +15,19 @@
     <name>Radiant::Devs::CodeGen</name>
     <description>generate the wings auto-gen code automatically</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
     <dependencies>
-        <!-- codegen  -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-codegen</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock-codegen</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

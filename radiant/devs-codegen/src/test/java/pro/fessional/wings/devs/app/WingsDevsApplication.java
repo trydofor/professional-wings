@@ -1,4 +1,4 @@
-package pro.fessional.wings.devs;
+package pro.fessional.wings.devs.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

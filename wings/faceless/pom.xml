@@ -26,16 +26,11 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer-curse</artifactId>
         </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>meepo</artifactId>
-        </dependency>
-        <!-- spring boot -->
+        <!-- jdbc -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!-- other -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

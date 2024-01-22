@@ -15,138 +15,122 @@
     <name>Radiant::Devs::Mvndeps</name>
     <description>check dependency's version by maven-dependency-checker</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
+    <!-- Keep `*.version` properties, get easy search and IDE hint -->
     <dependencies>
-        <!-- Keep the version in test scope, get easy search and IDE hint -->
+        <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
         <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core</artifactId>
-            <version>${shardingsphere.version}</version>
-            <scope>test</scope>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${annotations.version}</version>
         </dependency>
+        <!-- common utils-->
         <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-            <version>${hazelcast.version}</version>
-            <scope>test</scope>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
         </dependency>
-        <!-- utils -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${commons-collections4.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
             <version>${joda-convert.version}</version>
-            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>kaptcha</artifactId>
-            <version>${kaptcha.version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- wings project -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>${fastjson2.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- DENIED by wings, define safe version numbers for indirectly 3rd lib -->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
             <version>${kryo.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
             <version>${transmittable.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>me.zhyd.oauth</groupId>
             <artifactId>JustAuth</artifactId>
             <version>${justauth.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Argon2PasswordEncoder -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk18on</artifactId>
-            <version>${bouncycastle.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>${retrofit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- ops -->
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>${boot-admin.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
-            <version>${sentry.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- dev -->
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>${annotations.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
+            <version>${shardingsphere.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.servicecomb</groupId>
             <artifactId>java-chassis-core</artifactId>
             <version>${servicecomb.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <!-- others -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${boot-admin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+            <version>${sentry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>${retrofit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
     </dependencies>
 </project>

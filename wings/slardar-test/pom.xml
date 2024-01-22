@@ -19,15 +19,11 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer-test</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-test</artifactId>
+            <artifactId>slardar-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

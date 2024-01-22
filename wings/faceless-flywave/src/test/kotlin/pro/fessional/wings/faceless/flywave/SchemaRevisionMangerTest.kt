@@ -8,10 +8,10 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.breakpointDebug
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper
-import pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.testing.database.WingsTestHelper.breakpointDebug
 
 /**
  * Default profile, there are writer and reader datasource, use the writer only.
@@ -35,14 +35,14 @@ open class SchemaRevisionMangerTest {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var testingDatabaseHelper: TestingDatabaseHelper
 
     private val schemaVersion = "win_schema_version"
 
     @Test
     @TmsLink("C12047")
     fun test0CleanTables() {
-        wingsTestHelper.cleanTable()
+        testingDatabaseHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
             .master()
             .replace(revi1Schema, revi1Schema + 1, true)
@@ -135,12 +135,12 @@ open class SchemaRevisionMangerTest {
     @TmsLink("C12053")
     fun test5ForceBreak() {
         breakpointDebug("Publish 615💰")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         breakpointDebug("Cancel 615💰")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -4, false)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
     }
 
 
@@ -169,7 +169,7 @@ open class SchemaRevisionMangerTest {
             DROP TABLE IF EXISTS `test_temp_x`;
             """.trimIndent()
         )
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp_x")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp_x")
     }
 
     @Test

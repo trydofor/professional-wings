@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock;
+package pro.fessional.wings.devs.init;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -25,12 +25,9 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V05_20_1025_01_
  * @author trydofor
  * @since 2021-02-22
  */
-@SpringBootTest(properties = {
-        "wings.enabled.faceless.flywave=true",
-        "wings.faceless.flywave.checker=false",
-})
+@SpringBootTest(properties = "testing.dbname=wings_warlock")
 @EnabledIfSystemProperty(named = "test-init-database", matches = "true")
-public class BootDatabaseTest {
+public class DatabaseWarlockTest {
     @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;
     @Setter(onMethod_ = {@Autowired})

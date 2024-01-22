@@ -1,4 +1,4 @@
-package pro.fessional.wings.devs;
+package pro.fessional.wings.devs.init;
 
 import lombok.Setter;
 import org.junit.jupiter.api.MethodOrderer;

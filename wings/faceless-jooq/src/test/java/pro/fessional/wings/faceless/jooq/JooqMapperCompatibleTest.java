@@ -17,11 +17,11 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.testing.database.WingsTestHelper;
 
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -37,7 +37,7 @@ public class JooqMapperCompatibleTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Setter(onMethod_ = {@Autowired})
     private TstShardingDao dao;
@@ -45,7 +45,7 @@ public class JooqMapperCompatibleTest {
     @Test
     @TmsLink("C12098")
     public void test0Init() {
-        wingsTestHelper.cleanTable();
+        testingDatabaseHelper.cleanTable();
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);

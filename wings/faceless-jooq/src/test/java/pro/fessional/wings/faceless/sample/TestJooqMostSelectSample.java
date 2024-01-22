@@ -58,8 +58,8 @@ import java.util.Map;
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * <pre>

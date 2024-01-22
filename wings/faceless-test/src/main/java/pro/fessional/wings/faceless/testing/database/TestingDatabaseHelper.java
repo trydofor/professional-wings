@@ -1,4 +1,4 @@
-package pro.fessional.wings.testing.database;
+package pro.fessional.wings.faceless.testing.database;
 
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
@@ -21,19 +21,19 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2020-05-22
  */
-public class WingsTestHelper {
+public class TestingDatabaseHelper {
 
     public static final long REVISION_TEST_V1 = 2019_0601_01L;
     public static final long REVISION_TEST_V2 = 2019_0601_02L;
 
-    private static final Logger log = LoggerFactory.getLogger(WingsTestHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(TestingDatabaseHelper.class);
 
     private final DataSource current;
     private final Map<String, DataSource> backends;
 
     private final boolean hasH2;
 
-    public WingsTestHelper(DataSource current, Map<String, DataSource> backends) {
+    public TestingDatabaseHelper(DataSource current, Map<String, DataSource> backends) {
         this.current = current;
         this.backends = backends;
         boolean h2 = false;
@@ -154,7 +154,7 @@ public class WingsTestHelper {
     }
 
     public static void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
-        String sqls = InputStreams.readText(WingsTestHelper.class.getResourceAsStream("/wings-flywave/" + path));
+        String sqls = InputStreams.readText(TestingDatabaseHelper.class.getResourceAsStream("/wings-flywave/" + path));
         for (String sql : sqls.split(
                 ";+[ \\t]*[\\r\\n]+"
                 + "|"

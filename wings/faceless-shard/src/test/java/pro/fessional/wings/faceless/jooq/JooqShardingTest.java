@@ -20,16 +20,16 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShard
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.testing.database.WingsTestHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -54,12 +54,12 @@ public class JooqShardingTest {
     private TstShardingDao dao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Test
     @TmsLink("C12135")
     public void test0CleanTables() {
-        wingsTestHelper.cleanTable();
+        testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
     }

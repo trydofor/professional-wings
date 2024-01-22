@@ -18,6 +18,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>meepo</artifactId>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
         </dependency>

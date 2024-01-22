@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper
+import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper
-import pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice
 import java.io.File
 import javax.sql.DataSource
 
@@ -37,12 +37,12 @@ class SchemaFulldumpManagerTest {
     val fold = "./src/test/resources/wings-flywave/fulldump"
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var testingDatabaseHelper: TestingDatabaseHelper
 
     @Test
     @TmsLink("C12036")
     fun test0CleanTables() {
-        wingsTestHelper.cleanTable()
+        testingDatabaseHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 

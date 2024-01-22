@@ -1,4 +1,4 @@
-package pro.fessional.wings.tiny.project;
+package pro.fessional.wings.devs.init;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -27,13 +27,10 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_
  * @author trydofor
  * @since 2021-02-22
  */
-@SpringBootTest(properties = {
-        "wings.enabled.faceless.flywave=true",
-        "wings.faceless.flywave.checker=false",
-        "testing.dbname=wings_tiny"
-})
+@SpringBootTest(properties = "testing.dbname=wings_tiny")
 @EnabledIfSystemProperty(named = "test-init-database", matches = "true")
-public class BootDatabaseTest {
+public class DatabaseTinyTest {
+
     @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;
     @Setter(onMethod_ = {@Autowired})
