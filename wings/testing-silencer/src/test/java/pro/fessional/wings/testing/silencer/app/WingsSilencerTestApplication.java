@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.app;
+package pro.fessional.wings.testing.silencer.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -25,7 +25,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqConfProp;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
+import pro.fessional.wings.testing.silencer.AssertionLogger;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -123,7 +123,7 @@ public class TestJooqDslAndDaoSample {
         log.info("============update {}", u2);
 
         al.stop();
-        Assertions.assertTrue(al.assertCount(1), al::messageCount);
+        al.assertCount(1);
         al.uninstall();
     }
 

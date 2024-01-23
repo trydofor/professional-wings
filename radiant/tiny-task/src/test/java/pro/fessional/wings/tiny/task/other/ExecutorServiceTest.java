@@ -2,13 +2,12 @@ package pro.fessional.wings.tiny.task.other;
 
 import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
+import pro.fessional.wings.testing.silencer.AssertionLogger;
 
 import java.time.Instant;
 import java.util.concurrent.ScheduledFuture;
@@ -91,7 +90,7 @@ class ExecutorServiceTest {
         log.info("== done=");
 
         al.stop();
-        Assertions.assertTrue(al.assertCount(1), al::messageCount);
+        al.assertCount(1);
         al.uninstall();
     }
 }

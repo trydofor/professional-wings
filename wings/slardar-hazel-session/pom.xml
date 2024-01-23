@@ -33,7 +33,7 @@
         <!-- test -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-test</artifactId>
+            <artifactId>testing-slardar</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

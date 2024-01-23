@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.silencer.modulate.RunMode;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
+import pro.fessional.wings.testing.silencer.AssertionLogger;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 

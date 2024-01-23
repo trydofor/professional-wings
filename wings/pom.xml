@@ -21,7 +21,6 @@
         <module>silencer</module>
         <module>silencer-curse</module>
         <module>silencer-jaxb</module>
-        <module>silencer-test</module>
         <module>faceless</module>
         <module>faceless-autogen</module>
         <module>faceless-awesome</module>
@@ -29,24 +28,25 @@
         <module>faceless-jooq</module>
         <module>faceless-codegen</module>
         <module>faceless-shard</module>
-        <module>faceless-test</module>
         <module>slardar</module>
         <module>slardar-hazel-caching</module>
         <module>slardar-hazel-session</module>
         <module>slardar-webmvc</module>
         <module>slardar-sprint</module>
-        <module>slardar-test</module>
         <module>warlock</module>
         <module>warlock-autogen</module>
         <module>warlock-awesome</module>
         <module>warlock-bond</module>
         <module>warlock-codegen</module>
         <module>warlock-shadow</module>
-        <module>warlock-test</module>
         <module>batrider</module>
-        <module>batrider-test</module>
         <module>batrider-zero</module>
         <module>testing-docker</module>
+        <module>testing-faceless</module>
+        <module>testing-silencer</module>
+        <module>testing-slardar</module>
+        <module>testing-warlock</module>
+        <module>testing-batrider</module>
     </modules>
 
     <dependencies>

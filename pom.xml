@@ -157,11 +157,6 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>silencer-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -197,11 +192,6 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -223,11 +213,6 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>slardar-sprint</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>slardar-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -262,17 +247,7 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>warlock-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>batrider</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>batrider-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -282,7 +257,32 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-silencer</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>testing-docker</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-faceless</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-slardar</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-warlock</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->

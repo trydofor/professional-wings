@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
+import pro.fessional.wings.testing.silencer.AssertionLogger;
 
 /**
  * @author trydofor

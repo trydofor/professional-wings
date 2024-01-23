@@ -32,7 +32,7 @@
         <!-- test -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-test</artifactId>
+            <artifactId>testing-warlock</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

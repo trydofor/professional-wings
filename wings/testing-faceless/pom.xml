@@ -10,22 +10,24 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>batrider-test</artifactId>
+    <artifactId>testing-faceless</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Batrider::Test</name>
-    <description>Testing of Servicecomb</description>
+    <name>Wings::Faceless::Test</name>
+    <description>Testing of Faceless</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>batrider-zero</artifactId>
+            <artifactId>faceless</artifactId>
         </dependency>
         <dependency>
-            <!-- swagger -->
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-webmvc</artifactId>
-            <scope>test</scope>
+            <artifactId>testing-silencer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>testing-docker</artifactId>
         </dependency>
     </dependencies>
 </project>

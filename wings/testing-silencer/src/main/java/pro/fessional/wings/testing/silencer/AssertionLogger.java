@@ -1,12 +1,12 @@
-package pro.fessional.wings.silencer.testing;
+package pro.fessional.wings.testing.silencer;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
-
 import org.jetbrains.annotations.Contract;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
@@ -62,11 +62,10 @@ public class AssertionLogger extends AppenderBase<ILoggingEvent> {
         return c == null ? 0 : c;
     }
 
-    public boolean assertCount(int min) {
+    public void assertCount(int min) {
         for (Integer c : count.values()) {
-            if (c == null || c < min) return false;
+            Assertions.assertTrue(c != null && c >= min, this::messageCount);
         }
-        return true;
     }
 
     public String messageCount() {

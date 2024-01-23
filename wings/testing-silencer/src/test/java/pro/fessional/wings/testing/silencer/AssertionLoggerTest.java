@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.testing;
+package pro.fessional.wings.testing.silencer;
 
 import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
