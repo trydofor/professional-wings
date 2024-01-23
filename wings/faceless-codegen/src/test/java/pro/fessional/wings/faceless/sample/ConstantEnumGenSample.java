@@ -8,7 +8,7 @@ import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 
 import java.util.List;
 
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.execWingsSql;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.execWingsSql;
 
 /**
  * Customize Config

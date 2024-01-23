@@ -7,38 +7,38 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration;
-import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
+import pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration;
+import pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration;
 
 /**
  * @author trydofor
  * @since 2023-11-17
  */
 @SpringBootTest(properties = {
-        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration]=false",
-        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration]=false",
+        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration]=false",
+        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration]=false",
 })
 @Disabled("Investigate: Run separately to avoid impact")
 public class WingsEnabledTopFalseTest {
 
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration wingsEnabledCatConfiguration;
+    protected TestEnabledCatConfiguration wingsEnabledCatConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration.CatBean catBean;
+    protected TestEnabledCatConfiguration.CatBean catBean;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration.InnerCatConfiguration innerCatConfiguration;
+    protected TestEnabledCatConfiguration.InnerCatConfiguration innerCatConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration.InnerCatBean innerCatBean;
+    protected TestEnabledCatConfiguration.InnerCatBean innerCatBean;
 
 
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration wingsEnabledDogConfiguration;
+    protected TestEnabledDogConfiguration wingsEnabledDogConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration.DogBean dogBean;
+    protected TestEnabledDogConfiguration.DogBean dogBean;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration.InnerDogConfiguration innerDogConfiguration;
+    protected TestEnabledDogConfiguration.InnerDogConfiguration innerDogConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration.InnerDogBean innerDogBean;
+    protected TestEnabledDogConfiguration.InnerDogBean innerDogBean;
 
 
     @Test

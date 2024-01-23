@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 
-import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.JAVA;
-import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.JDBC;
-import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.PASS;
-import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.USER;
+import static pro.fessional.wings.warlock.project.TestWarlock0CodegenConstant.JAVA;
+import static pro.fessional.wings.warlock.project.TestWarlock0CodegenConstant.JDBC;
+import static pro.fessional.wings.warlock.project.TestWarlock0CodegenConstant.PASS;
+import static pro.fessional.wings.warlock.project.TestWarlock0CodegenConstant.USER;
 
 /**
  * @author trydofor

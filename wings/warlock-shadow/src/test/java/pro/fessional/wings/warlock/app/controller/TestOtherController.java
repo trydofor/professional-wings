@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.MessageException;
+import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.security.autogen.PermConstant;
-import pro.fessional.wings.warlock.app.service.WatchingService;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -119,14 +119,14 @@ public class TestOtherController {
 
 
     @Setter(onMethod_ = {@Autowired})
-    protected WatchingService watchingService;
+    protected TestWatchingService testWatchingService;
 
     @RequestMapping("/test/watching.json")
     public R<?> watching() throws InterruptedException {
-        watchingService.asyncWatch();
-        watchingService.asyncAwait();
-        watchingService.normalFetch();
-        watchingService.errorFetch();
+        testWatchingService.asyncWatch();
+        testWatchingService.asyncAwait();
+        testWatchingService.normalFetch();
+        testWatchingService.errorFetch();
         return R.OK;
     }
 }

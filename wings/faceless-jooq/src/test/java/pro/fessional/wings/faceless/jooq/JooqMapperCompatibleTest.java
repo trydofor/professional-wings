@@ -17,11 +17,11 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor

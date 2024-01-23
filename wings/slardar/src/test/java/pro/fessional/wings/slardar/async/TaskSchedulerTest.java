@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.wings.slardar.app.service.TestAsyncService;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.app.service.AsyncService;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +32,7 @@ public class TaskSchedulerTest {
     protected ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     @Setter(onMethod_ = {@Autowired})
-    protected AsyncService asyncService;
+    protected TestAsyncService testAsyncService;
 
     @Test
     @TmsLink("C13001")
@@ -42,7 +42,7 @@ public class TaskSchedulerTest {
         builder.user(userId);
         TerminalContext.login(builder.build());
 
-        CompletableFuture<Long> uid = asyncService.asyncUserId();
+        CompletableFuture<Long> uid = testAsyncService.asyncUserId();
         Assertions.assertEquals(userId, uid.get());
 
         final AtomicInteger cnt1 = new AtomicInteger(0);

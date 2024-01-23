@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.testing.silencer.AssertionLogger;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 /**
  * @author trydofor
@@ -29,7 +29,7 @@ class WarlockPermCacheTest {
     @Test
     @TmsLink("C14064")
     void cleanCache() throws InterruptedException {
-        AssertionLogger al = AssertionLogger.install();
+        TestingLoggerAssert al = TestingLoggerAssert.install();
         al.rule("loadPermAll", event -> event.getFormattedMessage().contains("loadPermAll size="));
         al.rule("loadRoleAll", event -> event.getFormattedMessage().contains("loadRoleAll size="));
         al.start();

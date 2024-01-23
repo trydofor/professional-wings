@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice
 import java.io.File
 import javax.sql.DataSource
 

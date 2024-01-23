@@ -14,11 +14,11 @@ import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.breakpointDebug
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice
 
 /**
  * Shard and trace table test

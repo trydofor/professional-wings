@@ -1,1 +1,1 @@
-org.springframework.context.ApplicationListener=pro.fessional.wings.silencer.app.conf.ApplicationEventLogger
+org.springframework.context.ApplicationListener=pro.fessional.wings.silencer.app.conf.TestApplicationEventLogger

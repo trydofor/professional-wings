@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
-import pro.fessional.wings.testing.silencer.AssertionLogger;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 import java.time.Instant;
 import java.util.concurrent.ScheduledFuture;
@@ -26,7 +26,7 @@ class ExecutorServiceTest {
     @Test
     @TmsLink("C15012")
     void schedule() throws InterruptedException {
-        final AssertionLogger al = AssertionLogger.install();
+        final TestingLoggerAssert al = TestingLoggerAssert.install();
         al.rule("-1 run", event -> event.getFormattedMessage().contains("-1 run="));
         al.rule("-1 cancel", event -> event.getFormattedMessage().contains("-1 cancel=false"));
         al.rule("=0 run", event -> event.getFormattedMessage().contains("=0 run="));

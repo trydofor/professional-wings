@@ -18,9 +18,9 @@ import java.util.SortedMap;
  */
 @Disabled("Sample: Init database, project template, managed by devops")
 @SpringBootTest(properties = {
-        "spring.datasource.url=" + Warlock0CodegenConstant.JDBC,
-        "spring.datasource.username=" + Warlock0CodegenConstant.USER,
-        "spring.datasource.password=" + Warlock0CodegenConstant.PASS,
+        "spring.datasource.url=" + TestWarlock0CodegenConstant.JDBC,
+        "spring.datasource.username=" + TestWarlock0CodegenConstant.USER,
+        "spring.datasource.password=" + TestWarlock0CodegenConstant.PASS,
 })
 class TestWarlock1SchemaManagerSample {
 

@@ -8,10 +8,10 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.breakpointDebug
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
 
 /**
  * Default profile, there are writer and reader datasource, use the writer only.

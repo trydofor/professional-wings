@@ -10,16 +10,16 @@ import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializat
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
-import pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.testing.database.TestingDataSource;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.testing.database.TestingDatabaseHelper.testcaseNotice;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor

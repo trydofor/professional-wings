@@ -535,7 +535,7 @@
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
                         <environmentVariables>
-                            <WINGS_HOME>${wings.rootdir}</WINGS_HOME>
+                            <WINGS_ROOTDIR>${wings.rootdir}</WINGS_ROOTDIR>
                         </environmentVariables>
                     </configuration>
                 </plugin>

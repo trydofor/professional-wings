@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.silencer.watch.Watches;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
-import pro.fessional.wings.warlock.app.service.WatchingService;
+import pro.fessional.wings.warlock.app.service.TestWatchingService;
 
 /**
  * @author trydofor
@@ -53,7 +53,7 @@ public class WarlockWatchingTest {
         Assertions.assertEquals(2, watch.owner.getWatches().size());
         Assertions.assertTrue(del);
         // async in async task pool
-        Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
-        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty());
+        Assertions.assertTrue(2 <= TestWatchingService.AsyncWatch.size());
+        Assertions.assertTrue(TestWatchingService.WatchOwner.getWatches().isEmpty());
     }
 }

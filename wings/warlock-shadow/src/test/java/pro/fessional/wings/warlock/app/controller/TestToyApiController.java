@@ -20,8 +20,8 @@ import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
+import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.controller.api.AbstractApiAuthController;
-import pro.fessional.wings.warlock.app.service.WatchingService;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,7 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class TestToyApiController extends AbstractApiAuthController {
 
     @Setter(onMethod_ = {@Autowired})
-    protected WatchingService watchingService;
+    protected TestWatchingService testWatchingService;
     @Setter(onMethod_ = {@Autowired})
     private SlardarSessionProp slardarSessionProp;
 
@@ -144,8 +144,8 @@ public class TestToyApiController extends AbstractApiAuthController {
         }
 
         log.warn("TestToyApiController={}", TerminalContext.get());
-        watchingService.asyncTerminal();
-        watchingService.logTerminal();
+        testWatchingService.asyncTerminal();
+        testWatchingService.logTerminal();
 
         return true;
     }
