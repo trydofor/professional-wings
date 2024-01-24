@@ -102,6 +102,7 @@ jobs:
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: inputs.testCoverReport
         run: |
+          mvn -pl ':devs-codegen' -am -Ddevs-codegen.test.skip=false -Ddevs-initdb=true -Dwings.test.skip=true clean test
           mvn -P 'test,!example' -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }} clean test
           mvn -pl ':devs-coverage' -am jacoco:report-aggregate
           mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS verify

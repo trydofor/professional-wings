@@ -25,7 +25,7 @@ public class WingsSilencerMergeTest {
 
     @Test
     @TmsLink("C11005")
-    public void merge() {
+    public void propMergeOrReplace() {
         // replace
         Assertions.assertEquals(List.of("a"), testMergingProp.getLst1());
         Assertions.assertEquals(List.of("a"), testMergingProp.getLst2());

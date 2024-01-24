@@ -64,7 +64,7 @@ public class WingsEnabledFalseTest {
 
     @Test
     @TmsLink("C11028")
-    public void test() {
+    public void wingsEnabledFalse() {
         Assertions.assertNotNull(wingsEnabledCatConfiguration);
         Assertions.assertNull(catBean);
         Assertions.assertNull(innerCatConfiguration);

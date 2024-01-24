@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2019-06-25
  */
 @SpringBootApplication
-public class TestWingsDevsApplication {
+public class TestDevsCodegenApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TestWingsDevsApplication.class, args);
+        SpringApplication.run(TestDevsCodegenApplication.class, args);
     }
 }

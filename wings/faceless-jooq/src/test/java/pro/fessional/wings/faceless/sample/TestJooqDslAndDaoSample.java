@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
 import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
-import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -74,7 +74,7 @@ public class TestJooqDslAndDaoSample {
     public void test0Init() {
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
+        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
     }
 
     @Test

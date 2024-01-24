@@ -17,10 +17,10 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
-import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -48,7 +48,7 @@ public class JooqMapperCompatibleTest {
         testingDatabaseHelper.cleanTable();
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);
+        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_02_TestRecord.revision(), 0);
     }
 
     @Test

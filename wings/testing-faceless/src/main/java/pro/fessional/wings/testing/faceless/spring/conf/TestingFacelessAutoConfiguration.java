@@ -16,7 +16,7 @@ public class TestingFacelessAutoConfiguration {
 
     @Bean
     public TestingDatabaseHelper wingsTestHelper(DataSourceContext context) {
-        return new TestingDatabaseHelper(context.getCurrent(), context.getBackends());
+        return new TestingDatabaseHelper(context);
     }
 
 }

@@ -43,7 +43,7 @@ public class WingsEnabledTopFalseTest {
 
     @Test
     @TmsLink("C11029")
-    public void test() {
+    public void wingsEnabledTopFalse() {
         Assertions.assertNull(wingsEnabledCatConfiguration, "change code and recompile to pass the testcase");
         Assertions.assertNull(catBean, "change code and recompile to pass the testcase");
         Assertions.assertNull(innerCatConfiguration, "change code and recompile to pass the testcase");

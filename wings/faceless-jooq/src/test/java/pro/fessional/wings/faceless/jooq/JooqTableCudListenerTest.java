@@ -36,8 +36,8 @@ import java.util.function.BiConsumer;
 
 import static java.util.Collections.singletonList;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
-import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -81,7 +81,7 @@ public class JooqTableCudListenerTest {
         testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V2, -1);
+        schemaRevisionManager.publishRevision(V90_19_0601_02_TestRecord.revision(), -1);
     }
 
     @Test

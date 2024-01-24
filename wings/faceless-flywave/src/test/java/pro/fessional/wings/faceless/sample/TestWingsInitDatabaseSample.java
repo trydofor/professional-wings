@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
-import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1;
 
 /**
  * @author trydofor
@@ -34,6 +34,6 @@ public class TestWingsInitDatabaseSample {
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
 
         // upgrade
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
+        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
     }
 }

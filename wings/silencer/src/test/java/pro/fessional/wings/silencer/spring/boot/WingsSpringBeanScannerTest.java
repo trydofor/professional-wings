@@ -4,10 +4,8 @@ import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import pro.fessional.wings.silencer.scanner.bean.TestBeanScan;
 import pro.fessional.wings.silencer.scanner.noscan.TestBeanNoScan;
 
@@ -21,21 +19,16 @@ import pro.fessional.wings.silencer.scanner.noscan.TestBeanNoScan;
 })
 class WingsSpringBeanScannerTest {
 
-    @Setter(onMethod_ = {@Autowired})
-    private ApplicationContext applicationContext;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private TestBeanScan testBeanScan;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private TestBeanNoScan testBeanNoScan;
 
 
     @Test
     @TmsLink("C11025")
-    public void test() {
-        applicationContext.getBean(TestBeanScan.class);
-
-        try {
-            applicationContext.getBean(TestBeanNoScan.class);
-            Assertions.fail();
-        }
-        catch (NoSuchBeanDefinitionException e) {
-            Assertions.assertTrue(true);
-        }
+    public void scannerBeanTi12() {
+        Assertions.assertNotNull(testBeanScan);
+        Assertions.assertNull(testBeanNoScan);
     }
 }

@@ -31,9 +31,7 @@
         <java.version>21</java.version>
         <!-- <kotlin.version>1.9.21</kotlin.version> -->
         <!-- mvn boot -->
-        <maven.test.skip>false</maven.test.skip>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <maven.install.skip>false</maven.install.skip>
+        <wings.test.skip>false</wings.test.skip>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
@@ -534,6 +532,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
+                        <skip>${wings.test.skip}</skip>
                         <environmentVariables>
                             <WINGS_ROOTDIR>${wings.rootdir}</WINGS_ROOTDIR>
                         </environmentVariables>

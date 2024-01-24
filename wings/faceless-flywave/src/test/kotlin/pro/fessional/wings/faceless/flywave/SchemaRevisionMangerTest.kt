@@ -10,7 +10,6 @@ import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializat
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
-import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
 
 /**
@@ -186,19 +185,20 @@ open class SchemaRevisionMangerTest {
     @TmsLink("C12057")
     fun test9MaintainBreak() {
         breakpointDebug("Prepare a breakpoint revision to mock a failure💰")
+        val revision = WingsRevision.V90_19_0601_01_TestSchema.revision()
         schemaRevisionManager.forceExecuteSql(
             """
-            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_TEST_V1';
+            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$revision';
             """.trimIndent()
         )
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
+        schemaRevisionManager.publishRevision(revision, 0)
         breakpointDebug("Can't execute due to broken version, see logs💰")
         schemaRevisionManager.forceExecuteSql(
             """
-            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_TEST_V1';
+            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$revision';
             """.trimIndent()
         )
         breakpointDebug("Fix breakpoint, and downgrade💰")
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
+        schemaRevisionManager.publishRevision(revision, 0)
     }
 }

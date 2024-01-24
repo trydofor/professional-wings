@@ -16,7 +16,6 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.T
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
-import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.REVISION_TEST_V1
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice
 
@@ -165,7 +164,7 @@ class SchemaJournalManagerTest {
             "${schemaPrefix}version"
         )
         breakpointDebug("Create test table💰, check all tables in the database")
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_01_TestSchema.revision(), 0)
         testingDatabaseHelper.assertSame(
             TestingDatabaseHelper.Type.Table,
             "sys_commit_journal",
