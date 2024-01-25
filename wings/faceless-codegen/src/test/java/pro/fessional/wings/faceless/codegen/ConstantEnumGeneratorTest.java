@@ -64,7 +64,7 @@ public class ConstantEnumGeneratorTest {
 
     @TmsLink("C12023")
     @Test
-    public void generate() {
+    public void genEnumByMock() {
         ConstantEnumGenerator.builder()
                              .targetDirectory("target/generated-constant")
                              .targetPackage("pro.fessional.wings.faceless.autogen.enums")

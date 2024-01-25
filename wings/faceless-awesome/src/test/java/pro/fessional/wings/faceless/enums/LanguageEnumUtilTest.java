@@ -18,7 +18,7 @@ public class LanguageEnumUtilTest {
 
     @Test
     @TmsLink("C12017")
-    public void test() {
+    public void localeLanguageTag() {
         Locale locale = StandardLanguage.ZH_CN.toLocale();
         log.info("locale={}", locale.toLanguageTag());
         StandardLanguage al = LanguageEnumUtil.localeOrNull(locale, StandardLanguage.values());

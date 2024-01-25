@@ -41,7 +41,7 @@ public class SilencerEncryptConfigurationTest {
 
     @Test
     @TmsLink("C11019")
-    public void testCode() {
+    public void testCrc8LeepCode() {
         long number = 1979L;
         long encode = crc8Long.encode(number);
         long decode = crc8Long.decode(encode);

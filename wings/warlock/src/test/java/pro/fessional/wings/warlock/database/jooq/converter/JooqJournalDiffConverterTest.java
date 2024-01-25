@@ -19,7 +19,7 @@ class JooqJournalDiffConverterTest {
 
     @Test
     @TmsLink("C14001")
-    void to() {
+    void journalDiff() {
         JournalDiff d0 = new JournalDiff();
         d0.setTable("test_table");
         d0.setColumn(List.of("id", "name", "money", "now"));

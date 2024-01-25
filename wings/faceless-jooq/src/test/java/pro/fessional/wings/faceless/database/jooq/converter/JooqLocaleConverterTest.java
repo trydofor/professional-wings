@@ -14,7 +14,7 @@ class JooqLocaleConverterTest {
 
     @Test
     @TmsLink("C12080")
-    void from() {
+    void jooqLocaleConvert() {
         JooqLocaleConverter jlc = new JooqLocaleConverter();
         final Locale lc = jlc.from("en-us");
         final String t1 = jlc.to(lc);

@@ -31,7 +31,7 @@ public class SilenceDebugTest {
 
     @Test
     @TmsLink("C11020")
-    public void testNow() {
+    public void tweakClock() {
         final LocalDateTime n0 = ThreadNow.localDateTime();
         TweakClock.tweakThread(Duration.ofSeconds(60));
         final LocalDateTime n1 = ThreadNow.localDateTime();
@@ -43,7 +43,7 @@ public class SilenceDebugTest {
 
     @Test
     @TmsLink("C11021")
-    public void testStack() {
+    public void tweakStack() {
         TweakStack.tweakGlobal(true);
         final MessageException me0 = new MessageException("test message");
         final StackTraceElement[] st0 = me0.getStackTrace();
@@ -63,7 +63,7 @@ public class SilenceDebugTest {
 
     @Test
     @TmsLink("C11022")
-    public void testLogger() {
+    public void tweakLogger() {
         final Map<Integer, Boolean> map = new HashMap<>();
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final AppenderBase<ILoggingEvent> debug = new AppenderBase<>() {

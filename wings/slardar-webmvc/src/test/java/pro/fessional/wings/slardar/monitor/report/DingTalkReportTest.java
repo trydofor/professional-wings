@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.monitor.report;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,6 @@ import java.util.TreeMap;
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}",
         "wings.slardar.ding-notice.default.notice-mobiles.god9=155XXXX1991",
 })
-@Disabled("3rdService: avoid frequent calls")
 class DingTalkReportTest {
 
     @Setter(onMethod_ = {@Autowired})

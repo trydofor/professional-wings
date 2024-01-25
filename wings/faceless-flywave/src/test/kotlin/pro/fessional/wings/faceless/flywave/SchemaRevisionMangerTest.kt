@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,7 +27,9 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.break
 )
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
-open class SchemaRevisionMangerTest {
+class SchemaRevisionMangerTest {
+
+    val log: Logger = LoggerFactory.getLogger(SqlSegmentParserTest::class.java)
 
     private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision()
     private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision()
@@ -80,11 +84,11 @@ open class SchemaRevisionMangerTest {
         val databaseVersion = schemaRevisionManager.statusRevisions()
         for ((d, u) in databaseVersion) {
             if (u == null) {
-                println("$d - -1")
+                log.info("$d - -1")
             } else {
-                println("$d -")
+                log.info("$d -")
                 for (entry in u.entries) {
-                    println(" ${entry.key} : ${entry.value}")
+                    log.info(" ${entry.key} : ${entry.value}")
                 }
             }
         }

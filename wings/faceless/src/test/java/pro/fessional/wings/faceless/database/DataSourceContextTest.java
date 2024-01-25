@@ -25,7 +25,7 @@ class DataSourceContextTest {
 
     @Test
     @TmsLink("C12004")
-    void test() {
+    void dbctxBackend() {
         assertNotNull(sourceContext);
         final DataSource primary = sourceContext.getCurrent();
         assertNotNull(primary);

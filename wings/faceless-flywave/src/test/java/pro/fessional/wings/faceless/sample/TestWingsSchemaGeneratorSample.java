@@ -39,7 +39,7 @@ public class TestWingsSchemaGeneratorSample {
 
     @Test
     @TmsLink("C12026")
-    public void init() {
+    public void init060102() {
         testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
                 .scan(FlywaveRevisionScanner.REVISION_PATH_MASTER,

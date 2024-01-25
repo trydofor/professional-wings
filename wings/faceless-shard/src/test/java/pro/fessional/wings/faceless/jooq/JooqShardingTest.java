@@ -111,7 +111,7 @@ public class JooqShardingTest {
                     .set(tp.LoginInfo, "update 5")
                     .where(tp.Id.eq(id))
                     .execute();
-        testcaseNotice("plain updated= $rp");
+        testcaseNotice("plain updated= " + rp);
         testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
         var tw = dao.getTable();
@@ -120,7 +120,7 @@ public class JooqShardingTest {
                     .set(tw.LoginInfo, "update 5")
                     .where(tw.Id.eq(id))
                     .execute();
-        testcaseNotice("write updated= $rw");
+        testcaseNotice("write updated= " + rw);
         testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
         var tr = dao.getAlias();
@@ -129,7 +129,7 @@ public class JooqShardingTest {
                     .set(tr.LoginInfo, "update 5")
                     .where(tr.Id.eq(id))
                     .execute();
-        testcaseNotice("read  updated= $rr");
+        testcaseNotice("read  updated= " + rr);
         testcaseNotice("update `tst_sharding_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?");
 
 
@@ -153,7 +153,7 @@ public class JooqShardingTest {
                         .limit(DSL.inline(1)) // RC3
                         .getSQL();
 //                .fetchOne().into(Long::class.java)
-            testcaseNotice("alias select", ra);
+            testcaseNotice("alias select" + ra);
             testcaseNotice("select `y8`.`id` from `tst_sharding` as `y8` where `y8`.`id` <= ?");
 
             var tp = TstShardingTable.TstSharding;
@@ -163,12 +163,12 @@ public class JooqShardingTest {
 //                .limit(1) // https://github.com/apache/incubator-shardingsphere/issues/3330
                         .getSQL();
 //                .fetchOne().into(Long::class.java)
-            testcaseNotice("plain select", rp);
+            testcaseNotice("plain select" + rp);
             testcaseNotice("select `id` from `tst_sharding` where `id` <= ?");
 
             var da = dao.getAlias();
             var rd = dao.fetch(da, da.Id.eq(id));
-            testcaseNotice("dao select= $rd");
+            testcaseNotice("dao select= " + rd);
             testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_sharding` as `y8` where `y8`.`id` = ?");
 
             testcaseNotice(
@@ -189,12 +189,12 @@ public class JooqShardingTest {
                     .and(tp.CommitId.isNotNull())
                     .getSQL();
 //                .execute()
-        testcaseNotice("plain delete= $rp");
+        testcaseNotice("plain delete= " + rp);
         testcaseNotice("delete from `tst_sharding` where (`id` <= ? and `commit_id` is not null)");
 
         var dw = dao.getTable();
         var rw = dao.delete(dw, dw.Id.eq(id));
-        testcaseNotice("dao delete= $rw");
+        testcaseNotice("dao delete= " + rw);
         testcaseNotice("delete from `tst_sharding_3` where `id` = ? ");
 
         testcaseNotice(

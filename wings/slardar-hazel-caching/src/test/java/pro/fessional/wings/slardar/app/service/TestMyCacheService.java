@@ -13,39 +13,39 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author trydofor
  * @since 2020-08-10
  */
-@CacheConfig(cacheNames = Level.General + "MyCacheService")
+@CacheConfig(cacheNames = Level.General + "TestMyCacheService")
 @Service
 public class TestMyCacheService {
     public static final ConcurrentHashMap<String, AtomicInteger> innerCount = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<String, AtomicInteger> outerCount = new ConcurrentHashMap<>();
 
     @Cacheable(cacheManager = Manager.Memory)
-    public int cacheMemory(String email) {
-        return directMemory(email);
+    public int cacheMemory(String key) {
+        return directMemory(key);
     }
 
-    public int directMemory(String email) {
-        AtomicInteger n = innerCount.computeIfAbsent(email, s -> new AtomicInteger(0));
+    public int directMemory(String key) {
+        AtomicInteger n = innerCount.computeIfAbsent(key, s -> new AtomicInteger(0));
         return n.incrementAndGet();
     }
 
     @Cacheable(cacheManager = Manager.Server)
-    public int cacheServer(String email) {
-        return directMemory(email);
+    public int cacheServer(String key) {
+        return directMemory(key);
     }
 
-    public int directServer(String email) {
-        AtomicInteger n = outerCount.computeIfAbsent(email, s -> new AtomicInteger(1));
+    public int directServer(String key) {
+        AtomicInteger n = outerCount.computeIfAbsent(key, s -> new AtomicInteger(0));
         return n.incrementAndGet();
     }
 
     @Cacheable
-    public int cachePrimary(String email) {
-        return directPrimary(email);
+    public int cachePrimary(String key) {
+        return directPrimary(key);
     }
 
-    public int directPrimary(String email) {
-        AtomicInteger n = outerCount.computeIfAbsent(email, s -> new AtomicInteger(1));
+    public int directPrimary(String key) {
+        AtomicInteger n = outerCount.computeIfAbsent(key, s -> new AtomicInteger(0));
         return n.incrementAndGet();
     }
 }

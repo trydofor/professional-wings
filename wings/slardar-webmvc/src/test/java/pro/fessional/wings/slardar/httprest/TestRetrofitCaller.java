@@ -20,7 +20,7 @@ import java.util.List;
  * @see TestRestTmplController
  * @since 2022-09-11
  */
-public interface RetrofitCaller {
+public interface TestRetrofitCaller {
 
     @Data
     class Ins {

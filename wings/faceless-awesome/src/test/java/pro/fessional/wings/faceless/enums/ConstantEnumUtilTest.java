@@ -19,7 +19,7 @@ public class ConstantEnumUtilTest {
 
     @Test
     @TmsLink("C12009")
-    public void idOrElse() {
+    public void enumIdOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertEquals(zhCn, ConstantEnumUtil.idOrNull(zhCn.getId(), StandardLanguage.values()));
         assertEquals(zhCn, ConstantEnumUtil.idOrElse(1, zhCn, StandardLanguage.values()));
@@ -27,7 +27,7 @@ public class ConstantEnumUtilTest {
 
     @Test
     @TmsLink("C12010")
-    public void nameOrElse() {
+    public void enumNameOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertEquals(zhCn, ConstantEnumUtil.nameOrNull(zhCn.name(), StandardLanguage.values()));
         assertEquals(zhCn, ConstantEnumUtil.nameOrElse("", zhCn, StandardLanguage.values()));
@@ -35,7 +35,7 @@ public class ConstantEnumUtilTest {
 
     @Test
     @TmsLink("C12011")
-    public void codeOrElse() {
+    public void enumCodeOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertEquals(zhCn, ConstantEnumUtil.codeOrNull(zhCn.getCode(), StandardLanguage.values()));
         assertEquals(zhCn, ConstantEnumUtil.codeOrElse("", zhCn, StandardLanguage.values()));
@@ -43,28 +43,28 @@ public class ConstantEnumUtilTest {
 
     @Test
     @TmsLink("C12012")
-    public void codeIn() {
+    public void enumCodeIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertTrue(ConstantEnumUtil.codeIn(zhCn.getCode(), StandardLanguage.values()));
     }
 
     @Test
     @TmsLink("C12013")
-    public void nameIn() {
+    public void enumNameIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertTrue(ConstantEnumUtil.nameIn(zhCn.name(), StandardLanguage.values()));
     }
 
     @Test
     @TmsLink("C12014")
-    public void idIn() {
+    public void enumIdIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         assertTrue(ConstantEnumUtil.idIn(zhCn.getId(), StandardLanguage.values()));
     }
 
     @Test
     @TmsLink("C12015")
-    public void groupInfo() {
+    public void enumGroupInfo() {
         List<StandardTimezone> usTimezone = ConstantEnumUtil.groupInfo(StandardTimezone.AMERICA_CHICAGO, StandardTimezone.values());
         List<StandardTimezone> objects = Arrays.asList(
                 StandardTimezone.AMERICA_CHICAGO,
@@ -78,7 +78,7 @@ public class ConstantEnumUtilTest {
 
     @Test
     @TmsLink("C12016")
-    public void namesAuto() {
+    public void enumNamesAuto() {
         List<StandardTimezone> usTimezone = ConstantEnumUtil.namesAuto(StandardTimezone.values(),
                 "AMERICA_CHICAGO, "
                 + "AMERICA_LOS_ANGELES "

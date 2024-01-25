@@ -21,7 +21,7 @@ class DefaultWingsAuthTypeSourceTest {
 
     @Test
     @TmsLink("C13080")
-    void parse1() {
+    void parsePathPattern() {
         final PathPattern ptn = patternParser.parse("/auth/{authType}/login.json");
         final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username/login.json"));
         assertNotNull(f1);
@@ -33,7 +33,7 @@ class DefaultWingsAuthTypeSourceTest {
 
     @Test
     @TmsLink("C13081")
-    void parse2() {
+    void parsePathPatternRegexp() {
         final PathPattern ptn = patternParser.parse("/auth/{authType:[^-]+}{splitter:-?}{authZone:[^-]*}/login.json");
         final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username-admin/login.json"));
         assertNotNull(f1);

@@ -18,9 +18,9 @@ import java.util.TimeZone;
  * @since 2021-02-01
  */
 @SuppressWarnings({"UastIncorrectHttpHeaderInspection", "CanBeFinal"})
-public class TestLoginHandler {
+public class TestingLoginHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(TestLoginHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(TestingLoginHandler.class);
 
     @Setter(onMethod_ = {@Autowired})
     private WingsLocaleResolver wingsLocaleResolver;

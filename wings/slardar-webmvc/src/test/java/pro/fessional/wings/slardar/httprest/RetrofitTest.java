@@ -25,8 +25,8 @@ import java.io.FileInputStream;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.slardar.httprest.RetrofitCaller.Bad;
-import static pro.fessional.wings.slardar.httprest.RetrofitCaller.Ins;
+import static pro.fessional.wings.slardar.httprest.TestRetrofitCaller.Bad;
+import static pro.fessional.wings.slardar.httprest.TestRetrofitCaller.Ins;
 import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -58,19 +58,19 @@ public class RetrofitTest {
             return chain.proceed(request);
         });
 
-        RetrofitCaller caller = RetrofitHelper.jacksonPlain(RetrofitCaller.class, host, bd.build());
+        TestRetrofitCaller caller = RetrofitHelper.jacksonPlain(TestRetrofitCaller.class, host, bd.build());
         testAll(caller);
     }
 
     @Test
     @TmsLink("C13057")
     public void testJacksonAutowired() {
-        RetrofitCaller caller = RetrofitHelper.jacksonPlain(RetrofitCaller.class, host, okHttpClient);
+        TestRetrofitCaller caller = RetrofitHelper.jacksonPlain(TestRetrofitCaller.class, host, okHttpClient);
         testAll(caller);
     }
 
     @SneakyThrows
-    private void testAll(RetrofitCaller caller) {
+    private void testAll(TestRetrofitCaller caller) {
         Bad bad = new Bad();
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");
@@ -107,7 +107,7 @@ public class RetrofitTest {
     @SneakyThrows
     @Test
     @TmsLink("C13058")
-    public void printFastjsonAndJackson() {
+    public void infoFastjsonAndJackson() {
         Bad bad = new Bad();
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");

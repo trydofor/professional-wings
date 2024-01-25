@@ -43,7 +43,7 @@ public class ConstantEnumI18nTest {
 
     @Test
     @TmsLink("C12006")
-    public void test3Code() {
+    public void enumI18nCode() {
         StandardLanguage zhCN = StandardLanguage.ZH_CN;
         StandardTimezone tzUs = StandardTimezone.AMERICA_CHICAGO;
         assertEquals(zhCN.getBase() + "." + zhCN.getKind() + "." + zhCN.getType() + "." + zhCN.getCode(), zhCN.getI18nCode());
@@ -52,7 +52,7 @@ public class ConstantEnumI18nTest {
 
     @Test
     @TmsLink("C12007")
-    public void test4I18n() {
+    public void dynamicI18nService() {
         execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
         execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
         execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
@@ -69,7 +69,7 @@ public class ConstantEnumI18nTest {
 
     @Test
     @TmsLink("C12008")
-    public void printAllBean() {
+    public void infoAllBeanName() {
         int i = 1;
         for (String bean : applicationContext.getBeanDefinitionNames()) {
             log.info("[{}] {}", i++, bean);

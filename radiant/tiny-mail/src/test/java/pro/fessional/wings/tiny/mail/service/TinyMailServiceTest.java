@@ -1,11 +1,15 @@
 package pro.fessional.wings.tiny.mail.service;
 
 import io.qameta.allure.TmsLink;
+import jakarta.mail.internet.AddressException;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.context.Now;
 
@@ -16,7 +20,7 @@ import pro.fessional.wings.slardar.context.Now;
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("3rdService: mail test, manual")
+@Slf4j
 class TinyMailServiceTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -24,45 +28,68 @@ class TinyMailServiceTest {
 
     @Test
     @TmsLink("C15006")
-    void sendOk() {
+    void sendMailOk() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
         message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
-        tinyMailService.send(message, true);
+        boolean ok = tinyMailService.send(message, true);
+        Assertions.assertTrue(ok);
     }
 
     @Test
     @TmsLink("C15007")
-    void sendNxt() {
+    void emitMailAfter5s() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
         message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
-        message.setDate(Now.localDateTime().plusSeconds(60));
-        tinyMailService.emit(message, true);
-        Sleep.ignoreInterrupt(70_000L);
+
+        int after = 5;
+        message.setDate(Now.localDateTime().plusSeconds(after));
+        long at = System.currentTimeMillis() + after * 1_000L;
+        long nt = tinyMailService.emit(message, true);
+        long of = Math.abs(nt - at);
+        Assertions.assertTrue(of < 500L);
+        Sleep.ignoreInterrupt(after * 1_500L);
     }
 
-    // 501 Mail from address must be same as authorization user.
+    /**
+     * 501 Mail from address must be same as authorization user.
+     */
     @Test
     @TmsLink("C15008")
-    void sendNgFrom() {
-        TinyMail message = new TinyMail();
-        message.setSubject("Mail Service Test");
-        message.setContentHtml("Nothing");
-        message.setFrom("admin@qq.com");
-        tinyMailService.send(message, true);
+    @Disabled("not for mock server, need real server auth")
+    void sendMailBadFrom() {
+        try {
+            TinyMail message = new TinyMail();
+            message.setSubject("Mail Service Test");
+            message.setContentHtml("Nothing");
+            message.setFrom("admin@qq.com"); // diff from mail user
+            tinyMailService.send(message, true);
+        }
+        catch (Exception e) {
+            log.error("501 Mail from address must be same as authorization user", e);
+        }
     }
 
-    // javax.mail.internet.AddressException: Local address contains dot-dot
+    /**
+     * javax.mail.internet.AddressException: Local address contains dot-dot
+     */
     @Test
     @TmsLink("C15009")
-    void sendBadTo() {
-        TinyMail message = new TinyMail();
-        message.setSubject("Mail Service Test");
-        message.setContentHtml("Nothing");
-        message.setTo("t.r.y...d.o...f.o.r@qq.com");
-        tinyMailService.send(message, true);
+    void sendMailBadTo() {
+        try {
+            TinyMail message = new TinyMail();
+            message.setSubject("Mail Service Test");
+            message.setContentHtml("Nothing");
+            message.setTo("t.r.y...d.o...f.o.r@qq.com");
+            tinyMailService.send(message, true);
+            Assertions.fail();
+        }
+        catch (Exception e) {
+            var rt = ThrowableUtil.root(e);
+            Assertions.assertInstanceOf(AddressException.class, rt);
+        }
     }
 }

@@ -10,11 +10,11 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @ComponentScan({
-        "pro.fessional.wings.batrider.app.controller",
-        "pro.fessional.wings.batrider.app.contractor"
+        "pro.fessional.wings.testing.batrider.controller",
+        "pro.fessional.wings.testing.batrider.contractor"
 })
-public class WingsBatriderTestApplication {
+public class TestBatriderTestApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WingsBatriderTestApplication.class, args);
+        SpringApplication.run(TestBatriderTestApplication.class, args);
     }
 }

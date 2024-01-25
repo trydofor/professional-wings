@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
-import pro.fessional.wings.testing.slardar.security.handler.TestLoginHandler;
-import pro.fessional.wings.testing.slardar.service.TestWingsUserDetailsService;
+import pro.fessional.wings.testing.slardar.security.handler.TestingLoginHandler;
+import pro.fessional.wings.testing.slardar.service.TestingWingsUserDetailsService;
 
 /**
  * @author trydofor
@@ -15,16 +15,16 @@ import pro.fessional.wings.testing.slardar.service.TestWingsUserDetailsService;
  */
 @AutoConfiguration(before = UserDetailsServiceAutoConfiguration.class)
 @ConditionalWingsEnabled
-public class TestSlardarAutoConfiguration {
+public class TestingSlardarAutoConfiguration {
 
     @Bean
-    public TestLoginHandler testLoginHandler() {
-        return new TestLoginHandler();
+    public TestingLoginHandler testLoginHandler() {
+        return new TestingLoginHandler();
     }
 
     @Bean
-    public TestWingsUserDetailsService testWingsUserDetailsService() {
-        return new TestWingsUserDetailsService();
+    public TestingWingsUserDetailsService testWingsUserDetailsService() {
+        return new TestingWingsUserDetailsService();
     }
 
     @Bean

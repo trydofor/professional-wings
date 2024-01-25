@@ -42,6 +42,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>testing-docker</artifactId>
             <scope>test</scope>

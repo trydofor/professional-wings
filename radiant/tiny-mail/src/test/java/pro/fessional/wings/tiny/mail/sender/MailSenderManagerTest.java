@@ -3,7 +3,6 @@ package pro.fessional.wings.tiny.mail.sender;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +18,6 @@ import java.util.List;
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("3rdService: batch send mails, manual")
 @Slf4j
 public class MailSenderManagerTest {
 
@@ -48,7 +46,7 @@ public class MailSenderManagerTest {
      */
     @Test
     @TmsLink("C15004")
-    public void testBatch() {
+    public void timeLoopAndBatch() {
         int size = 1; // auto test 1, manual 5
 
         final TinyMailConfig config = mailConfigProvider.defaultConfig();

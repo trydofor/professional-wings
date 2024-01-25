@@ -23,7 +23,7 @@ import java.util.Locale;
  * @since 2019-11-14
  */
 @Slf4j
-public class TestWingsUserDetailsService implements WingsUserDetailsService {
+public class TestingWingsUserDetailsService implements WingsUserDetailsService {
 
     public final String origPassword = "WingsBoot is Good";
     //5DDEEB6C6F9812EE9C7CCF6FC82A50DD

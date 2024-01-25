@@ -85,7 +85,7 @@ public class WingsJacksonMapperTest {
     private Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder;
 
     @BeforeEach
-    public void init() {
+    public void setup() {
         log.info("=== set locale to us ===");
         Locale.setDefault(Locale.US);
         // user timezone
@@ -415,7 +415,7 @@ public class WingsJacksonMapperTest {
 
     @Test
     @TmsLink("C13073")
-    public void testHelper() {
+    public void testStringMapHelper() {
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
         Map<String, String> j1 = StringMapHelper.json(i18nJson, objectMapper);

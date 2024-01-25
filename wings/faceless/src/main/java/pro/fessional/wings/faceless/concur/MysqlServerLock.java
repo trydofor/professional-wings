@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+
+import static pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper.FirstIntegerOrNull;
 
 /**
  * Locks based on the Mysql IS_FREE_LOCK and GET_LOCK at mysql instance level.
@@ -23,14 +24,6 @@ public class MysqlServerLock implements Lock {
     private final JdbcTemplate jdbcTemplate;
     private final String lockName;
 
-    private final ResultSetExtractor<Integer> integerExtractor = rs -> {
-        if (rs.next()) {
-            final int r = rs.getInt(1);
-            return rs.wasNull() ? null : r;
-        }
-        return null;
-    };
-
     /**
      * Tries to obtain a lock with a name given by the string str,
      * using a timeout of timeout seconds. A negative timeout value
@@ -42,7 +35,7 @@ public class MysqlServerLock implements Lock {
     public void lock() {
         final Integer rc = jdbcTemplate.query(
                 "SELECT GET_LOCK(?, -1) FROM DUAL",
-                integerExtractor,
+                FirstIntegerOrNull,
                 lockName);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
@@ -60,7 +53,7 @@ public class MysqlServerLock implements Lock {
     public boolean tryLock() {
         final Integer rc = jdbcTemplate.query(
                 "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,-1), -1) FROM DUAL",
-                integerExtractor,
+                FirstIntegerOrNull,
                 lockName, lockName);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
@@ -73,7 +66,7 @@ public class MysqlServerLock implements Lock {
         final int sec = (int) Math.max(1, unit.toSeconds(time));
         final Integer rc = jdbcTemplate.query(
                 "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,?), -1) FROM DUAL",
-                integerExtractor,
+                FirstIntegerOrNull,
                 lockName, lockName, sec);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
@@ -90,7 +83,7 @@ public class MysqlServerLock implements Lock {
     public void unlock() {
         final Integer rc = jdbcTemplate.query(
                 "SELECT RELEASE_LOCK(?) FROM DUAL",
-                integerExtractor,
+                FirstIntegerOrNull,
                 lockName);
         if (rc == null) {
             log.warn("unlock not existed lock, name={}", lockName);

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
-import pro.fessional.wings.testing.slardar.security.handler.TestLoginHandler;
+import pro.fessional.wings.testing.slardar.security.handler.TestingLoginHandler;
 
 
 /**
@@ -24,7 +24,7 @@ public class TestSecurityConfiguration {
     private final static Log log = LogFactory.getLog(TestSecurityConfiguration.class);
 
     @Setter(onMethod_ = {@Autowired})
-    private TestLoginHandler testLoginHandler;
+    private TestingLoginHandler testingLoginHandler;
 
     @Setter(onMethod_ = {@Autowired})
     private SessionRegistry sessionRegistry;
@@ -56,15 +56,15 @@ public class TestSecurityConfiguration {
                     .loginProcessingUrl("/user/login-proc.json") // handle by filter, no controller
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .successHandler(testLoginHandler.loginSuccess)
-                    .failureHandler(testLoginHandler.loginFailure)
+                    .successHandler(testingLoginHandler.loginSuccess)
+                    .failureHandler(testingLoginHandler.loginFailure)
 
             )
             .logout(conf -> conf
                     .logoutUrl("/user/logout.json")
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
-                    .logoutSuccessHandler(testLoginHandler.logoutSuccess)
+                    .logoutSuccessHandler(testingLoginHandler.logoutSuccess)
             )
             .sessionManagement(conf -> conf
                     .maximumSessions(10)

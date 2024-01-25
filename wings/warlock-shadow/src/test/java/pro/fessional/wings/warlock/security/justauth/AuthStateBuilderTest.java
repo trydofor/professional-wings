@@ -28,7 +28,7 @@ public class AuthStateBuilderTest {
 
     @Test
     @TmsLink("C14038")
-    public void test() {
+    public void authStateBuilder() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(Map.of(ParamState, new String[] {"/login", "http://localhost:8080"}));
         final String state = authStateBuilder.buildState(request);

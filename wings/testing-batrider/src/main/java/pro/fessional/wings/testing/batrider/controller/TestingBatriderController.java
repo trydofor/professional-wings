@@ -9,26 +9,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.testing.batrider.contract.HelloContract;
+import pro.fessional.wings.testing.batrider.contract.TestingHelloContract;
 
 /**
  * @author trydofor
  * @since 2022-08-04
  */
 @RestController
-public class BatriderController {
+public class TestingBatriderController {
 
-    private final HelloContract batriderHelloContract = Invoker.createProxy("batrider", "batrider-hello", HelloContract.class);
+    private final TestingHelloContract testingHelloContractProxy = Invoker.createProxy("batrider", "batrider-hello", TestingHelloContract.class);
 
     @Setter(onMethod_ = {@RpcReference(microserviceName = "winx-api", schemaId = "winx-hello")})
-    private HelloContract winxHelloContract;
+    private TestingHelloContract testingHelloContractRpc;
 
     @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
     @RequestMapping(path = "/batrider/winx-hello-rpc", method = RequestMethod.GET)
     public String winxHelloRpc(@RequestParam(name = "name") String name) {
-        return winxHelloContract.sayHello(name);
+        return testingHelloContractRpc.sayHello(name);
     }
 
     @RequestMapping(path = "/batrider/winx-hello-cse", method = RequestMethod.GET)
@@ -39,6 +39,6 @@ public class BatriderController {
 
     @RequestMapping(path = "/batrider/batx-hello-pxy", method = RequestMethod.GET)
     public String batriderHelloPxy(@RequestParam(name = "name") String name) {
-        return batriderHelloContract.sayHello(name);
+        return testingHelloContractProxy.sayHello(name);
     }
 }

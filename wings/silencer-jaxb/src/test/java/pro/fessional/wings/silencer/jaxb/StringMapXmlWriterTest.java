@@ -45,7 +45,7 @@ public class StringMapXmlWriterTest {
 
     @Test
     @TmsLink("C11023")
-    public void map() throws JAXBException {
+    public void infoMap() throws JAXBException {
         JAXBContext contextObj = JAXBContext.newInstance(TestXml.class);
         Marshaller marshallerObj = contextObj.createMarshaller();
         marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -60,7 +60,7 @@ public class StringMapXmlWriterTest {
 
     @Test
     @TmsLink("C11024")
-    public void xml() throws JAXBException {
+    public void infoXml() throws JAXBException {
         JAXBContext contextObj = JAXBContext.newInstance(TestXml.class);
 
         Marshaller marshallerObj = contextObj.createMarshaller();

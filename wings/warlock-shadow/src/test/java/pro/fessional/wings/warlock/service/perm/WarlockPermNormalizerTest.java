@@ -12,7 +12,7 @@ class WarlockPermNormalizerTest {
 
     @Test
     @TmsLink("C14065")
-    void normalize() {
+    void normalizePerm() {
         WarlockPermNormalizer normalizer = new WarlockPermNormalizer();
         Assertions.assertEquals("ROLE_root", normalizer.role("root"));
         Assertions.assertEquals("ROLE_root", normalizer.role("ROLE_root"));

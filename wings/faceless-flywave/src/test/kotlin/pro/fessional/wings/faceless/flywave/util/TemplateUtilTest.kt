@@ -14,7 +14,7 @@ class TemplateUtilTest {
 
     @Test
     @TmsLink("C12032")
-    fun one() {
+    fun parseMergeOne() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
         val idx = TemplateUtil.parse(txt, tkn, "'\"")
@@ -24,7 +24,7 @@ class TemplateUtilTest {
 
     @Test
     @TmsLink("C12033")
-    fun bnd() {
+    fun parseMergeOneBoundary() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
         val idx = TemplateUtil.parse(txt, tkn, "'\"",false)
@@ -34,7 +34,7 @@ class TemplateUtilTest {
 
     @Test
     @TmsLink("C12034")
-    fun more() {
+    fun parseMergeMore() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = listOf("SYS_LIGHT_SEQUENCE","LIGHT_SEQUENCE","SEQUENCE`")
         val idx = TemplateUtil.parse(txt, tkn, "'\"")
@@ -47,7 +47,7 @@ class TemplateUtilTest {
 
     @Test
     @TmsLink("C12035")
-    fun isb(){
+    fun isBoundary(){
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         assertTrue(TemplateUtil.isBoundary(txt,"SYS_LIGHT_SEQUENCE"))
         assertFalse(TemplateUtil.isBoundary(txt,"SYS_LIGHT"))

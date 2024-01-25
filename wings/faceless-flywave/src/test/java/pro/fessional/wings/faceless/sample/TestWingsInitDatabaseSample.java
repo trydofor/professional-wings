@@ -27,7 +27,7 @@ public class TestWingsInitDatabaseSample {
 
     @Test
     @TmsLink("C12024")
-    public void init0601() {
+    public void init060101() {
         // init
         var sqls = scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0);

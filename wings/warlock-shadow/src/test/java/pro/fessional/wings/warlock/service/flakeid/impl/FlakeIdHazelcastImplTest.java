@@ -29,7 +29,7 @@ class FlakeIdHazelcastImplTest {
 
     @Test
     @TmsLink("C14055")
-    void getId() throws InterruptedException {
+    void hazelcastFlakeId() throws InterruptedException {
         assertInstanceOf(FlakeIdHazelcastImpl.class, flakeIdService);
         final var threadCnt = 100;
         final var loopCount = 5000;

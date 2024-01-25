@@ -28,7 +28,7 @@ class HazelcastGlobalLockTest {
 
     @Test
     @TmsLink("C13018")
-    void lock() throws InterruptedException {
+    void hazelcastLock() throws InterruptedException {
         HazelcastGlobalLock globalLock = new HazelcastGlobalLock(hazelcastInstance);
         Lock lock = globalLock.getLock("test-lock");
         try {

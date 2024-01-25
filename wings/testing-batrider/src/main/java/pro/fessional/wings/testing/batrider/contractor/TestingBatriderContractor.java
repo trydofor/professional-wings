@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pro.fessional.wings.testing.batrider.contract.HelloContract;
+import pro.fessional.wings.testing.batrider.contract.TestingHelloContract;
 
 /**
  * Mvc Style, Customize SchemaId, basePath without SchemaId
@@ -16,7 +16,7 @@ import pro.fessional.wings.testing.batrider.contract.HelloContract;
  */
 @RestSchema(schemaId = "batrider-hello")
 @RequestMapping(path = "/")
-public class BatriderContractor implements HelloContract {
+public class TestingBatriderContractor implements TestingHelloContract {
 
     @RequestMapping(path = "/batrider-hello/say-hello", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody

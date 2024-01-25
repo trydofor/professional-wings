@@ -1,10 +1,10 @@
 package pro.fessional.wings.faceless.flywave;
 
 import io.qameta.allure.TmsLink;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -19,7 +19,7 @@ class WingsRevisionTest {
 
     @Test
     @TmsLink("C12147")
-    void getPath() throws IOException {
+    void revisionModulePath() {
         assertExist(WingsRevision.V00_19_0512_01_Schema);
         assertExist(WingsRevision.V00_19_0512_02_Fix227);
         assertExist(WingsRevision.V01_19_0520_01_IdLog);
@@ -36,7 +36,8 @@ class WingsRevisionTest {
         assertExist(WingsRevision.V90_19_0601_02_TestRecord);
     }
 
-    private void assertExist(WingsRevision wr) throws IOException {
+    @SneakyThrows
+    private void assertExist(WingsRevision wr) {
         Path path = Path.of("../..", wr.getRoot(), wr.getPath());
         assertTrue(Files.isDirectory(path));
         assertTrue(Files.list(path).anyMatch(it -> {

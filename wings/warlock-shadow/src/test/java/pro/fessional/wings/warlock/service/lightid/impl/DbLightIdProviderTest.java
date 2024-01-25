@@ -23,7 +23,7 @@ public class DbLightIdProviderTest {
 
     @Test
     @TmsLink("C14061")
-    public void test() {
+    public void dbLightIdProvider() {
         Assertions.assertInstanceOf(BlockingLightIdProvider.class, lightIdProvider);
     }
 }

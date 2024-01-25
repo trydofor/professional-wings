@@ -140,7 +140,7 @@ public class DatabaseChecker {
      * output the database version in the log
      */
 
-    public static void version(DataSource ds) {
+    public static long version(DataSource ds) {
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
 
         final String ver = isH2(ds) ? "H2VERSION()" : "VERSION()";
@@ -148,15 +148,16 @@ public class DatabaseChecker {
             log.info("{}={}, primary={}", ver, rs.getString(1), DataSourceContext.extractUrl(ds));
         });
 
-        String rev = "SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
+        String sql = "SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
+        Long rev = null;
         try {
-            tmpl.query(rev, rs -> {
-                log.info("flywave revision={}", rs.getString(1));
-            });
+            rev = tmpl.query(sql, JdbcTemplateHelper.FirstLongOrNull);
         }
         catch (DataAccessException e) {
             log.info("flywave revision is unknown, for no sys_schema_version");
         }
+        log.info("flywave revision={}", rev);
+        return rev == null ? -1 : rev;
     }
 
     /**

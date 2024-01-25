@@ -1003,7 +1003,7 @@
         </profile>
         <profile>
             <!-- -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} -->
-            <id>test</id>
+            <id>coverage</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
                 <surefire.timeout>0</surefire.timeout> <!-- going to kill self fork JVM -->

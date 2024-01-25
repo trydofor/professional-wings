@@ -29,8 +29,8 @@ class DatabaseCheckerTest {
 
     @Test
     @TmsLink("C12002")
-    void timezone() {
-        log.warn("spring.datasource.url={}", jdbcUrl);
+    void checkVersionTimezone() {
+        log.info("spring.datasource.url={}", jdbcUrl);
         DatabaseChecker.version(dataSource);
         DatabaseChecker.timezone(dataSource);
     }
