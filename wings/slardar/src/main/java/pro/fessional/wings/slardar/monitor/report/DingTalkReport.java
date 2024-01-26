@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.monitor.report;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.WarnReport;
@@ -31,6 +32,13 @@ public class DingTalkReport implements WarnReport {
         this.dingConfig = config;
     }
 
+    /**
+     * report warn to dingtalk robot
+     *
+     * @param appName app name as subject
+     * @param jvmName jvm name to track
+     * @param warn    warn details
+     */
     @Override
     public Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
         final DingTalkConf conf = dingTalkNotice.provideConfig(dingConfig, true);
@@ -64,7 +72,12 @@ public class DingTalkReport implements WarnReport {
             }
         });
 
-        final boolean rst = dingTalkNotice.send(conf, appName + " " + conf.getNoticeKeyword(), text);
+        String subject = appName;
+        if (StringUtils.isNotEmpty(conf.getNoticeKeyword())) {
+            subject = subject + " " + conf.getNoticeKeyword();
+        }
+
+        final boolean rst = dingTalkNotice.send(conf, subject, text);
         return rst ? Sts.Done : Sts.Fail;
     }
 

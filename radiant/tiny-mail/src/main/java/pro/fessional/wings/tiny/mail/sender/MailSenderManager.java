@@ -100,18 +100,19 @@ public class MailSenderManager {
      */
     @SneakyThrows
     public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
-        if (senderProp.isDryrun()) {
+        final String host = message.getHost();
+        checkHostWaitOrIdle(host, maxWait);
+
+        final JavaMailSender sender = senderProvider.singletonSender(message);
+        final MimeMessage mimeMessage = prepareMimeMessage(message, preparer, sender);
+
+        if (isDryrun(message)) {
             final int slp = RandomUtils.nextInt(10, 2000);
             Sleep.ignoreInterrupt(slp);
             log.info("single mail dryrun and sleep {} ms", slp);
             return;
         }
 
-        final String host = message.getHost();
-        checkHostWaitOrIdle(host, maxWait);
-
-        final JavaMailSender sender = senderProvider.singletonSender(message);
-        final MimeMessage mimeMessage = prepareMimeMessage(message, preparer, sender);
         long now = -1;
         try {
             sender.send(mimeMessage);
@@ -153,28 +154,16 @@ public class MailSenderManager {
         if (messages.isEmpty()) return Collections.emptyList();
 
         final List<BatchResult> results = new ArrayList<>(messages.size());
-        if (senderProp.isDryrun()) {
-            final int slp = RandomUtils.nextInt(10, 2000);
-            Sleep.ignoreInterrupt(slp);
-            log.info("batch mail dryrun and sleep {} ms", slp);
-            final long avg = slp / messages.size();
-            for (TinyMailMessage message : messages) {
-                final BatchResult br = new BatchResult();
-                br.tinyMessage = message;
-                br.costMillis = avg;
-                results.add(br);
-            }
-            return results;
-        }
-
         for (String host : messages.stream().map(MailProperties::getHost).collect(Collectors.toSet())) {
             checkHostWaitOrIdle(host, maxWait);
         }
 
         final HashMap<JavaMailSender, ArrayList<BatchResult>> senderGroup = new HashMap<>();
+        int dryrunCount = 0;
         for (TinyMailMessage message : messages) {
             final BatchResult temp = new BatchResult();
             temp.tinyMessage = message;
+            temp.costMillis = 0;
             try {
                 temp.mailSender = senderProvider.singletonSender(message);
                 temp.mimeMessage = prepareMimeMessage(message, preparer, temp.mailSender);
@@ -185,8 +174,24 @@ public class MailSenderManager {
 
             results.add(temp);
             if (temp.mimeMessage != null) {
-                senderGroup.computeIfAbsent(temp.mailSender, ignored -> new ArrayList<>())
-                           .add(temp);
+                if (isDryrun(message)) {
+                    temp.costMillis = -1;
+                    dryrunCount++;
+                }
+                else {
+                    senderGroup.computeIfAbsent(temp.mailSender, ignored -> new ArrayList<>())
+                               .add(temp);
+                }
+            }
+        }
+
+        if (dryrunCount > 0) {
+            final int slp = RandomUtils.nextInt(10, 2000);
+            Sleep.ignoreInterrupt(slp);
+            log.info("batch mail dryrun and sleep {} ms", slp);
+            final long avg = slp / dryrunCount;
+            for (BatchResult rst : results) {
+                if (rst.costMillis < 0) rst.costMillis = avg;
             }
         }
 
@@ -255,6 +260,21 @@ public class MailSenderManager {
         }
 
         return results;
+    }
+
+    private boolean isDryrun(TinyMailMessage message) {
+        boolean dryrun = senderProp.isDryrun();
+        if (!dryrun) {
+            String dr = message.getDryrun();
+            if (dr != null && !dr.isEmpty()) {
+                String title = message.getSubject();
+                dryrun = title != null && title.startsWith(dr);
+            }
+        }
+        if (dryrun) {
+            log.info("mail-send dryrun. subject={}, bizId={}", message.subject, message.bizId);
+        }
+        return dryrun;
     }
 
     private void treatHostIdle(String host, long now) {

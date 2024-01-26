@@ -141,6 +141,13 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         }
 
         log.debug("ding-talk post message, host={}, text={}", host, message);
+
+        String dr = config.getDryrun();
+        if (dr != null && !dr.isEmpty() && subject.startsWith(dr)) {
+            log.info("ding-talk dryrun. subject={}, message={}", subject, message);
+            return true;
+        }
+
         final String s = OkHttpClientHelper.postJson(callFactory, host, message);
         log.debug("ding-talk result={}", s);
         return s.contains("\"errcode\":0,");

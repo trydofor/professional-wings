@@ -409,3 +409,5 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 15012 ExecutorServiceTest: cancel task, check log
 * 15013 TinyTaskServiceTest: task from bean method reference
 * 15014 TinyTaskServiceTest: nothing but keep running 180s to see log
+* 15015 MailNoticeTest: title dryrun mailNotice
+* 15016 MailSenderManagerTest: title dryrun batch mail

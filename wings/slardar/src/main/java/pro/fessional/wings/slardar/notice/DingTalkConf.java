@@ -23,6 +23,11 @@ public class DingTalkConf {
     public static final String MsgMarkdown = "markdown";
 
     /**
+     * the dryrun prefix of subject. merge if null, `empty` means disable.
+     */
+    private String dryrun;
+
+    /**
      * template of DingTalk webhook URL.
      */
     private String webhookUrl = "";
@@ -73,6 +78,7 @@ public class DingTalkConf {
     public void adopt(DingTalkConf that) {
         if (that == null) return;
 
+        dryrun = that.dryrun;
         webhookUrl = that.webhookUrl;
         digestSecret = that.digestSecret;
         accessToken = that.accessToken;
@@ -88,6 +94,7 @@ public class DingTalkConf {
     public void merge(DingTalkConf that) {
         if (that == null) return;
 
+        if (dryrun == null) dryrun = that.dryrun;
         if (notValue(webhookUrl)) webhookUrl = that.webhookUrl;
         if (notValue(digestSecret)) digestSecret = that.digestSecret;
         if (notValue(accessToken)) accessToken = that.accessToken;

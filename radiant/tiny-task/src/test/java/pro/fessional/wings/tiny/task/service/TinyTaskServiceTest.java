@@ -28,7 +28,7 @@ import static pro.fessional.wings.tiny.task.service.TinyTaskServiceTest.timingCr
         "wings.tiny.task.define[pro.fessional.wings.tiny.app.service.TestServiceManual#strStr].timing-cron=" + timingCron,
         "wings.tiny.task.define[pro.fessional.wings.tiny.app.service.TestServiceManual#strStr].version=1",
 //        "wings.tiny.task.enabled.dryrun=true",
-        "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}"
+        "wings.slardar.ding-notice.default.access-token="
 })
 @DependsOnDatabaseInitialization
 class TinyTaskServiceTest {
