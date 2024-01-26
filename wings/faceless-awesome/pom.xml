@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-test</artifactId>
+            <artifactId>testing-faceless</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

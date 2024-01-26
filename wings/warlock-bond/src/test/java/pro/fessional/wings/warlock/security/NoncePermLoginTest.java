@@ -61,7 +61,7 @@ class NoncePermLoginTest {
 
     @Test
     @TmsLink("C14015")
-    public void testDanger() {
+    public void testDangerLocked() {
         log.warn("current locale = {}", Locale.getDefault());
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":true}");
         {

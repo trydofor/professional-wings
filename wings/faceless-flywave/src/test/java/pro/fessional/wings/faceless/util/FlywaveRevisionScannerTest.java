@@ -19,7 +19,7 @@ public class FlywaveRevisionScannerTest {
 
     @Test
     @TmsLink("C12028")
-    public void branchPath() {
+    public void flywaveBranchPath() {
         String path = REVISION_PATH_BRANCH_HEAD + "feature/01-enum-i18n/" + REVISION_PATH_REVIFILE_TAIL;
         assertEquals(path, FlywaveRevisionScanner.branchPath("feature/01-enum-i18n"));
         assertEquals(path, FlywaveRevisionScanner.branchPath("/feature/01-enum-i18n"));
@@ -35,7 +35,7 @@ public class FlywaveRevisionScannerTest {
 
     @Test
     @TmsLink("C12029")
-    public void commentPath() {
+    public void flywaveCommentInfo() {
         assertEquals("master/2019-0601_01-test.sql", FlywaveRevisionScanner.commentInfo(
                 "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601u01-test.sql",
                 "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601v01-test.sql"
@@ -44,7 +44,7 @@ public class FlywaveRevisionScannerTest {
 
     @Test
     @TmsLink("C12030")
-    public void builder() {
+    public void flywaveHelper() {
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sql = FlywaveRevisionScanner
                 .helper()
                 .master()
@@ -59,7 +59,7 @@ public class FlywaveRevisionScannerTest {
 
     @Test
     @TmsLink("C12031")
-    void formatRevi() {
+    void flywaveFormatRevision() {
         assertEquals("1234-5678-9", FlywaveRevisionScanner.formatRevi("123456789-"));
         assertEquals("1234-5678-9", FlywaveRevisionScanner.formatRevi("1234-56-78-9"));
         assertEquals("1234", FlywaveRevisionScanner.formatRevi("1234"));

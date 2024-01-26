@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.silencer.modulate.RunMode;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 
@@ -138,7 +138,7 @@ class RuntimeConfServiceTest {
     @Test
     @TmsLink("C14013")
     void testCacheWithCud() {
-        final AssertionLogger al = AssertionLogger.install();
+        final TestingLoggerAssert al = TestingLoggerAssert.install();
         al.rule("insert", event -> event.getFormattedMessage().contains("insert into `win_conf_runtime`"));
         al.rule("update", event -> event.getFormattedMessage().contains("update `win_conf_runtime`"));
         al.rule("evictAllConfCache", event -> event.getFormattedMessage().contains("evictAllConfCache by win_conf_runtime, TableChangeEvent"));

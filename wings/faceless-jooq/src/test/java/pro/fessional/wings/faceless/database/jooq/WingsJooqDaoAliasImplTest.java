@@ -18,7 +18,7 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShard
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.testing.database.WingsTestHelper;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -27,9 +27,9 @@ import java.util.SortedMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 
 /**
@@ -45,7 +45,7 @@ import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotic
 public class WingsJooqDaoAliasImplTest {
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
@@ -59,10 +59,10 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     @TmsLink("C12081")
     public void test0DropAndInit() {
-        wingsTestHelper.cleanTable();
+        testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V2, -1);
+        schemaRevisionManager.publishRevision(V90_19_0601_02_TestRecord.revision(), -1);
     }
 
     @Test

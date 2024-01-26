@@ -11,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
-import pro.fessional.wings.faceless.app.service.TransactionalBusinessService;
-import pro.fessional.wings.faceless.app.service.TransactionalClauseService;
+import pro.fessional.wings.faceless.app.service.TestTransactionalClauseService;
+import pro.fessional.wings.faceless.app.service.TestTransactionalManageService;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
 
 /**
  * @author trydofor
@@ -34,10 +34,10 @@ public class TransactionalServiceTest {
     protected SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    protected TransactionalClauseService transactionalClauseService;
+    protected TestTransactionalClauseService testTransactionalClauseService;
 
     @Setter(onMethod_ = {@Autowired})
-    protected TransactionalBusinessService transactionalBusinessService;
+    protected TestTransactionalManageService testTransactionalManageService;
 
     @Setter(onMethod_ = {@Autowired})
     protected LightIdBufferedProvider lightIdBufferedProvider;
@@ -47,7 +47,7 @@ public class TransactionalServiceTest {
     public void test0Init() {
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
+        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
     }
 
     @Test
@@ -57,22 +57,22 @@ public class TransactionalServiceTest {
         lightIdBufferedProvider.setFixCount(1);
         // insert
         try {
-            transactionalBusinessService.declarativeTx(id, true, false, false);
+            testTransactionalManageService.declarativeTx(id, true, false, false);
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        final long nxt = transactionalClauseService.getNextSequence();
+        final long nxt = testTransactionalClauseService.getNextSequence();
         Assertions.assertEquals(nxt, ild + 1);
 
-        final Integer ic = transactionalClauseService.selectInt(id.get());
+        final Integer ic = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ic);
 
         // update
         try {
-            transactionalBusinessService.declarativeTx(id, false, true, false);
+            testTransactionalManageService.declarativeTx(id, false, true, false);
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
@@ -80,12 +80,12 @@ public class TransactionalServiceTest {
         }
 
         // rollback
-        final Integer uc = transactionalClauseService.selectInt(id.get());
+        final Integer uc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(uc);
 
         // delete
         try {
-            transactionalBusinessService.declarativeTx(id, false, false, true);
+            testTransactionalManageService.declarativeTx(id, false, false, true);
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
@@ -93,18 +93,18 @@ public class TransactionalServiceTest {
         }
 
         // rollback
-        final Integer dc = transactionalClauseService.selectInt(id.get());
+        final Integer dc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(dc);
 
         // normal
         try {
-            transactionalBusinessService.declarativeTx(id, false, false, false);
+            testTransactionalManageService.declarativeTx(id, false, false, false);
         }
         catch (Exception e) {
             Assertions.fail("should no exception");
         }
 
-        final Integer ac = transactionalClauseService.selectInt(id.get());
+        final Integer ac = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ac);
         lightIdBufferedProvider.setFixCount(0);
     }
@@ -116,52 +116,52 @@ public class TransactionalServiceTest {
         final AtomicLong id = new AtomicLong(-1);
         // insert
         try {
-            transactionalBusinessService.withoutTx(id, true, false, false);
+            testTransactionalManageService.withoutTx(id, true, false, false);
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        final long nxt = transactionalClauseService.getNextSequence();
+        final long nxt = testTransactionalClauseService.getNextSequence();
         Assertions.assertEquals(nxt, ild + 1);
 
-        final Integer ic = transactionalClauseService.selectInt(id.get());
+        final Integer ic = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertEquals(1, ic);
 
         // update
         try {
-            transactionalBusinessService.withoutTx(id, false, true, false);
+            testTransactionalManageService.withoutTx(id, false, true, false);
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
             log.info("update failure", e);
         }
 
-        final Integer uc = transactionalClauseService.selectInt(id.get());
+        final Integer uc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertEquals(2, uc);
 
         // delete
         try {
-            transactionalBusinessService.withoutTx(id, false, false, true);
+            testTransactionalManageService.withoutTx(id, false, false, true);
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
             log.info("delete failure", e);
         }
 
-        final Integer dc = transactionalClauseService.selectInt(id.get());
+        final Integer dc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(dc);
 
         // normal
         try {
-            transactionalBusinessService.withoutTx(id, false, false, false);
+            testTransactionalManageService.withoutTx(id, false, false, false);
         }
         catch (Exception e) {
             Assertions.fail("should no exception");
         }
 
-        final Integer ac = transactionalClauseService.selectInt(id.get());
+        final Integer ac = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ac);
         lightIdBufferedProvider.setFixCount(0);
     }
@@ -179,53 +179,53 @@ public class TransactionalServiceTest {
         final AtomicLong id = new AtomicLong(-1);
         // insert
         try {
-            transactionalBusinessService.programmaticTx(id, true, false, false, rollback);
+            testTransactionalManageService.programmaticTx(id, true, false, false, rollback);
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        final long nxt = transactionalClauseService.getNextSequence();
+        final long nxt = testTransactionalClauseService.getNextSequence();
         Assertions.assertEquals(nxt, ild + 1);
 
         // rollback
-        final Integer ic = transactionalClauseService.selectInt(id.get());
+        final Integer ic = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ic);
 
         // update
         try {
-            transactionalBusinessService.programmaticTx(id, false, true, false, rollback);
+            testTransactionalManageService.programmaticTx(id, false, true, false, rollback);
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
             log.info("update failure", e);
         }
         // rollback
-        final Integer uc = transactionalClauseService.selectInt(id.get());
+        final Integer uc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(uc);
 
         // delete
         try {
-            transactionalBusinessService.programmaticTx(id, false, false, true, rollback);
+            testTransactionalManageService.programmaticTx(id, false, false, true, rollback);
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
             log.info("delete failure", e);
         }
         // rollback
-        final Integer dc = transactionalClauseService.selectInt(id.get());
+        final Integer dc = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(dc);
 
         // nomal
         try {
-            transactionalBusinessService.programmaticTx(id, false, false, false, rollback);
+            testTransactionalManageService.programmaticTx(id, false, false, false, rollback);
         }
         catch (Exception e) {
             Assertions.fail("should no exception");
         }
 
-        final Integer ac = transactionalClauseService.selectInt(id.get());
+        final Integer ac = testTransactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ac);
     }
 }

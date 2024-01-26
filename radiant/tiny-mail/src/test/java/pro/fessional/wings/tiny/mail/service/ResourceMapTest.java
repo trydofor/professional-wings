@@ -25,7 +25,7 @@ public class ResourceMapTest {
 
     @Test
     @TmsLink("C15005")
-    public void testString() throws IOException {
+    public void jsonResourceSerializer() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         Map<String, Resource> res1 = new LinkedHashMap<>();

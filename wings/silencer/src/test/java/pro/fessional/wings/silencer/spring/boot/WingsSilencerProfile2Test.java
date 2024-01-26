@@ -36,7 +36,7 @@ public class WingsSilencerProfile2Test {
 
     @Test
     @TmsLink("C11008")
-    public void profile() {
+    public void profileDevAndTest() {
         assertEquals("Silencer-test30", moduleTest);
         assertEquals("silencer-test", nameTest);
         assertEquals("Silencer-dev", moduleDev);

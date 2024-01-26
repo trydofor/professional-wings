@@ -21,7 +21,7 @@ class SimpleJdbcTemplateTest {
 
     @Test
     @TmsLink("C12058")
-    fun metadata() {
+    fun simpleJdbcTemplate() {
         val tmpl = SimpleJdbcTemplate(dataSources.current, "current")
         tmpl.execute("show tables")
     }

@@ -27,7 +27,7 @@ public class TestWingsSchemaJournalSample {
 
     @Test
     @TmsLink("C12027")
-    public void journal() {
+    public void journalTables() {
         long cid = -1;
         List<String> tables = Arrays.asList(
                 "win_account_balance",

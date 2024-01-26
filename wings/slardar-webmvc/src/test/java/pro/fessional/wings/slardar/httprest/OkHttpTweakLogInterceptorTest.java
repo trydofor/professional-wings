@@ -25,7 +25,7 @@ class OkHttpTweakLogInterceptorTest {
 
     @Test
     @TmsLink("C13051")
-    void intercept() {
+    void interceptLogger() {
         final String name = log.getName();
         log.warn(">>>> default");
         OkHttpClientHelper.getText(okHttpClient, "https://www.bing.com");

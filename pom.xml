@@ -31,9 +31,7 @@
         <java.version>21</java.version>
         <!-- <kotlin.version>1.9.21</kotlin.version> -->
         <!-- mvn boot -->
-        <maven.test.skip>false</maven.test.skip>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <maven.install.skip>false</maven.install.skip>
+        <wings.test.skip>false</wings.test.skip>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
@@ -157,11 +155,6 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>silencer-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -197,11 +190,6 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -223,11 +211,6 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>slardar-sprint</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>slardar-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -262,17 +245,7 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>warlock-test</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>batrider</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>batrider-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -282,7 +255,32 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-silencer</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>testing-docker</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-faceless</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-slardar</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-warlock</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->
@@ -534,8 +532,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
+                        <skip>${wings.test.skip}</skip>
                         <environmentVariables>
-                            <WINGS_HOME>${wings.rootdir}</WINGS_HOME>
+                            <WINGS_ROOTDIR>${wings.rootdir}</WINGS_ROOTDIR>
                         </environmentVariables>
                     </configuration>
                 </plugin>
@@ -1004,7 +1003,7 @@
         </profile>
         <profile>
             <!-- -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} -->
-            <id>test</id>
+            <id>coverage</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
                 <surefire.timeout>0</surefire.timeout> <!-- going to kill self fork JVM -->

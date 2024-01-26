@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.TmsLink;
 import jakarta.servlet.http.Cookie;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -55,12 +56,6 @@ import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLIC
                 "wings.slardar.cookie.domain[a.com]=b,c",
                 "wings.slardar.cookie.path[/admin]=b,c",
         })
-/*
-        res.addCookie(newCookie("b64", ins.b64,true,true));
-        res.addCookie(newCookie("aes", ins.aes,true,true));
-        res.addCookie(newCookie("ck1", ins.ck1,false,true));
-        res.addCookie(newCookie("ck2", ins.ck2,false,true));
- */
 @AutoConfigureMockMvc
 @Slf4j
 public class WingsCookieTest {
@@ -82,20 +77,21 @@ public class WingsCookieTest {
 
     @Test
     @TmsLink("C13115")
-    public void test1Cookie() throws Exception {
+    public void testMvcCookie() {
         mockMvcCookie("/test/cookie.json");
     }
 
     @Test
     @TmsLink("C13116")
-    public void test2Cookie() throws Exception {
+    public void testClientCookie() {
         // Must use client, do NOT mock
         httpClient("/test/cookie-forward.json");
         // mock mvc do NOT really execute the mapping method
 //        mockMvcCookie("/test/cookie-forward.json");
     }
 
-    public void mockMvcCookie(String url) throws Exception {
+    @SneakyThrows
+    public void mockMvcCookie(String url) {
         final Ins ins = new Ins();
         ins.setCk1("ck1-is-man");
         ins.setCk2("ck2-is-good");
@@ -106,12 +102,12 @@ public class WingsCookieTest {
         Aes aes256 = Aes256Provider.cookie();
 
         mockMvc.perform(
-                post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(new Cookie(PREFIX + "ck1", ins.getCk1()),
-                                new Cookie(PREFIX + CK2OTH, ins.getCk2()))
-                        .content(objectMapper.writeValueAsString(ins))
-        )
+                       post(url)
+                               .contentType(MediaType.APPLICATION_JSON)
+                               .cookie(new Cookie(PREFIX + "ck1", ins.getCk1()),
+                                       new Cookie(PREFIX + CK2OTH, ins.getCk2()))
+                               .content(objectMapper.writeValueAsString(ins))
+               )
                .andDo(print())
                .andExpect(status().isOk())
                .andExpect(cookie().value(PREFIX + "ck1", ins.getCk1()))
@@ -131,7 +127,8 @@ public class WingsCookieTest {
         ;
     }
 
-    public void httpClient(String url) throws Exception {
+    @SneakyThrows
+    public void httpClient(String url) {
         final Ins ins = new Ins();
         ins.setCk1("ck1-is-man");
         ins.setCk2("ck2-is-good");

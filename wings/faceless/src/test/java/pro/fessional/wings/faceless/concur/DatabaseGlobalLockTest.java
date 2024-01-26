@@ -32,7 +32,7 @@ class DatabaseGlobalLockTest {
 
     @Test
     @TmsLink("C12001")
-    void lock() throws InterruptedException {
+    void mysqlLock() throws InterruptedException {
         DatabaseGlobalLock globalLock = new DatabaseGlobalLock(namedJdbcTemplate.getJdbcTemplate());
         Lock lock = globalLock.getLock("test-lock");
         try {

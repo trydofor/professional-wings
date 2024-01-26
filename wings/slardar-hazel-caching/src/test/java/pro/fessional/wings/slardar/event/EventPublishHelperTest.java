@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2021-06-09
  */
-@SpringBootTest(properties = "wings.enabled.slardar.hazelcast-standalone=false")
+@SpringBootTest
 @Slf4j
 public class EventPublishHelperTest {
 

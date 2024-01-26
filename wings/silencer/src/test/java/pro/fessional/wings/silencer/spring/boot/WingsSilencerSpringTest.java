@@ -36,7 +36,7 @@ public class WingsSilencerSpringTest {
 
     @Test
     @TmsLink("C11009")
-    public void profile() {
+    public void profileDevNoAutoconf() {
         assertEquals("empty", module);
         assertEquals("silencer-dev", name);
         assertEquals("empty", moduleTest);

@@ -34,16 +34,16 @@ import java.util.Map;
  * #example properties:
  *
  * ## @ConditionalWingsEnabled(prefix="spring.catty.enabled")
- * ## disable @Bean catBean in WingsEnabledCatConfiguration
- * spring.catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.catBean=false
+ * ## disable @Bean catBean in TestEnabledCatConfiguration
+ * spring.catty.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration.catBean=false
  * ## disable InnerCatConfiguration and its Bean
- * spring.catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration$InnerCatConfiguration=false
+ * spring.catty.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration$InnerCatConfiguration=false
  *
  * ## @Conditional(WingsEnabledCondition.class) or @ConditionalWingsEnabled
- * ## disable @Bean dogBean in WingsEnabledDogConfiguration
- * wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.dogBean=false
+ * ## disable @Bean dogBean in TestEnabledDogConfiguration
+ * wings.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration.dogBean=false
  * ## disable InnerDogConfiguration and its Bean
- * wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration$InnerDogConfiguration=false
+ * wings.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration$InnerDogConfiguration=false
  * </pre>
  *
  * @author trydofor

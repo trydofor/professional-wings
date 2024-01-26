@@ -19,7 +19,7 @@ public class SmartFormatterTest {
 
     @Test
     @TmsLink("C13007")
-    public void print() {
+    public void infoFormat() {
         LocalDateTime d = LocalDateTime.of(2021, 1, 2, 3, 0, 0, 0);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy[-MM][-dd][ ][HH][:mm][:ss][ ][VV]");
         log.info("format={}",d.format(df));

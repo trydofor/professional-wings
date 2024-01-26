@@ -22,7 +22,7 @@ public class HzLightIdProviderTest {
 
     @Test
     @TmsLink("C14062")
-    public void test() {
+    public void hzLightIdProvider() {
         Assertions.assertInstanceOf(HazelcastLightIdProvider.class, lightIdProvider);
     }
 }

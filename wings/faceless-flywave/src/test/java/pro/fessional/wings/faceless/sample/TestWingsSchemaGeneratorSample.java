@@ -9,9 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.testing.database.WingsTestHelper;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.util.SortedMap;
+
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
 
 /**
  * Use flywave to manage database version
@@ -30,19 +32,19 @@ import java.util.SortedMap;
 public class TestWingsSchemaGeneratorSample {
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
     @TmsLink("C12026")
-    public void init() {
-        wingsTestHelper.cleanTable();
+    public void init060102() {
+        testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
                 .scan(FlywaveRevisionScanner.REVISION_PATH_MASTER,
                         WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(WingsTestHelper.REVISION_TEST_V2, 0);
+        schemaRevisionManager.publishRevision(V90_19_0601_02_TestRecord.revision(), 0);
     }
 }

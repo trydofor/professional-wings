@@ -3,11 +3,11 @@ package pro.fessional.wings.tiny.mail.sender;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ import java.util.List;
  */
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
+        "logging.level.root=INFO",
 })
-@Disabled("3rdService: batch send mails, manual")
 @Slf4j
 public class MailSenderManagerTest {
 
@@ -48,7 +48,7 @@ public class MailSenderManagerTest {
      */
     @Test
     @TmsLink("C15004")
-    public void testBatch() {
+    public void timeLoopAndBatch() {
         int size = 1; // auto test 1, manual 5
 
         final TinyMailConfig config = mailConfigProvider.defaultConfig();
@@ -97,4 +97,26 @@ public class MailSenderManagerTest {
         log.info(stopWatch.toString());
     }
 
+    @Test
+    @TmsLink("C15016")
+    public void batchMailDryrun() {
+        final TinyMailConfig config = mailConfigProvider.defaultConfig();
+        List<TinyMailMessage> messages = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            TinyMailMessage message = new TinyMailMessage();
+            message.adopt(config);
+            message.setSubject("[DRYRUN] test batch tiny mail " + i);
+            message.setContent("test batch tiny mail " + i);
+            messages.add(message);
+        }
+        TestingLoggerAssert al = TestingLoggerAssert.install();
+        al.rule("batch dryrun", it -> it.getFormattedMessage().contains("batch mail dryrun and sleep"));
+        al.start();
+
+        mailSenderManager.batchSend(messages);
+
+        al.assertCount(1);
+        al.stop();
+        al.uninstall();
+    }
 }

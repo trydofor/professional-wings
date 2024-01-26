@@ -23,7 +23,7 @@ public class SpringRandomConfigTest {
 
     @Test
     @TmsLink("C13042")
-    public void testRandom() {
+    public void infoSpringRandom() {
         log.info("random-value=" + randomValue);
         log.info("random-uuid=" + randomUuid);
     }

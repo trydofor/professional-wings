@@ -33,21 +33,21 @@ public class AllLightIdProviderPerformTest {
 
     @Test
     @TmsLink("C14058")
-    public void testJvm() {
+    public void performJvm() {
         // avg=0.039ms
         test(new LightIdBufferedProvider(lightIdLoader), 1000);
     }
 
     @Test
     @TmsLink("C14059")
-    public void testHz() {
+    public void performHazelcast() {
         // avg=1.065ms
         test(new HazelcastLightIdProvider(lightIdLoader, hazelcastInstance), 1000);
     }
 
     @Test
     @TmsLink("C14060")
-    public void testDb() {
+    public void performMysql() {
         // avg=10.723ms, 5ms per sql
         test(new BlockingLightIdProvider(lightIdLoader), 1000);
     }

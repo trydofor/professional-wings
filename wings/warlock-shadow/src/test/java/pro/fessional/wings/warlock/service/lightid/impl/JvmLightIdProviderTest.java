@@ -39,7 +39,7 @@ public class JvmLightIdProviderTest {
 
     @Test
     @TmsLink("C14063")
-    public void test() {
+    public void jvmLightIdProvider() {
         Assertions.assertInstanceOf(LightIdBufferedProvider.class, lightIdProvider);
     }
 

@@ -15,13 +15,7 @@ import javax.sql.DataSource;
  * @author trydofor
  * @since 2022-03-18
  */
-@SpringBootTest(properties = {
-//        "spring.datasource.url=jdbc:mysql://localhost:51487/wings_faceless",
-//        "spring.datasource.url=jdbc:mysql://localhost:51487/wings_faceless?connectionTimeZone=UTC",
-//        "spring.datasource.url=jdbc:mysql://localhost:51487/wings_faceless?connectionTimeZone=%2B08:00",
-//        "spring.datasource.url=jdbc:mysql://localhost:51487/wings_faceless?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true",
-//        "spring.datasource.url=jdbc:mysql://localhost:51487/wings_faceless?connectionTimeZone=-04:00&forceConnectionTimeZoneToSession=true",
-})
+@SpringBootTest
 @Slf4j
 @DependsOnDatabaseInitialization
 class DatabaseCheckerTest {
@@ -35,8 +29,8 @@ class DatabaseCheckerTest {
 
     @Test
     @TmsLink("C12002")
-    void timezone() {
-        log.warn("spring.datasource.url={}", jdbcUrl);
+    void checkVersionTimezone() {
+        log.info("spring.datasource.url={}", jdbcUrl);
         DatabaseChecker.version(dataSource);
         DatabaseChecker.timezone(dataSource);
     }

@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -43,7 +43,7 @@ open class LightIdServiceImplTest {
     lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var testingDatabaseHelper: TestingDatabaseHelper
 
     @Autowired
     lateinit var journalService: JournalService
@@ -56,7 +56,7 @@ open class LightIdServiceImplTest {
     @Test
     @TmsLink("C12075")
     fun test0CleanTables() {
-        wingsTestHelper.cleanTable()
+        testingDatabaseHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 

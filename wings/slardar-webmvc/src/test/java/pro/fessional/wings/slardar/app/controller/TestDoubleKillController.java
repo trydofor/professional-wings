@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.app.service.TestDoubleKillService;
 import pro.fessional.wings.slardar.concur.DoubleKill;
-import pro.fessional.wings.slardar.app.service.DoubleKillService;
 
 /**
  * @author trydofor
@@ -17,7 +17,7 @@ import pro.fessional.wings.slardar.app.service.DoubleKillService;
 public class TestDoubleKillController {
 
     @Setter(onMethod_ = {@Autowired})
-    private DoubleKillService doubleKillService;
+    private TestDoubleKillService testDoubleKillService;
 
     @GetMapping("/test/double-kill.json")
     @DoubleKill(expression = "@httpSessionIdResolver.resolveSessionIds(#p0)")
@@ -28,6 +28,6 @@ public class TestDoubleKillController {
 
     @GetMapping("/test/double-kill-async.json")
     public R<String> doubleKillAsync() {
-        return R.ok(doubleKillService.sleepCache("controller", 10));
+        return R.ok(testDoubleKillService.sleepCache("controller", 10));
     }
 }

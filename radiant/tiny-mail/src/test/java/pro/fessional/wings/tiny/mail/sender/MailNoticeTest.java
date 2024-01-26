@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 import java.util.Collections;
 
@@ -19,6 +20,7 @@ import java.util.Collections;
  */
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
+        "logging.level.root=INFO",
 })
 @Slf4j
 public class MailNoticeTest {
@@ -43,15 +45,29 @@ public class MailNoticeTest {
 
     @Test
     @TmsLink("C15001")
-    public void testPost() {
+    public void postMailNotice() {
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
         Assertions.assertTrue(snd, "need env MAIL_USER, MAIL_PASS, current user=" + mailUser);
     }
 
     @Test
+    @TmsLink("C15015")
+    public void postMailNoticeDryrun() {
+        TestingLoggerAssert al = TestingLoggerAssert.install();
+        al.rule("single dryrun", it -> it.getFormattedMessage().contains("single mail dryrun and sleep"));
+        al.start();
+
+        mailNotice.post("[DRYRUN] test tiny mail send", "test send");
+
+        al.assertCount(1);
+        al.stop();
+        al.uninstall();
+    }
+
+    @Test
     @Disabled("Statis: time cost")
     @TmsLink("C15002")
-    public void testDefault() {
+    public void timeEmitPostSend() {
         final StopWatch stopWatch = new StopWatch();
         try (final StopWatch.Watch ignored = stopWatch.start("emit")) {
             mailNotice.emit("test tiny mail emit", "test emit");
@@ -68,7 +84,7 @@ public class MailNoticeTest {
     @Test
     @Disabled("3rdService: gmail")
     @TmsLink("C15003")
-    public void testGmail() {
+    public void sendGmail() {
         // dynamic config
         final String name = "gmailx";
         TinyMailConfig conf = new TinyMailConfig();

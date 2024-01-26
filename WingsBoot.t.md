@@ -166,7 +166,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12127 TestJooqMostSelectSample: paginate jooq sample
 * 12128 TestJooqMostSelectSample: paginate jdbc sample
 * 12129 TestJooqMostSelectSample: enum mapper sample
-* 12130 TestJooqMostSelectSample: dsl function sample
+* 12130 Tes[WingsBoot.t.md](WingsBoot.t.md)tJooqMostSelectSample: dsl function sample
 * 12131 FlywaveShardingTest: clean and init schema itself
 * 12132 FlywaveShardingTest: insert data in the writer
 * 12133 FlywaveShardingTest: check sharding on writer and reader
@@ -183,6 +183,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12144 MockTstNormalTableTest: mock ConnectionProvider by spring
 * 12145 MockTstNormalTableTest: mock DSLContext to Dao instance
 * 12146 WingsEnumConvertersTest: enum converter
+* 12147 WingsRevisionTest: module root and path
 
 ## 13 Slardar
 
@@ -313,7 +314,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14004 ResultSerializeTest: fastjson transient field of R
 * 14005 ResultSerializeTest: kryo transient field of R
 * 14006 ResultSerializeTest: java Serializable transient field of R
-* 14007 BootDatabaseTest: clean and init warlock schema
+* 14007 DatabaseWarlockTest: clean and init warlock schema
 * 14008 RuntimeConfServiceTest: simple type in runtime config
 * 14009 RuntimeConfServiceTest: List, Map in runtime config
 * 14010 RuntimeConfServiceTest: json in runtime config
@@ -387,6 +388,10 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14078 CacheEventHelperTest: table is in the tables collection
 * 14079 TerminalJournalServiceTest: submit of TerminalJournalService
 * 14080 TableChangePublisherTest: publish Insert TableChangeEvent
+* 14081 DatabaseWingsTest: clean and init wings schema
+* 14082 DatabaseFacelessTest: clean and init faceless schema
+* 14083 DatabaseShard0Test: clean and init shard_0 schema
+* 14084 DatabaseShard1Test: clean and init shard_1 schema
 
 ## 15 Tiny
 
@@ -399,8 +404,10 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 15007 TinyMailServiceTest: emit mail after 60s
 * 15008 TinyMailServiceTest: 501 Mail from with authorization user
 * 15009 TinyMailServiceTest: AddressException address contains dot-dot
-* 15010 BootDatabaseTest: clean and init schema for tiny
+* 15010 DatabaseTinyTest: clean and init schema for tiny
 * 15011 TinyMailCodeGenTest: insert and update trigger
 * 15012 ExecutorServiceTest: cancel task, check log
 * 15013 TinyTaskServiceTest: task from bean method reference
 * 15014 TinyTaskServiceTest: nothing but keep running 180s to see log
+* 15015 MailNoticeTest: title dryrun mailNotice
+* 15016 MailSenderManagerTest: title dryrun batch mail

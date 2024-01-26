@@ -19,7 +19,7 @@ public class Md5HmacSha256Test {
 
     @Test
     @TmsLink("C14033")
-    public void postJson() {
+    public void signaturePostJson() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
         queryString.put("query", "string"); // normal param
         queryString.put("null", null); // ignore null
@@ -61,7 +61,7 @@ public class Md5HmacSha256Test {
 
     @Test
     @TmsLink("C14034")
-    public void postFile() {
+    public void signaturePostFile() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
         queryString.put("query", "string"); // normal param
         queryString.put("null", null); // ignore null

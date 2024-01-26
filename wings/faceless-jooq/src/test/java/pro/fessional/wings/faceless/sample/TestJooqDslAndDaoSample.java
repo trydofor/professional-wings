@@ -25,7 +25,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqConfProp;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.silencer.testing.AssertionLogger;
+import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -38,9 +38,9 @@ import java.util.stream.Collectors;
 
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
 import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -74,13 +74,13 @@ public class TestJooqDslAndDaoSample {
     public void test0Init() {
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
+        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
     }
 
     @Test
     @TmsLink("C12113")
     public void test1Dao() {
-        final AssertionLogger al = AssertionLogger.install();
+        final TestingLoggerAssert al = TestingLoggerAssert.install();
         final Pattern alias = prop.isAutoQualify()
                               ? Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`\\1`.`id` > \\? and `\\1`.`commit_id` < \\?\\)")
                               : Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`id` > \\? and `commit_id` < \\?\\)");
@@ -123,7 +123,7 @@ public class TestJooqDslAndDaoSample {
         log.info("============update {}", u2);
 
         al.stop();
-        Assertions.assertTrue(al.assertCount(1), al::messageCount);
+        al.assertCount(1);
         al.uninstall();
     }
 

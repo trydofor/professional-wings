@@ -35,7 +35,7 @@ class NonceLoginTest {
 
     @Test
     @TmsLink("C14050")
-    public void testTestNyLogin() {
+    public void testNyNonceLogin() {
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":false}");
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
 

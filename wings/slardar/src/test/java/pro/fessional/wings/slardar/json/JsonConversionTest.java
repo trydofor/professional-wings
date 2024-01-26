@@ -61,7 +61,7 @@ class JsonConversionTest {
 
     @Test
     @TmsLink("C13016")
-    void convert() {
+    void fastjsonCompatible() {
         Dto dto = new Dto();
         Map<String, String> map = new HashMap<>();
         map.put("one", "1");
@@ -94,7 +94,7 @@ class JsonConversionTest {
 
     @Test
     @TmsLink("C13017")
-    void parse() {
+    void fastjsonGenerics() {
         Dto dto = new Dto();
         R<Dto> rd = R.okData(dto);
         String rd0 = JSON.toJSONString(rd, FastJsonHelper.DefaultWriter());

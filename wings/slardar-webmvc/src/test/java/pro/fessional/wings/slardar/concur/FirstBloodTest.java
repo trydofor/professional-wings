@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "wings.enabled.pro.fessional.wings.slardar.app.conf.SlardarFirstBloodTestConfiguration=true",
+                "wings.enabled.pro.fessional.wings.slardar.app.conf.TestFirstBloodTestConfiguration=true",
                 "wings.enabled.slardar.first-blood=true",
                 "wings.enabled.slardar.first-blood-image=false",
                 "wings.slardar.first-blood.http-status=202",

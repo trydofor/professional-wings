@@ -15,8 +15,8 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -35,7 +35,7 @@ public class SlardarOkhttp3ConfigurationTest {
 
     @Test
     @TmsLink("C13085")
-    public void test() throws Exception {
+    public void restTemplateOkHttp() throws Exception {
 
         ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
 
@@ -45,7 +45,7 @@ public class SlardarOkhttp3ConfigurationTest {
             requestFactory = (ClientHttpRequestFactory) field.get(requestFactory);
         }
 
-        assertTrue(requestFactory instanceof OkHttp3ClientHttpRequestFactory);
+        assertInstanceOf(OkHttp3ClientHttpRequestFactory.class, requestFactory);
 
         Field field = OkHttp3ClientHttpRequestFactory.class.getDeclaredField("client");
         field.setAccessible(true);

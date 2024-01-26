@@ -26,7 +26,7 @@ public class CombinableMessageSourceTest {
 
     @Test
     @TmsLink("C11010")
-    public void combine() {
+    public void dynamicCombineMessage() {
 
         assertTrue(MessageSourceHelper.hasPrimary);
         assertTrue(MessageSourceHelper.hasCombine);

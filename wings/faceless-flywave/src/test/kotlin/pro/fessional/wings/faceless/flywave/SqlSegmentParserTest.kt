@@ -4,6 +4,8 @@ import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,6 +18,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 @SpringBootTest(properties = ["debug = true"])
 @DependsOnDatabaseInitialization
 class SqlSegmentParserTest {
+    val log: Logger = LoggerFactory.getLogger(SqlSegmentParserTest::class.java)
 
     @Autowired
     lateinit var sqlSegmentProcessor: SqlSegmentProcessor
@@ -30,29 +33,29 @@ class SqlSegmentParserTest {
         val scan = FlywaveRevisionScanner.scanMaster()
         for ((k, v) in scan) {
             val undo = sqlSegmentProcessor.parse(sqlStatementParser, v.undoText)
-            println("undo===========$k")
+            log.info("undo===========$k")
             for (stm in undo) {
                 printSegment(k, stm)
             }
             val upto = sqlSegmentProcessor.parse(sqlStatementParser, v.uptoText)
-            println("upto===========$k")
+            log.info("upto===========$k")
             for (stm in upto) {
                 printSegment(k, stm)
             }
         }
 
         val trg = sqlSegmentProcessor.parse(sqlStatementParser, SqlSegmentParserTest::class.java.getResourceAsStream("/sql/ddl-dml.sql")!!.bufferedReader().readText())
-        println("1009===========")
+        log.info("1009===========")
         for (stm in trg) {
             printSegment(1009, stm)
         }
     }
 
     fun printSegment(revi: Long, segment: SqlSegmentProcessor.Segment) {
-        println(">>> revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, dbsType=${segment.dbsType}, table=${segment.tblName}, errType=${segment.errType}, tblRegx=${segment.tblRegx}")
+        log.info(">>> revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, dbsType=${segment.dbsType}, table=${segment.tblName}, errType=${segment.errType}, tblRegx=${segment.tblRegx}")
         for (i in 0..1) {
             val sql = sqlSegmentProcessor.merge(segment, mapOf(segment.tblName to segment.tblName + "_" + i))
-            println(">>>>$i\n$sql")
+            log.info(">>>>$i\n$sql")
         }
     }
 

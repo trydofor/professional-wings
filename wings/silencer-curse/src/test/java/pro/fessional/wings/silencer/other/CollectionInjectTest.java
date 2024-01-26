@@ -50,7 +50,7 @@ public class CollectionInjectTest {
 
     @Test
     @TmsLink("C11013")
-    public void testList() {
+    public void injectList() {
         Assertions.assertEquals(1, listEmpty.size());
         Assertions.assertEquals(1, listValue0.size());
         Assertions.assertEquals(2, listValue1.size());
@@ -61,7 +61,7 @@ public class CollectionInjectTest {
 
     @Test
     @TmsLink("C11014")
-    public void testMap() {
+    public void injectMap() {
         Assertions.assertEquals(1, mapEmpty.size());
         Assertions.assertEquals(1, mapValue0.size());
         Assertions.assertEquals(2, mapValue1.size());

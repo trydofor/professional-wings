@@ -19,7 +19,7 @@ public class SpringPageHelperTest {
 
     @Test
     @TmsLink("C13113")
-    void from() {
+    void pageRequest2Query() {
         PageQuery pq = new PageQuery(2, 3, "id,-name");
         final PageRequest pr = SpringPageHelper.from(pq);
         final PageQuery ps = SpringPageHelper.into(pr);
@@ -28,7 +28,7 @@ public class SpringPageHelperTest {
 
     @Test
     @TmsLink("C13114")
-    void into() {
+    void pageQuery2Request() {
         final List<Sort.Order> ods = Arrays.asList(Sort.Order.asc("id"), Sort.Order.desc("name"));
         PageRequest pr = PageRequest.of(3, 4, Sort.by(ods));
         final PageQuery pq = SpringPageHelper.into(pr);

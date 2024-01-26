@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,7 +15,8 @@ import javax.sql.DataSource
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName::class)
 @DependsOnDatabaseInitialization
-open class WingsShardingTest {
+class WingsShardingTest {
+    val log: Logger = LoggerFactory.getLogger(SqlSegmentParserTest::class.java)
 
     @Autowired
     lateinit var datasource: DataSource
@@ -26,7 +29,7 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val result = statement.executeUpdate()
-        println("=================== dropTable=$result")
+        log.info("=================== dropTable=$result")
     }
 
     @Test
@@ -45,7 +48,7 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val result = statement.executeUpdate()
-        println("=================== createTable=$result")
+        log.info("=================== createTable=$result")
     }
 
     @Test
@@ -58,7 +61,7 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val result = statement.executeUpdate()
-        println("=================== insertDate=$result")
+        log.info("=================== insertDate=$result")
     }
 
     @Test
@@ -70,7 +73,7 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val result = statement.executeUpdate()
-        println("=================== alterTable=$result")
+        log.info("=================== alterTable=$result")
     }
 
 
@@ -94,7 +97,7 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val rst1 = sts1.executeUpdate()
-        println("=================== trigger=$rst1")
+        log.info("=================== trigger=$rst1")
 
         val sts2 = datasource.connection.prepareStatement("""
         create trigger `wg_order${"$"}log_bu` before update on `wg_order_0`
@@ -104,6 +107,6 @@ open class WingsShardingTest {
         """.trimIndent())
 
         val rst2 = sts2.executeUpdate()
-        println("=================== trigger=$rst2")
+        log.info("=================== trigger=$rst2")
     }
 }

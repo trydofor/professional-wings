@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.service.auth;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +27,7 @@ class PasswordEncoderTest {
 
     @Test
     @TmsLink("C14053")
-    @Disabled("Print: password to the log")
-    void printPassword() {
+    void infoPassword() {
         final String md5h = Md5.sum("moilioncircle");
         log.info("md5={}", md5h);
         final String password = "3e5ecf947e5f08731c6de4385b8900fe";

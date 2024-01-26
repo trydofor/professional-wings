@@ -12,7 +12,7 @@ class DatabaseNamingTest {
 
     @Test
     @TmsLink("C12003")
-    void tableName() {
+    void tableSnakeNaming() {
         Assertions.assertEquals("database_naming_test", DatabaseNaming.tableName(DatabaseNamingTest.class));
         Assertions.assertEquals("ab_cd_efg", DatabaseNaming.lowerSnake("AbCdEFG"));
         Assertions.assertEquals("database_naming", DatabaseNaming.lowerSnake("DatabaseNaming"));

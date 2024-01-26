@@ -3,9 +3,9 @@ package pro.fessional.wings.faceless.service.wini18n.impl;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import pro.fessional.mirana.i18n.LocaleResolver;
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.silencer.message.MessageSourceHelper;
 
@@ -47,7 +47,7 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
         return cache.computeIfAbsent(key, s -> {
             String txt = jdbcTemplate.query(
                     "SELECT hint FROM sys_standard_i18n WHERE base=? AND kind=? AND ukey=? AND lang=?",
-                    strExtractor,
+                    JdbcTemplateHelper.FirstStringOrNull,
                     base, kind, ukey, lan);
             String hint = txt == null ? "" : txt;
             if (!hint.isEmpty()) {
@@ -77,8 +77,6 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
     private String key(String base, String kind, String ukey, String lang) {
         return base + "." + kind + "." + ukey + "@" + lang;
     }
-
-    private static final ResultSetExtractor<String> strExtractor = rs -> rs.next() ? rs.getString(1) : "";
 
     private static final RowMapper<Po> poMapper = (rs, rowNum) -> {
         Po po = new Po();

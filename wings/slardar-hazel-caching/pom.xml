@@ -37,11 +37,5 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-hazelcast</artifactId>
         </dependency>
-        <!-- test -->
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

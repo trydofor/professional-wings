@@ -28,14 +28,14 @@ public class MessageModuleTest {
 
     @Test
     @TmsLink("C11001")
-    void testModule() {
+    void modulePropAndLangTag() {
         assertEquals("Silencer", module);
         assertEquals(Locale.forLanguageTag("en-US"), Locale.getDefault());
     }
 
     @Test
     @TmsLink("C11002")
-    void testMessageStandard() {
+    void messageOfStandard() {
         // use lang
         String cn = messageSource.getMessage("base.not-empty", Arr.of("姓名"), Locale.CHINA);
         // use default
@@ -53,7 +53,7 @@ public class MessageModuleTest {
 
     @Test
     @TmsLink("C11003")
-    void testMessagePartial() {
+    void messageOfPartial() {
         // use lang
         String zh = messageSource.getMessage("base.not-empty", Arr.of("姓名"), Locale.forLanguageTag("zh"));
         // use default

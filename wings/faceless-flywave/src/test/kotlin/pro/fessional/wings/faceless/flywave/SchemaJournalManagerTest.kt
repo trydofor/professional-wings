@@ -15,10 +15,9 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.H
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper
-import pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.testing.database.WingsTestHelper.breakpointDebug
-import pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice
 
 /**
  * Shard and trace table test
@@ -124,7 +123,7 @@ class SchemaJournalManagerTest {
     lateinit var shcemaShardingManager: SchemaShardingManager
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var testingDatabaseHelper: TestingDatabaseHelper
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
@@ -138,7 +137,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12039")
     fun test0CleanTables() {
-        wingsTestHelper.cleanTable()
+        testingDatabaseHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
             .helper()
             .master()
@@ -157,17 +156,17 @@ class SchemaJournalManagerTest {
     @TmsLink("C12040")
     fun test1CreateTables() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
-        wingsTestHelper.assertSame(
-            WingsTestHelper.Type.Table,
+        testingDatabaseHelper.assertSame(
+            TestingDatabaseHelper.Type.Table,
             "sys_commit_journal",
             "sys_light_sequence",
             "${schemaPrefix}journal",
             "${schemaPrefix}version"
         )
         breakpointDebug("Create test table💰, check all tables in the database")
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
-        wingsTestHelper.assertSame(
-            WingsTestHelper.Type.Table,
+        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_01_TestSchema.revision(), 0)
+        testingDatabaseHelper.assertSame(
+            TestingDatabaseHelper.Type.Table,
             "sys_commit_journal",
             "sys_light_sequence",
             "${schemaPrefix}journal",
@@ -183,8 +182,8 @@ class SchemaJournalManagerTest {
     @TmsLink("C12041")
     fun test2Sharding() {
         schemaJournalManager.checkAndInitDdl("tst_sharding", 0)
-        wingsTestHelper.assertNot(
-            WingsTestHelper.Type.Table,
+        testingDatabaseHelper.assertNot(
+            TestingDatabaseHelper.Type.Table,
             "tst_sharding_0",
             "tst_sharding_1",
             "tst_sharding_2",
@@ -193,8 +192,8 @@ class SchemaJournalManagerTest {
         )
         breakpointDebug("Sharding test💰, check all tables in the database")
         shcemaShardingManager.publishShard("tst_sharding", 5)
-        wingsTestHelper.assertHas(
-            WingsTestHelper.Type.Table, "tst_sharding_0",
+        testingDatabaseHelper.assertHas(
+            TestingDatabaseHelper.Type.Table, "tst_sharding_0",
             "tst_sharding_1",
             "tst_sharding_2",
             "tst_sharding_3",
@@ -206,15 +205,15 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12042")
     fun test4AiTrigger() {
-        if (wingsTestHelper.hasH2()) {
+        if (testingDatabaseHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "ai__tst_sharding")
 
         jdbcTemplate.execute(
             """
@@ -228,23 +227,23 @@ class SchemaJournalManagerTest {
         breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishInsert("tst_sharding", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "ai__tst_sharding")
         testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
     @TmsLink("C12043")
     fun test4AuTrigger() {
-        if (wingsTestHelper.hasH2()) {
+        if (testingDatabaseHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "au__tst_sharding")
 
         jdbcTemplate.execute("UPDATE `tst_sharding_1` SET login_info='ZhaoSi', commit_id=1 WHERE id = 1")
         breakpointDebug("Update data🐵, select data and check table")
@@ -255,22 +254,22 @@ class SchemaJournalManagerTest {
         breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishUpdate("tst_sharding", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "au__tst_sharding")
         testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
     @TmsLink("C12044")
     fun test5BdTrigger() {
-        if (wingsTestHelper.hasH2()) {
+        if (testingDatabaseHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
         breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "bd__tst_sharding")
 
         jdbcTemplate.execute("DELETE FROM `tst_sharding_1` WHERE id = 1")
         breakpointDebug("Delete data🐵, select data and check table")
@@ -281,15 +280,15 @@ class SchemaJournalManagerTest {
         breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishDelete("tst_sharding", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "bd__tst_sharding")
         testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
     @TmsLink("C12045")
     fun test6Trigger() {
-        if (wingsTestHelper.hasH2()) {
+        if (testingDatabaseHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -298,10 +297,10 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_sharding")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, traceTable("tst_sharding"))
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "ai__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "au__tst_sharding")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Trigger, "bd__tst_sharding")
 
         jdbcTemplate.execute(
             """
@@ -322,9 +321,9 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishInsert("tst_sharding", false, 0)
         schemaJournalManager.publishUpdate("tst_sharding", false, 0)
         schemaJournalManager.publishDelete("tst_sharding", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "ai__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "au__tst_sharding")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Trigger, "bd__tst_sharding")
 
         testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
@@ -332,7 +331,7 @@ class SchemaJournalManagerTest {
     @Test
     @TmsLink("C12046")
     fun test7AltTable() {
-        if (wingsTestHelper.hasH2()) {
+        if (testingDatabaseHelper.hasH2()) {
             testcaseNotice("h2 database skip")
             return
         }
@@ -341,8 +340,8 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
-        wingsTestHelper.assertHas(
-            WingsTestHelper.Type.Table,
+        testingDatabaseHelper.assertHas(
+            TestingDatabaseHelper.Type.Table,
             "tst_sharding",
             "tst_sharding_0",
             "tst_sharding_1",

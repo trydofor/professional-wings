@@ -39,7 +39,7 @@ public class Param1ControllerTest {
 
     @Test
     @TmsLink("C14035")
-    public void testMvc() throws JsonProcessingException {
+    public void param1Mvc() throws JsonProcessingException {
         testMvc("/test/param1/str.json", objectMapper.writeValueAsString("string"), "\"string\"");
         testMvc("/test/param1/str.json", "\"string\"", "\"string\"");
         testMvc("/test/param1/str.json", "string", "string");
@@ -72,7 +72,7 @@ public class Param1ControllerTest {
      */
     @Test
     @TmsLink("C14036")
-    public void testObj() throws JsonProcessingException {
+    public void param1Obj() throws JsonProcessingException {
         testObj("string", "\"string\"");
         testObj(123, "123", "\"123\"");
         testObj(Integer.valueOf("123"), "123", "\"123\"");

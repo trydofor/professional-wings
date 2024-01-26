@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.testing.database.WingsTestHelper
-import pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.testing.database.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.breakpointDebug
 
 /**
  * Default profile, there are writer and reader datasource, use the writer only.
@@ -26,7 +27,9 @@ import pro.fessional.wings.testing.database.WingsTestHelper.breakpointDebug
 )
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
-open class SchemaRevisionMangerTest {
+class SchemaRevisionMangerTest {
+
+    val log: Logger = LoggerFactory.getLogger(SqlSegmentParserTest::class.java)
 
     private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision()
     private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision()
@@ -35,14 +38,14 @@ open class SchemaRevisionMangerTest {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var testingDatabaseHelper: TestingDatabaseHelper
 
     private val schemaVersion = "win_schema_version"
 
     @Test
     @TmsLink("C12047")
     fun test0CleanTables() {
-        wingsTestHelper.cleanTable()
+        testingDatabaseHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
             .master()
             .replace(revi1Schema, revi1Schema + 1, true)
@@ -81,11 +84,11 @@ open class SchemaRevisionMangerTest {
         val databaseVersion = schemaRevisionManager.statusRevisions()
         for ((d, u) in databaseVersion) {
             if (u == null) {
-                println("$d - -1")
+                log.info("$d - -1")
             } else {
-                println("$d -")
+                log.info("$d -")
                 for (entry in u.entries) {
-                    println(" ${entry.key} : ${entry.value}")
+                    log.info(" ${entry.key} : ${entry.value}")
                 }
             }
         }
@@ -135,12 +138,12 @@ open class SchemaRevisionMangerTest {
     @TmsLink("C12053")
     fun test5ForceBreak() {
         breakpointDebug("Publish 615💰")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         breakpointDebug("Cancel 615💰")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -4, false)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
     }
 
 
@@ -169,7 +172,7 @@ open class SchemaRevisionMangerTest {
             DROP TABLE IF EXISTS `test_temp_x`;
             """.trimIndent()
         )
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp_x")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "test_temp_x")
     }
 
     @Test
@@ -186,19 +189,20 @@ open class SchemaRevisionMangerTest {
     @TmsLink("C12057")
     fun test9MaintainBreak() {
         breakpointDebug("Prepare a breakpoint revision to mock a failure💰")
+        val revision = WingsRevision.V90_19_0601_01_TestSchema.revision()
         schemaRevisionManager.forceExecuteSql(
             """
-            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_TEST_V1';
+            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$revision';
             """.trimIndent()
         )
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
+        schemaRevisionManager.publishRevision(revision, 0)
         breakpointDebug("Can't execute due to broken version, see logs💰")
         schemaRevisionManager.forceExecuteSql(
             """
-            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_TEST_V1';
+            UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$revision';
             """.trimIndent()
         )
         breakpointDebug("Fix breakpoint, and downgrade💰")
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
+        schemaRevisionManager.publishRevision(revision, 0)
     }
 }

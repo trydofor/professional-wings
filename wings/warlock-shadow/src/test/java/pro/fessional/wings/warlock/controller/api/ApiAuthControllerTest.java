@@ -22,7 +22,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
-import pro.fessional.wings.warlock.app.service.WatchingService;
+import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
@@ -139,7 +139,7 @@ class ApiAuthControllerTest {
                 jsonJson(c, t, null);
             }
         }
-        final long uid = WatchingService.AsyncContext.getUserId();
+        final long uid = TestWatchingService.AsyncContext.getUserId();
         Assertions.assertEquals(userId, Long.toString(uid));
     }
 

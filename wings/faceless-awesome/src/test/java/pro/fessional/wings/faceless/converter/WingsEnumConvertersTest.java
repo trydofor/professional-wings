@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * @author trydofor
@@ -15,7 +15,7 @@ class WingsEnumConvertersTest {
 
     @Test
     @TmsLink("C12146")
-    public void testConvert() {
+    public void convertIdAndCode() {
         assertEquals(StandardLanguage.AR_AE, WingsEnumConverters.Id2Language.convert(1020101));
         assertEquals(StandardLanguage.AR_AE, WingsEnumConverters.Code2Language.convert("ar_AE"));
         assertEquals(StandardLanguage.AR_AE, WingsEnumConverters.Code2Language.convert("AR_AE"));

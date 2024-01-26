@@ -17,13 +17,13 @@ import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
-import pro.fessional.wings.faceless.app.service.TestingTableCudHandler;
+import pro.fessional.wings.faceless.app.service.TestTableCudHandler;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
-import pro.fessional.wings.testing.database.WingsTestHelper;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,9 +36,9 @@ import java.util.function.BiConsumer;
 
 import static java.util.Collections.singletonList;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -67,21 +67,21 @@ public class JooqTableCudListenerTest {
     private TstShardingDao testDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private TestingTableCudHandler testingTableCudHandler;
+    private TestTableCudHandler testTableCudHandler;
 
     @Test
     @TmsLink("C12104")
     public void test0Init() {
-        wingsTestHelper.cleanTable();
+        testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
-        schemaRevisionManager.publishRevision(REVISION_TEST_V2, -1);
+        schemaRevisionManager.publishRevision(V90_19_0601_02_TestRecord.revision(), -1);
     }
 
     @Test
@@ -197,16 +197,16 @@ public class JooqTableCudListenerTest {
     }
 
     private void assertCud(boolean wv, Cud cud, List<List<Long>> ids, Runnable run, String sqlPart) {
-        testingTableCudHandler.reset();
+        testTableCudHandler.reset();
         TableCudListener.WarnVisit = wv;
         run.run();
         final String sql = LastSql.get();
         Assertions.assertTrue(StringUtils.containsIgnoreCase(sql, sqlPart));
 
         TableCudListener.WarnVisit = false;
-        final List<Cud> d = testingTableCudHandler.getCud();
-        final List<String> t = testingTableCudHandler.getTable();
-        List<Map<String, List<?>>> f = testingTableCudHandler.getField();
+        final List<Cud> d = testTableCudHandler.getCud();
+        final List<String> t = testTableCudHandler.getTable();
+        List<Map<String, List<?>>> f = testTableCudHandler.getField();
 
         if (cud == null) {
             Assertions.assertTrue(d.isEmpty());

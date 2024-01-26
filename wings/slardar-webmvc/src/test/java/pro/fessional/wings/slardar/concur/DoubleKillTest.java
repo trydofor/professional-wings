@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.slardar.app.service.DoubleKillService;
+import pro.fessional.wings.slardar.app.service.TestDoubleKillService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,7 +36,7 @@ class DoubleKillTest {
     private String doubleKillHost;
 
     @Setter(onMethod_ = {@Autowired})
-    private DoubleKillService doubleKillService;
+    private TestDoubleKillService testDoubleKillService;
 
     @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
@@ -94,14 +94,14 @@ class DoubleKillTest {
     void doubleKillArg() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");
-            doubleKillService.sleepSecond("sleep", 10);
+            testDoubleKillService.sleepSecond("sleep", 10);
             log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
             log.info("before main call");
-            doubleKillService.sleepSecond("sleep", 10);
+            testDoubleKillService.sleepSecond("sleep", 10);
             log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {
@@ -114,14 +114,14 @@ class DoubleKillTest {
     void doubleKillStr() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");
-            doubleKillService.sleepSecondStr("sleep", 10);
+            testDoubleKillService.sleepSecondStr("sleep", 10);
             log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
             log.info("before main call");
-            doubleKillService.sleepSecondStr("sleep", 10);
+            testDoubleKillService.sleepSecondStr("sleep", 10);
             log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {
@@ -134,14 +134,14 @@ class DoubleKillTest {
     void doubleKillExp() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");
-            doubleKillService.sleepSecondExp("sleep", 10);
+            testDoubleKillService.sleepSecondExp("sleep", 10);
             log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
             log.info("before main call");
-            doubleKillService.sleepSecondExp("sleep", 10);
+            testDoubleKillService.sleepSecondExp("sleep", 10);
             log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {

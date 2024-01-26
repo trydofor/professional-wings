@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstNormalTableTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstNormalTableDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstNormalTable;
-import pro.fessional.wings.faceless.app.database.jooq.MockTstNormalTableDataProvider;
+import pro.fessional.wings.faceless.app.database.jooq.TestNormalTableDataProvider;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static pro.fessional.wings.faceless.app.database.jooq.MockTstNormalTableDataProvider.DefaultRecord;
+import static pro.fessional.wings.faceless.app.database.jooq.TestNormalTableDataProvider.DefaultRecord;
 
 
 /**
@@ -31,9 +31,9 @@ import static pro.fessional.wings.faceless.app.database.jooq.MockTstNormalTableD
  * @since 2023-11-10
  */
 @SpringBootTest(properties = {
-        "wings.faceless.testing.mock-jooq=true",
+        "wings.testing.faceless.mock-jooq=true",
         """
-                spring.datasource.url=jdbc:h2:./${testing.dbname}\\
+                spring.datasource.url=jdbc:h2:${testing.wings.rootdir}/${testing.dbname}\\
                 ;USER=${spring.datasource.username};PASSWORD=${spring.datasource.password}\\
                 ;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;IGNORECASE=TRUE\\
                 ;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE"""
@@ -77,7 +77,7 @@ public class MockTstNormalTableTest {
         m.setValueTime(LocalTime.of(11, 23, 45));
         m.setValueLang(StandardLanguage.EN_US);
 
-        MockTstNormalTableDataProvider provider = new MockTstNormalTableDataProvider();
+        TestNormalTableDataProvider provider = new TestNormalTableDataProvider();
         provider.setRecord(m);
         MockConnection connection = new MockConnection(provider);
         DSLContext dsl = DSL.using(connection, SQLDialect.MYSQL);

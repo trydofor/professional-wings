@@ -25,6 +25,10 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
 public class TinyMailConfig extends MailProperties {
 
     /**
+     * the dryrun prefix of subject. merge if null, `empty` means disable.
+     */
+    protected String dryrun;
+    /**
      * the name of mail config. automatically set in static config, manually set in dynamic config,
      */
     protected String name;
@@ -117,7 +121,7 @@ public class TinyMailConfig extends MailProperties {
     public void adopt(TinyMailConfig that) {
         if (that == null) return;
         adopt((MailProperties) that);
-
+        dryrun = that.dryrun;
         name = that.name;
         from = that.from;
         to = that.to;
@@ -164,6 +168,7 @@ public class TinyMailConfig extends MailProperties {
         if (that == null) return;
         merge((MailProperties) that);
 
+        if (dryrun == null) dryrun = that.dryrun;
         if (notValue(name)) name = that.name;
         if (notValue(from)) from = that.from;
         if (to == null) to = that.to;

@@ -12,14 +12,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.testing.database.TestingDataSource;
-import pro.fessional.wings.testing.database.WingsTestHelper;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.testing.database.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.testing.database.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
+import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -39,12 +39,12 @@ public class FlywaveShardingTest {
     @Setter(onMethod_ = {@Autowired})
     private DataSourceContext dataSourceContext;
     @Setter(onMethod_ = {@Autowired})
-    private WingsTestHelper wingsTestHelper;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Test
     @TmsLink("C12131")
     public void test0CleanTables() {
-        wingsTestHelper.cleanTable();
+        testingDatabaseHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
     }
@@ -52,10 +52,10 @@ public class FlywaveShardingTest {
     @Test
     @TmsLink("C12132")
     public void test1Single() {
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "tst_sharding");
+        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "tst_sharding");
 
-        schemaRevisionManager.forceApplyBreak(REVISION_TEST_V2, 2, true, "writer");
+        schemaRevisionManager.forceApplyBreak(V90_19_0601_02_TestRecord.revision(), 2, true, "writer");
         assertEquals(20, countRecords("writer", "tst_sharding"));
         assertEquals(0, countRecords("reader", "tst_sharding"));
 
@@ -66,9 +66,9 @@ public class FlywaveShardingTest {
     @TmsLink("C12133")
     public void test2Sharding() {
         schemaShardingManager.publishShard("sys_schema_journal", 2);
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
         schemaShardingManager.publishShard("sys_schema_journal", 0);
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
         testcaseNotice("2 sys_schema_journal_[0-1] tables on writer and reader at the same time");
     }
 
@@ -76,7 +76,7 @@ public class FlywaveShardingTest {
     @TmsLink("C12134")
     public void test3ShardMove() {
         schemaShardingManager.publishShard("tst_sharding", 5);
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "tst_sharding",
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "tst_sharding",
                 "tst_sharding_0",
                 "tst_sharding_1",
                 "tst_sharding_2",

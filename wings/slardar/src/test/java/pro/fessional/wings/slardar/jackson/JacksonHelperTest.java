@@ -17,7 +17,7 @@ class JacksonHelperTest {
 
     @Test
     @TmsLink("C13014")
-    void testObject() {
+    void jacksonJsonAndXml() {
         final String jsonText = InputStreams.readText(JacksonHelperTest.class.getResourceAsStream("/complex.json"));
         final Map<?, ?> jsonMap = JacksonHelper.object(jsonText, Map.class);
 

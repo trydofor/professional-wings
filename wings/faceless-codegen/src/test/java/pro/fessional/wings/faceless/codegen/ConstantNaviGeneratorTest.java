@@ -17,7 +17,7 @@ class ConstantNaviGeneratorTest {
 
     @Test
     @TmsLink("C12018")
-    void generate() {
+    void genNaviPerm() {
         Collection<Entry> entries = new ArrayList<>();
         entries.add(create(1000L, "root", "super privilege, NOT for external use"));
         entries.add(create(1000L, ".*", "super privilege, NOT for external use"));
