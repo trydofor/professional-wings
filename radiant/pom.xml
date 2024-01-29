@@ -17,9 +17,6 @@
     <description>Radiant components under GhostShip Model</description>
 
     <modules>
-        <module>devs-codegen</module>
-        <module>devs-coverage</module>
-        <module>devs-mvndeps</module>
         <module>tiny-autogen</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
@@ -107,4 +104,17 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>devs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>devs-codegen</module>
+                <module>devs-coverage</module>
+                <module>devs-mvndeps</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
