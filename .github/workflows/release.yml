@@ -30,14 +30,16 @@ on:
         required: false
   release:
     types: [published]
-
+  push:
+    branches:
+      - 'main'
 jobs:
   release:
     name: Release to Sonatype
     runs-on: ubuntu-latest
     env:
       MAVEN_OPTS: -Xmx2g
-      LOG_LEVEL: ${{ inputs.testLoggerLevel }}
+      LOG_LEVEL: ${{ inputs.testLoggerLevel || 'INFO' }}
       TEST_VERBOSE: ${{ inputs.testLoggerLevel == 'DEBUG' }}
 
     steps:
@@ -73,16 +75,21 @@ jobs:
           _opt=$(git describe --tags --exact-match 2>/dev/null || true)
           if [ "$_opt" != "" ]; then
             _opt="-Drevision=$_opt"
-            echo $_opt
+            echo "MVN_REVISION=$_opt"
             echo "MVN_REVISION=$_opt" >> "$GITHUB_OUTPUT"
           fi
           
           _ver=$(mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version $_opt help:evaluate)
-          echo $_ver
+          echo "WINGS_VERSION=$_ver"
           echo "WINGS_VERSION=$_ver" >> "$GITHUB_OUTPUT"
           
-          echo "MVN_COVERAGE=${{ inputs.testCoverReport || github.event_name == 'release' }}" >> "$GITHUB_OUTPUT"
-          echo "MVN_DEPLOYRH=${{ inputs.deployOssrh || github.event_name == 'release' }}" >> "$GITHUB_OUTPUT"
+          _cov=${{ inputs.testCoverReport || github.event_name == 'push' }}
+          echo "MVN_COVERAGE=$_cov"
+          echo "MVN_COVERAGE=$_cov" >> "$GITHUB_OUTPUT"
+          
+          _drh=${{ inputs.deployOssrh || github.event_name == 'release' }}
+          echo "MVN_DEPLOYRH=$_drh"
+          echo "MVN_DEPLOYRH=$_drh" >> "$GITHUB_OUTPUT"
           
           mvn -v
           git --no-pager log --graph -10 --pretty=format:'%H - %ai %d %s'
@@ -103,7 +110,7 @@ jobs:
 
       ## report if not release
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
-        if: steps.settings.outputs.MVN_COVERAGE
+        if: steps.settings.outputs.MVN_COVERAGE == 'true'
         run: |
           mvn -pl ':devs-codegen' -am -Ddevs-codegen.test.skip=false -Ddevs-initdb=true -Dwings.test.skip=true clean test
           mvn -P 'coverage,!example' -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }} clean test
@@ -112,15 +119,11 @@ jobs:
         env:
           TZ: Asia/Shanghai
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
-          MAIL_USER: ${{ secrets.MAIL_USER }}
-          MAIL_PASS: ${{ secrets.MAIL_PASS }}
-          MAIL_FROM: ${{ secrets.MAIL_FROM }}
-          MAIL_TO: ${{ secrets.MAIL_TO }}
           COVERALLS_WINGS: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
       ## import gpp private key
       - name: Import GPG key
-        if: steps.settings.outputs.MVN_DEPLOYRH
+        if: steps.settings.outputs.MVN_DEPLOYRH == 'true'
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.MVN_GPG_SKEY }}
@@ -128,7 +131,7 @@ jobs:
 
       ## maven deploy
       - name: Deploy ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
-        if: steps.settings.outputs.MVN_DEPLOYRH
+        if: steps.settings.outputs.MVN_DEPLOYRH == 'true'
         run: >
           mvn 
           -P 'ossrh,doc,!example,!devs'

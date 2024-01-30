@@ -41,7 +41,6 @@
                     <skip>${devs-codegen.test.skip}</skip>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
