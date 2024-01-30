@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -419,39 +420,45 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     private LinkedHashMap<String, Diff.V<?>> diff(WinTaskDefine v1, TaskerProp v2) {
         LinkedHashMap<String, Diff.V<?>> result = new LinkedHashMap<>();
-        Diff.V.diff(result, "enabled", v1.getEnabled(), v2.isEnabled());
-        Diff.V.diff(result, "autorun", v1.getAutorun(), v2.isAutorun());
-        Diff.V.diff(result, "version", v1.getVersion(), v2.getVersion());
+        diff(result, "enabled", v1.getEnabled(), v2.isEnabled());
+        diff(result, "autorun", v1.getAutorun(), v2.isAutorun());
+        diff(result, "version", v1.getVersion(), v2.getVersion());
 
-        Diff.V.diff(result, "taskerBean", v1.getTaskerBean(), v2.getTaskerBean());
-        Diff.V.diff(result, "taskerPara", v1.getTaskerPara(), v2.getTaskerPara());
-        Diff.V.diff(result, "taskerName", v1.getTaskerName(), v2.getTaskerName());
-        Diff.V.diff(result, "taskerFast", v1.getTaskerFast(), v2.isTaskerFast());
-        Diff.V.diff(result, "taskerApps", v1.getTaskerApps(), v2.getTaskerApps());
-        Diff.V.diff(result, "taskerRuns", v1.getTaskerRuns(), v2.getTaskerRuns());
+        diff(result, "taskerBean", v1.getTaskerBean(), v2.getTaskerBean());
+        diff(result, "taskerPara", v1.getTaskerPara(), v2.getTaskerPara());
+        diff(result, "taskerName", v1.getTaskerName(), v2.getTaskerName());
+        diff(result, "taskerFast", v1.getTaskerFast(), v2.isTaskerFast());
+        diff(result, "taskerApps", v1.getTaskerApps(), v2.getTaskerApps());
+        diff(result, "taskerRuns", v1.getTaskerRuns(), v2.getTaskerRuns());
 
-        Diff.V.diff(result, "noticeBean", v1.getNoticeBean(), v2.getNoticeBean());
-        Diff.V.diff(result, "noticeWhen", v1.getNoticeWhen(), v2.getNoticeWhen());
-        Diff.V.diff(result, "noticeConf", v1.getNoticeConf(), v2.getNoticeConf());
+        diff(result, "noticeBean", v1.getNoticeBean(), v2.getNoticeBean());
+        diff(result, "noticeWhen", v1.getNoticeWhen(), v2.getNoticeWhen());
+        diff(result, "noticeConf", v1.getNoticeConf(), v2.getNoticeConf());
 
-        Diff.V.diff(result, "timingZone", v1.getTimingZone(), v2.getTimingZone());
-        Diff.V.diff(result, "timingType", v1.getTimingType(), v2.getTimingType());
-        Diff.V.diff(result, "timingCron", v1.getTimingCron(), v2.getTimingCron());
-        Diff.V.diff(result, "timingIdle", v1.getTimingIdle(), v2.getTimingIdle());
-        Diff.V.diff(result, "timingRate", v1.getTimingRate(), v2.getTimingRate());
-        Diff.V.diff(result, "timingMiss", v1.getTimingMiss(), v2.getTimingMiss());
-        Diff.V.diff(result, "timingBeat", v1.getTimingBeat(), v2.getTimingBeat());
+        diff(result, "timingZone", v1.getTimingZone(), v2.getTimingZone());
+        diff(result, "timingType", v1.getTimingType(), v2.getTimingType());
+        diff(result, "timingCron", v1.getTimingCron(), v2.getTimingCron());
+        diff(result, "timingIdle", v1.getTimingIdle(), v2.getTimingIdle());
+        diff(result, "timingRate", v1.getTimingRate(), v2.getTimingRate());
+        diff(result, "timingMiss", v1.getTimingMiss(), v2.getTimingMiss());
+        diff(result, "timingBeat", v1.getTimingBeat(), v2.getTimingBeat());
 
-        Diff.V.diff(result, "duringFrom", v1.getDuringFrom(), v2.getDuringFrom());
-        Diff.V.diff(result, "duringStop", v1.getDuringStop(), v2.getDuringStop());
-        Diff.V.diff(result, "duringExec", v1.getDuringExec(), v2.getDuringExec());
-        Diff.V.diff(result, "duringFail", v1.getDuringFail(), v2.getDuringFail());
-        Diff.V.diff(result, "duringDone", v1.getDuringDone(), v2.getDuringDone());
-        Diff.V.diff(result, "duringBoot", v1.getDuringBoot(), v2.getDuringBoot());
+        diff(result, "duringFrom", v1.getDuringFrom(), v2.getDuringFrom());
+        diff(result, "duringStop", v1.getDuringStop(), v2.getDuringStop());
+        diff(result, "duringExec", v1.getDuringExec(), v2.getDuringExec());
+        diff(result, "duringFail", v1.getDuringFail(), v2.getDuringFail());
+        diff(result, "duringDone", v1.getDuringDone(), v2.getDuringDone());
+        diff(result, "duringBoot", v1.getDuringBoot(), v2.getDuringBoot());
 
-        Diff.V.diff(result, "resultKeep", v1.getResultKeep(), v2.getResultKeep());
+        diff(result, "resultKeep", v1.getResultKeep(), v2.getResultKeep());
 
         return result;
+    }
+
+    public <K, T> void diff(Map<K, Diff.V<?>> map, K key, T t1, T t2) {
+        if (!Objects.equals(t1, t2)) {
+            map.put(key, Diff.v(t1, t2));
+        }
     }
 
     public enum Jane {

@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Devs::Mvndeps</name>
-    <description>check dependency's version by maven-dependency-checker</description>
+    <description>mvn versions:display-dependency-updates or maven-dependency-checker</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -22,6 +22,11 @@
 
     <!-- Keep `*.version` properties, get easy search and IDE hint -->
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -61,6 +66,21 @@
         </dependency>
         <!-- wings project -->
         <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>mirana</artifactId>
+            <version>${mirana.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>meepo</artifactId>
+            <version>${meepo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>${kaptcha.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>${fastjson2.version}</version>
@@ -91,11 +111,13 @@
             <artifactId>JustAuth</artifactId>
             <version>${justauth.version}</version>
         </dependency>
+        <!-- sharding jdbc -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${shardingsphere.version}</version>
         </dependency>
+        <!-- servicecomb -->
         <dependency>
             <groupId>org.apache.servicecomb</groupId>
             <artifactId>java-chassis-core</artifactId>
@@ -133,4 +155,41 @@
             <version>${druid.version}</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <configuration>
+                    <dependencyIncludes>
+                        <include>org.springframework.boot:spring-boot</include>
+                        <include>org.jetbrains:annotations</include>
+                        <include>org.mapstruct:mapstruct-processor</include>
+                        <include>com.google.guava:guava</include>
+                        <include>commons-io:commons-io</include>
+                        <include>org.apache.commons:commons-collections4</include>
+                        <include>org.apache.commons:commons-text</include>
+                        <include>org.joda:joda-convert</include>
+                        <include>pro.fessional:mirana</include>
+                        <include>pro.fessional:meepo</include>
+                        <include>pro.fessional:kaptcha</include>
+                        <include>com.alibaba.fastjson2:fastjson2</include>
+                        <include>com.alibaba:fastjson</include>
+                        <include>com.esotericsoftware:kryo</include>
+                        <include>com.alibaba:transmittable-thread-local</include>
+                        <include>org.bouncycastle:bcpkix-jdk18on</include>
+                        <include>me.zhyd.oauth:JustAuth</include>
+                        <include>org.apache.shardingsphere:shardingsphere-jdbc-core</include>
+                        <include>org.apache.servicecomb:java-chassis-core</include>
+                        <include>org.springdoc:springdoc-openapi-starter-webmvc-ui</include>
+                        <include>de.codecentric:spring-boot-admin-starter-client</include>
+                        <include>io.sentry:sentry-spring-boot-starter-jakarta</include>
+                        <include>com.squareup.retrofit2:retrofit</include>
+                        <include>io.qameta.allure:allure-java-commons</include>
+                        <include>com.alibaba:druid-spring-boot-starter</include>
+                    </dependencyIncludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

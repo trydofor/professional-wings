@@ -24,97 +24,78 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer-curse</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer-jaxb</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-awesome</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-shard</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-hazel-caching</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-hazel-session</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-sprint</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock-awesome</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock-bond</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock-shadow</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>tiny-mail</artifactId>
-            <version>${wings.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>tiny-task</artifactId>
-            <version>${wings.version}</version>
         </dependency>
     </dependencies>
     <build>
