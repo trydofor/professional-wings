@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
+import pro.fessional.wings.tiny.mail.TestingMailUtil;
 
 import java.util.Collections;
 
@@ -31,11 +33,8 @@ public class MailNoticeTest {
     @Setter(onMethod_ = {@Autowired})
     protected MailConfigProvider mailConfigProvider;
 
-    @Setter(onMethod_ = {@Value("${spring.mail.username:}")})
-    protected String mailUser;
-
-    @Setter(onMethod_ = {@Value("${spring.mail.password:}")})
-    protected String mailPass;
+    @Setter(onMethod_ = {@Autowired})
+    protected MailProperties mailProperties;
 
     @Setter(onMethod_ = {@Value("${GMAIL_USER:}")})
     protected String gmailUser;
@@ -46,8 +45,9 @@ public class MailNoticeTest {
     @Test
     @TmsLink("C15001")
     public void postMailNotice() {
-        final boolean snd = mailNotice.post("test tiny mail send", "test send");
-        Assertions.assertTrue(snd, "need env MAIL_USER, MAIL_PASS, current user=" + mailUser);
+        String subject = TestingMailUtil.dryrun("test tiny mail send", mailProperties);
+        final boolean snd = mailNotice.post(subject, "test send");
+        Assertions.assertTrue(snd, "need env MAIL_USER, MAIL_PASS, current user=" + mailProperties.getUsername());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class MailNoticeTest {
         al.rule("single dryrun", it -> it.getFormattedMessage().contains("single mail dryrun and sleep"));
         al.start();
 
-        mailNotice.post("[DRYRUN] test tiny mail send", "test send");
+        mailNotice.post(TestingMailUtil.dryrun("test tiny mail send"), "test send");
 
         al.assertCount(1);
         al.stop();
