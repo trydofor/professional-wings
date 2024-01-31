@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.context.Now;
+import pro.fessional.wings.tiny.mail.TestingMailUtil;
 
 /**
  * @author trydofor
@@ -26,11 +28,15 @@ class TinyMailServiceTest {
     @Setter(onMethod_ = {@Autowired})
     protected TinyMailService tinyMailService;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected MailProperties mailProperties;
+
     @Test
     @TmsLink("C15006")
     void sendMailOk() {
         TinyMail message = new TinyMail();
-        message.setSubject("Mail Service Test");
+        String subject = TestingMailUtil.dryrun("Mail Service Send Test", mailProperties);
+        message.setSubject(subject);
         message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
         boolean ok = tinyMailService.send(message, true);
@@ -41,7 +47,8 @@ class TinyMailServiceTest {
     @TmsLink("C15007")
     void emitMailAfter5s() {
         TinyMail message = new TinyMail();
-        message.setSubject("Mail Service Test");
+        String subject = TestingMailUtil.dryrun("Mail Service Emit Test", mailProperties);
+        message.setSubject(subject);
         message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
 

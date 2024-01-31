@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
+import pro.fessional.wings.tiny.mail.TestingMailUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,18 +50,21 @@ public class MailSenderManagerTest {
     @Test
     @TmsLink("C15004")
     public void timeLoopAndBatch() {
-        int size = 1; // auto test 1, manual 5
 
         final TinyMailConfig config = mailConfigProvider.defaultConfig();
+        final boolean dryrun = TestingMailUtil.isDryrun(config);
+        // Too many emails per second. Please upgrade your plan
+        final int size = dryrun ? 1 : 5;
+
+
         final StopWatch stopWatch = new StopWatch();
-
-
         try (final StopWatch.Watch ignored = stopWatch.start("single")) {
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();
                 message.adopt(config);
-                message.setSubject("test single tiny mail " + i);
-                message.setContent("test single tiny mail " + i);
+                String text = "test single tiny mail " + i;
+                message.setSubject(TestingMailUtil.dryrun(text, dryrun));
+                message.setContent(text);
                 log.info("single {} send start ====", i);
                 mailSenderManager.singleSend(message);
                 log.info("single {} send done ====", i);
@@ -73,8 +77,9 @@ public class MailSenderManagerTest {
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();
                 message.adopt(config);
-                message.setSubject("test batch tiny mail " + i);
-                message.setContent("test batch tiny mail " + i);
+                String text = "test batch tiny mail " + i;
+                message.setSubject(TestingMailUtil.dryrun(text, dryrun));
+                message.setContent(text);
                 messages.add(message);
             }
             log.info("batch {} send start ====", size);
@@ -105,7 +110,7 @@ public class MailSenderManagerTest {
         for (int i = 0; i < 2; i++) {
             TinyMailMessage message = new TinyMailMessage();
             message.adopt(config);
-            message.setSubject("[DRYRUN] test batch tiny mail " + i);
+            message.setSubject(TestingMailUtil.dryrun("test batch tiny mail " + i));
             message.setContent("test batch tiny mail " + i);
             messages.add(message);
         }

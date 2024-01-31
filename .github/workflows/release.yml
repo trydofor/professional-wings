@@ -1,5 +1,5 @@
 name: Release-To-OssRh
-run-name: Release ${{github.ref_name}} by @${{ github.event_name }}
+run-name: Release ${{ github.ref_name }} by @${{ github.event_name }}
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
       TEST_VERBOSE: ${{ inputs.testLoggerLevel == 'DEBUG' }}
 
     steps:
-      - name: Checkout ${{github.event.release.tag_name}}
+      - name: Checkout ${{ github.event.release.tag_name }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 10
@@ -56,13 +56,13 @@ jobs:
           path: |
             ~/.asdf/
             ~/.m2/repository/
-          key: asdf-m2-repo-${{hashFiles('.tool-versions')}}
+          key: asdf-m2-repo-${{ hashFiles('pom.xml') }}
 
       ## install jdk and maven
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@v3
         with:
-          skip_install: ${{steps.cache-sdk-repo.outputs.cache-hit == 'true'}}
+          skip_install: ${{ steps.cache-sdk-repo.outputs.cache-hit == 'true' }}
 
       ## write settings.xml
       - name: Maven settings.xml
@@ -112,8 +112,9 @@ jobs:
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: steps.settings.outputs.MVN_COVERAGE == 'true'
         run: |
-          mvn -pl ':devs-codegen' -am -Ddevs-codegen.test.skip=false -Ddevs-initdb=true -Dwings.test.skip=true clean test
-          mvn -P 'coverage,!example' -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }} clean test
+          mvn -P '!example,!devs' -Dmaven.test.skip=true clean install
+          mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
+          mvn -P 'coverage,!example,!devs' -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }} test
           mvn -pl ':devs-coverage' -am jacoco:report-aggregate
           mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS verify
         env:
