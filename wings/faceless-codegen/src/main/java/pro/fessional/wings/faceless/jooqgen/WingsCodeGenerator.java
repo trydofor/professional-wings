@@ -8,6 +8,12 @@ import org.jooq.meta.TableDefinition;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.Database;
 import org.jooq.meta.jaxb.ForcedType;
+import org.jooq.meta.jaxb.Generate;
+import org.jooq.meta.jaxb.Generator;
+import org.jooq.meta.jaxb.Jdbc;
+import org.jooq.meta.jaxb.Logging;
+import org.jooq.meta.jaxb.Strategy;
+import org.jooq.meta.jaxb.Target;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -48,7 +54,6 @@ import java.util.stream.Collectors;
  */
 public class WingsCodeGenerator {
 
-    public static final String JOOQ_XML = "/wings-flywave/jooq-codegen-faceless.xml";
     private static final Logger log = LoggerFactory.getLogger(WingsCodeGenerator.class);
 
     /**
@@ -59,7 +64,8 @@ public class WingsCodeGenerator {
      * @param suffix      Add suffixes to DefaultCatalog, DefaultSchema and Global to distinguish generation.
      */
 
-    @SuppressWarnings("resource") public static void generate(Configuration conf, boolean incremental, String suffix) {
+    @SuppressWarnings("resource")
+    public static void generate(Configuration conf, boolean incremental, String suffix) {
         if (conf == null) {
             conf = config();
         }
@@ -101,9 +107,88 @@ public class WingsCodeGenerator {
         return new Builder(conf == null ? config() : conf);
     }
 
+    /**
+     * the default wings mysql configuration
+     */
     @NotNull
     public static Configuration config() {
-        return config(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
+        Configuration conf = new Configuration();
+        conf.withLogging(Logging.INFO);
+        conf.withJdbc(new Jdbc()
+                .withDriver("com.mysql.cj.jdbc.Driver")
+                .withUrl("!!your-config-here!!")
+                .withUser("!!your-config-here!!")
+                .withPassword("!!your-config-here!!"));
+        conf.withGenerator(new Generator()
+                .withName(WingsJavaGenerator.class.getName())
+                .withTarget(new Target()
+                        .withPackageName("!!your-config-here!!")
+                        .withDirectory("!!your-config-here!!"))
+                .withDatabase(new Database()
+                        .withInputSchema("!!your-config-here!!")
+                        .withOutputCatalogToDefault(true)
+                        .withOutputSchemaToDefault(true)
+                        .withIncludes(".*")
+                        .withExcludes("""
+                                spring.* # Spring table
+                                |.*__[a-z]* # journal table
+                                |.*\\$[a-z]* # journal table
+                                |sys_commit_journal # jdbc handled
+                                |sys_light_sequence # jdbc handled
+                                |sys_schema_journal # jdbc handled
+                                |sys_schema_version # jdbc handled
+                                """)
+                        .withSchemaVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+                        .withIncludeTables(true)
+                        .withIncludeRoutines(false)
+                        .withIncludePackages(false)
+                        .withIncludePackageRoutines(false)
+                        .withIncludePackageUDTs(false)
+                        .withIncludePackageConstants(false)
+                        .withIncludeUDTs(false)
+                        .withIncludeSequences(false)
+                        .withIncludePrimaryKeys(true)
+                        .withIncludeUniqueKeys(false)
+                        .withIncludeForeignKeys(false)
+                        .withIncludeCheckConstraints(false)
+                        .withIncludeIndexes(false)
+                        .withForcedTypes(
+                                new ForcedType().withName("BOOLEAN").withIncludeTypes("TINYINT(\\(1\\))?"),
+                                new ForcedType().withName("INTEGER").withIncludeTypes("TINYINT[2-9()]*")
+                        )
+                )
+                .withGenerate(new Generate()
+                        .withComments(false)
+                        .withEmptyCatalogs(true)
+                        .withEmptySchemas(true)
+                        .withIndexes(false)
+                        // JavaEE / JakartaEE
+                        .withSpringAnnotations(true)
+                        .withJpaAnnotations(false)
+
+                        .withValidationAnnotations(false)
+                        .withJavaTimeTypes(true)
+                        .withKeys(false)
+                        .withInterfaces(true)
+                        .withDaos(true)
+                        .withPojos(true)
+                        .withPojosEqualsAndHashCode(true)
+                        .withPojosToString(true)
+                        // Don't open it. or the JournalAware will not work well. column editing is good for setter assignment.
+                        .withFluentSetters(false)
+
+                        .withGlobalCatalogReferences(false)
+                        .withGlobalSchemaReferences(false)
+                        .withGlobalTableReferences(true)
+                        .withGlobalSequenceReferences(false)
+                        .withGlobalUDTReferences(false)
+                        .withGlobalRoutineReferences(false)
+                        .withGlobalQueueReferences(false)
+                        .withGlobalLinkReferences(false)
+                )
+                .withStrategy(new Strategy().withName(WingsJavaStrategy.class.getName()))
+        );
+        return conf;
     }
 
     @NotNull
