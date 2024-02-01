@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.17.0.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.18.0.xsd">
     <logging>INFO</logging>
     <jdbc>
-        <driver>!!your-config-here!!</driver>
+        <driver>com.mysql.cj.jdbc.Driver</driver>
         <url>!!your-config-here!!</url>
         <user>!!your-config-here!!</user>
         <password>!!your-config-here!!</password>
