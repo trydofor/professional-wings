@@ -36,9 +36,9 @@ public class FlywaveRevisionScannerTest {
     @Test
     @TmsLink("C12029")
     public void flywaveCommentInfo() {
-        assertEquals("master/2019-0601_01-test.sql", FlywaveRevisionScanner.commentInfo(
-                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601u01-test.sql",
-                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601v01-test.sql"
+        assertEquals("master/2022-0601_01-test.sql", FlywaveRevisionScanner.commentInfo(
+                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/2022-0601u01-test.sql",
+                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/2022-0601v01-test.sql"
         ));
     }
 
@@ -48,13 +48,13 @@ public class FlywaveRevisionScannerTest {
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sql = FlywaveRevisionScanner
                 .helper()
                 .master()
-                .replace(2019_0601_01, 2021_0120_01)
-                .include(it -> it >= 2019_0520_01)
-                .exclude("faceless-test", 2019_0601_01)
-                .exclude(it -> it < 2021_0101_01)
+                .replace(2022_0601_02, 2023_0120_02)
+                .include(it -> it >= 2019_0520_01) // remove 2019051201
+                .exclude("testing-faceless-v1", 2022_0601_01) // remove 2022060101
+                .exclude(it -> it < 2023_0101_01) // remove 2019052001
                 .scan();
         assertEquals(1, sql.size());
-        assertEquals(2019_0601_01, sql.get(2021_0120_01L).getRevision());
+        assertEquals(2022_0601_02, sql.get(2023_0120_02L).getRevision());
     }
 
     @Test

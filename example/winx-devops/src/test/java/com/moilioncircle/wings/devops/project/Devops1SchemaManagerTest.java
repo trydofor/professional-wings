@@ -31,7 +31,7 @@ class Devops1SchemaManagerTest {
     void initSchema() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
 //        manager.init(WingsRevision.V04_20_1024_02_RolePermit.revision(),
-        manager.mergePublish(9999_9999_01L,
+        manager.mergePublish(2022_0222_01L,
                 includeWarlockPath(),
                 Helper::master
         );
@@ -39,7 +39,7 @@ class Devops1SchemaManagerTest {
 
     @Test
     void resetSchema() {
-        long revi = 9999_9999_01L;
+        long revi = 2022_0222_01L;
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
         final Helper helper = FlywaveRevisionScanner.helper();
         includeWarlockPath().accept(helper);

@@ -17,8 +17,8 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
-import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_01_TestSchema;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_02_TestRecord;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -52,10 +52,10 @@ public class FlywaveShardingTest {
     @Test
     @TmsLink("C12132")
     public void test1Single() {
-        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
+        schemaRevisionManager.publishRevision(V90_22_0601_01_TestSchema.revision(), 0);
         testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "tst_sharding");
 
-        schemaRevisionManager.forceApplyBreak(V90_19_0601_02_TestRecord.revision(), 2, true, "writer");
+        schemaRevisionManager.forceApplyBreak(V90_22_0601_02_TestRecord.revision(), 2, true, "writer");
         assertEquals(20, countRecords("writer", "tst_sharding"));
         assertEquals(0, countRecords("reader", "tst_sharding"));
 

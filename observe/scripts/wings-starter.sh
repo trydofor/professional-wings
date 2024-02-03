@@ -1,5 +1,12 @@
 #!/bin/bash
-THIS_VERSION=2023-10-18
+THIS_VERSION=2024-02-03
+################ system env to use ################
+# JAVA_HOME      # if JDK_HOME is not valid
+# JAVA_OPTS      # prepend to java args
+# BOOT_OPTS      # prepend to spring-boot args
+# BOOT_ENVF=''   # `*.env` file, load after env-link and env-file
+# TZ             # java default timezone
+# SPRING_APPLICATION_JSON # springboot default json properties
 ################ modify the following params ################
 WORK_DIR=''      # directory of script-generated files and logs. default empty (script location)
 TAIL_LOG='log'   # the log to tail, (log|out|new|ask)
@@ -74,7 +81,6 @@ BOOT_DTM=$(date '+%y%m%d%H%M%S') # datetime of boot
 BOOT_TKN=''                      # boot token, Composed of jar+dtm
 BOOT_MD5=''                      # execute md5+jar in safe mode
 JAR_NAME=''                      # basename of boot-jar
-JAVA_OPT=''                      # real args of java
 #
 function print_envs() {
     echo -e "#################################################"
@@ -89,6 +95,8 @@ function print_envs() {
     echo "work-dir=$WORK_DIR"
     echo "env-link=$link_envs"
     echo "env-file=$this_envs"
+    # shellcheck disable=SC2153
+    echo "env-boot=$BOOT_ENVF"
     echo "grep-key='$grep_key'"
 }
 
@@ -166,9 +174,8 @@ function check_java() {
         JAVA_OPT="$JAVA_OPT -Duser.timezone=$TIME_ZID"
     fi
 
-    if [[ "$JAVA_EXT" != "" ]]; then
-        JAVA_OPT="$JAVA_OPT $JAVA_EXT"
-    fi
+    # shellcheck disable=SC2153
+    JAVA_OPT="$JAVA_OPTS $JAVA_OPT $JAVA_EXT"
 }
 
 function check_boot() {
@@ -222,16 +229,25 @@ if [[ -L "$this_file" ]]; then
     link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
+        echo -e "\033[37;42;1mINFO: load link-envs form $link_envs ==== \033[0m"
         # shellcheck disable=SC1090
         source "$link_envs"
     fi
 fi
+
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
+    echo -e "\033[37;42;1mINFO: load this-envs form $this_envs ==== \033[0m"
     # shellcheck disable=SC1090
     source "$this_envs"
 else
     echo -e "\033[31mWARN: no env file found. $this_envs \033[0m"
+fi
+
+if [[ -f "$BOOT_ENVF" ]]; then
+    echo -e "\033[37;42;1mINFO: load boot-envs form $BOOT_ENVF ==== \033[0m"
+    # shellcheck disable=SC1090
+    source "$BOOT_ENVF"
 fi
 
 # change workdir
@@ -376,9 +392,9 @@ fi
 if [[ "$BOOT_LOG" != "" ]]; then
     BOOT_ARG="--logging.file.name=$BOOT_LOG $BOOT_ARG"
 fi
-if [[ "$BOOT_EXT" != "" ]]; then
-    BOOT_ARG="$BOOT_ARG $BOOT_EXT"
-fi
+
+# shellcheck disable=SC2153
+BOOT_ARG="$BOOT_OPTS $BOOT_ARG $BOOT_EXT"
 
 # check ps
 grep_key=" -jar ${BOOT_JAR}[ _-]"

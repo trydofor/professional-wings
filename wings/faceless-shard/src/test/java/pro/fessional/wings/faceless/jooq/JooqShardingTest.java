@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
-import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_01_TestSchema;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -67,7 +67,7 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12136")
     public void test1PublishTest() {
-        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
+        schemaRevisionManager.publishRevision(V90_22_0601_01_TestSchema.revision(), 0);
     }
 
     @Test

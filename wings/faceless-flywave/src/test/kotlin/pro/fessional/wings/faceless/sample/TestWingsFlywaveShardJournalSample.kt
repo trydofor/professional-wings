@@ -37,10 +37,10 @@ class TestWingsFlywaveShardJournalSample {
 
         // upgrade
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
-        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_01_TestSchema.revision(), 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V90_22_0601_01_TestSchema.revision(), 0)
 
         // force upgrade in master database only
-        schemaRevisionManager.forceApplyBreak(WingsRevision.V90_19_0601_02_TestRecord.revision(), 2, true, "master")
+        schemaRevisionManager.forceApplyBreak(WingsRevision.V90_22_0601_02_TestRecord.revision(), 2, true, "master")
 
         // sharding
         val table = "tst_sharding"

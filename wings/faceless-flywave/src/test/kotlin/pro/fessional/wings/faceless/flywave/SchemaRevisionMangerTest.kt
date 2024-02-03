@@ -189,7 +189,7 @@ class SchemaRevisionMangerTest {
     @TmsLink("C12057")
     fun test9MaintainBreak() {
         breakpointDebug("Prepare a breakpoint revision to mock a failure💰")
-        val revision = WingsRevision.V90_19_0601_01_TestSchema.revision()
+        val revision = WingsRevision.V90_22_0601_01_TestSchema.revision()
         schemaRevisionManager.forceExecuteSql(
             """
             UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$revision';

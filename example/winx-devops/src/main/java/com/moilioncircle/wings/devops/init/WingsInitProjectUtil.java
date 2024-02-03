@@ -190,9 +190,9 @@ public class WingsInitProjectUtil {
         final String ymd1 = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         final String ymd2 = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd"));
         final String ymh = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd_HHmm"));
-        return text.replace("9999-99-99", ymd1)
-                   .replace("9999_9999_01L", ymd2 + "_01L")
-                   .replace("9999_9999_9999L", ymh + "_01L")
+        return text.replace("2022-02-22", ymd1)
+                   .replace("2022_0222_01L", ymd2 + "_01L")
+                   .replace("2022_0222_2222L", ymh + "_01L")
                 ;
     }
 
