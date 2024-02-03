@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <version>3.2.2</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -24,6 +24,7 @@
         <revision>3.2.110-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.2</spring-boot.version>
+        <!--  -->
         <wings.version>${revision}</wings.version>
         <!--suppress UnresolvedMavenProperty fulfill by directory-maven-plugin -->
         <wings.rootdir>${highest-basedir}</wings.rootdir>

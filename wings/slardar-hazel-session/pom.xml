@@ -25,12 +25,12 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
         </dependency>
+        <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
-        <!-- test -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>testing-slardar</artifactId>
