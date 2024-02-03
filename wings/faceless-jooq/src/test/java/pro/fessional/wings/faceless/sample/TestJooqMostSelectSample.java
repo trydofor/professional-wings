@@ -58,7 +58,7 @@ import java.util.Map;
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_02_TestRecord;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_02_TestRecord;
 import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.testcaseNotice;
 
 /**
@@ -89,7 +89,7 @@ public class TestJooqMostSelectSample {
     public void test0Init() {
         final var  sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
-        schemaRevisionManager.publishRevision(V90_19_0601_02_TestRecord.revision(), 0);
+        schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), 0);
     }
 
     @Test

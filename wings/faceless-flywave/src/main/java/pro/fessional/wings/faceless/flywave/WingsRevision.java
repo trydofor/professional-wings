@@ -22,8 +22,9 @@ public enum WingsRevision implements RevisionRegister {
     V01_21_0918_01_FixAuthn(2021_0918_01L, "fix authn", "branch/somefix/01-authn-fix", "wings/warlock/src/main/resources/wings-flywave"),
     V02_21_1220_01_Fix242(2021_1220_01L, "fix v242.201", "branch/somefix/02-v242-201", "wings/faceless-flywave/src/main/resources/wings-flywave"),
 
-    V90_19_0601_01_TestSchema(2019_0601_01L, "test v1 schema", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
-    V90_19_0601_02_TestRecord(2019_0601_02L, "test v2 record", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
+    V90_22_0601_01_TestSchema(2022_0601_01L, "test v1 schema", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
+    V90_22_0601_02_TestRecord(2022_0601_02L, "test v2 record", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
+    V91_22_0222_01_ExampleInit(2022_0222_01L, "example demo", "master/00-init", "example/winx-common/src/main/resources/wings-flywave/"),
     ;
 
     private final long revi;

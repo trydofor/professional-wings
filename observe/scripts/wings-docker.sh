@@ -1,13 +1,13 @@
 #!/bin/bash
-THIS_VERSION=2022-01-22
+THIS_VERSION=2024-02-03
 
 TEMP_DIR="../../example/winx-devops/target" # To avoid copy, recommend the same partition on the hard disk.
 BOOT_JAR="../../example/winx-devops/target/winx-devops-*-SNAPSHOT.jar"
 BOOT_ENV="./wings-starter.env"
 BOOT_BSH="./wings-starter.sh"
 
-DOCK_DIR="/opt/"
 DOCK_TAG="wings/winx-devops"
+DOCK_DIR="/opt"
 
 ####
 function show_help() {
@@ -52,7 +52,8 @@ function link_file() {
         cnt=$(find "$frm" -name "$tkn" | wc -l)
         if [[ $cnt -ne 1 ]]; then
             find "$frm" -name "$tkn"
-            echo -e "\033[37;41;1mERROR: found $cnt file, $lnk_it \033[0m should clean"
+            echo -e "\033[37;41;1mERROR: found $cnt file, $lnk_it \033[0m"
+            echo -e "must existed 1 file, e.g. mvn clean package"
             exit
         fi
         arg=$(find "$frm" -name "$tkn")
@@ -90,18 +91,26 @@ echo "temp-dir=$tmp_dir"
 echo -e "\033[37;42;1m ==== Dockerfile ==== \033[0m"
 
 tee Dockerfile <<EOF
-FROM openjdk:11-jdk
+FROM eclipse-temurin:21
 
 EXPOSE 80
+
 VOLUME /data
 VOLUME /tmp
+## external config dir to put env and config
+VOLUME /wings
+##
+ENV BOOT_ENVF=/wings/application.env
+ENV JAVA_OPTS=''
+ENV BOOT_OPTS=''
+ENV SPRING_APPLICATION_JSON='{}'
 
 COPY ./* $DOCK_DIR
 RUN chmod +x $DOCK_DIR/*.sh
 
 WORKDIR $DOCK_DIR
-# need bash to run
-ENTRYPOINT ["/opt/wings-starter.sh", "docker"]
+## need bash to run
+ENTRYPOINT ["$DOCK_DIR/wings-starter.sh", "docker"]
 EOF
 
 ls -al
@@ -116,5 +125,6 @@ cat <<EOF
 (cd "$tmp_dir" && docker build -t "$DOCK_TAG" .)
 docker run -it --rm $DOCK_TAG
 docker run -it --rm --entrypoint /bin/sh $DOCK_TAG
-# use help as param1 to see help
+## use help as param1 to see help
+## map
 EOF

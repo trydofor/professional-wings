@@ -1,12 +1,18 @@
 [mysqld]
 authentication_policy       = caching_sha2_password
+max_allowed_packet          = 16777216
 max_connections             = 4096
+## table store lowercase compare case-sensitive
 lower_case_table_names      = 1
+## FULLTEXT indexes by MeCab parser and ngram parser
 innodb_ft_min_token_size    = 2
 ft_min_word_len             = 2
 ngram_token_size            = 2
+## default charset and timezone
 character-set-server        = UTF8MB4
-default-time-zone           = '+8:00'
+default-time-zone           = +08:00
 log_bin_trust_function_creators = 1
-innodb_file_per_table           = 1
+## local
+innodb_file_per_table       = 1
+innodb_strict_mode          = 0
 #skip_grant_tables

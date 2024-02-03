@@ -32,8 +32,8 @@ class WingsRevisionTest {
         assertExist(WingsRevision.V07_20_1027_01_TinyMail);
         assertExist(WingsRevision.V01_21_0918_01_FixAuthn);
         assertExist(WingsRevision.V02_21_1220_01_Fix242);
-        assertExist(WingsRevision.V90_19_0601_01_TestSchema);
-        assertExist(WingsRevision.V90_19_0601_02_TestRecord);
+        assertExist(WingsRevision.V90_22_0601_01_TestSchema);
+        assertExist(WingsRevision.V90_22_0601_02_TestRecord);
     }
 
     @SneakyThrows

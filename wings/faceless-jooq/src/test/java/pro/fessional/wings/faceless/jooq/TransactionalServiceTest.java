@@ -18,7 +18,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_19_0601_01_TestSchema;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_01_TestSchema;
 
 /**
  * @author trydofor
@@ -47,7 +47,7 @@ public class TransactionalServiceTest {
     public void test0Init() {
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
-        schemaRevisionManager.publishRevision(V90_19_0601_01_TestSchema.revision(), 0);
+        schemaRevisionManager.publishRevision(V90_22_0601_01_TestSchema.revision(), 0);
     }
 
     @Test

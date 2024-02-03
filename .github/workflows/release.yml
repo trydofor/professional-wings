@@ -14,6 +14,11 @@ on:
         default: false
         type: boolean
         required: false
+      testVerifyDryRun:
+        description: 'dryrun coverage report?'
+        default: false
+        type: boolean
+        required: false
       testLoggerLevel:
         description: 'test logger level'
         default: INFO
@@ -114,13 +119,15 @@ jobs:
         run: |
           mvn -P '!example,!devs' -Dmaven.test.skip=true clean install
           mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
-          mvn -P 'coverage,!example,!devs' -Dmaven.test.failure.ignore=${{ inputs.testFailureIgnore }} test
+          mvn -P 'coverage,!example,!devs' -Dmaven.test.failure.ignore=$TESTFAILS_IGNORE test
           mvn -pl ':devs-coverage' -am jacoco:report-aggregate
-          mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS verify
+          mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN verify
         env:
           TZ: Asia/Shanghai
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
           COVERALLS_WINGS: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_DRYRUN: ${{ inputs.testVerifyDryRun || 'false' }}
+          TESTFAILS_IGNORE: ${{ inputs.testFailureIgnore || 'false' }}
 
       ## import gpp private key
       - name: Import GPG key

@@ -48,7 +48,7 @@ public class JooqMapperCompatibleTest {
         testingDatabaseHelper.cleanTable();
         final var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
-        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_02_TestRecord.revision(), 0);
+        schemaRevisionManager.publishRevision(WingsRevision.V90_22_0601_02_TestRecord.revision(), 0);
     }
 
     @Test

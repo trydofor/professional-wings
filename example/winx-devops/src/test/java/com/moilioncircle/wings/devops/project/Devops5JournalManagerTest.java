@@ -36,7 +36,7 @@ public class Devops5JournalManagerTest {
         schemaJournalManager.askWay(FlywaveInteractiveGui.askGui());
         schemaJournalManager.logWay(FlywaveInteractiveGui.logGui());
 
-        long commitId = 9999_9999_9999L;
+        long commitId = 2022_0222_2222L;
         boolean enable = true;
         boolean manage = true;
         List<String> tables = Arrays.asList(

@@ -164,7 +164,7 @@ class SchemaJournalManagerTest {
             "${schemaPrefix}version"
         )
         breakpointDebug("Create test table💰, check all tables in the database")
-        schemaRevisionManager.publishRevision(WingsRevision.V90_19_0601_01_TestSchema.revision(), 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V90_22_0601_01_TestSchema.revision(), 0)
         testingDatabaseHelper.assertSame(
             TestingDatabaseHelper.Type.Table,
             "sys_commit_journal",

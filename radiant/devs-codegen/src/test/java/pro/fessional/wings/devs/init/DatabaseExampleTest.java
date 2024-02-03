@@ -1,6 +1,5 @@
 package pro.fessional.wings.devs.init;
 
-import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,17 +11,17 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V03_20_1023_01_
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V04_20_1024_01_UserLogin;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V04_20_1024_02_RolePermit;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V05_20_1025_01_ConfRuntime;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V91_22_0222_01_ExampleInit;
 
 
 /**
  * @author trydofor
  * @since 2021-02-22
  */
-@SpringBootTest(properties = "testing.dbname=wings")
+@SpringBootTest(properties = "testing.dbname=wings_example")
 @EnabledIfSystemProperty(named = "devs-initdb", matches = "true")
-public class DatabaseWingsTest extends TestingDatabase {
+public class DatabaseExampleTest extends TestingDatabase {
     @Test
-    @TmsLink("C14081")
     void resetSchemaWings() {
         reset(
                 V00_19_0512_01_Schema,
@@ -31,7 +30,8 @@ public class DatabaseWingsTest extends TestingDatabase {
                 V03_20_1023_01_AuthEnum,
                 V04_20_1024_01_UserLogin,
                 V04_20_1024_02_RolePermit,
-                V05_20_1025_01_ConfRuntime
+                V05_20_1025_01_ConfRuntime,
+                V91_22_0222_01_ExampleInit
         );
     }
 }

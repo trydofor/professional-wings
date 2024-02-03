@@ -25,6 +25,6 @@ class TestWingsFlywaveInitDatabaseSample {
     fun forceUpdateSql() {
         val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.forceUpdateSql(sqls[WingsRevision.V00_19_0512_01_Schema.revision()]!!, 0)
-        schemaRevisionManager.forceUpdateSql(sqls[WingsRevision.V90_19_0601_01_TestSchema.revision()]!!, 0)
+        schemaRevisionManager.forceUpdateSql(sqls[WingsRevision.V90_22_0601_01_TestSchema.revision()]!!, 0)
     }
 }
