@@ -76,7 +76,9 @@
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
         <!-- java, kotlin sources  -->
         <source.srcMainJava>${project.basedir}/src/main/java</source.srcMainJava>
+        <source.srcMainJavaGen>${project.basedir}/src/main/java-gen</source.srcMainJavaGen>
         <source.srcMainKotlin>${project.basedir}/src/main/kotlin</source.srcMainKotlin>
+        <source.srcMainKotlinGen>${project.basedir}/src/main/kotlin-gen</source.srcMainKotlinGen>
         <source.srcTestJava>${project.basedir}/src/test/java</source.srcTestJava>
         <source.srcTestKotlin>${project.basedir}/src/test/kotlin</source.srcTestKotlin>
         <!-- delombok: javadoc cannot find symbol  -->
@@ -161,16 +163,6 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-autogen</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-awesome</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless-flywave</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -217,16 +209,6 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>warlock</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>warlock-autogen</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>warlock-awesome</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -285,11 +267,6 @@
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
-                <artifactId>tiny-autogen</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>tiny-task</artifactId>
@@ -762,7 +739,9 @@
                             <configuration>
                                 <sources>
                                     <source>${source.srcMainKotlin}</source>
+                                    <source>${source.srcMainKotlinGen}</source>
                                     <source>${source.srcMainJava}</source>
+                                    <source>${source.srcMainJavaGen}</source>
                                 </sources>
                             </configuration>
                         </execution>
@@ -979,7 +958,9 @@
                                 <configuration>
                                     <sourceDirs>
                                         <sourceDir>${source.srcMainKotlin}</sourceDir>
+                                        <sourceDir>${source.srcMainKotlinGen}</sourceDir>
                                         <sourceDir>${source.srcMainJava}</sourceDir>
+                                        <sourceDir>${source.srcMainJavaGen}</sourceDir>
                                     </sourceDirs>
                                 </configuration>
                             </execution>

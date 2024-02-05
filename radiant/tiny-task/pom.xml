@@ -22,10 +22,6 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>tiny-autogen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
             <optional>true</optional>
         </dependency>

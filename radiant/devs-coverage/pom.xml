@@ -39,10 +39,6 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-awesome</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
         </dependency>
         <dependency>
@@ -76,10 +72,6 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
@@ -121,9 +113,8 @@
                         <directory>${wings.rootdir}/wings/silencer-jaxb/src/main/java</directory>
                         <directory>${wings.rootdir}/wings/silencer-jaxb/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/faceless/src/main/java</directory>
+                        <directory>${wings.rootdir}/wings/faceless/src/main/java-gen</directory>
                         <directory>${wings.rootdir}/wings/faceless/target/generated-sources/annotations</directory>
-                        <directory>${wings.rootdir}/wings/faceless-awesome/src/main/java</directory>
-                        <directory>${wings.rootdir}/wings/faceless-awesome/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/faceless-flywave/src/main/java</directory>
                         <directory>${wings.rootdir}/wings/faceless-flywave/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/faceless-flywave/src/main/kotlin</directory>
@@ -142,16 +133,17 @@
                         <directory>${wings.rootdir}/wings/slardar-webmvc/src/main/java</directory>
                         <directory>${wings.rootdir}/wings/slardar-webmvc/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/warlock/src/main/java</directory>
+                        <directory>${wings.rootdir}/wings/warlock/src/main/java-gen</directory>
                         <directory>${wings.rootdir}/wings/warlock/target/generated-sources/annotations</directory>
-                        <directory>${wings.rootdir}/wings/warlock-awesome/src/main/java</directory>
-                        <directory>${wings.rootdir}/wings/warlock-awesome/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/warlock-bond/src/main/java</directory>
                         <directory>${wings.rootdir}/wings/warlock-bond/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/wings/warlock-shadow/src/main/java</directory>
                         <directory>${wings.rootdir}/wings/warlock-shadow/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/radiant/tiny-mail/src/main/java</directory>
+                        <directory>${wings.rootdir}/radiant/tiny-mail/src/main/java-gen</directory>
                         <directory>${wings.rootdir}/radiant/tiny-mail/target/generated-sources/annotations</directory>
                         <directory>${wings.rootdir}/radiant/tiny-task/src/main/java</directory>
+                        <directory>${wings.rootdir}/radiant/tiny-task/src/main/java-gen</directory>
                         <directory>${wings.rootdir}/radiant/tiny-task/target/generated-sources/annotations</directory>
                     </sourceDirectories>
                 </configuration>

@@ -135,7 +135,7 @@ public class ConstantEnumGenerator {
     /**
      * first, copy ConstantEnumTemplate.java to /resource/ to avoid compile
      *
-     * @param src    ./src/main/java/
+     * @param src    ./src/main/java-gen/
      * @param pkg    pro.fessional.wings.faceless.enums.constant
      * @param pojos  data objects
      * @param filter filter by type, true for include, false for exclude

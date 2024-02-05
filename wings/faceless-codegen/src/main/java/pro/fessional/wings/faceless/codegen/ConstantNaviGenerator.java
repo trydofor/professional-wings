@@ -33,7 +33,7 @@ public class ConstantNaviGenerator {
 
     private static final String ROOT = "";
 
-    private String targetDir = "src/main/java";
+    private String targetDir = "src/main/java-gen";
     private String packageName = "";
     private String delimiter = ".";
 
@@ -56,10 +56,13 @@ public class ConstantNaviGenerator {
         StringBuilder out = new StringBuilder();
         out.append(String.format("""
                         package %s;
+                        
+                        import javax.annotation.processing.Generated;
 
                         /**
                          * @since %s
                          */
+                        @Generated("wings faceless codegen")
                         public interface %s {""",
                 packageName, LocalDate.now(), javaName));
         if (!prefixCode.isEmpty()) {

@@ -10,6 +10,11 @@
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration.databaseCheckerRunner", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration.registerEnumUtilRunner", "type": "java.lang.Boolean"},
 
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration$JooqDaoScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration.registerRuntimeModeRunner", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration.runtimeConfService", "type": "java.lang.Boolean"},
+
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.databaseGlobalLock", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.jvmStaticGlobalLock", "type": "java.lang.Boolean"},

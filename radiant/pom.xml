@@ -17,7 +17,6 @@
     <description>Radiant components under GhostShip Model</description>
 
     <modules>
-        <module>tiny-autogen</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
     </modules>

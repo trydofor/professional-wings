@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Import;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration;
+import pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration;
@@ -20,6 +21,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 @ConfigurationPropertiesScan(basePackageClasses = WarlockEnabledProp.class)
 @Import({
         WarlockAutoRunConfiguration.class,
+        WarlockAwesomeConfiguration.class,
         WarlockJournalConfiguration.class,
         WarlockLockBeanConfiguration.class,
         WarlockTableChangeConfiguration.class,
