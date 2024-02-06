@@ -26,7 +26,7 @@ import java.util.List;
  * @author trydofor
  * @since 2023-01-23
  */
-@SpringBootTest
+@SpringBootTest(properties = "testing.dbname=wings")
 @EnabledIfSystemProperty(named = "devs-autogen", matches = "true")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenCodeTest {
@@ -51,17 +51,17 @@ public class AutogenCodeTest {
     void autogen01AllMainCode() {
         autogen01AllMainJooq();
 
-        autogen10FacelessAutogen();// faceless-autogen/enums
-        autogen20WarlockAutogenEnum();// warlock-autogen/enums
-        autogen20WarlockAutogenAuth();// warlock-autogen/security
+        autogen10FacelessAutogen();// faceless/enums
+        autogen20WarlockAutogenEnum();// warlock/enums
+        autogen20WarlockAutogenAuth();// warlock/security
     }
 
     @Test
     @Disabled("call by autogen01AllMainCode")
     void autogen01AllMainJooq() {
-        autogen21WarlockAutogenJooq();// warlock-autogen/database
-        autogen31TinyMailAutogenJooq();// tiny-autogen/mail
-        autogen31TinyTaskAutogenJooq();// tiny-autogen/task
+        autogen21WarlockAutogenJooq();// warlock/database
+        autogen31TinyMailAutogenJooq();// tiny/mail
+        autogen31TinyTaskAutogenJooq();// tiny/task
     }
 
     // ////////////////// individual test  //////////////////
@@ -72,7 +72,7 @@ public class AutogenCodeTest {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(dataSource);
         final List<ConstantEnumGenerator.ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
         ConstantEnumGenerator.builder()
-                             .targetDirectory(projectRoot + "wings/faceless-autogen/src/main/java/")
+                             .targetDirectory(projectRoot + "wings/faceless/src/main/java-gen/")
                              .targetPackage("pro.fessional.wings.faceless.enums.autogen")
                              .includeType(ProjectEnumGenerator.facelessEnums)
                              .generate(enums);
@@ -105,7 +105,8 @@ public class AutogenCodeTest {
     @Disabled("call by autogen01AllMainCode")
     void autogen20WarlockAutogenEnum() {
         Warlock2EnumGenerator generator = new Warlock2EnumGenerator();
-        generator.setTargetDir(projectRoot + "wings/warlock-autogen/src/main/java/");
+        generator.setTargetDir(projectRoot + "wings/warlock/src/main/java-gen/");
+        generator.setTargetPkg("pro.fessional.wings.warlock.enums.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 h -> h.includeType(Warlock2EnumGenerator.warlockEnums));
     }
@@ -115,7 +116,8 @@ public class AutogenCodeTest {
     void autogen20WarlockAutogenAuth() {
         JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(jdbcUrl, jdbcUser, jdbcPass);
         Warlock4AuthGenerator generator = new Warlock4AuthGenerator();
-        generator.setTargetDir(projectRoot + "wings/warlock-autogen/src/main/java/");
+        generator.setTargetDir(projectRoot + "wings/warlock/src/main/java-gen/");
+        generator.setTargetPkg("pro.fessional.wings.warlock.security.autogen");
         generator.genPerm(helper);
         generator.genRole(helper);
     }
@@ -124,7 +126,8 @@ public class AutogenCodeTest {
     @Disabled("call by autogen01AllMainJooq")
     void autogen21WarlockAutogenJooq() {
         Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
-        generator.setTargetDir(projectRoot + "wings/warlock-autogen/src/main/java/");
+        generator.setTargetDir(projectRoot + "wings/warlock/src/main/java-gen/");
+        generator.setTargetPkg("pro.fessional.wings.warlock.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 Warlock3JooqGenerator.includeWarlockBase(false),
                 Warlock3JooqGenerator.includeWarlockBond(true),
@@ -135,7 +138,7 @@ public class AutogenCodeTest {
     @Disabled("call by autogen01AllMainJooq")
     void autogen31TinyMailAutogenJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();
-        generator.setTargetDir(projectRoot + "radiant/tiny-autogen/src/main/java/");
+        generator.setTargetDir(projectRoot + "radiant/tiny-mail/src/main/java-gen/");
         generator.setTargetPkg("pro.fessional.wings.tiny.mail.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 bd -> bd.databaseIncludes("win_mail_sender"),
@@ -146,7 +149,7 @@ public class AutogenCodeTest {
     @Disabled("call by autogen01AllMainJooq")
     void autogen31TinyTaskAutogenJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();
-        generator.setTargetDir(projectRoot + "radiant/tiny-autogen/src/main/java/");
+        generator.setTargetDir(projectRoot + "radiant/tiny-task/src/main/java-gen/");
         generator.setTargetPkg("pro.fessional.wings.tiny.task.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 bd -> bd.databaseIncludes("win_task_define", "win_task_result"),

@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public class Warlock3JooqGenerator extends ProjectJooqGenerator {
 
     public Warlock3JooqGenerator() {
-        targetDir = "../warlock-autogen/src/main/java/";
+        targetDir = "../warlock/src/main/java-gen/";
         targetPkg = "pro.fessional.wings.warlock.database.autogen";
         configXml = "";
     }

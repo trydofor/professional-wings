@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-awesome</artifactId>
+            <artifactId>warlock</artifactId>
         </dependency>
         <dependency>
             <groupId>de.codecentric</groupId>

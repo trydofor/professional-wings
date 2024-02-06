@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-awesome</artifactId>
+            <artifactId>faceless</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>

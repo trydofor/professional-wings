@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
+@ConditionalOnClass(ConditionalOnAvailableEndpoint.class)
 public class SlardarActuatorConfiguration {
 
     private final static Log log = LogFactory.getLog(SlardarActuatorConfiguration.class);

@@ -34,7 +34,7 @@ public class ConstantEnumGenSample {
 
         final List<ConstantEnumGenerator.ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
         ConstantEnumGenerator.builder()
-                             .targetDirectory("wings/faceless/src/main/java/")
+                             .targetDirectory("wings/faceless/src/main/java-gen/")
                              .targetPackage("pro.fessional.wings.faceless.enums.autogen")
                              .excludeType("standard_boolean")
                              .generate(enums);
