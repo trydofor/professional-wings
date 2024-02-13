@@ -1,5 +1,4 @@
 name: Release-To-OssRh
-run-name: Release ${{ github.ref_name }} by @${{ github.event_name }}
 
 on:
   workflow_dispatch:
@@ -28,6 +27,11 @@ on:
           - INFO
           - WARN
           - ERROR
+      applyQodanaScan:
+        description: 'apply Qodana Scan?'
+        default: true
+        type: boolean
+        required: false
       deployOssrh:
         description: 'deploy to ossrh?'
         default: true
@@ -42,6 +46,10 @@ jobs:
   release:
     name: Release to Sonatype
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
     env:
       MAVEN_OPTS: -Xmx2g
       LOG_LEVEL: ${{ inputs.testLoggerLevel || 'INFO' }}
@@ -73,31 +81,43 @@ jobs:
       - name: Maven settings.xml
         id: settings
         run: |
+          echo "## env and var" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           JAVA_HOME=$(asdf where java)
+          echo "- JAVA_HOME=$JAVA_HOME" >> "$GITHUB_STEP_SUMMARY"
           echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_OUTPUT"
+          echo "- GIT_BRANCH=$(git branch --show-current)" >> "$GITHUB_STEP_SUMMARY"
           echo "GIT_BRANCH=$(git branch --show-current)" >> "$GITHUB_OUTPUT"
           
           _opt=$(git describe --tags --exact-match 2>/dev/null || true)
           if [ "$_opt" != "" ]; then
             _opt="-Drevision=$_opt"
-            echo "MVN_REVISION=$_opt"
+            echo "- MVN_REVISION=$_opt" >> "$GITHUB_STEP_SUMMARY"
             echo "MVN_REVISION=$_opt" >> "$GITHUB_OUTPUT"
           fi
           
           _ver=$(mvn --quiet --non-recursive -DforceStdout -Dexpression=project.version $_opt help:evaluate)
-          echo "WINGS_VERSION=$_ver"
+          echo "- WINGS_VERSION=$_ver" >> "$GITHUB_STEP_SUMMARY"
           echo "WINGS_VERSION=$_ver" >> "$GITHUB_OUTPUT"
           
           _cov=${{ inputs.testCoverReport || github.event_name == 'push' }}
-          echo "MVN_COVERAGE=$_cov"
+          echo "- MVN_COVERAGE=$_cov" >> "$GITHUB_STEP_SUMMARY"
           echo "MVN_COVERAGE=$_cov" >> "$GITHUB_OUTPUT"
           
           _drh=${{ inputs.deployOssrh || github.event_name == 'release' }}
-          echo "MVN_DEPLOYRH=$_drh"
+          echo "- MVN_DEPLOYRH=$_drh" >> "$GITHUB_STEP_SUMMARY"
           echo "MVN_DEPLOYRH=$_drh" >> "$GITHUB_OUTPUT"
           
-          mvn -v
-          git --no-pager log --graph -10 --pretty=format:'%H - %ai %d %s'
+          _qod=${{ inputs.applyQodanaScan || 'false' }}
+          echo "- QODANA_SCAN=$_qod" >> "$GITHUB_STEP_SUMMARY"
+          echo "QODANA_SCAN=$_qod" >> "$GITHUB_OUTPUT"
+          
+          echo "## mvn and git" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          mvn -v >> "$GITHUB_STEP_SUMMARY"
+          git --no-pager log --graph -10 --pretty=format:'%H - %ai %d %s' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
           
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml << "EOF"
@@ -112,7 +132,11 @@ jobs:
             </servers>
           </settings>
           EOF
-
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2023.3
+        if: steps.settings.outputs.QODANA_SCAN == 'true'
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
       ## report if not release
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: steps.settings.outputs.MVN_COVERAGE == 'true'
