@@ -231,11 +231,12 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         DSLContext dsl = ctx();
         LoaderOptionsStep<R> ldi = dsl.loadInto(table);
         if (ignoreOrReplace) {
-            ldi.onDuplicateKeyIgnore();
+            ldi = ldi.onDuplicateKeyIgnore();
         }
         else {
-            ldi.onDuplicateKeyUpdate();
+            ldi = ldi.onDuplicateKeyUpdate();
         }
+
         try {
             return ldi.loadRecords(records)
                       .fields(table.fields())
@@ -307,8 +308,6 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
         }
         else {
-//            RowCountQuery query = WingsJooqUtil.replaceInto(record);
-//            return dsl.execute(query);
             rc = dsl.insertInto(table)
                     .columns(fields)
                     .values(values)
@@ -424,7 +423,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                 for (int i = 0; i < updLen; i++) {
                     vals[i + fldLen] = r.get(updateFields[i]);
                 }
-                batch.bind(vals);
+                batch = batch.bind(vals);
             }
 
             return batch.execute();
@@ -683,7 +682,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                 for (Field<?> uf : whereFields) {
                     vals[off++] = r.get(uf);
                 }
-                batch.bind(vals);
+                batch = batch.bind(vals);
             }
 
             return batch.execute();

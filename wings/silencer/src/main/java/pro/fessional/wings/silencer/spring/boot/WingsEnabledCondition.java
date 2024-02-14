@@ -65,7 +65,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
     public static void reset() {
         Uninit = true;
         ErrorMap.clear();
-        ErrorMap.clear();
+        PrefixMap.clear();
         EnableMap.clear();
     }
 

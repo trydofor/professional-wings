@@ -1,4 +1,5 @@
 name: Release-To-OssRh
+run-name: Release ${{ github.ref_name }} by @${{ github.event_name }}
 
 on:
   workflow_dispatch:
@@ -81,7 +82,7 @@ jobs:
       - name: Maven settings.xml
         id: settings
         run: |
-          echo "## env and var" >> "$GITHUB_STEP_SUMMARY"
+          echo "# env and var" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           JAVA_HOME=$(asdf where java)
           echo "- JAVA_HOME=$JAVA_HOME" >> "$GITHUB_STEP_SUMMARY"
@@ -112,7 +113,7 @@ jobs:
           echo "- QODANA_SCAN=$_qod" >> "$GITHUB_STEP_SUMMARY"
           echo "QODANA_SCAN=$_qod" >> "$GITHUB_OUTPUT"
           
-          echo "## mvn and git" >> "$GITHUB_STEP_SUMMARY"
+          echo "# mvn and git" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo '```text' >> "$GITHUB_STEP_SUMMARY"
           mvn -v >> "$GITHUB_STEP_SUMMARY"

@@ -5,7 +5,6 @@ import jakarta.servlet.DispatcherType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConnection;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -141,7 +140,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
     }
 
     @Override
-    public void logout() throws ServletException {
+    public void logout() {
     }
 
     @Override

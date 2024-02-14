@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.cache.spring;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.Cache;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 import java.util.concurrent.Callable;
@@ -73,7 +74,7 @@ public class NullsCache implements Cache {
                 nulls.put(key, Boolean.TRUE);
             }
             else {
-                // skip null
+                DummyBlock.empty();
             }
         }
         else {

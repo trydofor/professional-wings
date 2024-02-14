@@ -1,12 +1,8 @@
 package pro.fessional.wings.slardar.spring.help;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -14,8 +10,6 @@ import org.springframework.web.util.pattern.PathPattern;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
 import pro.fessional.wings.slardar.spring.conf.WingsBindAuthnConfigurer;
-import pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer;
-import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -35,38 +29,6 @@ import java.util.function.Consumer;
  */
 public class SecurityConfigHelper {
 
-    /**
-     * <pre>
-     * protected void configure(HttpSecurity http) throws Exception {
-     *     http
-     *         .apply(wingsPermit())
-     *             .permitAllCors(true)
-     *             .and()
-     *         ...;
-     * }
-     * </pre>
-     */
-    @NotNull
-    public static HttpHelper http() {
-        return new HttpHelper();
-    }
-
-    public static class HttpHelper extends AbstractHttpConfigurer<HttpHelper, HttpSecurity> {
-        @Contract("_->this")
-        public HttpHelper httpPermit(Customizer<WingsHttpPermitConfigurer> customizer) throws Exception {
-            final WingsHttpPermitConfigurer conf = getBuilder().apply(new WingsHttpPermitConfigurer());
-            customizer.customize(conf);
-            return this;
-        }
-
-        @Contract("_->this")
-        public HttpHelper bindLogin(Customizer<WingsBindLoginConfigurer> customizer) throws Exception {
-            final WingsBindLoginConfigurer conf = getBuilder().apply(new WingsBindLoginConfigurer());
-            customizer.customize(conf);
-            return this;
-        }
-    }
-
     public static class MatcherHelper extends AbstractRequestMatcherRegistry<MatcherHelper> {
         private final Consumer<List<RequestMatcher>> matchersConsumer;
 
@@ -84,6 +46,7 @@ public class SecurityConfigHelper {
         public static MatcherHelper of(ApplicationContext context, AtomicReference<RequestMatcher> ref) {
             return new MatcherHelper(context, it -> ref.set(it.get(0)));
         }
+
         public static MatcherHelper of(ApplicationContext context, RequestMatcher[] ref) {
             return new MatcherHelper(context, it -> it.toArray(ref));
         }

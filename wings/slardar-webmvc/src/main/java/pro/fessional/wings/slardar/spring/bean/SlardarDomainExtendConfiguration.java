@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import pro.fessional.mirana.text.Wildcard;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
+import pro.fessional.wings.slardar.domainx.DomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -49,6 +51,13 @@ public class SlardarDomainExtendConfiguration {
             hostMatcher.put(key, ls);
         }
 
+        DomainRequestMatcher requestMatcher = buildDomainRequestMatcher(config, context);
+
+        return new WingsDomainExtendFilter(hostMatcher, requestMatcher);
+    }
+
+    @NotNull
+    private static DomainRequestMatcher buildDomainRequestMatcher(DomainExtendProp config, ApplicationContext context) {
         String prefix = config.getPrefix();
         if (!prefix.endsWith("/")) {
             prefix = prefix + "/";
@@ -62,11 +71,6 @@ public class SlardarDomainExtendConfiguration {
             return handlerMappings;
         };
 
-        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(prefix,
-                config.getOtherUrl(), config.getCacheSize(), supplier);
-
-        return new WingsDomainExtendFilter(
-                hostMatcher,
-                requestMatcher);
+        return new DefaultDomainRequestMatcher(prefix, config.getOtherUrl(), config.getCacheSize(), supplier);
     }
 }

@@ -2,10 +2,8 @@ package pro.fessional.wings.slardar.spring.conf;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 /**
@@ -20,34 +18,39 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
         return this;
     }
 
+    @SneakyThrows
     @Contract("->this")
     public WingsHttpPermitConfigurer permitLogin() {
-        requestMatchers(SecurityConfigHelper.loginAntPaths()).permitAll();
-        return this;
-    }
-
-    @Contract("->this")
-    public WingsHttpPermitConfigurer permitOAuth2() {
-        requestMatchers(SecurityConfigHelper.oauth2AntPaths()).permitAll();
-        return this;
-    }
-
-    @Contract("->this")
-    public WingsHttpPermitConfigurer permitSwagger() {
-        requestMatchers(SecurityConfigHelper.swaggerAntPaths()).permitAll();
-        return this;
-    }
-
-    @Contract("->this")
-    public WingsHttpPermitConfigurer permitTest() {
-        requestMatchers(SecurityConfigHelper.testAntPaths()).permitAll();
+        getBuilder().authorizeHttpRequests(
+                c -> c.requestMatchers(SecurityConfigHelper.loginAntPaths()).permitAll()
+        );
         return this;
     }
 
     @SneakyThrows
-    @NotNull
-    public AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl requestMatchers(String... paths) {
-        final HttpSecurity http = getBuilder();
-        return http.authorizeHttpRequests().requestMatchers(paths);
+    @Contract("->this")
+    public WingsHttpPermitConfigurer permitOAuth2() {
+        getBuilder().authorizeHttpRequests(
+                c -> c.requestMatchers(SecurityConfigHelper.oauth2AntPaths()).permitAll()
+        );
+        return this;
+    }
+
+    @SneakyThrows
+    @Contract("->this")
+    public WingsHttpPermitConfigurer permitSwagger() {
+        getBuilder().authorizeHttpRequests(
+                c -> c.requestMatchers(SecurityConfigHelper.swaggerAntPaths()).permitAll()
+        );
+        return this;
+    }
+
+    @SneakyThrows
+    @Contract("->this")
+    public WingsHttpPermitConfigurer permitTest() {
+        getBuilder().authorizeHttpRequests(
+                c -> c.requestMatchers(SecurityConfigHelper.testAntPaths()).permitAll()
+        );
+        return this;
     }
 }

@@ -69,10 +69,10 @@ fi
 # ##############
 echo "====================="
 pwd
-echo MAVEN_OPTS=$MAVEN_OPTS
-echo LOG_LEVEL=$LOG_LEVEL
-echo TEST_VERBOSE=$TEST_VERBOSE
-echo COVERALLS_DRYRUN=$COVERALLS_DRYRUN
+echo "MAVEN_OPTS=$MAVEN_OPTS"
+echo "LOG_LEVEL=$LOG_LEVEL"
+echo "TEST_VERBOSE=$TEST_VERBOSE"
+echo "COVERALLS_DRYRUN=$COVERALLS_DRYRUN"
 echo "FROM STEP $_step TO RUN"
 echo "====================="
 set -e

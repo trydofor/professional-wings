@@ -148,7 +148,7 @@ public class JournalJdbcHelper {
     }
     // ////
 
-    private static void checkWhere(String where) {
+    public static void checkWhere(String where) {
         if (where == null || where.isEmpty()) {
             throw new IllegalArgumentException("where clause is empty");
         }
@@ -161,9 +161,9 @@ public class JournalJdbcHelper {
         }
     }
 
-    private static void checkTableName(String table) {
+    public static void checkTableName(String table) {
         if (table == null) throw new NullPointerException("table is null");
-        if (table.contains(" ") || table.contains("\t") || table.contains("\r") || table.contains("\n") || table.contains("=")) {
+        if (table.contains(" ") || table.contains("\t") || table.contains("\r") || table.contains("\n") || table.contains("=") || table.contains(";")) {
             throw new IllegalArgumentException("table is may be sql-injected");
         }
     }

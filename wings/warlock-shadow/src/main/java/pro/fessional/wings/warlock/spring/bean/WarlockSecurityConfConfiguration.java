@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -29,6 +31,7 @@ import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper.MatcherHelper;
 import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
@@ -100,8 +103,7 @@ public class WarlockSecurityConfConfiguration {
             final LogoutSuccessHandler logoutOkHandler = logoutSuccessHandler.getIfAvailable();
             log.info("WarlockShadow conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
 
-            http.apply(SecurityConfigHelper.http())
-                .bindLogin(conf -> {
+            http.with(new WingsBindLoginConfigurer(), conf -> {
                             conf.loginPage(securityProp.getLoginPage()) // init authenticationEntryPoint, 401 page
                                 // init filter.RequestMatcher
                                 .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // by filter,no controller
@@ -122,7 +124,6 @@ public class WarlockSecurityConfConfiguration {
                             }
                         }
                 )
-                .and()
                 .logout(conf -> {
                             conf.logoutUrl(securityProp.getLogoutUrl())
                                 .clearAuthentication(true)
@@ -152,7 +153,7 @@ public class WarlockSecurityConfConfiguration {
             final AccessDeniedHandler deniedHandler = accessDeniedHandler.getIfAvailable();
             if (deniedHandler != null) {
                 log.info("WarlockShadow conf exceptionHandling, accessDeniedHandler=" + deniedHandler.getClass());
-                http.exceptionHandling().accessDeniedHandler(deniedHandler);
+                http.exceptionHandling(c -> c.accessDeniedHandler(deniedHandler));
             }
         };
     }
@@ -163,8 +164,7 @@ public class WarlockSecurityConfConfiguration {
     public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(WarlockSecurityProp securityProp) {
         log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
 
-        return http -> {
-            final var conf = http.authorizeHttpRequests();
+        return http -> http.authorizeHttpRequests(conf -> {
             // 1 PermitAll
             final Set<String> permed = CommonPropHelper.onlyValue(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
@@ -200,7 +200,7 @@ public class WarlockSecurityConfConfiguration {
                     conf.requestMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }
             }
-        };
+        });
     }
 
     @Bean
@@ -208,7 +208,7 @@ public class WarlockSecurityConfConfiguration {
     @Order(WingsOrdered.Lv4Application + 100)
     public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
         log.info("WarlockShadow spring-bean warlockSecurityHttpBaseConfigure");
-        return HttpSecurity::httpBasic;
+        return http -> http.httpBasic(c -> {});
     }
 
     @Bean
@@ -220,27 +220,27 @@ public class WarlockSecurityConfConfiguration {
         log.info("WarlockShadow spring-bean warlockSecurityAutoHttpConfigure");
         return http -> {
             // cors
-            http.cors().configurationSource(SecurityConfigHelper.corsPermitAll());
+            http.cors(c -> c.configurationSource(SecurityConfigHelper.corsPermitAll()));
 
             // cache
             final RequestCache rc = cache.getIfAvailable();
             if (rc == null) {
-                http.requestCache().disable();
+                http.requestCache(RequestCacheConfigurer::disable);
                 log.info("WarlockShadow conf HttpSecurity, requestCache disable");
             }
             else {
-                http.requestCache().requestCache(rc);
+                http.requestCache(c -> c.requestCache(rc));
                 log.info("WarlockShadow conf HttpSecurity, requestCache " + rc.getClass().getName());
             }
 
             // csrf
             final CsrfTokenRepository ct = csrf.getIfAvailable();
             if (ct == null) {
-                http.csrf().disable();
+                http.csrf(AbstractHttpConfigurer::disable);
                 log.info("WarlockShadow conf HttpSecurity, csrf disable");
             }
             else {
-                http.csrf().csrfTokenRepository(ct);
+                http.csrf(c -> c.csrfTokenRepository(ct));
                 log.info("WarlockShadow conf HttpSecurity, csrf " + ct.getClass().getName());
             }
         };
@@ -277,19 +277,19 @@ public class WarlockSecurityConfConfiguration {
             log.info("WarlockShadow conf securityFilterChain, anyRequest=" + anyRequest);
             String str = anyRequest.trim();
             if (!StringUtils.hasText(str) || "permitAll".equalsIgnoreCase(str)) {
-                http.authorizeHttpRequests().anyRequest().permitAll();
+                http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
             }
             else if ("authenticated".equalsIgnoreCase(str)) {
-                http.authorizeHttpRequests().anyRequest().authenticated();
+                http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
             }
             else if ("anonymous".equalsIgnoreCase(str)) {
-                http.authorizeHttpRequests().anyRequest().anonymous();
+                http.authorizeHttpRequests(c -> c.anyRequest().anonymous());
             }
             else if ("fullyAuthenticated".equalsIgnoreCase(str)) {
-                http.authorizeHttpRequests().anyRequest().fullyAuthenticated();
+                http.authorizeHttpRequests(c -> c.anyRequest().fullyAuthenticated());
             }
             else {
-                http.authorizeHttpRequests().anyRequest().hasAnyAuthority(str.split("[, \t\r\n]+"));
+                http.authorizeHttpRequests(c -> c.anyRequest().hasAnyAuthority(str.split("[, \t\r\n]+")));
             }
         }
         log.info("WarlockShadow conf securityFilterChain, done");

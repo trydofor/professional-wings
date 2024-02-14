@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
-import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class SlardarEventConfiguration {
     @Bean(name = slardarEventExecutor)
     @ConditionalWingsEnabled
     public Executor slardarEventExecutor(SlardarAsyncProp prop) {
-        TaskExecutorBuilder builder = new TaskExecutorBuilder();
+        ThreadPoolTaskExecutorBuilder builder = new ThreadPoolTaskExecutorBuilder();
         final TaskExecutionProperties event = prop.getEvent();
         final TaskExecutionProperties.Pool pool = event.getPool();
         builder = builder.queueCapacity(pool.getQueueCapacity());

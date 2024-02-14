@@ -12,6 +12,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
@@ -431,7 +432,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 path = path.replace("classpath:", "classpath*:");
             }
             else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
-                // skip
+                DummyBlock.empty();
             }
             else {
                 // 6. any non-`classpath:`,`classpath*:` will be scanned as `file:`

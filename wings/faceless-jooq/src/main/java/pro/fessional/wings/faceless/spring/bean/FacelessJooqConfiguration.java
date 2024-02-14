@@ -70,7 +70,7 @@ public class FacelessJooqConfiguration {
                     .withRenderGroupConcatMaxLenSessionVariable(config.isRenderGroupConcat())
 //                  .withParseDialect(SQLDialect.MYSQL)
                 .withRenderTable(config.getRenderTable());
-            ;
+
             log.info("FacelessJooq conf jooq setting, dialect=" + settings.getParseDialect());
 
             if (config.isConverter()) {

@@ -170,18 +170,18 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Override
     @SuppressWarnings("DuplicatedCode")
-    public long save(@NotNull TinyMailPlain message) {
-        final String conf = message.getConf();
+    public long save(@NotNull TinyMailPlain msg) {
+        final String conf = msg.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
         AssertArgs.notNull(config, "mail conf={} not found", conf);
 
         final WinMailSender po = new WinMailSender();
-        final boolean isNew = message.getId() == null || message.getId() <= 0;
+        final boolean isNew = msg.getId() == null || msg.getId() <= 0;
         final long id;
         final RunMode rm = RuntimeMode.getRunMode();
         final String crm = rm == RunMode.Nothing ? "" : rm.name().toLowerCase();
 
-        final LocalDateTime md = message.getDate();
+        final LocalDateTime md = msg.getDate();
         if (isNew) {
             id = lightIdService.getId(winMailSenderDao.getTable());
             // Optimist Lock
@@ -193,32 +193,32 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             po.setSumDone(0);
         }
         else {
-            id = message.getId();
-            Null.notNull(message.getNextSend(), po::setNextSend);
+            id = msg.getId();
+            Null.notNull(msg.getNextSend(), po::setNextSend);
         }
 
         po.setId(id);
-        po.setMailApps(toString(message.getApps(), appName));
-        po.setMailRuns(toString(message.getRuns(), crm));
-        po.setMailConf(message.getConf());
-        po.setMailFrom(toString(message.getFrom(), config.getFrom()));
-        po.setMailTo(toString(message.getTo(), config.getTo()));
-        po.setMailCc(toString(message.getCc(), config.getCc()));
-        po.setMailBcc(toString(message.getBcc(), config.getBcc()));
-        po.setMailReply(toString(message.getReply(), config.getReply()));
-        po.setMailSubj(message.getSubject());
-        po.setMailText(message.getContent());
-        po.setMailHtml(BoxedCastUtil.orElse(message.getHtml(), config.getHtml()));
-        po.setMailFile(toStringMap(message.getAttachment()));
-        po.setMailMark(message.getMark());
+        po.setMailApps(toString(msg.getApps(), appName));
+        po.setMailRuns(toString(msg.getRuns(), crm));
+        po.setMailConf(msg.getConf());
+        po.setMailFrom(toString(msg.getFrom(), config.getFrom()));
+        po.setMailTo(toString(msg.getTo(), config.getTo()));
+        po.setMailCc(toString(msg.getCc(), config.getCc()));
+        po.setMailBcc(toString(msg.getBcc(), config.getBcc()));
+        po.setMailReply(toString(msg.getReply(), config.getReply()));
+        po.setMailSubj(msg.getSubject());
+        po.setMailText(msg.getContent());
+        po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
+        po.setMailFile(toStringMap(msg.getAttachment()));
+        po.setMailMark(msg.getMark());
         po.setMailDate(md);
 
-        Null.notNull(message.getMaxFail(), po::setMaxFail);
-        Null.notNull(message.getMaxDone(), po::setMaxDone);
+        Null.notNull(msg.getMaxFail(), po::setMaxFail);
+        Null.notNull(msg.getMaxDone(), po::setMaxDone);
 
-        Null.notNull(message.getRefType(), po::setRefType);
-        Null.notNull(message.getRefKey1(), po::setRefKey1);
-        Null.notNull(message.getRefKey2(), po::setRefKey2);
+        Null.notNull(msg.getRefType(), po::setRefType);
+        Null.notNull(msg.getRefKey1(), po::setRefKey1);
+        Null.notNull(msg.getRefKey2(), po::setRefKey2);
 
         // try to check message format
         final TinyMailMessage tms = makeMailMessage(config, po, null);

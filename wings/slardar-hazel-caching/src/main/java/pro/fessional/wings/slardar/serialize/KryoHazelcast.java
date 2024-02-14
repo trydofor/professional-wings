@@ -13,18 +13,9 @@ import java.io.IOException;
  * @author trydofor
  * @since 2021-06-09
  */
-public class KryoHazelcast implements StreamSerializer<Object>/*, HazelcastInstanceAware */ {
+public class KryoHazelcast implements StreamSerializer<Object> {
 
     public static final int TYPE_ID = 1979_01_30;
-
-    /*
-    private HazelcastInstance hazelcastInstance;
-
-    @Override
-    public void setHazelcastInstance(HazelcastInstance ins) {
-        this.hazelcastInstance = ins;
-    }
-    */
 
     @Override
     public void write(ObjectDataOutput out, @NotNull Object object) throws IOException {

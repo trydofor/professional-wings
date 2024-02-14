@@ -33,13 +33,11 @@ public class OkHttpClientBuilder {
         return SpringBuilder != null ? SpringBuilder : staticBuilder();
     }
 
-    @SuppressWarnings("KotlinInternalInJava")
     public static void sslTrustAll(Builder builder) {
         builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
                .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER);
     }
-    
-    @SuppressWarnings("KotlinInternalInJava")
+
     public static void cookieHost(Builder builder) {
         builder.cookieJar(new OkHttpHostCookie());
     }

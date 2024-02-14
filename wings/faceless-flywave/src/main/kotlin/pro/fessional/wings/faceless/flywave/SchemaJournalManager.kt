@@ -338,7 +338,6 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
-
             isUpdate -> {
                 """
                 SELECT
@@ -349,7 +348,6 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
-
             isDelete -> {
                 """
                 SELECT
@@ -360,7 +358,6 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
-
             else -> {
                 throw RuntimeException("unsupported event $event")
             }
@@ -371,29 +368,35 @@ class SchemaJournalManager(
         } else {
             "'1000-01-01 00:00:00.000'"
         }
-        val updateSql = if (isInsert) {
-            """
-            UPDATE $schemaJournalTable SET
-                log_insert = $logDate,
-                commit_id = ?
-            WHERE table_name = ?
-            """.trimIndent()
-        } else if (isUpdate) {
-            """
-            UPDATE $schemaJournalTable SET
-                log_update = $logDate,
-                commit_id = ?
-            WHERE table_name = ?
-            """.trimIndent()
-        } else if (isDelete) {
-            """
-            UPDATE $schemaJournalTable SET
-                log_delete = $logDate,
-                commit_id = ?
-            WHERE table_name = ?
-            """.trimIndent()
-        } else {
-            throw RuntimeException("unsupported event $event")
+
+        val updateSql = when {
+            isInsert -> {
+                """
+                UPDATE $schemaJournalTable SET
+                    log_insert = $logDate,
+                    commit_id = ?
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            isUpdate -> {
+                """
+                UPDATE $schemaJournalTable SET
+                    log_update = $logDate,
+                    commit_id = ?
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            isDelete -> {
+                """
+                UPDATE $schemaJournalTable SET
+                    log_delete = $logDate,
+                    commit_id = ?
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            else -> {
+                throw RuntimeException("unsupported event $event")
+            }
         }
 
         val model = HashMap<String, String>()

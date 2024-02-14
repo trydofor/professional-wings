@@ -11,7 +11,7 @@ interface SqlStatementParser {
     sealed class SqlType {
         data class Plain(val table: String, val rename: String = "") : SqlType()
         data class Shard(val table: String) : SqlType()
-        object Other : SqlType()
+        data object Other : SqlType()
     }
 
     /**
