@@ -2,7 +2,6 @@ package pro.fessional.wings.tiny.task.service.impl;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,9 +128,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
                 final Object result;
                 if (execProp.isDryrun()) {
-                    final int slp = RandomUtils.nextInt(10, 2000);
+                    final long slp = Sleep.ignoreInterrupt(10, 2000);
                     result = "dryrun and sleep " + slp;
-                    Sleep.ignoreInterrupt(slp);
                     log.info("task force done, dryrun and sleep {} ms, id={}", slp, id);
                 }
                 else {
@@ -257,9 +255,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
                     final Object result;
                     if (execProp.isDryrun()) {
-                        final int slp = RandomUtils.nextInt(10, 2000);
+                        final long slp = Sleep.ignoreInterrupt(10, 2000);
                         result = "dryrun and sleep " + slp;
-                        Sleep.ignoreInterrupt(slp);
                         log.info("task done, dryrun and sleep {} ms, id={}", slp, id);
                     }
                     else {

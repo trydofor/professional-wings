@@ -3,10 +3,9 @@ package pro.fessional.wings.faceless.codegen;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pro.fessional.meepo.Meepo;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -35,9 +34,8 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-09-24
  */
+@Slf4j
 public class ConstantEnumGenerator {
-
-    private static final Logger log = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
     /**
      * Replacement for non-java characters, empty means ignore

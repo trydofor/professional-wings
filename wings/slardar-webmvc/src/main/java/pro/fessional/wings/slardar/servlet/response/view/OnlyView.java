@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.view.AbstractView;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -24,12 +25,12 @@ public abstract class OnlyView<T> extends AbstractView {
         this.data = data;
     }
 
-    public abstract void responseData(@NotNull T data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception;
+    public abstract void responseData(@NotNull T data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException;
 
     @Override
     protected void renderMergedOutputModel(@NotNull Map<String, Object> model,
                                            @NotNull HttpServletRequest request,
-                                           HttpServletResponse response) throws Exception {
+                                           HttpServletResponse response) throws IOException {
         response.setContentType(this.contentType);
         if (data != null) {
             responseData(data, request, response);

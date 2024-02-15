@@ -1,8 +1,7 @@
 package pro.fessional.wings.testing.faceless.database;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.mirana.io.InputStreams;
@@ -22,9 +21,8 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2020-05-22
  */
+@Slf4j
 public class TestingDatabaseHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(TestingDatabaseHelper.class);
 
     private final DataSourceContext dataSourceContext;
 

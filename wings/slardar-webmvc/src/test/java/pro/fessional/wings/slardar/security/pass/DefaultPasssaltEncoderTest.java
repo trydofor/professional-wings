@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author trydofor
  * @since 2021-02-25
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings("all")
 @Slf4j
 class DefaultPasssaltEncoderTest {
     private final PasswordEncoder bcrypt = new BCryptPasswordEncoder();

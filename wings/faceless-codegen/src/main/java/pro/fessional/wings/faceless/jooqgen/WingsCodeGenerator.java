@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooqgen;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Converter;
@@ -14,8 +15,6 @@ import org.jooq.meta.jaxb.Jdbc;
 import org.jooq.meta.jaxb.Logging;
 import org.jooq.meta.jaxb.Strategy;
 import org.jooq.meta.jaxb.Target;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Null;
@@ -52,9 +51,8 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-05-31
  */
+@Slf4j
 public class WingsCodeGenerator {
-
-    private static final Logger log = LoggerFactory.getLogger(WingsCodeGenerator.class);
 
     /**
      * Generate Jooq Code

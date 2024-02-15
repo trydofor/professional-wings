@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -107,8 +106,7 @@ public class MailSenderManager {
         final MimeMessage mimeMessage = prepareMimeMessage(message, preparer, sender);
 
         if (isDryrun(message)) {
-            final int slp = RandomUtils.nextInt(10, 2000);
-            Sleep.ignoreInterrupt(slp);
+            final long slp = Sleep.ignoreInterrupt(10, 2000);
             log.info("single mail dryrun and sleep {} ms", slp);
             return;
         }
@@ -186,8 +184,7 @@ public class MailSenderManager {
         }
 
         if (dryrunCount > 0) {
-            final int slp = RandomUtils.nextInt(10, 2000);
-            Sleep.ignoreInterrupt(slp);
+            final long slp = Sleep.ignoreInterrupt(10, 2000);
             log.info("batch mail dryrun and sleep {} ms", slp);
             final long avg = slp / dryrunCount;
             for (BatchResult rst : results) {

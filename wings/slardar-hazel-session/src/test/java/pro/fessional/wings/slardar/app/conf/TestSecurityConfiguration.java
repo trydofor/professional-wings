@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
 import pro.fessional.wings.testing.slardar.security.handler.TestingLoginHandler;
@@ -74,8 +76,8 @@ public class TestSecurityConfiguration {
 //            .exceptionHandling(conf -> conf
 //                    .accessDeniedHandler()
 //            )
-            .requestCache().disable()
-            .csrf().disable();
+            .requestCache(RequestCacheConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 }

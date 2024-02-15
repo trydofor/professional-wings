@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractAuthPermCheckCombo implements ComboWingsAuthCheckService.Combo {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public boolean check(WingsUserDetails userDetails, WingsBindAuthToken authentication) {

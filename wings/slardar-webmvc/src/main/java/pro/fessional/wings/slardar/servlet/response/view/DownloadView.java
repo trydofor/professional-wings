@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.getDownloadContentType;
@@ -23,7 +24,7 @@ public class DownloadView extends InputStreamView {
     }
 
     @Override
-    public void responseData(@NotNull InputStream data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
+    public void responseData(@NotNull InputStream data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
         ResponseHelper.setDownloadContentDisposition(response, fileName);
         super.responseData(data, request, response);
     }
