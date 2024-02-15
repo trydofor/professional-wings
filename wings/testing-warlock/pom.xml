@@ -13,7 +13,7 @@
     <artifactId>testing-warlock</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Warlock::Test</name>
+    <name>Wings::Testing::Warlock</name>
     <description>Testing of Warlock</description>
 
     <dependencies>

@@ -145,8 +145,8 @@ jobs:
           mvn -P '!example,!devs' -Dmaven.test.skip=true clean install
           mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
           mvn -P 'coverage,!example,!devs' -Dmaven.test.failure.ignore=$TESTFAILS_IGNORE test
-          mvn -pl ':devs-coverage' -am jacoco:report-aggregate
-          mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN verify
+          mvn -P 'coverage' -pl ':devs-coverage' -am jacoco:report-aggregate
+          mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN -Dwings.rootdir=../.. coveralls:report
         env:
           TZ: Asia/Shanghai
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}

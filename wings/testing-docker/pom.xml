@@ -13,7 +13,7 @@
     <artifactId>testing-docker</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Testing:Docker</name>
+    <name>Wings::Testing::Docker</name>
     <description>Docker(MySql/H2) for testing</description>
 
     <dependencies>
