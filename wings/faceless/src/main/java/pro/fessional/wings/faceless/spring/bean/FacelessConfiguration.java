@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.database.DataSourceContext.Customizer;
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJdbc;
 import pro.fessional.wings.faceless.service.flakeid.impl.FlakeIdLightIdImpl;
@@ -50,7 +51,8 @@ public class FacelessConfiguration {
         log.info("Faceless🦄 database-current-url=" + ctx.cacheJdbcUrl(ctx.getCurrent()));
         Map<String, DataSource> backends = ctx.getBackends();
         for (Map.Entry<String, DataSource> e : backends.entrySet()) {
-            log.info("Faceless🦄 database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
+            log.info("Faceless🦄 initSafeTable database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
+            JdbcTemplateHelper.initSafeTable(new JdbcTemplate(e.getValue()));
         }
 
         return ctx;

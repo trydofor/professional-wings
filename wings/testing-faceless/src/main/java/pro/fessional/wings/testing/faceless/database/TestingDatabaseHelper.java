@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -62,9 +63,10 @@ public class TestingDatabaseHelper {
         testcaseNotice("clean database " + info);
         JdbcTemplate tmpl = new JdbcTemplate(dataSource);
         tmpl.query("SHOW TABLES", rs -> {
-            String tbl = rs.getString(1);
+            String tbl = JdbcTemplateHelper.safeName(rs.getString(1));
             testcaseNotice("DROP TABLE " + tbl);
-            tmpl.execute("DROP TABLE `" + tbl + "`");
+            //noinspection SqlSourceToSinkFlow
+            tmpl.execute("DROP TABLE " + tbl);
         });
     }
 
