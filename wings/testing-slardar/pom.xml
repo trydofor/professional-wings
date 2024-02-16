@@ -13,7 +13,7 @@
     <artifactId>testing-slardar</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Slardar::Test</name>
+    <name>Wings::Testing::Slardar</name>
     <description>Testing of Slardar</description>
 
     <dependencies>

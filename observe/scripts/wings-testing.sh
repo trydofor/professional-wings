@@ -67,12 +67,14 @@ if [[ "$_ans" != "" ]]; then
     _step="$_ans"
 fi
 # ##############
+TZ=Asia/Shanghai
 echo "====================="
 pwd
-echo MAVEN_OPTS=$MAVEN_OPTS
-echo LOG_LEVEL=$LOG_LEVEL
-echo TEST_VERBOSE=$TEST_VERBOSE
-echo COVERALLS_DRYRUN=$COVERALLS_DRYRUN
+echo "TZ=$TZ"
+echo "MAVEN_OPTS=$MAVEN_OPTS"
+echo "LOG_LEVEL=$LOG_LEVEL"
+echo "TEST_VERBOSE=$TEST_VERBOSE"
+echo "COVERALLS_DRYRUN=$COVERALLS_DRYRUN"
 echo "FROM STEP $_step TO RUN"
 echo "====================="
 set -e
@@ -80,6 +82,6 @@ set -x
 [[ "$_step" -le "1" ]] && mvn -P '!example,!devs' -Dmaven.test.skip=true clean install
 [[ "$_step" -le "2" ]] && mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
 [[ "$_step" -le "3" ]] && mvn -P 'coverage,!example,!devs' test
-[[ "$_step" -le "4" ]] && mvn -pl ':devs-coverage' -am jacoco:report-aggregate
-[[ "$_step" -le "5" ]] && mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN verify
+[[ "$_step" -le "4" ]] && mvn -P 'coverage' -pl ':devs-coverage' -am jacoco:report-aggregate
+[[ "$_step" -le "5" ]] && mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN -Dwings.rootdir=../.. coveralls:report
 

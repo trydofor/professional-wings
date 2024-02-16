@@ -3,9 +3,9 @@ package pro.fessional.wings.faceless.codegen;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.meepo.Meepo;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -34,9 +34,8 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-09-24
  */
+@Slf4j
 public class ConstantEnumGenerator {
-
-    private static final Logger log = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
     /**
      * Replacement for non-java characters, empty means ignore
@@ -145,7 +144,7 @@ public class ConstantEnumGenerator {
 
         Set<File> nowFiles = new HashSet<>();
         File dst = new File(src, pkg.replace('.', '/'));
-        dst.mkdirs();
+        boolean ignore = dst.mkdirs();
 
         Map<String, String> javaFiles = mergeJava(pkg, pojos, filter);
 
@@ -189,27 +188,9 @@ public class ConstantEnumGenerator {
 
     public static Map<String, String> mergeJava(String pkg, Collection<? extends ConstantEnum> pos, Map<String, Boolean> filter) {
 
-        final Map<String, List<ConstantEnum>> temp = pos
+        Map<String, List<ConstantEnum>> enums = filterEnums(filter, pos
                 .stream()
-                .collect(Collectors.groupingBy(ConstantEnum::getType));
-
-        Map<String, List<ConstantEnum>> enums = new TreeMap<>(temp);
-        final Map<String, List<ConstantEnum>> incs = new TreeMap<>();
-        for (Map.Entry<String, Boolean> en : filter.entrySet()) {
-            if (Boolean.TRUE.equals(en.getValue())) {
-                final List<ConstantEnum> vs = enums.get(en.getKey());
-                if (vs != null) {
-                    incs.put(en.getKey(), vs);
-                }
-            }
-            else {
-                enums.remove(en.getKey());
-            }
-        }
-
-        if (!incs.isEmpty()) {
-            enums = incs;
-        }
+                .collect(Collectors.groupingBy(ConstantEnum::getType)));
 
         Map<String, String> javaFiles = new HashMap<>();
         int count = 1;
@@ -286,6 +267,28 @@ public class ConstantEnumGenerator {
             javaFiles.put(enumClass, text);
         }
         return javaFiles;
+    }
+
+    @NotNull
+    private static Map<String, List<ConstantEnum>> filterEnums(Map<String, Boolean> filter, Map<String, List<ConstantEnum>> temp) {
+        Map<String, List<ConstantEnum>> enums = new TreeMap<>(temp);
+        final Map<String, List<ConstantEnum>> incs = new TreeMap<>();
+        for (Map.Entry<String, Boolean> en : filter.entrySet()) {
+            if (Boolean.TRUE.equals(en.getValue())) {
+                final List<ConstantEnum> vs = enums.get(en.getKey());
+                if (vs != null) {
+                    incs.put(en.getKey(), vs);
+                }
+            }
+            else {
+                enums.remove(en.getKey());
+            }
+        }
+
+        if (!incs.isEmpty()) {
+            enums = incs;
+        }
+        return enums;
     }
 
     private static boolean isSuper(ConstantEnum it) {

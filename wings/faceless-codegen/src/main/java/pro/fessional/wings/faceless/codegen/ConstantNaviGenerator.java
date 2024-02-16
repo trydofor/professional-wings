@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +50,7 @@ public class ConstantNaviGenerator {
 
         //
         File dst = new File(targetDir, packageName.replace('.', '/'));
-        dst.mkdirs();
+        boolean ignore = dst.mkdirs();
 
         StringBuilder out = new StringBuilder();
         out.append(String.format("""

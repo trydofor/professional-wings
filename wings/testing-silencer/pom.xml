@@ -13,7 +13,7 @@
     <artifactId>testing-silencer</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Silencer::Test</name>
+    <name>Wings::Testing::Silencer</name>
     <description>Testing of Silencer</description>
 
     <dependencies>

@@ -1,12 +1,12 @@
 package pro.fessional.wings.testing.faceless.database;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -22,9 +22,8 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2020-05-22
  */
+@Slf4j
 public class TestingDatabaseHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(TestingDatabaseHelper.class);
 
     private final DataSourceContext dataSourceContext;
 
@@ -64,9 +63,10 @@ public class TestingDatabaseHelper {
         testcaseNotice("clean database " + info);
         JdbcTemplate tmpl = new JdbcTemplate(dataSource);
         tmpl.query("SHOW TABLES", rs -> {
-            String tbl = rs.getString(1);
+            String tbl = JdbcTemplateHelper.safeName(rs.getString(1));
             testcaseNotice("DROP TABLE " + tbl);
-            tmpl.execute("DROP TABLE `" + tbl + "`");
+            //noinspection SqlSourceToSinkFlow
+            tmpl.execute("DROP TABLE " + tbl);
         });
     }
 

@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.cache.cache2k;
 import org.cache2k.Cache;
 import org.cache2k.extra.spring.SpringCache2kCache;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.best.DummyBlock;
 
 import java.util.concurrent.Callable;
 
@@ -56,7 +57,7 @@ public class NullsCache2k extends SpringCache2kCache {
                 nulls.put(key, Boolean.TRUE);
             }
             else {
-                // skip null
+                DummyBlock.empty();
             }
         }
         else {

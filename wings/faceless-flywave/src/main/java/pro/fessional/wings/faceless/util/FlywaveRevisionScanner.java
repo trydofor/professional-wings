@@ -1,9 +1,8 @@
 package pro.fessional.wings.faceless.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
@@ -35,9 +34,8 @@ import java.util.regex.Pattern;
  * @author trydofor
  * @since 2019-06-14
  */
+@Slf4j
 public class FlywaveRevisionScanner {
-
-    private static final Logger log = LoggerFactory.getLogger(FlywaveRevisionScanner.class);
 
     public static final String REVISION_PATH_REVIFILE_EXTN = ".sql";
     public static final String REVISION_PATH_REVIFILE_TAIL = "**/*" + REVISION_PATH_REVIFILE_EXTN;

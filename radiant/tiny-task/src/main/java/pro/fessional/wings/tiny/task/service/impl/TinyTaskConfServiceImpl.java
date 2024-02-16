@@ -355,51 +355,51 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     @NotNull
     private WinTaskDefine genWinTaskDefine(TaskerProp prop, String key) {
-        WinTaskDefine po = new WinTaskDefine();
+        WinTaskDefine wtd = new WinTaskDefine();
 
-        po.setEnabled(prop.isEnabled());
-        po.setAutorun(prop.isAutorun());
-        po.setVersion(prop.getVersion());
-        po.setPropkey(key);
+        wtd.setEnabled(prop.isEnabled());
+        wtd.setAutorun(prop.isAutorun());
+        wtd.setVersion(prop.getVersion());
+        wtd.setPropkey(key);
 
-        po.setTaskerBean(prop.getTaskerBean());
-        po.setTaskerPara(prop.getTaskerPara());
-        po.setTaskerName(prop.getTaskerName());
-        po.setTaskerFast(prop.isTaskerFast());
+        wtd.setTaskerBean(prop.getTaskerBean());
+        wtd.setTaskerPara(prop.getTaskerPara());
+        wtd.setTaskerName(prop.getTaskerName());
+        wtd.setTaskerFast(prop.isTaskerFast());
 
         final String apps = prop.getTaskerApps();
-        po.setTaskerApps(isEmpty(apps) ? appName : apps);
+        wtd.setTaskerApps(isEmpty(apps) ? appName : apps);
 
         final String runs = prop.getTaskerRuns();
         if (isEmpty(runs)) {
             final RunMode rm = RuntimeMode.getRunMode();
-            po.setTaskerRuns(rm == RunMode.Nothing ? "" : rm.name().toLowerCase());
+            wtd.setTaskerRuns(rm == RunMode.Nothing ? "" : rm.name().toLowerCase());
         }
         else {
-            po.setTaskerRuns(runs);
+            wtd.setTaskerRuns(runs);
         }
 
-        po.setNoticeBean(prop.getNoticeBean());
-        po.setNoticeWhen(prop.getNoticeWhen());
-        po.setNoticeConf(prop.getNoticeConf());
+        wtd.setNoticeBean(prop.getNoticeBean());
+        wtd.setNoticeWhen(prop.getNoticeWhen());
+        wtd.setNoticeConf(prop.getNoticeConf());
 
-        po.setTimingZone(prop.getTimingZone());
-        po.setTimingType(prop.getTimingType());
-        po.setTimingCron(prop.getTimingCron());
-        po.setTimingIdle(prop.getTimingIdle());
-        po.setTimingRate(prop.getTimingRate());
-        po.setTimingMiss(prop.getTimingMiss());
-        po.setTimingBeat(prop.getTimingBeat());
+        wtd.setTimingZone(prop.getTimingZone());
+        wtd.setTimingType(prop.getTimingType());
+        wtd.setTimingCron(prop.getTimingCron());
+        wtd.setTimingIdle(prop.getTimingIdle());
+        wtd.setTimingRate(prop.getTimingRate());
 
-        po.setDuringFrom(prop.getDuringFrom());
-        po.setDuringStop(prop.getDuringStop());
-        po.setDuringExec(prop.getDuringExec());
-        po.setDuringFail(prop.getDuringFail());
-        po.setDuringDone(prop.getDuringDone());
-        po.setDuringBoot(prop.getDuringBoot());
+        wtd.setTimingMiss(prop.getTimingMiss());
+        wtd.setTimingBeat(prop.getTimingBeat());
+        wtd.setDuringFrom(prop.getDuringFrom());
+        wtd.setDuringStop(prop.getDuringStop());
+        wtd.setDuringExec(prop.getDuringExec());
+        wtd.setDuringFail(prop.getDuringFail());
+        wtd.setDuringDone(prop.getDuringDone());
+        wtd.setDuringBoot(prop.getDuringBoot());
 
-        po.setResultKeep(prop.getResultKeep());
-        return po;
+        wtd.setResultKeep(prop.getResultKeep());
+        return wtd;
     }
 
     private <T> T fetchProp(Class<T> claz, Function<WinTaskDefineTable, Condition> cond) {

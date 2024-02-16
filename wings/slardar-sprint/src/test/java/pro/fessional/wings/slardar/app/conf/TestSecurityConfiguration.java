@@ -5,9 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer;
+import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 
@@ -39,12 +43,11 @@ public class TestSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("config HttpSecurity");
-        http.apply(SecurityConfigHelper.http())
-            .httpPermit(conf -> conf
+        http.with(new WingsHttpPermitConfigurer(), conf -> conf
                     .permitCorsAll()
                     .permitTest()
             )
-            .bindLogin(conf -> conf
+            .with(new WingsBindLoginConfigurer(), conf -> conf
                     .loginPage("/user/login.json")
                     .loginProcessingUrl("/*/login-proc.json")
                     .usernameParameter("username")
@@ -53,7 +56,6 @@ public class TestSecurityConfiguration {
                     .failureHandler((request, response, exception) -> log.info("failureHandler"))
                     .bindAuthTypeToEnums("user", Null.Enm)
             )
-            .and()
             .authorizeHttpRequests(conf -> conf
                     .requestMatchers(new AntPathRequestMatcher("/authed/*", null)).authenticated()
             )
@@ -75,8 +77,8 @@ public class TestSecurityConfiguration {
 //            .exceptionHandling(conf -> conf
 //                    .accessDeniedHandler()
 //            )
-            .requestCache().disable()
-            .csrf().disable();
+            .requestCache(RequestCacheConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 }

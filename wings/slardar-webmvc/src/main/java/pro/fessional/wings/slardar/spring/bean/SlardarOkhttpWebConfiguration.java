@@ -16,6 +16,7 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 /**
  * @author trydofor
  * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#io.rest-client.resttemplate.customization">RestTemplate Customization</a>
+ * @link <a href="https://github.com/spring-projects/spring-framework/issues/30919">Deprecate OkHttp3Client</a>
  * @see RestTemplateAutoConfiguration#RestTemplateAutoConfiguration()
  * @since 2020-05-22
  */

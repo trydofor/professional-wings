@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -18,7 +19,7 @@ public class InputStreamView extends OnlyView<InputStream> {
     }
 
     @Override
-    public void responseData(@NotNull InputStream data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
+    public void responseData(@NotNull InputStream data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
         IOUtils.copy(data, response.getOutputStream(), 1024);
         IOUtils.closeQuietly(data, null);
     }

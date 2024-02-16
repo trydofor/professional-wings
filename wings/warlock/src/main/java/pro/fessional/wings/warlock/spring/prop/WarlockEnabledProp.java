@@ -35,7 +35,7 @@ public class WarlockEnabledProp {
     public static final String Key$secCheckUrl = Key + ".sec-check-url";
 
     /**
-     * whether to enable Web auto config, eg. firewall, debug, etc.
+     * whether to enable Web auto config, e.g. firewall, debug, etc.
      *
      * @see #Key$secWebAuto
      */

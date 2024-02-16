@@ -23,7 +23,7 @@ class SchemaFulldumpManager(
     private val log = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
 
     companion object {
-        const val prefix = "--"
+        const val Prefix = "--"
 
         /**
          * Exclude Those that satisfy the RegExp (matches all, case-insensitive) and sorted in ascii order
@@ -58,7 +58,7 @@ class SchemaFulldumpManager(
                 val spec = ArrayList<String>(tables.size + table.size)
                 val temp = LinkedList(tables)
                 for (t in table) {
-                    if (t.startsWith(prefix)) {
+                    if (t.startsWith(Prefix)) {
                         spec.add(t)
                         continue
                     }
@@ -73,7 +73,7 @@ class SchemaFulldumpManager(
                     }
                 }
                 if (!only && temp.isNotEmpty()) {
-                    spec.add(prefix)
+                    spec.add(Prefix)
                     spec.addAll(temp.sorted())
                 }
                 spec
@@ -91,7 +91,7 @@ class SchemaFulldumpManager(
                 val regexSlots = LinkedHashMap<Regex, ArrayList<String>>(regexp.size)
                 for (it in regexp) {
                     when {
-                        it.startsWith(prefix) -> regexSlots[it.toRegex(RegexOption.LITERAL)] = arrayListOf(it.trim())
+                        it.startsWith(Prefix) -> regexSlots[it.toRegex(RegexOption.LITERAL)] = arrayListOf(it.trim())
                         else -> regexSlots[it.toRegex(RegexOption.IGNORE_CASE)] = arrayListOf()
                     }
                 }
@@ -112,7 +112,7 @@ class SchemaFulldumpManager(
                 if (!only && temp.isNotEmpty()) {
                     ArrayList<String>(grpd.size + temp.size + 1).apply {
                         addAll(grpd)
-                        add(prefix)
+                        add(Prefix)
                         addAll(temp.sorted())
                     }
                 } else {
@@ -157,7 +157,7 @@ class SchemaFulldumpManager(
                     }
 
                     else -> {
-                        buf.write("$prefix ${sql.table} ${sql.sqlType}")
+                        buf.write("$Prefix ${sql.table} ${sql.sqlType}")
                         buf.write("\n")
                         buf.write("${sql.sqlText};")
                         buf.write("\n\n")
@@ -166,12 +166,12 @@ class SchemaFulldumpManager(
             }
 
             if (trgs.isNotEmpty()) {
-                buf.write("$prefix TRIGGER")
+                buf.write("$Prefix TRIGGER")
                 buf.write("\n\n")
                 buf.write("DELIMITER \$\$")
                 buf.write("\n\n")
                 for (sql in trgs) {
-                    buf.write("$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
+                    buf.write("$Prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
                 }
                 buf.write("DELIMITER ;\n")
             }
@@ -196,7 +196,7 @@ class SchemaFulldumpManager(
 
         val tables = schemaDefinitionLoader.showTables(database)
         for (table in filterSorter(tables)) {
-            if (table.startsWith(prefix)) {
+            if (table.startsWith(Prefix)) {
                 log.info("[dumpDdl] insert comment, {}", table)
                 result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
@@ -242,7 +242,7 @@ class SchemaFulldumpManager(
         val tables = schemaDefinitionLoader.showTables(database)
         val builder = StringBuilder()
         for (table in filterSorter(tables)) {
-            if (table.startsWith(prefix)) {
+            if (table.startsWith(Prefix)) {
                 log.info("[dumpRec] insert comment, {}", table)
                 result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
@@ -283,7 +283,7 @@ class SchemaFulldumpManager(
     private fun appendRevision(result: ArrayList<SqlString>, tmpl: SimpleJdbcTemplate) = try {
         tmpl.query("SELECT revision, apply_dt FROM sys_schema_version WHERE apply_dt >'1000-01-01' order by revision desc limit 1") {
             val sb = StringBuilder()
-            sb.append(prefix)
+            sb.append(Prefix)
             sb.append(" revision=")
             sb.append(it.getString("revision"))
             sb.append(", apply_dt=")

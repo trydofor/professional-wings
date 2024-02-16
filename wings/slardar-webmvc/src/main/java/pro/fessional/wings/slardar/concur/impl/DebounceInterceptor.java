@@ -117,7 +117,6 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     }
 
     @Override
-    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {

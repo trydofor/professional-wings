@@ -62,8 +62,11 @@ public class JournalJdbcHelper {
     }
 
     public static String getJournalDateColumn(JdbcTemplate tmpl, String table) {
-        //noinspection SqlConstantExpression
-        return getJournalDateColumn(table, s -> tmpl.query("SELECT * FROM " + s + " WHERE 1 = 0", filedJournal));
+        return getJournalDateColumn(table, s -> {
+            String tbl = JdbcTemplateHelper.safeTable(s);
+            String sql = "SELECT * FROM " + tbl + " WHERE 1 = 0";
+            return tmpl.query(sql, filedJournal);
+        });
     }
 
     // jdbc
@@ -110,8 +113,9 @@ public class JournalJdbcHelper {
     }
 
     public static int deleteWhere(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, String where, Object... args) {
-        checkWhere(where);
-        checkTableName(table);
+        where = JdbcTemplateHelper.safeWhere(where);
+        table = JdbcTemplateHelper.safeTable(table);
+
         String jf = getJournalDateColumn(tmpl, table);
         String journalSetter = " ";
         if (!jf.isEmpty()) {
@@ -119,11 +123,9 @@ public class JournalJdbcHelper {
             journalSetter = ", " + jf + "=" + ldt + " ";
         }
 
-        @SuppressWarnings("SqlWithoutWhere") // checked
         String update = "UPDATE " + table + " SET " + COL_COMMIT_ID + "=" + commitId + journalSetter + where;
         tmpl.update(update, args);
 
-        @SuppressWarnings("SqlWithoutWhere") // checked
         String delete = "DELETE FROM " + table + " " + where;
         return tmpl.update(delete, args);
     }
@@ -145,26 +147,5 @@ public class JournalJdbcHelper {
     public static String getFieldName(String name) {
         int dot = name.lastIndexOf('.');
         return dot < 0 ? name : name.substring(dot + 1);
-    }
-    // ////
-
-    private static void checkWhere(String where) {
-        if (where == null || where.isEmpty()) {
-            throw new IllegalArgumentException("where clause is empty");
-        }
-        if (where.contains(";")) {
-            throw new IllegalArgumentException("where clause may be sql-injected, should not contains ';'");
-        }
-        final String key = " WHERE ";
-        if (!where.regionMatches(true, 0, key, 0, key.length())) {
-            throw new IllegalArgumentException("missing ' WHERE ' in where clause");
-        }
-    }
-
-    private static void checkTableName(String table) {
-        if (table == null) throw new NullPointerException("table is null");
-        if (table.contains(" ") || table.contains("\t") || table.contains("\r") || table.contains("\n") || table.contains("=")) {
-            throw new IllegalArgumentException("table is may be sql-injected");
-        }
     }
 }

@@ -4,8 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Table;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -50,6 +52,18 @@ public interface WingsTableCudHandler {
      */
     default void handle(@NotNull Class<?> source, @NotNull Cud cud, @NotNull Table<?> table, @NotNull Supplier<Map<String, List<?>>> field) {
         handle(source, cud, table.getName(), field);
+    }
+
+    default void handle(@NotNull Class<?> source, @NotNull Cud cud, @NotNull Table<?> table, @NotNull Consumer<Map<String, List<?>>> field) {
+        handle(source, cud, table.getName(), field);
+    }
+
+    default void handle(@NotNull Class<?> source, @NotNull Cud cud, @NotNull String table, @NotNull Consumer<Map<String, List<?>>> field) {
+        handle(source, cud, table, () -> {
+            Map<String, List<?>> map = new HashMap<>();
+            field.accept(map);
+            return map;
+        });
     }
 
     default void handle(@NotNull Class<?> source, @NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<?>> field) {

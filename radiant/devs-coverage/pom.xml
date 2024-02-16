@@ -100,7 +100,6 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <configuration>
-                    <basedir>${wings.rootdir}</basedir>
                     <relativeReportDirs>
                         <relativeReportDir>/jacoco</relativeReportDir>
                         <relativeReportDir>/jacoco-aggregate</relativeReportDir>
@@ -147,15 +146,6 @@
                         <directory>${wings.rootdir}/radiant/tiny-task/target/generated-sources/annotations</directory>
                     </sourceDirectories>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-coverage</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

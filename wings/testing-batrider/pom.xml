@@ -13,7 +13,7 @@
     <artifactId>testing-batrider</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Batrider::Test</name>
+    <name>Wings::Testing::Batrider</name>
     <description>Testing of Servicecomb</description>
 
     <dependencies>

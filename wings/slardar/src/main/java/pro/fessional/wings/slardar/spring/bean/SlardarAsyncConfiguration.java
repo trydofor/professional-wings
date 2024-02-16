@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
-import org.springframework.boot.task.TaskExecutorBuilder;
-import org.springframework.boot.task.TaskSchedulerBuilder;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -48,7 +48,7 @@ public class SlardarAsyncConfiguration {
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     @ConditionalWingsEnabled
-    public Executor taskExecutor(TaskExecutorBuilder builder) {
+    public Executor taskExecutor(ThreadPoolTaskExecutorBuilder builder) {
         final ThreadPoolTaskExecutor executor = builder.build();
         executor.initialize();
         log.info("Slardar spring-bean taskExecutor via ttlExecutor, prefix=" + executor.getThreadNamePrefix());
@@ -57,7 +57,7 @@ public class SlardarAsyncConfiguration {
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     @ConditionalWingsEnabled
-    public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
+    public AsyncTaskExecutor applicationTaskExecutor(ThreadPoolTaskExecutorBuilder builder) {
         final ThreadPoolTaskExecutor executor = builder.build();
         executor.initialize();
         final Executor ttlExecutor = TtlExecutors.getTtlExecutor(executor);
@@ -68,7 +68,7 @@ public class SlardarAsyncConfiguration {
     // Do NOT use @Primary to avoid overwriting the @Async thread pool.
     @Bean(name = DEFAULT_TASK_SCHEDULER_BEAN_NAME)
     @ConditionalWingsEnabled
-    public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
+    public ThreadPoolTaskScheduler taskScheduler(ThreadPoolTaskSchedulerBuilder builder) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
         final TtlThreadPoolTaskScheduler bean = builder.configure(scheduler);
         log.info("Slardar spring-bean taskScheduler via TtlThreadPoolTaskScheduler, prefix=" + bean.getThreadNamePrefix());
@@ -80,7 +80,7 @@ public class SlardarAsyncConfiguration {
     @ConditionalWingsEnabled
     public ThreadPoolTaskScheduler slardarHeavyScheduler(SlardarAsyncProp prop) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
-        TaskSchedulerBuilder builder = new TaskSchedulerBuilder();
+        ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder();
         final TaskSchedulingProperties heavy = prop.getHeavy();
         builder = builder.poolSize(heavy.getPool().getSize());
         TaskSchedulingProperties.Shutdown shutdown = heavy.getShutdown();

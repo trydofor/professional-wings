@@ -25,12 +25,6 @@ public class WingsHazelcastCacheCustomizer implements HazelcastConfigCustomizer 
     public void customize(Config config) {
         final Map<String, MapConfig> mapCnf = config.getMapConfigs();
 
-        /*
-        final SlardarCacheProp.Conf common = slardarCacheProp.getCommon();
-        checkMapConf(config, mapCnf, "default", common.getMaxLive(),
-                common.getMaxIdle(), common.getMaxSize());
-        */
-
         // check level
         for (Map.Entry<String, SlardarCacheProp.Conf> entry : cacheProp.getLevel().entrySet()) {
             final SlardarCacheProp.Conf lvl = entry.getValue();

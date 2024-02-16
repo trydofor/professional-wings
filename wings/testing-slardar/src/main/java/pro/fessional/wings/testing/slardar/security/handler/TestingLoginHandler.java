@@ -1,8 +1,7 @@
 package pro.fessional.wings.testing.slardar.security.handler;
 
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -18,9 +17,8 @@ import java.util.TimeZone;
  * @since 2021-02-01
  */
 @SuppressWarnings({"UastIncorrectHttpHeaderInspection", "CanBeFinal"})
+@Slf4j
 public class TestingLoginHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(TestingLoginHandler.class);
 
     @Setter(onMethod_ = {@Autowired})
     private WingsLocaleResolver wingsLocaleResolver;

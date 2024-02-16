@@ -165,11 +165,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
             });
 
             if (rct > 0) {
-                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, () -> {
-                    Map<String, List<?>> field = new HashMap<>();
-                    field.put(t.Id.getName(), List.of(roleId));
-                    return field;
-                });
+                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, field -> field.put(t.Id.getName(), List.of(roleId)));
             }
         }
     }

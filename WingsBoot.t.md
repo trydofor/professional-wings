@@ -166,7 +166,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12127 TestJooqMostSelectSample: paginate jooq sample
 * 12128 TestJooqMostSelectSample: paginate jdbc sample
 * 12129 TestJooqMostSelectSample: enum mapper sample
-* 12130 Tes[WingsBoot.t.md](WingsBoot.t.md)tJooqMostSelectSample: dsl function sample
+* 12130 TestJooqMostSelectSample: dsl function sample
 * 12131 FlywaveShardingTest: clean and init schema itself
 * 12132 FlywaveShardingTest: insert data in the writer
 * 12133 FlywaveShardingTest: check sharding on writer and reader
@@ -184,6 +184,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12145 MockTstNormalTableTest: mock DSLContext to Dao instance
 * 12146 WingsEnumConvertersTest: enum converter
 * 12147 WingsRevisionTest: module root and path
+* 12148 JdbcTemplateHelperTest: safe table
 
 ## 13 Slardar
 

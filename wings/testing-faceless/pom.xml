@@ -13,7 +13,7 @@
     <artifactId>testing-faceless</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Faceless::Test</name>
+    <name>Wings::Testing::Faceless</name>
     <description>Testing of Faceless</description>
 
     <dependencies>

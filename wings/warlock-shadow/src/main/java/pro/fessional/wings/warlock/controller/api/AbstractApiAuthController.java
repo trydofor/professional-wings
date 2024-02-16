@@ -30,6 +30,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Pass;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Term;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -52,11 +53,11 @@ import static pro.fessional.wings.warlock.controller.api.AbstractApiAuthControll
  */
 public abstract class AbstractApiAuthController {
 
+    protected final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
+
     public static final int MD5_LEN = MdHelp.LEN_MD5_HEX;
     public static final int SHA1_LEN = MdHelp.LEN_SHA1_HEX;
     public static final int HMAC_LEN = 64;
-
-    protected final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     /**
      * Whether it is compatible mode (send clientId directly), or only the ticket mode.
@@ -404,7 +405,7 @@ public abstract class AbstractApiAuthController {
      * `true` means it has been processed and can response,
      * `false` means it has not been processed.
      */
-    public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws Exception;
+    public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws IOException;
 
     public enum ApiError {
         SignatureMissing,

@@ -17,6 +17,7 @@ public class SafeHttpHelper {
     public static boolean isSafeRedirect(@NotNull String uri, Set<String> hosts) {
         if (hosts == null || hosts.isEmpty()) return true;
 
+        //noinspection HttpUrlsUsage
         if (!StringUtils.startsWithIgnoreCase(uri, "http://")
             && !StringUtils.startsWithIgnoreCase(uri, "https://")) {
             return false;

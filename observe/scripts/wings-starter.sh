@@ -574,8 +574,8 @@ case "$ARGS_RUN" in
         # shellcheck disable=SC2009
         mvs=$(ps -o vsz "$cid" | grep -v VSZ | numfmt --grouping)
         echo -e "\033[37;42;1mINFO: ps -o rss -o vsz $cid \033[0m"
-        echo -e "Resident (RSS) = $(printf "%*s" 12 $mrs) Kb"
-        echo -e "Virtual  (VSZ) = $(printf "%*s" 12 $mvs) Kb"
+        echo -e "Resident (RSS) = $(printf '%*s' 12 $mrs) Kb"
+        echo -e "Virtual  (VSZ) = $(printf '%*s' 12 $mvs) Kb"
 
         if [[ "$USER_RUN" == "$USER" ]]; then
             echo -e "\033[37;42;1mINFO: $(which jstat) -gcutil $cid 1000 3 \033[0m"
