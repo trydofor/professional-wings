@@ -13,21 +13,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.MethodMetadata;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
-import pro.fessional.wings.silencer.spring.prop.SilencerConditionalProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerFeatureProp;
 
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * <pre>
- * disable `@Configuration`, `@Bean` and any `@Component` by properties
+ * disable `@Configuration`, `@Bean` and any `@Component` by properties, enabled by default.
  *
  * `qualified-key` = `Prefix.` + `ClassName` + `.beanMethod`? = `true|false`
  *
- * - Prefix - default {@link #Prefix}
+ * - Prefix - default {@link WingsEnabledContext#PrefixEnabled}
  * - ClassName - {@link Class#getName()} eg. pro.fessional.wings.silencer.spring.bean.SilencerConfiguration
  * - beanMethod - {@link Method#getName()} eg. applicationInspectRunner
  *
@@ -53,40 +51,36 @@ import java.util.Map;
 @Order(Ordered.HIGHEST_PRECEDENCE + 70)
 public class WingsEnabledCondition extends SpringBootCondition {
 
-    public static final String Prefix = "wings.enabled";
-
-    private static final AntPathMatcher DotMatcher = new AntPathMatcher();
-    private static final Map<String, Boolean> ErrorMap = new LinkedHashMap<>();
-    private static final Map<String, String> PrefixMap = new LinkedHashMap<>();
-    private static final Map<String, Boolean> EnableMap = new LinkedHashMap<>();
-
     private static boolean Uninit = true;
 
     public static void reset() {
+        // for testing or reload
         Uninit = true;
-        ErrorMap.clear();
-        PrefixMap.clear();
-        EnableMap.clear();
+        WingsEnabledContext.reset();
     }
 
     public static void mappingOnce(Environment env) {
         if (Uninit) {
             Uninit = false;
-            var prop = Binder.get(env).bind(SilencerConditionalProp.Key, SilencerConditionalProp.class)
-                             .orElseGet(SilencerConditionalProp::new);
+            WingsEnabledContext.setEnabledProvider(env::getProperty);
+
+            var prop = Binder.get(env)
+                             .bind(SilencerFeatureProp.Key, SilencerFeatureProp.class)
+                             .orElseGet(SilencerFeatureProp::new);
+
             for (Map.Entry<String, Boolean> en : prop.getError().entrySet()) {
                 if (StringUtils.hasText(en.getKey()) && en.getValue() != null) {
-                    ErrorMap.put(en.getKey(), en.getValue());
+                    WingsEnabledContext.putFeatureError(en.getKey(), en.getValue());
                 }
             }
             for (Map.Entry<String, String> en : prop.getPrefix().entrySet()) {
                 if (StringUtils.hasText(en.getKey()) && StringUtils.hasText(en.getValue())) {
-                    PrefixMap.put(en.getKey(), en.getValue());
+                    WingsEnabledContext.putFeaturePrefix(en.getKey(), en.getValue());
                 }
             }
             for (Map.Entry<String, Boolean> en : prop.getEnable().entrySet()) {
                 if (StringUtils.hasText(en.getKey()) && en.getValue() != null) {
-                    EnableMap.put(en.getKey(), en.getValue());
+                    WingsEnabledContext.putFeatureEnable(en.getKey(), en.getValue());
                 }
             }
         }
@@ -95,22 +89,22 @@ public class WingsEnabledCondition extends SpringBootCondition {
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
         mappingOnce(context.getEnvironment());
-        return conditionOutcome(context, metadata);
+        return conditionOutcome(metadata);
     }
 
-    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, @NotNull AnnotatedTypeMetadata metadata) {
+    private ConditionOutcome conditionOutcome(@NotNull AnnotatedTypeMetadata metadata) {
 
         var attrs = metadata.getAnnotationAttributes(ConditionalWingsEnabled.class.getName());
         if (attrs == null) {
             // without ConditionalWingsEnabled, in Conditional(WingsEnabledCondition.class)
-            return thisConditionOutcome(context, metadata, null);
+            return thisConditionOutcome(metadata, null);
         }
 
-        final ConditionOutcome outcome = thisConditionOutcome(context, metadata, attrs);
+        final ConditionOutcome outcome = thisConditionOutcome(metadata, attrs);
         if (outcome.isMatch()) {
             if (attrs.get("and") instanceof Class<?>[] ands) {
                 for (Class<?> clz : ands) {
-                    final ConditionOutcome and = conditionOutcome(context, clz);
+                    final ConditionOutcome and = conditionOutcome(clz);
                     if (!and.isMatch()) {
                         return and;
                     }
@@ -119,7 +113,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
 
             if (attrs.get("not") instanceof Class<?>[] nots) {
                 for (Class<?> clz : nots) {
-                    final ConditionOutcome not = conditionOutcome(context, clz);
+                    final ConditionOutcome not = conditionOutcome(clz);
                     if (not.isMatch()) {
                         return ConditionOutcome.noMatch(not.getConditionMessage());
                     }
@@ -131,26 +125,26 @@ public class WingsEnabledCondition extends SpringBootCondition {
     }
 
 
-    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, Class<?> meta) {
+    private ConditionOutcome conditionOutcome(Class<?> meta) {
 
         var anno = meta.getAnnotation(ConditionalWingsEnabled.class);
         if (anno == null) {
             // without ConditionalWingsEnabled, in Conditional(WingsEnabledCondition.class)
-            return thisConditionOutcome(context, meta, null);
+            return thisConditionOutcome(meta, null);
         }
 
-        final ConditionOutcome thisCondition = thisConditionOutcome(context, meta, anno);
+        final ConditionOutcome thisCondition = thisConditionOutcome(meta, anno);
         if (thisCondition.isMatch()) {
 
             for (Class<?> clz : anno.and()) {
-                final ConditionOutcome and = conditionOutcome(context, clz);
+                final ConditionOutcome and = conditionOutcome(clz);
                 if (!and.isMatch()) {
                     return and;
                 }
             }
 
             for (Class<?> clz : anno.not()) {
-                final ConditionOutcome not = conditionOutcome(context, clz);
+                final ConditionOutcome not = conditionOutcome(clz);
                 if (not.isMatch()) {
                     return ConditionOutcome.noMatch(not.getConditionMessage());
                 }
@@ -162,7 +156,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
     }
 
     @NotNull
-    private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull AnnotatedTypeMetadata metadata, @Nullable Map<String, Object> attrs) {
+    private ConditionOutcome thisConditionOutcome(@NotNull AnnotatedTypeMetadata metadata, @Nullable Map<String, Object> attrs) {
 
         final String id;
         // on @Component class
@@ -178,7 +172,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
         }
 
         try {
-            final String pre = buildPrefix(id);
+            final String pre = WingsEnabledContext.handlePrefix(id);
             final String[] keys = new String[3];
             keys[0] = pre + "." + id;
 
@@ -191,7 +185,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
                 }
             }
 
-            var result = conditionOutcome(context, id, keys);
+            var result = conditionOutcome(id, keys);
             if (result != null) return result;
 
             boolean falsy = attrs != null && attrs.get("value") instanceof Boolean value && !value;
@@ -203,10 +197,10 @@ public class WingsEnabledCondition extends SpringBootCondition {
     }
 
     @NotNull
-    private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull Class<?> meta, @Nullable ConditionalWingsEnabled anno) {
+    private ConditionOutcome thisConditionOutcome(@NotNull Class<?> meta, @Nullable ConditionalWingsEnabled anno) {
         final String id = meta.getName();
         try {
-            final String pre = buildPrefix(id);
+            final String pre = WingsEnabledContext.handlePrefix(id);
             final String[] keys = new String[3];
             keys[0] = pre + "." + id;
 
@@ -219,7 +213,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
                 }
             }
 
-            var result = conditionOutcome(context, id, keys);
+            var result = conditionOutcome(id, keys);
             if (result != null) return result;
 
             boolean falsy = anno != null && !anno.value();
@@ -231,60 +225,47 @@ public class WingsEnabledCondition extends SpringBootCondition {
     }
 
     @NotNull
-    private String buildPrefix(String key) {
-        for (Map.Entry<String, String> en : PrefixMap.entrySet()) {
-            if (DotMatcher.match(en.getKey(), key)) {
-                return en.getValue();
-            }
-        }
-        return Prefix;
-    }
-
-    @NotNull
     private ConditionOutcome handleException(String id, Throwable t) {
-        for (Map.Entry<String, Boolean> en : ErrorMap.entrySet()) {
-            if (DotMatcher.match(en.getKey(), id)) {
-                return en.getValue() == Boolean.TRUE
-                       ? ConditionOutcome.match(t.getMessage())
-                       : ConditionOutcome.noMatch(t.getMessage());
-            }
+        Boolean b = WingsEnabledContext.handleError(id);
+        if (b == null) {
+            throw new IllegalStateException("set " + SilencerFeatureProp.Key$error + "[" + id + "]=true/false to skip error by match/no-match", t);
         }
-
-        throw new IllegalStateException("set " + SilencerConditionalProp.Key$error + "[" + id + "]=true/false to skip error by match/no-match", t);
+        else {
+            return b ? ConditionOutcome.match(t.getMessage())
+                     : ConditionOutcome.noMatch(t.getMessage());
+        }
     }
 
 
     @Nullable
-    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, String id, String @NotNull [] keys) {
-        for (Map.Entry<String, Boolean> en : EnableMap.entrySet()) {
-            String ek = en.getKey();
-            if (DotMatcher.match(ek, id)) {
-                return en.getValue() == Boolean.TRUE
-                       ? ConditionOutcome.match(ConditionMessage
+    private ConditionOutcome conditionOutcome(String id, String @NotNull [] keys) {
+        // one-one
+        for (String key : keys) {
+            if (key == null) continue;
+
+            Boolean bb = WingsEnabledContext.handleEnabled(key);
+            if (bb != null) {
+                return bb ? ConditionOutcome.match(ConditionMessage
                         .forCondition(ConditionalWingsEnabled.class)
-                        .found(ek)
+                        .found(key)
                         .items(true))
-                       : ConditionOutcome.noMatch(ConditionMessage
+                          : ConditionOutcome.noMatch(ConditionMessage
                         .forCondition(ConditionalWingsEnabled.class)
-                        .found(ek)
+                        .found(key)
                         .items(false));
             }
         }
 
-        final Environment environment = context.getEnvironment();
-        for (String key : keys) {
-            if (key == null) continue;
-            Boolean enabled = asBool(environment.getProperty(key));
-            if (enabled == null) continue;
-
-            return enabled
-                   ? ConditionOutcome.match(ConditionMessage
+        // one-many
+        Boolean bf = WingsEnabledContext.handleFeature(id);
+        if (bf != null) {
+            return bf ? ConditionOutcome.match(ConditionMessage
                     .forCondition(ConditionalWingsEnabled.class)
-                    .found(key)
+                    .found(id)
                     .items(true))
-                   : ConditionOutcome.noMatch(ConditionMessage
+                      : ConditionOutcome.noMatch(ConditionMessage
                     .forCondition(ConditionalWingsEnabled.class)
-                    .found(key)
+                    .found(id)
                     .items(false));
         }
 
@@ -301,11 +282,5 @@ public class WingsEnabledCondition extends SpringBootCondition {
                : ConditionOutcome.match(ConditionMessage
                 .forCondition(ConditionalWingsEnabled.class)
                 .because("default true"));
-    }
-
-    private Boolean asBool(String value) {
-        if ("false".equalsIgnoreCase(value)) return Boolean.FALSE;
-        if ("true".equalsIgnoreCase(value)) return Boolean.TRUE;
-        return null;
     }
 }

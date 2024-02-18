@@ -15,8 +15,8 @@ import pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration;
  * @since 2023-11-17
  */
 @SpringBootTest(properties = {
-        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration]=false",
-        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration]=false",
+        "wings.feature.enable[pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration]=false",
+        "wings.feature.enable[pro.fessional.wings.silencer.app.bean.TestEnabledDogConfiguration]=false",
 })
 @Disabled("Investigate: Run separately to avoid impact")
 public class WingsEnabledTopFalseTest {

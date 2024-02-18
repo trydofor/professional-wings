@@ -2,7 +2,7 @@ package pro.fessional.wings.slardar.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledContext;
 
 /**
  * wings-enabled-79.properties
@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 @ConfigurationProperties(SlardarEnabledProp.Key)
 public class SlardarEnabledProp {
 
-    public static final String Key = WingsEnabledCondition.Prefix + ".slardar";
+    public static final String Key = WingsEnabledContext.PrefixEnabled + ".slardar";
 
     /**
      * whether to enable DoubleKill by DoubleKillAround AOP

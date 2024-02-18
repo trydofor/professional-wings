@@ -14,7 +14,7 @@ on:
         default: false
         type: boolean
         required: false
-      testVerifyDryRun:
+      testCoverageDryRun:
         description: 'dryrun coverage report?'
         default: false
         type: boolean
@@ -151,7 +151,7 @@ jobs:
           TZ: Asia/Shanghai
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
           COVERALLS_WINGS: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_DRYRUN: ${{ inputs.testVerifyDryRun || 'false' }}
+          COVERALLS_DRYRUN: ${{ inputs.testCoverageDryRun || 'false' }}
           TESTFAILS_IGNORE: ${{ inputs.testFailureIgnore || 'false' }}
 
       ## import gpp private key

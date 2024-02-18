@@ -2,7 +2,7 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledContext;
 
 /**
  * toggling the Silencer feature, wings-enabled-79.properties
@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 @ConfigurationProperties(SilencerEnabledProp.Key)
 public class SilencerEnabledProp {
 
-    public static final String Key = WingsEnabledCondition.Prefix + ".silencer";
+    public static final String Key = WingsEnabledContext.PrefixEnabled + ".silencer";
 
     /**
      * Whether to automatically configure `wings-conf` and `wings-i18n`

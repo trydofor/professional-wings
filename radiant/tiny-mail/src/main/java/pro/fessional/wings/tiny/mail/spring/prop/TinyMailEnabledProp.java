@@ -2,7 +2,7 @@ package pro.fessional.wings.tiny.mail.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledContext;
 
 /**
  * wings-enabled-79.properties
@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 @ConfigurationProperties(TinyMailEnabledProp.Key)
 public class TinyMailEnabledProp {
 
-    public static final String Key = WingsEnabledCondition.Prefix + ".tiny.mail";
+    public static final String Key = WingsEnabledContext.PrefixEnabled + ".tiny.mail";
 
 
     /**
