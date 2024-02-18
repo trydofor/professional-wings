@@ -34,7 +34,12 @@ on:
         type: boolean
         required: false
       deployOssrh:
-        description: 'deploy to ossrh?'
+        description: 'deploy to oss-repo?'
+        default: true
+        type: boolean
+        required: false
+      deployAltrh:
+        description: 'deploy to alt-repo?'
         default: true
         type: boolean
         required: false
@@ -106,8 +111,12 @@ jobs:
           echo "MVN_COVERAGE=$_cov" >> "$GITHUB_OUTPUT"
           
           _drh=${{ inputs.deployOssrh || github.event_name == 'release' }}
-          echo "- MVN_DEPLOYRH=$_drh" >> "$GITHUB_STEP_SUMMARY"
-          echo "MVN_DEPLOYRH=$_drh" >> "$GITHUB_OUTPUT"
+          echo "- MVN_DEPLOY_OSSRH=$_drh" >> "$GITHUB_STEP_SUMMARY"
+          echo "MVN_DEPLOY_OSSRH=$_drh" >> "$GITHUB_OUTPUT"
+          
+          _drp=${{ ( inputs.deployAltrh || github.event_name == 'release' ) && secrets.MVN_ALT_USER != '' }}
+          echo "- MVN_DEPLOY_ALTRH=$_drp" >> "$GITHUB_STEP_SUMMARY"
+          echo "MVN_DEPLOY_ALTRH=$_drp" >> "$GITHUB_OUTPUT"
           
           _qod=${{ inputs.applyQodanaScan || 'false' }}
           echo "- QODANA_SCAN=$_qod" >> "$GITHUB_STEP_SUMMARY"
@@ -129,6 +138,11 @@ jobs:
                 <id>ossrh</id>
                 <username>${MVN_OSS_USER}</username>
                 <password>${MVN_OSS_PASS}</password>
+              </server>
+              <server>
+                <id>altrh</id>
+                <username>${MVN_ALT_USER}</username>
+                <password>${MVN_ALT_PASS}</password>
               </server>
             </servers>
           </settings>
@@ -156,23 +170,41 @@ jobs:
 
       ## import gpp private key
       - name: Import GPG key
-        if: steps.settings.outputs.MVN_DEPLOYRH == 'true'
+        if: steps.settings.outputs.MVN_DEPLOY_OSSRH == 'true' || steps.settings.outputs.MVN_DEPLOY_ALTRH == 'true'
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.MVN_GPG_SKEY }}
           passphrase: ${{ secrets.MVN_GPG_PASS }}
 
-      ## maven deploy
-      - name: Deploy ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
-        if: steps.settings.outputs.MVN_DEPLOYRH == 'true'
+      ## maven deploy ossrh
+      - name: Deploy OSS ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
+        if: steps.settings.outputs.MVN_DEPLOY_OSSRH == 'true'
         run: >
           mvn 
-          -P 'ossrh,doc,!example,!devs'
+          -P 'deploy,ossrh,doc,!example,!devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
-          clean deploy
+          deploy
         env:
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
+          MVN_GPG_PASS: ${{ secrets.MVN_GPG_PASS }}
           MVN_OSS_USER: ${{ secrets.MVN_OSS_USER }}
           MVN_OSS_PASS: ${{ secrets.MVN_OSS_PASS }}
+
+      ## maven deploy altrh
+      - name: Deploy ALT ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
+        if: steps.settings.outputs.MVN_DEPLOY_ALTRH == 'true'
+        run: >
+          mvn 
+          -P 'deploy,altrh,doc,!example,!devs'
+          ${{ steps.settings.outputs.MVN_REVISION }}
+          -Dgpg.passphrase=${MVN_GPG_PASS}
+          deploy
+        env:
+          JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
           MVN_GPG_PASS: ${{ secrets.MVN_GPG_PASS }}
+          ## export MVN_ALT_REPO=https://packages.trydofor.com/maven/repository/devops/
+          MVN_ALT_USER: ${{ secrets.MVN_ALT_USER }}
+          MVN_ALT_PASS: ${{ secrets.MVN_ALT_PASS }}
+          MVN_ALT_REPO: ${{ secrets.MVN_ALT_REPO }}
+          MVN_ALT_SNAP: ${{ secrets.MVN_ALT_SNAP }}
