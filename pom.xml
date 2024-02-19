@@ -82,7 +82,8 @@
         <source.srcTestJava>${project.basedir}/src/test/java</source.srcTestJava>
         <source.srcTestKotlin>${project.basedir}/src/test/kotlin</source.srcTestKotlin>
         <!-- delombok: javadoc cannot find symbol  -->
-        <source.srcMainDelombok>${project.build.directory}/delombok-main</source.srcMainDelombok>
+        <source.srcMainMixed>${project.build.directory}/main-mixed</source.srcMainMixed>
+        <source.srcMainDelombok>${project.build.directory}/main-delombok</source.srcMainDelombok>
         <!-- test,doc,deploy -->
         <argLine>-Xmx2g @{javaopenArgLine}</argLine> <!-- surefire and jacoco -->
         <javaopenArgLine>
@@ -540,6 +541,32 @@
                             <nonFilteredFileExtension>docx</nonFilteredFileExtension>
                         </nonFilteredFileExtensions>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>copy-main-mixed</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${source.srcMainMixed}</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${source.srcMainJava}</directory>
+                                    </resource>
+                                    <resource>
+                                        <directory>${source.srcMainJavaGen}</directory>
+                                    </resource>
+                                    <resource>
+                                        <directory>${source.srcMainKotlin}</directory>
+                                    </resource>
+                                    <resource>
+                                        <directory>${source.srcMainKotlinGen}</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -606,19 +633,19 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!--  doc  -->
+                <!--  doc delombok getter for doc -->
                 <plugin>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok-maven-plugin</artifactId>
                     <version>${lombok-maven-plugin.version}</version>
                     <configuration>
                         <addOutputDirectory>false</addOutputDirectory>
-                        <sourceDirectory>${source.srcMainJava}</sourceDirectory>
+                        <sourceDirectory>${source.srcMainMixed}</sourceDirectory>
                         <outputDirectory>${source.srcMainDelombok}</outputDirectory>
                     </configuration>
                     <executions>
                         <execution>
-                            <phase>generate-sources</phase>
+                            <phase>compile</phase>
                             <goals>
                                 <goal>delombok</goal>
                             </goals>
@@ -658,7 +685,6 @@
                     <configuration>
                         <sourceDirectories>
                             <dir>${source.srcMainDelombok}</dir>
-                            <dir>${source.srcMainKotlin}</dir>
                         </sourceDirectories>
                     </configuration>
                     <executions>
@@ -816,6 +842,7 @@
                         </args>
                         <compilerPlugins>
                             <plugin>spring</plugin>
+                            <plugin>lombok</plugin>
                         </compilerPlugins>
                     </configuration>
                     <dependencies>
@@ -823,6 +850,16 @@
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-allopen</artifactId>
                             <version>${kotlin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-lombok</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
