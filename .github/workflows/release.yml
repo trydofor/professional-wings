@@ -156,10 +156,10 @@ jobs:
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: steps.settings.outputs.MVN_COVERAGE == 'true'
         run: |
-          mvn -P '!example,!devs' -Dmaven.test.skip=true clean install
+          mvn -P '!module-example,!module-devs' -Dmaven.test.skip=true clean install
           mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
-          mvn -P 'coverage,!example,!devs' -Dmaven.test.failure.ignore=$TESTFAILS_IGNORE test
-          mvn -P 'coverage' -pl ':devs-coverage' -am jacoco:report-aggregate
+          mvn -P 'report-coverage,!module-example,!module-devs' -Dmaven.test.failure.ignore=$TESTFAILS_IGNORE test
+          mvn -P 'report-coverage' -pl ':devs-coverage' -am jacoco:report-aggregate
           mvn -pl ':devs-coverage' -DrepoToken=$COVERALLS_WINGS -DdryRun=$COVERALLS_DRYRUN -Dwings.rootdir=../.. coveralls:report
         env:
           TZ: Asia/Shanghai
@@ -181,7 +181,7 @@ jobs:
         if: steps.settings.outputs.MVN_DEPLOY_OSSRH == 'true'
         run: >
           mvn 
-          -P 'deploy,ossrh,doc,!example,!devs'
+          -P 'deploy,deploy-oss,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           deploy
@@ -196,7 +196,7 @@ jobs:
         if: steps.settings.outputs.MVN_DEPLOY_ALTRH == 'true'
         run: >
           mvn 
-          -P 'deploy,altrh,doc,!example,!devs'
+          -P 'deploy,deploy-alt,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           deploy

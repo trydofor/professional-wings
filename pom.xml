@@ -621,15 +621,19 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
-                    <configuration>
-                        <skip>${spring-boot.repackage.skip}</skip>
-                        <executable>${spring-boot.repackage.executable}</executable>
-                    </configuration>
                     <executions>
                         <execution>
+                            <id>build-info</id>
                             <goals>
                                 <goal>build-info</goal>
                             </goals>
+                        </execution>
+                        <execution>
+                            <id>repackage</id>
+                            <configuration>
+                                <skip>${spring-boot.repackage.skip}</skip>
+                                <executable>${spring-boot.repackage.executable}</executable>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -645,6 +649,7 @@
                     </configuration>
                     <executions>
                         <execution>
+                            <id>delombok</id>
                             <phase>compile</phase>
                             <goals>
                                 <goal>delombok</goal>
@@ -689,6 +694,7 @@
                     </configuration>
                     <executions>
                         <execution>
+                            <id>attach-javadocs</id>
                             <phase>prepare-package</phase>
                             <goals>
                                 <goal>javadocJar</goal>
@@ -765,6 +771,7 @@
                     <version>${build-helper-maven-plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>add-sources</id>
                             <phase>generate-sources</phase>
                             <goals>
                                 <goal>add-source</goal>
@@ -813,7 +820,7 @@
                     <version>${directory-maven-plugin.version}</version>
                     <executions>
                         <execution>
-                            <id>directories</id>
+                            <id>project-basedir</id>
                             <goals>
                                 <goal>highest-basedir</goal>
                             </goals>
@@ -870,7 +877,7 @@
                     <version>${git-commit-id-maven-plugin.version}</version>
                     <executions>
                         <execution>
-                            <id>get-the-git-infos</id>
+                            <id>git-infos</id>
                             <goals>
                                 <goal>revision</goal>
                             </goals>
@@ -911,6 +918,15 @@
         </repository>
     </repositories>
     <profiles>
+        <profile>
+            <id>module-example</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>example</module>
+            </modules>
+        </profile>
         <profile>
             <id>wings-kotlin-1test</id>
             <activation>
@@ -1033,7 +1049,7 @@
         </profile>
         <profile>
             <!-- -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }} -->
-            <id>coverage</id>
+            <id>report-coverage</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
                 <surefire.timeout>0</surefire.timeout> <!-- going to kill self fork JVM -->
@@ -1069,7 +1085,10 @@
             </build>
         </profile>
         <profile>
-            <id>doc</id>
+            <id>deploy</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -1086,16 +1105,6 @@
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-            </properties>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -1104,7 +1113,7 @@
             </build>
         </profile>
         <profile>
-            <id>ossrh</id>
+            <id>deploy-oss</id>
             <build>
                 <plugins>
                     <plugin>
@@ -1126,22 +1135,13 @@
             </distributionManagement>
         </profile>
         <profile>
-            <id>altrh</id>
+            <id>deploy-alt</id>
             <properties>
                 <!--suppress UnresolvedMavenProperty -->
                 <altReleaseDeploymentRepository>altrh::${MVN_ALT_REPO}</altReleaseDeploymentRepository>
                 <!--suppress UnresolvedMavenProperty -->
                 <altSnapshotDeploymentRepository>altrh::${MVN_ALT_SNAP}</altSnapshotDeploymentRepository>
             </properties>
-        </profile>
-        <profile>
-            <id>example</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>example</module>
-            </modules>
         </profile>
     </profiles>
 </project>
