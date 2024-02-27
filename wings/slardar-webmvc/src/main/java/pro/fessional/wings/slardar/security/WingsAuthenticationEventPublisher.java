@@ -6,6 +6,7 @@ import org.springframework.security.authentication.DefaultAuthenticationEventPub
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthToken;
@@ -27,65 +28,69 @@ public class WingsAuthenticationEventPublisher extends DefaultAuthenticationEven
 
     @Override
     public void publishAuthenticationSuccess(Authentication authentication) {
-        boolean terminal = false;
-        if (authentication.getPrincipal() instanceof final WingsUserDetails userDetails
-            && authentication.getDetails() instanceof final WingsAuthDetails authDetails) {
-
-            final Map<String, String> meta = authDetails.getMetaData();
-            TerminalContext.Builder builder = new TerminalContext.Builder()
-                    .locale(userDetails.getLocale())
-                    .timeZone(userDetails.getZoneId())
-                    .terminal(TerminalAddr, meta.get(WingsAuthHelper.AuthAddr))
-                    .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
-                    .user(userDetails.getUserId())
-                    .authType(userDetails.getAuthType())
-                    .username(userDetails.getUsername())
-                    .authPerm(userDetails.getAuthorities().stream()
-                                         .map(GrantedAuthority::getAuthority)
-                                         .collect(Collectors.toSet()))
-                    .terminal(TerminalSecurityAttribute.UserDetails, userDetails)
-                    .terminal(TerminalSecurityAttribute.AuthDetails, authDetails);
-            TerminalContext.login(builder.build());
-            terminal = true;
+        if (!(authentication.getPrincipal() instanceof final WingsUserDetails userDetails)) {
+            super.publishAuthenticationSuccess(authentication);
+            return;
         }
+
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(userDetails.getLocale())
+                .timeZone(userDetails.getZoneId())
+                .user(userDetails.getUserId())
+                .authType(userDetails.getAuthType())
+                .username(userDetails.getUsername())
+                .authPerm(userDetails.getAuthorities().stream()
+                                     .map(GrantedAuthority::getAuthority)
+                                     .collect(Collectors.toSet()))
+                .terminal(TerminalSecurityAttribute.UserDetails, userDetails);
+        buildTerminal(builder, authentication);
+
+        TerminalContext.login(builder.build());
+
 
         try {
             super.publishAuthenticationSuccess(authentication);
         }
         finally {
-            if (terminal) {
-                TerminalContext.logout(false);
-            }
+            TerminalContext.logout(false);
         }
     }
 
     @Override
     public void publishAuthenticationFailure(AuthenticationException exception, Authentication authentication) {
-
-        boolean terminal = false;
-        if (authentication instanceof final WingsBindAuthToken authToken
-            && authentication.getDetails() instanceof final WingsAuthDetails authDetails) {
-            final Map<String, String> meta = authDetails.getMetaData();
-            final var builder = new TerminalContext.Builder()
-                    .locale(LocaleContextHolder.getLocale())
-                    .timeZone(LocaleContextHolder.getTimeZone())
-                    .terminal(TerminalAddr, meta.get(WingsAuthHelper.AuthAddr))
-                    .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
-                    .authType(authToken.getAuthType())
-                    .username(authToken.getName())
-                    .terminal(TerminalSecurityAttribute.AuthDetails, authDetails)
-                    .guest();
-            TerminalContext.login(builder.build());
-            terminal = true;
+        if (!(authentication instanceof final WingsBindAuthToken authToken)) {
+            super.publishAuthenticationFailure(exception, authentication);
+            return;
         }
+
+        final var builder = new TerminalContext.Builder()
+                .locale(LocaleContextHolder.getLocale())
+                .timeZone(LocaleContextHolder.getTimeZone())
+                .authType(authToken.getAuthType())
+                .username(authToken.getName())
+                .guest();
+
+        buildTerminal(builder, authentication);
+        TerminalContext.login(builder.build());
 
         try {
             super.publishAuthenticationFailure(exception, authentication);
         }
         finally {
-            if (terminal) {
-                TerminalContext.logout(false);
-            }
+            TerminalContext.logout(false);
+        }
+    }
+
+    private void buildTerminal(TerminalContext.Builder builder, Authentication authentication) {
+        Object details = authentication.getDetails();
+        if (details instanceof WingsAuthDetails wad) {
+            builder.terminal(TerminalSecurityAttribute.AuthDetails, wad);
+            Map<String, String> metaData = wad.getMetaData();
+            builder.terminal(TerminalAddr, metaData.get(WingsAuthHelper.AuthAddr));
+            builder.terminal(TerminalAgent, metaData.get(WingsAuthHelper.AuthAgent));
+        }
+        else if (details instanceof WebAuthenticationDetails wad) {
+            builder.terminal(TerminalAddr, wad.getRemoteAddress());
         }
     }
 }

@@ -50,7 +50,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     @Override
     @Nullable
     public UserDetails postAudit(@NotNull UserDetails useDetail, String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
-        log.warn("DEBUG_ONLY postAudit, this={}, cache={}, user={}, type={}", System.identityHashCode(this), System.identityHashCode(cache), username, authType);
+//        log.warn("DEBUG_ONLY postAudit, this={}, cache={}, user={}, type={}", System.identityHashCode(this), System.identityHashCode(cache), username, authType);
         if (authType != Null.Enm && !acceptNonceType.contains(authType)) {
             return useDetail;
         }
@@ -78,7 +78,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     public void handleNonceSendEvent(WarlockNonceSendEvent event) {
         String key = cacheKey(event.getAuthType(), event.getUsername());
         cache.put(key, event);
-        log.warn("DEBUG_ONLY handleNonceSendEvent, this={}, cache={}, event={}", System.identityHashCode(this), System.identityHashCode(cache), event);
+//        log.warn("DEBUG_ONLY handleNonceSendEvent, this={}, cache={}, event={}", System.identityHashCode(this), System.identityHashCode(cache), event);
         log.info("put WarlockNonceSendEvent to cache={}, key={}", cache.getName(), key);
     }
 
