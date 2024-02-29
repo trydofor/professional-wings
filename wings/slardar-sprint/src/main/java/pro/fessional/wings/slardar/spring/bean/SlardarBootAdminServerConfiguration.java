@@ -49,7 +49,7 @@ public class SlardarBootAdminServerConfiguration {
     @Bean
     @ConditionalWingsEnabled
     @Conditional(SpringBootAdminServerEnabledCondition.class)
-    public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
+    public static BeanPostProcessor bootAdminMappingOrderPostProcessor() {
         log.info("SlardarSprint spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
         return new BeanPostProcessor() {
             @Override

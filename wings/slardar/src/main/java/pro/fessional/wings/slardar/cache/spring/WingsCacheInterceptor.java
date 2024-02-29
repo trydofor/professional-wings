@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.Cache;
 import org.springframework.cache.interceptor.CacheInterceptor;
 
+import java.util.List;
+
 /**
  * @author trydofor
  * @since 2022-04-19
@@ -12,12 +14,13 @@ public class WingsCacheInterceptor extends CacheInterceptor {
 
     @Override
     protected void doEvict(@NotNull Cache cache, @NotNull Object key, boolean immediate) {
-        if (key instanceof CacheEvictMultiKeys r) {
-            if (r.isEvictAll()) {
+        if (key instanceof CacheEvictKey r) {
+            List<Object> keys = r.getKeys();
+            if (keys.isEmpty()) {
                 super.doClear(cache, immediate);
             }
             else {
-                for (Object k : r.getEvictKey()) {
+                for (Object k : keys) {
                     super.doEvict(cache, k, immediate);
                 }
             }

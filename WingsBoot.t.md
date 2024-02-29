@@ -306,6 +306,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13116 WingsCookieTest: encrypt cookie by forward
 * 13117 AttributeHolderTest: Attribute expiry
 * 13118 EventPublishHelperTest: async global AttributeRidEvent
+* 13119 WingsCacheInterceptorTest: evict mulitple cache keys
 
 ## 14 Warlock
 
