@@ -34,6 +34,7 @@
         <!-- mvn boot -->
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
         <annotations.version>24.1.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
@@ -44,7 +45,7 @@
         <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
-        <mirana.version>2.7.0</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.7.1-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.5.1</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <fastjson2.version>2.0.46</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
@@ -74,6 +75,10 @@
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <dokka-maven-plugin.version>1.9.10</dokka-maven-plugin.version> <!-- https://kotlinlang.org/docs/dokka-maven.html#general-configuration -->
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+        <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
+        <jib-maven-plugin.version>3.4.1</jib-maven-plugin.version> <!-- https://github.com/GoogleContainerTools/jib/releases -->
+        <jib-layer-filter.version>0.3.0</jib-layer-filter.version> <!-- https://github.com/GoogleContainerTools/jib-extensions/blob/master/first-party/jib-layer-filter-extension-maven/README.md -->
         <!-- java, kotlin sources  -->
         <source.srcMainJava>${project.basedir}/src/main/java</source.srcMainJava>
         <source.srcMainJavaGen>${project.basedir}/src/main/java-gen</source.srcMainJavaGen>
@@ -85,24 +90,34 @@
         <source.srcMainMixed>${project.build.directory}/main-mixed</source.srcMainMixed>
         <source.srcMainDelombok>${project.build.directory}/main-delombok</source.srcMainDelombok>
         <!-- test,doc,deploy -->
-        <argLine>-Xmx2g @{javaopenArgLine}</argLine> <!-- surefire and jacoco -->
-        <javaopenArgLine>
-            --add-modules=java.se <!-- Hazelcast -->
-            --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
-            --add-opens=java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
-            --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/java.net=ALL-UNNAMED <!-- Gson -->
-            --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
-            --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
-            --add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
-            --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
-            --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
-        </javaopenArgLine>
+        <argLine>-Xmx2g @{javaopenArgLine} --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argLine> <!-- surefire and jacoco -->
+        <javaopenArgLine><!-- trim indent
+            -->--add-modules=java.se <!-- Hazelcast
+            -->--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson
+            -->--add-opens=java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2
+            -->--add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=java.base/java.net=ALL-UNNAMED <!-- Gson
+            -->--add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet
+            -->--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot
+            -->--add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast
+            -->--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot
+            --></javaopenArgLine>
+        <!-- docker -->
+        <docker.from.prefix><!-- docker:// --></docker.from.prefix>
+        <docker.to.prefix><!-- registry://docker.io/fessional/ --></docker.to.prefix>
+        <docker.image.app-root>/app</docker.image.app-root>
+        <docker.image.app-conf>${docker.image.app-root}/conf</docker.image.app-conf>
+        <docker.image.app-data>${docker.image.app-root}/data</docker.image.app-data>
+        <docker.image.app-logs>${docker.image.app-root}/logs</docker.image.app-logs>
+        <docker.image.app-port>8080</docker.image.app-port>
+        <docker.image.app-xms>1G</docker.image.app-xms>
+        <docker.image.app-xmx>3G</docker.image.app-xmx>
+        <docker.image.app-user>nobody</docker.image.app-user>
     </properties>
 
     <licenses>
@@ -441,7 +456,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
@@ -664,25 +678,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <!--
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                    <configuration>
-                        <sourcepath>${source.srcMainDelombok}</sourcepath>
-                        <doclint>none</doclint>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                -->
                 <plugin>
                     <groupId>org.jetbrains.dokka</groupId>
                     <artifactId>dokka-maven-plugin</artifactId>
@@ -901,6 +896,43 @@
                         </includeOnlyProperties>
                         <commitIdGenerationMode>full</commitIdGenerationMode>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>[3.8,)</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.cloud.tools</groupId>
+                            <artifactId>jib-layer-filter-extension-maven</artifactId>
+                            <version>${jib-layer-filter.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1142,6 +1174,202 @@
                 <!--suppress UnresolvedMavenProperty -->
                 <altSnapshotDeploymentRepository>altrh::${MVN_ALT_SNAP}</altSnapshotDeploymentRepository>
             </properties>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- mvn -Pdocker jib:dockerBuild -->
+                        <!-- https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#system-properties -->
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <configuration>
+                            <from>
+                                <image>${docker.from.prefix}eclipse-temurin:${java.version}-jre</image>
+                            </from>
+                            <to>
+                                <image>${docker.to.prefix}${project.artifactId}:${project.version}</image>
+                            </to>
+                            <container>
+                                <format>OCI</format>
+                                <volumes>
+                                    <volume>${docker.image.app-conf}</volume>
+                                    <volume>${docker.image.app-data}</volume>
+                                    <volume>${docker.image.app-logs}</volume>
+                                </volumes>
+                                <environment>
+                                    <JAVA_XMS>${docker.image.app-xms}</JAVA_XMS>
+                                    <JAVA_XMX>${docker.image.app-xmx}</JAVA_XMX>
+                                    <JAVA_OPTS><!-- trim indent
+                                        -->${javaopenArgLine} <!--
+                                        -->-server <!--
+                                        -->-Djava.awt.headless=true -Dfile.encoding=UTF-8 <!--
+                                        -->-XX:MetaspaceSize=256M -XX:AutoBoxCacheMax=20000 <!--
+                                        -->-XX:MaxDirectMemorySize=1024M <!--
+                                        -->-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${docker.image.app-logs}/application.hprof <!--
+                                        -->-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=8 -XX:ConcGCThreads=8 <!--
+                                        -->-Xlog:gc*=info:file=${docker.image.app-logs}/application.gc:time,tid,tags:filecount=5,filesize=100m <!--
+                                    --></JAVA_OPTS>
+                                    <SPRING_APPLICATION_JSON>{<!-- trim indent
+                                        -->"server.port":${docker.image.app-port}, <!--
+                                        -->"spring.config.location":"optional:file:${docker.image.app-conf}", <!--
+                                        -->"logging.file.name":"${docker.image.app-logs}/application.log" <!--
+                                    -->}</SPRING_APPLICATION_JSON>
+                                </environment>
+                                <ports>
+                                    <port>${docker.image.app-port}</port>
+                                    <port>5701</port>
+                                </ports>
+                                <user>${docker.image.app-user}</user>
+                                <appRoot>${docker.image.app-root}</appRoot>
+                                <workingDirectory>${docker.image.app-root}</workingDirectory>
+                                <entrypoint>
+                                    <arg>/bin/bash</arg>
+                                    <arg>-c</arg>
+                                    <arg><!-- JDK_JAVA_OPTIONS / JAVA_TOOL_OPTIONS / _JAVA_OPTIONS
+                                        -->exec java -Xms$JAVA_XMS -Xmx$JAVA_XMX $JAVA_OPTS <!--
+                                        -->-cp @${docker.image.app-root}/jib-classpath-file <!--
+                                        -->@${docker.image.app-root}/jib-main-class-file <!--
+                                    --></arg>
+                                </entrypoint>
+                                <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                                <filesModificationTime>${maven.build.timestamp}</filesModificationTime>
+                            </container>
+                            <pluginExtensions>
+                                <pluginExtension>
+                                    <implementation>com.google.cloud.tools.jib.maven.extension.layerfilter.JibLayerFilterExtension</implementation>
+                                    <configuration implementation="com.google.cloud.tools.jib.maven.extension.layerfilter.Configuration">
+                                        <filters>
+                                            <filter>
+                                                <glob>**/spring-boot-devtools-*.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/spring-boot-docker-compose-*.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/spring-boot-starter-*.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/spring-boot-autoconfigure-processor-*.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/spring-boot-configuration-processor-*.jar</glob>
+                                            </filter>
+                                        </filters>
+                                    </configuration>
+                                </pluginExtension>
+                            </pluginExtensions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>docker-dep</id>
+            <properties>
+                <jib.to.image>${docker.to.prefix}${project.artifactId}:${project.version}-DEP</jib.to.image>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <configuration>
+                            <pluginExtensions>
+                                <pluginExtension>
+                                    <implementation>com.google.cloud.tools.jib.maven.extension.layerfilter.JibLayerFilterExtension</implementation>
+                                    <configuration implementation="com.google.cloud.tools.jib.maven.extension.layerfilter.Configuration">
+                                        <filters combine.children="append">
+                                            <filter>
+                                                <glob>**/*-SNAPSHOT.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/classes/**</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/resources/**</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/jib-*-file</glob>
+                                            </filter>
+                                        </filters>
+                                    </configuration>
+                                </pluginExtension>
+                            </pluginExtensions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>docker-app</id>
+            <properties>
+                <jib.from.image>${docker.from.prefix}${project.artifactId}:${project.version}-DEP</jib.from.image>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <configuration>
+                            <pluginExtensions>
+                                <pluginExtension>
+                                    <implementation>com.google.cloud.tools.jib.maven.extension.layerfilter.JibLayerFilterExtension</implementation>
+                                    <configuration implementation="com.google.cloud.tools.jib.maven.extension.layerfilter.Configuration">
+                                        <filters>
+                                            <filter>
+                                                <glob>**/*.jar</glob>
+                                            </filter>
+                                            <filter>
+                                                <glob>**/*-SNAPSHOT.jar</glob>
+                                                <toLayer>SNAPSHOT libraries</toLayer>
+                                            </filter>
+                                        </filters>
+                                    </configuration>
+                                </pluginExtension>
+                            </pluginExtensions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>paketo</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <image>
+                                <name>${docker.to.prefix}${project.artifactId}:${project.version}</name>
+<!--                                <applicationDirectory>${docker.image.app-root}</applicationDirectory>-->
+                                <createdDate>now</createdDate>
+                                <env>
+                                    <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                                    <BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
+                                    <BPE_SPRING_APPLICATION_JSON>{<!-- trim indent
+                                        -->"server.port":${docker.image.app-port}, <!--
+                                        -->"spring.config.location":"optional:file:${docker.image.app-conf}", <!--
+                                        -->"logging.file.name":"${docker.image.app-logs}/application.log" <!--
+                                    -->}</BPE_SPRING_APPLICATION_JSON>
+                                    <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
+                                    <BPE_APPEND_JAVA_TOOL_OPTIONS><!-- trim indent
+                                        -->${javaopenArgLine} <!--
+                                        -->-Djava.awt.headless=true -Dfile.encoding=UTF-8 <!--
+                                        -->-XX:MetaspaceSize=256M -XX:AutoBoxCacheMax=20000 <!--
+                                        -->-XX:MaxDirectMemorySize=1024M <!--
+                                        -->-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${docker.image.app-logs}/application.hprof <!--
+                                        -->-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=8 -XX:ConcGCThreads=8 <!--
+                                        -->-Xlog:gc*=info:file=${docker.image.app-logs}/application.gc:time,tid,tags:filecount=5,filesize=100m <!--
+                                    --></BPE_APPEND_JAVA_TOOL_OPTIONS>
+                                </env>
+                            </image>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
