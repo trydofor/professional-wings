@@ -45,10 +45,10 @@
         <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
-        <mirana.version>2.7.1-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.7.1</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.5.1</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.46</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.47</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.6.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.5</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
@@ -57,28 +57,28 @@
         <!-- sharding jdbc -->
         <shardingsphere.version>5.4.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>3.0.1</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>3.0.2</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>2.3.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <boot-admin.version>3.2.1</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>7.2.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
+        <boot-admin.version>3.2.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>7.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
         <allure.version>2.25.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
         <druid.version>1.2.21</druid.version> <!-- https://github.com/alibaba/druid/releases -->
         <!-- mvn-build-plugin -->
-        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
         <directory-maven-plugin.version>1.0</directory-maven-plugin.version> <!-- https://github.com/jdcasey/directory-maven-plugin -->
-        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version> <!-- https://www.mojohaus.org/versions/versions-maven-plugin -->
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <dokka-maven-plugin.version>1.9.10</dokka-maven-plugin.version> <!-- https://kotlinlang.org/docs/dokka-maven.html#general-configuration -->
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
-        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
         <jib-maven-plugin.version>3.4.1</jib-maven-plugin.version> <!-- https://github.com/GoogleContainerTools/jib/releases -->
         <jib-layer-filter.version>0.3.0</jib-layer-filter.version> <!-- https://github.com/GoogleContainerTools/jib-extensions/blob/master/first-party/jib-layer-filter-extension-maven/README.md -->
+        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version> <!-- https://maven.apache.org/enforcer/maven-enforcer-plugin/ -->
+        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version> <!-- https://www.mojohaus.org/versions/versions-maven-plugin -->
         <!-- java, kotlin sources  -->
         <source.srcMainJava>${project.basedir}/src/main/java</source.srcMainJava>
         <source.srcMainJavaGen>${project.basedir}/src/main/java-gen</source.srcMainJavaGen>
