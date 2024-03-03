@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.app.service.TestScanService;
  * @since 2023-11-17
  */
 @SpringBootTest(properties = {
-        "wings.silencer.conditional.prefix[pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration*]=catty.enabled",
+        "wings.feature.prefix[pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration*]=catty.enabled",
         "catty.enabled.catBean=true",
         "catty.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration.catBean=false",
         "catty.enabled.pro.fessional.wings.silencer.app.bean.TestEnabledCatConfiguration.autowire=false",

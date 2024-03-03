@@ -2,7 +2,7 @@ package pro.fessional.wings.tiny.task.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledContext;
 
 /**
  * wings-enabled-79.properties
@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 @ConfigurationProperties(TinyTaskEnabledProp.Key)
 public class TinyTaskEnabledProp {
 
-    public static final String Key = WingsEnabledCondition.Prefix + ".tiny.task";
+    public static final String Key = WingsEnabledContext.PrefixEnabled + ".tiny.task";
 
     /**
      * whether to auto register TinyTask.Auto.

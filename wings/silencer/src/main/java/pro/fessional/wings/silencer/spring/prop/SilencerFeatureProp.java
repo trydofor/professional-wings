@@ -2,22 +2,23 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledContext;
 
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * WingsEnabledCondition properties wings-conditional-79.properties
+ * WingsEnabledCondition properties wings-feature-79.properties
  *
  * @author trydofor
  * @see #Key
  * @since 2023-12-04
  */
 @Data
-@ConfigurationProperties(SilencerConditionalProp.Key)
-public class SilencerConditionalProp {
+@ConfigurationProperties(SilencerFeatureProp.Key)
+public class SilencerFeatureProp {
 
-    public static final String Key = "wings.silencer.conditional";
+    public static final String Key = WingsEnabledContext.PrefixFeature;
 
     /**
      * the mapping of qualified-key (ant-matcher) and its error handling

@@ -1,7 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
 import ch.qos.logback.classic.LoggerContext;
-import com.alibaba.ttl.TransmittableThreadLocal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,6 @@ public class SilencerTweakConfiguration {
         public void auto(SilencerTweakProp prop) throws ThreadLocalAttention {
             final long ms = prop.getClockOffset();
             log.info("SilencerCurse spring-auto initThreadClockTweak with TransmittableThreadLocal, offset=" + ms);
-            ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>(), false);
             final Duration dr = Duration.ofMillis(ms);
             if (!dr.isZero()) {
                 final Clock clock = ThreadNow.TweakClock.current(true);
@@ -90,7 +88,6 @@ public class SilencerTweakConfiguration {
         @Autowired
         public void auto(SilencerTweakProp prop) throws ThreadLocalAttention {
             log.info("SilencerCurse spring-auto initCodeExceptionTweak with TransmittableThreadLocal, stack=" + prop.isCodeStack());
-            CodeException.TweakStack.initThread(new TransmittableThreadLocal<>(), false);
             CodeException.TweakStack.initDefault(prop::isCodeStack);
         }
     }

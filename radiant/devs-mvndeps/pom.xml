@@ -13,11 +13,12 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Devs::Mvndeps</name>
-    <description>mvn versions:display-dependency-updates or maven-dependency-checker</description>
+    <description>mvn -U versions:display-dependency-updates versions:display-plugin-updates</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
+        <dependency-updates-file>${project.build.directory}/dependency-updates.txt</dependency-updates-file>
     </properties>
 
     <!-- Keep `*.version` properties, get easy search and IDE hint -->
@@ -159,8 +160,75 @@
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>${directory-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${coveralls-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>${dokka-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>${lombok-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib-maven-plugin.version}</version>
+            </plugin>
+            <!--  -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <configuration>
+                    <outputFile>${dependency-updates-file}</outputFile>
+                    <outputLineWidth>100</outputLineWidth>
+                    <processDependencyManagement>false</processDependencyManagement>
+                    <processDependencyManagementTransitive>false</processDependencyManagementTransitive>
+                    <ignoredVersions>
+                        <ignoredVersion>.*[.-]android.*</ignoredVersion>
+                        <ignoredVersion>.*[.-]SNAPSHOT.*</ignoredVersion>
+                        <ignoredVersion>.*[.-]Beta.*</ignoredVersion>
+                        <ignoredVersion>\d{8,}\.\d{6,}</ignoredVersion>
+                        <ignoredVersion>.*-b.*</ignoredVersion>
+                    </ignoredVersions>
                     <dependencyIncludes>
                         <include>org.springframework.boot:spring-boot</include>
                         <include>org.jetbrains:annotations</include>

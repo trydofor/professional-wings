@@ -12,7 +12,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
-import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
@@ -427,19 +426,20 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         final LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
         for (String path : sortedPath) {
+            if (path.startsWith("optional:")) {
+                path = path.substring(9); // optional:
+            }
+
             // 5. `classpath:/` is scanned as `classpath*:/`
             if (path.startsWith("classpath:")) {
                 path = path.replace("classpath:", "classpath*:");
             }
-            else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
-                DummyBlock.empty();
-            }
-            else {
-                // 6. any non-`classpath:`,`classpath*:` will be scanned as `file:`
+            // 6. any non-protocol will be scanned as `file:`
+            else if (!path.contains(":")) {
                 path = "file:" + path;
             }
 
-            log.info("🦁 Wings scan classpath, path=" + path);
+            log.info("🦁 Wings scan path=" + path);
             //  7. ending with `/` as dir, otherwirse as file
             if (path.endsWith("/") || path.endsWith("\\")) {
                 // 8. From the above path, `application.*` is loaded first, then `wings-conf/**/*.*`
