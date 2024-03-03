@@ -1335,7 +1335,7 @@
             </build>
         </profile>
         <profile>
-            <id>paketo</id>
+            <id>image-paketo</id>
             <build>
                 <plugins>
                     <plugin>
@@ -1344,7 +1344,7 @@
                         <configuration>
                             <image>
                                 <name>${docker.to.prefix}${project.artifactId}:${project.version}</name>
-<!--                                <applicationDirectory>${docker.image.app-root}</applicationDirectory>-->
+                                <!-- app-root /workspace is hard code, can not change to /app -->
                                 <createdDate>now</createdDate>
                                 <env>
                                     <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
