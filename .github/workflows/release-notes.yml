@@ -1,0 +1,86 @@
+on:
+  milestone:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      milestoneId:
+        description: 'Id of Milestone'
+        type: number
+        required: true
+        default: 10
+
+name: Milestone Release Notes
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_FOLDER: temp_release_notes
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Prepare Settings
+        id: settings
+        run: |
+          echo "# env and var" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          
+          _user=${{ github.actor }}
+          echo "- ACTION_NAME=$_user" >> "$GITHUB_STEP_SUMMARY"
+          echo "ACTION_NAME=$_user" >> "$GITHUB_OUTPUT"
+          
+          _mail=${{ format('{0}+{1}@users.noreply.github.com', github.actor_id, github.actor) }}
+          echo "- ACTION_MAIL=$_mail" >> "$GITHUB_STEP_SUMMARY"
+          echo "ACTION_MAIL=$_mail" >> "$GITHUB_OUTPUT"
+          
+          _owner=${{ github.repository_owner }}
+          echo "- OWNER=$_owner" >> "$GITHUB_STEP_SUMMARY"
+          echo "OWNER=$_owner" >> "$GITHUB_OUTPUT"
+
+          _repo=$(basename ${{ github.repository }})
+          echo "- REPO_NAME=$_repo" >> "$GITHUB_STEP_SUMMARY"
+          echo "REPO_NAME=$_repo" >> "$GITHUB_OUTPUT"
+          
+          _id=${{ inputs.milestoneId }}
+          if [ "$_id" == "" ]; then
+            _file=${{ github.event.milestone.title }}
+          else
+            _file=$(curl -s -H "Authorization: token $GH_PAT" https://api.github.com/repos/$_owner/$_repo/milestones/$_id | jq -r '.title')
+          fi
+          echo "- FILE_NAME=$_file" >> "$GITHUB_STEP_SUMMARY"
+          echo "FILE_NAME=$_file" >> "$GITHUB_OUTPUT"
+          
+          # https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md
+          cat > .github/release-notes.yml << "EOF"
+          changelog:
+            issues:
+              exclude:
+                labels: [ "duplicate", "invalid", "investigate", "pending", "question", "wontfix" ]
+            sections:
+              - title: "⭐ New Feature"
+                labels: [ "feature" ]
+              - title: "🐞 Bug Fixes"
+                labels: [ "bug" ]
+              - title: "💎 Enhancement"
+                labels: [ "better", "devops", "quality" ]
+              - title: "📝 Documentation"
+                labels: [ "docs" ]
+              - title: "📦️ Dependency"
+                labels: [ "deps" ]
+          EOF
+
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:latest
+        env:
+          FILENAME_PREFIX: Milestone-
+          FILENAME:  ${{ steps.settings.outputs.FILE_NAME }}
+
+      - name: Upload Release Notes to Wiki
+        uses: docker://decathlon/wiki-page-creator-action:latest
+        env:
+          ACTION_MAIL: ${{ steps.settings.outputs.ACTION_MAIL }}
+          ACTION_NAME: ${{ steps.settings.outputs.ACTION_NAME }}
+          MD_FOLDER: ${{ env.OUTPUT_FOLDER }}
+          OWNER: ${{ steps.settings.outputs.OWNER }}
+          REPO_NAME: ${{ steps.settings.outputs.REPO_NAME }}

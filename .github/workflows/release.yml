@@ -1,4 +1,4 @@
-name: Release-To-OssRh
+name: Release to Maven Repo
 run-name: Release ${{ github.ref_name }} by @${{ github.event_name }}
 
 on:
@@ -194,6 +194,7 @@ jobs:
       ## maven deploy altrh
       - name: Deploy ALT ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: steps.settings.outputs.MVN_DEPLOY_ALTRH == 'true'
+        continue-on-error: ${{ inputs.deployAltrh != 'true' }}
         run: >
           mvn 
           -P 'deploy,deploy-alt,!module-example,!module-devs'
