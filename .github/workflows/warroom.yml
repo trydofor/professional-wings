@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+
+name: Warroom for Actions
+
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Prepare Settings
+        id: settings
+        run: |
+          echo "# env and var" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          
+          _user=${{ github.actor }}
+          echo "- ACTION_NAME=$_user" >> "$GITHUB_STEP_SUMMARY"
+          echo "ACTION_NAME=$_user" >> "$GITHUB_OUTPUT"
+          
+          _mail=${{ format('{0}+{1}@users.noreply.github.com', github.actor_id, github.actor) }}
+          echo "- ACTION_MAIL=$_mail" >> "$GITHUB_STEP_SUMMARY"
+          echo "ACTION_MAIL=$_mail" >> "$GITHUB_OUTPUT"
+          
+          _owner=${{ github.repository_owner }}
+          echo "- OWNER=$_owner" >> "$GITHUB_STEP_SUMMARY"
+          echo "OWNER=$_owner" >> "$GITHUB_OUTPUT"
+
+          _repo=$(basename ${{ github.repository }})
+          echo "- REPO_NAME=$_repo" >> "$GITHUB_STEP_SUMMARY"
+          echo "REPO_NAME=$_repo" >> "$GITHUB_OUTPUT"
+          
+          echo "## workspace" >> "$GITHUB_STEP_SUMMARY"
+          ls -al  >> "$GITHUB_STEP_SUMMARY"
