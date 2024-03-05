@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 THIS_VERSION=2023-04-14
 
 cat << EOF
@@ -26,10 +26,10 @@ dumpopts=${*:3}
 logxopts="--no-data"
 confopts=--defaults-extra-file=$extracnf
 if [[ -f "$extracnf" ]]; then
-  echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
-  grep -E "^(host|port|user)" "$extracnf"
+    echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
+    grep -E "^(host|port|user)" "$extracnf"
 else
-  echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[m"
+    echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[m"
 cat << 'EOF'
 [client]
 protocol=tcp
@@ -45,19 +45,19 @@ net-buffer-length=64k
 set-gtid-purged=OFF
 single-transaction
 EOF
-  exit
+    exit
 fi
 
 unalias mysql >/dev/null 2>&1
 unalias mysqldump >/dev/null 2>&1
 
 if [[ "$database" == "" ]]; then
-  echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[m"
-  echo "./wings-mysql-dump.sh wings-mysql-client.cnf database  --no-data"
-  echo -e "\033[0;33mNOTE:current databases \033[m"
-  # shellcheck disable=SC2086
-  mysql $confopts -N -e "show databases;"
-  exit
+    echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[m"
+    echo "./wings-mysql-dump.sh wings-mysql-client.cnf database  --no-data"
+    echo -e "\033[0;33mNOTE:current databases \033[m"
+    # shellcheck disable=SC2086
+    mysql $confopts -N -e "show databases;"
+    exit
 fi
 
 ###
@@ -71,42 +71,42 @@ dump_md5_file="$dump_head.md5"
 
 # shellcheck disable=SC2086
 if ! mysql $confopts -D "$database" -N -e "show tables" > "$dump_tbl_file"; then
-  echo -e "\033[37;41;1mERROR: failed to show tables of $database \033[0m"
-  rm -rf "$dump_tbl_file"
-  exit
+    echo -e "\033[37;41;1mERROR: failed to show tables of $database \033[0m"
+    rm -rf "$dump_tbl_file"
+    exit
 fi
 
 logs_cnt=$(grep -cE '\$|__' "$dump_tbl_file")
 if [[ $logs_cnt == 0 ]]; then
-  echo "no logs tables to dump"
-  echo "-- no logs tables to dump" > "$dump_logs_file"
+    echo "no logs tables to dump"
+    echo "-- no logs tables to dump" > "$dump_logs_file"
 else
-  echo -e "\033[0;33mNOTE: dump logs tables without data, count=$logs_cnt\033[m"
+    echo -e "\033[0;33mNOTE: dump logs tables without data, count=$logs_cnt\033[m"
 
-  # shellcheck disable=SC2046,SC2086
-  if mysqldump $confopts $dumpopts $logxopts \
-  "$database" $(grep -E '\$|__' "$dump_tbl_file") > "$dump_logs_file"; then
-    echo "successfully dump logs"
-  else
-    echo -e "\033[37;41;1mERROR: failed to dump logs \033[0m"
-    exit
-  fi
+    # shellcheck disable=SC2046,SC2086
+    if mysqldump $confopts $dumpopts $logxopts \
+    "$database" $(grep -E '\$|__' "$dump_tbl_file") > "$dump_logs_file"; then
+        echo "successfully dump logs"
+    else
+        echo -e "\033[37;41;1mERROR: failed to dump logs \033[0m"
+        exit
+    fi
 fi
 
 main_cnt=$(grep -cvE '\$|__' "$dump_tbl_file")
 if [[ $main_cnt == 0 ]]; then
-  echo "no main tables to dump"
-  echo "-- no main tables to dump" > "$dump_main_file"
+    echo "no main tables to dump"
+    echo "-- no main tables to dump" > "$dump_main_file"
 else
-  echo -e "\033[0;33mNOTE: dump main tables with data, count=$main_cnt\033[m"
-  # shellcheck disable=SC2046,SC2086
-  if mysqldump $confopts $dumpopts \
-  "$database" $(grep -vE '\$|__' "$dump_tbl_file") > "$dump_main_file"; then
-    echo "successfully dump main"
-  else
-    echo -e "\033[37;41;1mERROR: failed to dump main \033[0m"
-    exit
-  fi
+    echo -e "\033[0;33mNOTE: dump main tables with data, count=$main_cnt\033[m"
+    # shellcheck disable=SC2046,SC2086
+    if mysqldump $confopts $dumpopts \
+    "$database" $(grep -vE '\$|__' "$dump_tbl_file") > "$dump_main_file"; then
+        echo "successfully dump main"
+    else
+        echo -e "\033[37;41;1mERROR: failed to dump main \033[0m"
+        exit
+    fi
 fi
 
 echo -e "\033[0;33mNOTE: dump file $dump_head\033[m"

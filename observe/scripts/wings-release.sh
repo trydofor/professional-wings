@@ -1,5 +1,5 @@
-#!/bin/bash
-THIS_VERSION=2023-05-25
+#!/bin/bash -e
+THIS_VERSION=2024-03-05
 
 cat <<EOF
 #################################################
@@ -24,9 +24,18 @@ WEB_PACK='build'                                   # package command of web
 
 ################ NO NEED to modify the following ################
 function check_cmd() {
-    if ! which "$1" >/dev/null; then
-        echo -e "\033[31mERROR: need command $1 \033[0m"
-        exit
+    if ! command -v "$1" >/dev/null; then
+        # rc or init script
+        if [[ -f "$2" ]]; then
+            # shellcheck disable=SC1090
+            source "$2"
+        elif [[ "$2" != "" ]]; then
+            echo -e "\033[33mWARN: no command=$1, no script=$2 \033[0m"
+            return 1
+        else
+            echo -e "\033[31mERROR: no command=$1 \033[0m"
+            exit
+        fi
     fi
 }
 
@@ -94,11 +103,9 @@ function build_mvn() {
 }
 
 function build_web() {
-    # node version
+    # nvm
     if [[ -f ".nvmrc" ]]; then
-        # shellcheck disable=SC1090
-        source ~/.nvm/nvm.sh
-        nvm use
+        check_cmd nvm "$HOME/.nvm/nvm.sh" &&  nvm use
     fi
 
     _pre_pack
@@ -158,6 +165,11 @@ function build_auto() {
         exit
     fi
 
+    ## https://asdf-vm.com
+    if [[ -f ".tool-versions" ]]; then
+        check_cmd asdf "$HOME/.asdf/asdf.sh" && asdf install
+    fi
+
     # mvn
     if [[ -f "pom.xml" || "$1" == "mvn" ]]; then
         build_mvn
@@ -205,6 +217,7 @@ fi
 if [[ "$WORK_DIR" == "" ]]; then
     WORK_DIR=$(dirname "$this_file")
 fi
+
 cd "$WORK_DIR" || exit
 WORK_DIR=$(realpath -s "$WORK_DIR")
 echo "work-dir=$WORK_DIR"
