@@ -1,5 +1,5 @@
-#!/bin/bash
-THIS_VERSION=2024-02-03
+#!/bin/bash -e
+THIS_VERSION=2024-03-05
 ################ system env to use ################
 # JAVA_HOME      # if JDK_HOME is not valid
 # JAVA_OPTS      # prepend to java args

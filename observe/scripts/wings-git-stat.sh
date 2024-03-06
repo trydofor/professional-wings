@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 THIS_VERSION=2021-12-21
 echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 

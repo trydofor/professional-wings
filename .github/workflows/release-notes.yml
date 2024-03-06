@@ -58,15 +58,15 @@ jobs:
               exclude:
                 labels: [ "duplicate", "invalid", "investigate", "pending", "question", "wontfix" ]
             sections:
-              - title: "⭐ New Feature"
+              - title: "⭐ New Features"
                 labels: [ "feature" ]
               - title: "🐞 Bug Fixes"
                 labels: [ "bug" ]
-              - title: "💎 Enhancement"
+              - title: "💎 Enhancements"
                 labels: [ "better", "devops", "quality" ]
               - title: "📝 Documentation"
                 labels: [ "docs" ]
-              - title: "📦️ Dependency"
+              - title: "📦️ Dependencies"
                 labels: [ "deps" ]
           EOF
 

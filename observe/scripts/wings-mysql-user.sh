@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 THIS_VERSION=2023-11-09
 
 cat <<EOF
@@ -22,7 +22,7 @@ cat <<EOF
 EOF
 
 function passwd24() {
-  head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 24
+    head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 24
 }
 
 #####
@@ -33,9 +33,9 @@ command="$2"
 option="$3"
 
 if [[ "$command" == "" || "$command" == "help" || ! -f "$userenv" ]]; then
-  echo -e '\033[37;42;1mNOTE: users env file\033[m'
-  # https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
-  cat <<'EOF'
+    echo -e '\033[37;42;1mNOTE: users env file\033[m'
+    # https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
+    cat <<'EOF'
 execute=false
 ## prefix of username
 user_pre=devall
@@ -54,12 +54,12 @@ host_app=10.11.%
 host_dev=%
 host_dba=%
 EOF
-  echo -e '\033[37;42;1mNOTE: user manage\033[m'
-  cat <<'EOF'
+    echo -e '\033[37;42;1mNOTE: user manage\033[m'
+    cat <<'EOF'
 RENAME USER 'trydofor'@'%' TO 'trydofor'@'127.0.%';
 DROP USER IF EXISTS 'trydofor'@'%';
 EOF
-  exit
+    exit
 fi
 
 declare more_dba
@@ -69,14 +69,14 @@ source "$userenv"
 
 declare user_pre
 if [[ "$user_pre" == "" ]]; then
-  echo -e "\033[37;41;1mERROR: need user_pre in users option \033[0m"
-  exit
+    echo -e "\033[37;41;1mERROR: need user_pre in users option \033[0m"
+    exit
 fi
 
 declare grant_db
 if [[ "$grant_db" == "" ]]; then
-  echo -e "\033[37;41;1mERROR: need grant_db in users option \033[0m"
-  exit
+    echo -e "\033[37;41;1mERROR: need grant_db in users option \033[0m"
+    exit
 fi
 
 #
@@ -104,7 +104,7 @@ echo -e "\033[37;42;1mNOTE: sql script $temp_sql\033[m"
 rm "$temp_sql" >/dev/null 2>&1
 
 if [[ "$command" == "create" ]]; then
-  grep -v '^#' >> "$temp_sql" <<EOF
+    grep -v '^#' >> "$temp_sql" <<EOF
 -- create
 ${user_raw}CREATE USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
 ${user_app}CREATE USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
@@ -114,8 +114,8 @@ EOF
 fi
 
 if [[ "$command" == "grant" ]]; then
-  for db_main in $grant_db; do
-    grep -v '^#' >> "$temp_sql" <<EOF
+    for db_main in $grant_db; do
+        grep -v '^#' >> "$temp_sql" <<EOF
 -- grant
 ${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main\`.* TO '${user_pre}${name_pre}raw'@'$host_raw';
 ${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main\`.* TO '${user_pre}${name_pre}app'@'$host_app';
@@ -124,16 +124,16 @@ ${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '${user_pre}${name_pre}dev'@'$host
 ${user_dba}GRANT ALL ON \`$db_main\`.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 ${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
-    for mb in $more_dba; do
-      grep -v '^#' >> "$temp_sql" <<EOF
+        for mb in $more_dba; do
+            grep -v '^#' >> "$temp_sql" <<EOF
 ${user_dba}GRANT SELECT ON \`$mb\`.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
+        done
     done
-  done
 fi
 
 if [[ "$command" == "passwd" ]]; then
-  grep -v '^#' >> "$temp_sql" <<EOF
+    grep -v '^#' >> "$temp_sql" <<EOF
 -- change passwd
 ${user_raw}ALTER USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
 ${user_app}ALTER USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
@@ -145,13 +145,13 @@ fi
 cat "$temp_sql"
 
 if [[ "$execute" == "true" ]]; then
-  unalias mysql >/dev/null 2>&1
+    unalias mysql >/dev/null 2>&1
 
-  if [[ -f "$option" ]]; then
-    echo -e "\033[0;33mNOTE: current option file \033[m"
-    cat "$option"
-    mysql --defaults-extra-file="$option" -vvv --force < "$temp_sql"
-  else
-    mysql -vvv --force < "$temp_sql"
-  fi
+    if [[ -f "$option" ]]; then
+        echo -e "\033[0;33mNOTE: current option file \033[m"
+        cat "$option"
+        mysql --defaults-extra-file="$option" -vvv --force < "$temp_sql"
+    else
+        mysql -vvv --force < "$temp_sql"
+    fi
 fi

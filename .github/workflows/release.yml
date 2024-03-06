@@ -114,7 +114,7 @@ jobs:
           echo "- MVN_DEPLOY_OSSRH=$_drh" >> "$GITHUB_STEP_SUMMARY"
           echo "MVN_DEPLOY_OSSRH=$_drh" >> "$GITHUB_OUTPUT"
           
-          _drp=${{ ( inputs.deployAltrh || github.event_name == 'release' ) && secrets.MVN_ALT_USER != '' }}
+          _drp=${{ secrets.MVN_ALT_USER != '' && ( inputs.deployAltrh || github.event_name == 'push' ) }}
           echo "- MVN_DEPLOY_ALTRH=$_drp" >> "$GITHUB_STEP_SUMMARY"
           echo "MVN_DEPLOY_ALTRH=$_drp" >> "$GITHUB_OUTPUT"
           
