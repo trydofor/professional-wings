@@ -16,6 +16,8 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author trydofor
  * @since 2022-11-16
@@ -74,6 +76,8 @@ class OkHttpTokenizeTest {
         tokenize.setClientSecret(secret);
         tokenize.setAuthorizeUrl(host + urlmapProp.getOauthAuthorize());
         tokenize.setAccessTokenUrl(host + urlmapProp.getOauthAccessToken());
+        final AtomicReference<OkHttpTokenizeOauth.Token> token = new AtomicReference<>();
+        tokenize.setInitListener(token::set);
 
         OkHttpTokenClient oauthClient = new OkHttpTokenClient(okHttpClient, tokenize);
         okhttp3.Request request = new okhttp3.Request.Builder()
@@ -81,6 +85,7 @@ class OkHttpTokenizeTest {
                 .post(OkHttpClientHelper.EMPTY)
                 .build();
 
+        Assertions.assertSame(token.get(), tokenize.getToken());
         final String str = OkHttpClientHelper.executeString(oauthClient, request, false);
         Assertions.assertNotNull(str);
         Assertions.assertNotEquals("failed", str);
@@ -96,6 +101,8 @@ class OkHttpTokenizeTest {
         tokenize.setUsername("trydofor");
         tokenize.setPassword("moMxVKXxA8Pe9XX9");
         tokenize.setHeaderAuth(slardarSessionProp.getHeaderName());
+        final AtomicReference<String> token = new AtomicReference<>();
+        tokenize.setInitListener(token::set);
 
         OkHttpTokenClient oauthClient = new OkHttpTokenClient(okHttpClient, tokenize);
         okhttp3.Request request = new okhttp3.Request.Builder()
@@ -103,6 +110,7 @@ class OkHttpTokenizeTest {
                 .post(OkHttpClientHelper.EMPTY)
                 .build();
 
+        Assertions.assertSame(token.get(), tokenize.getToken());
         final String str = OkHttpClientHelper.executeString(oauthClient, request, false);
         Assertions.assertNotNull(str);
         Assertions.assertNotEquals("failed", str);

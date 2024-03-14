@@ -20,6 +20,8 @@ import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 
+import java.util.function.Consumer;
+
 /**
  * <a href="https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html">fedex authorization v1</a>
  *
@@ -70,6 +72,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
      */
     private int expireBuff = 30_000;
     private transient Token token;
+    private transient Consumer<Token> initListener;
 
     @Override
     public boolean needToken(@NotNull Request request) {
@@ -91,19 +94,32 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
 
     @Override
     public boolean initToken(@NotNull Call.Factory callFactory) {
-        final Token tkn = token;
+        final Token oldTkn = token;
 
         Token newTkn = null;
-        if (tkn != null && tkn.refresh != null) {
-            newTkn = fetchByRefresh(callFactory, tkn.refresh);
+        if (oldTkn != null && oldTkn.refresh != null) {
+            newTkn = fetchByRefresh(callFactory, oldTkn.refresh);
         }
 
         if (newTkn == null) {
             newTkn = fetchByGrantType(callFactory);
         }
 
-        token = newTkn;
-        return newTkn != null;
+        if (newTkn != null) {
+            token = newTkn;
+
+            if (initListener != null) {
+                try {
+                    initListener.accept(newTkn);
+                }
+                catch (Exception e) {
+                    log.warn("failed to listen oauth init", e);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     @SuppressWarnings("DuplicatedCode")
