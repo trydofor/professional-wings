@@ -39,15 +39,6 @@
         <serialize-keys>true</serialize-keys>
         <local-update-policy>INVALIDATE</local-update-policy>
     </near-cache>
-    <serialization>
-        <serializers>
-            <!-- need UnmodifiableCollectionsSerializer -->
-            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
-            <!-- spring FindByIndexNameSessionRepository -->
-            <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
-                        type-class="org.springframework.session.MapSession"/>
-        </serializers>
-    </serialization>
     <user-code-deployment enabled="true">
         <!--        <jarPaths>-->
         <!--            <jarPath>example.jar</jarPath>-->
