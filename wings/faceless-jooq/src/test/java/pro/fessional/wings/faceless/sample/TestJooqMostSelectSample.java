@@ -47,6 +47,7 @@ import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -82,12 +83,16 @@ public class TestJooqMostSelectSample {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private TstShardingDao dao;
+    private TestingDatabaseHelper testingDatabaseHelper;
+
+    @Setter(onMethod_ = {@Autowired})
+    private TstShardingDao tstShardingDao;
 
     @Test
     @TmsLink("C12120")
     public void test0Init() {
-        final var  sqls = FlywaveRevisionScanner.scanMaster();
+        testingDatabaseHelper.cleanTable();
+        var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), 0);
     }
@@ -95,8 +100,8 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12121")
     public void test1SelectOnDemand() {
-        DSLContext ctx = dao.ctx();
-        TstShardingTable t = dao.getTable();
+        DSLContext ctx = tstShardingDao.ctx();
+        TstShardingTable t = tstShardingDao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("1 field to List");
@@ -124,7 +129,7 @@ public class TestJooqMostSelectSample {
         Map<Long, List<TstSharding>> grps = ctx.selectFrom(t)
                                                .where(c)
                                                .fetch()
-                                               .intoGroups(t.Id, dao.mapper());
+                                               .intoGroups(t.Id, tstShardingDao.mapper());
 
         testcaseNotice("2 fields to 2D array");
         Object[][] arrs = ctx.select(t.Id, t.LoginInfo)
@@ -174,8 +179,8 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12122")
     public void test2InsertPojo() {
-        DSLContext ctx = dao.ctx();
-        TstShardingTable t = dao.getTable();
+        DSLContext ctx = tstShardingDao.ctx();
+        TstShardingTable t = tstShardingDao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("Multiple fields (subsets of the same name) to List *Recommended*");
@@ -237,8 +242,8 @@ public class TestJooqMostSelectSample {
         );
 
         //////////////////////// execution ////////////////////////
-        DSLContext ctx = dao.ctx();
-        TstShardingTable t = dao.getTable();
+        DSLContext ctx = tstShardingDao.ctx();
+        TstShardingTable t = tstShardingDao.getTable();
 
         testcaseNotice("from `tst_sharding` where (id >= ? AND id <= ?)"
                 , "from `tst_sharding` where (id >= 1 AND id <= 105)");
@@ -272,7 +277,7 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12124")
     public void test3BindSql() {
-        DSLContext ctx = dao.ctx();
+        DSLContext ctx = tstShardingDao.ctx();
 
         testcaseNotice("Binding by map or jackson pojo to map");
         Map<String, Object> bd1 = new HashMap<>();
@@ -309,7 +314,7 @@ public class TestJooqMostSelectSample {
 
         // Convert by record, Must have fields with the same name
         testcaseNotice("Binding by pojo, Convert by record, Must have fields with the same name");
-        TstShardingRecord rc = dao.newRecord(bd3);
+        TstShardingRecord rc = tstShardingDao.newRecord(bd3);
         rc.from(bd3);
         List<SameName> bv3 = ctx.fetch("""
                                         SELECT id, login_info
@@ -325,7 +330,7 @@ public class TestJooqMostSelectSample {
     @TmsLink("C12125")
     public void test3DynamicSql() {
         // condition and `cond*`
-        TstShardingTable t = dao.getTable();
+        TstShardingTable t = tstShardingDao.getTable();
 
         // by builder, null friendly
         Condition d1 = WingsJooqUtil.condition("1=1");
@@ -355,31 +360,31 @@ public class TestJooqMostSelectSample {
         SameName bd1 = new SameName();
         bd1.setId(105L);
         bd1.setLoginInfo("LOGIN_INFO-05");
-        TstShardingRecord rc1 = dao.newRecord(bd1);
+        TstShardingRecord rc1 = tstShardingDao.newRecord(bd1);
 
         // where (`id` = ? and `login_info` = ?)
         // (`id` = 105 and `login_info` = 'LOGIN_INFO-05')
         testcaseNotice("by Record and condChain `AND`");
         Condition cd1 = WingsJooqUtil.condChain(AND, rc1);
-        List<TstSharding> rs1 = dao.fetch(dao.getTable(), cd1);
+        List<TstSharding> rs1 = tstShardingDao.fetch(tstShardingDao.getTable(), cd1);
 
         //
         SameName bd2 = new SameName();
         bd2.setId(105L);
         bd2.setLoginInfo("LOGIN_INFO-06");
-        TstShardingRecord rc2 = dao.newRecord(bd2);
+        TstShardingRecord rc2 = tstShardingDao.newRecord(bd2);
         // where (`id` = ? or `login_info` = ?)
         // where (`id` = 105 or `login_info` = 'LOGIN_INFO-06')
         testcaseNotice("by Record and condChain `OR`");
         Condition cd2 = WingsJooqUtil.condChain(OR, rc2);
-        List<TstSharding> rs2 = dao.fetch(dao.getTable(), cd2);
+        List<TstSharding> rs2 = tstShardingDao.fetch(tstShardingDao.getTable(), cd2);
 
         // only id
         // where `id` = ?
         // where `id` = 105
         testcaseNotice("by Record and condChain single field");
         List<Condition> cds = WingsJooqUtil.condField(rc2, t.Id);
-        List<TstSharding> rs3 = dao.fetch(t, DSL.condition(OR, cds));
+        List<TstSharding> rs3 = tstShardingDao.fetch(t, DSL.condition(OR, cds));
 
         //
         testcaseNotice("by string-value map");
@@ -390,13 +395,13 @@ public class TestJooqMostSelectSample {
 
         // from `tst_sharding` where (id = ? and login_info = ?)
         Condition cd4 = WingsJooqUtil.condChain(map);
-        List<TstSharding> rc4 = dao.fetch(t, cd4);
+        List<TstSharding> rc4 = tstShardingDao.fetch(t, cd4);
 
         // from `tst_sharding` as `y8` where (`y8`.`login_info` = ? and `y8`.`id` = ?)
         testcaseNotice("by string-value map, and alias");
-        TstShardingTable a = dao.getAlias();
+        TstShardingTable a = tstShardingDao.getAlias();
         Condition cd5 = WingsJooqUtil.condChain(map, true, a);
-        List<TstSharding> rc5 = dao.fetch(a, cd5);
+        List<TstSharding> rc5 = tstShardingDao.fetch(a, cd5);
 
         // use dao.update() to update
 
@@ -437,10 +442,10 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12127")
     public void test5PaginateJooq() {
-        DSLContext dsl = dao.ctx();
-        TstShardingTable t = dao.getTable();
-        TstShardingTable t1 = dao.getAlias();
-        TstShardingTable t2 = dao.getAlias("t2");
+        DSLContext dsl = tstShardingDao.ctx();
+        TstShardingTable t = tstShardingDao.getTable();
+        TstShardingTable t1 = tstShardingDao.getAlias();
+        TstShardingTable t2 = tstShardingDao.getAlias("t2");
 
         //
         testcaseNotice("use helperJooq, normal",
@@ -449,7 +454,7 @@ public class TestJooqMostSelectSample {
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, Field<?>> order = new HashMap<>();
         order.put("d", t1.Id);
-        PageResult<TstSharding> pr1 = PageJooqHelper.use(dao, page)
+        PageResult<TstSharding> pr1 = PageJooqHelper.use(tstShardingDao, page)
                                                     .count()
                                                     .from(t1)
                                                     .where(t1.Id.ge(1L))
@@ -457,7 +462,7 @@ public class TestJooqMostSelectSample {
                                                     .fetch(t1.Id, t1.CommitId)
                                                     .into(TstSharding.class);
 
-        PageResult<TstSharding> pr2 = PageJooqHelper.use(dao.ctx(), page)
+        PageResult<TstSharding> pr2 = PageJooqHelper.use(tstShardingDao.ctx(), page)
                                                     .count()
                                                     .from(t1)
                                                     .where(t1.Id.ge(1L))
@@ -473,7 +478,7 @@ public class TestJooqMostSelectSample {
         testcaseNotice("use helperJooq, simple",
                 "cached total to ignore `select count` in db",
                 "select * from `tst_sharding` limit ?");
-        PageResult<TstSharding> pr3 = PageJooqHelper.use(dao, page, 10)
+        PageResult<TstSharding> pr3 = PageJooqHelper.use(tstShardingDao, page, 10)
                                                     .count()
                                                     .from(t)
                                                     .whereTrue()
@@ -484,14 +489,14 @@ public class TestJooqMostSelectSample {
         testcaseNotice("use helperJooq wrap",
                 "select count(*) as `c` from (select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
-         final var  qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
-        PageResult<TstSharding> pr4 = PageJooqHelper.use(dao, page)
+        final var qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
+        PageResult<TstSharding> pr4 = PageJooqHelper.use(tstShardingDao, page)
                                                     .wrap(qry4, order)
                                                     .fetch()
                                                     .into(TstSharding.class);
 
-         final var  qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
-        PageResult<TstSharding> pr5 = PageJooqHelper.use(dao, page)
+        final var qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
+        PageResult<TstSharding> pr5 = PageJooqHelper.use(tstShardingDao, page)
                                                     .wrap(qry5, order)
                                                     .fetch()
                                                     .into(it -> {
@@ -593,22 +598,22 @@ public class TestJooqMostSelectSample {
     @Test
     @TmsLink("C12129")
     public void test6MapperEnum() {
-        final TstShardingTable t = dao.getTable();
+        final TstShardingTable t = tstShardingDao.getTable();
         DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(JooqConsEnumConverter.of(StandardLanguage.class));
         final Field<StandardLanguage> langField = DSL.field(t.Language.getName(), lang);
-        final List<EnumDto> sn = dao.ctx()
-                                    .select(t.Id, langField)
-                                    .from(t)
-                                    .fetch()
-                                    .into(EnumDto.class);
+        final List<EnumDto> sn = tstShardingDao.ctx()
+                                               .select(t.Id, langField)
+                                               .from(t)
+                                               .fetch()
+                                               .into(EnumDto.class);
         log.info("sn={}", sn);
 
         // Global injected
-        final List<EnumDto> sn2 = dao.ctx()
-                                     .select(t.Id, t.Language)
-                                     .from(t)
-                                     .fetch()
-                                     .into(EnumDto.class);
+        final List<EnumDto> sn2 = tstShardingDao.ctx()
+                                                .select(t.Id, t.Language)
+                                                .from(t)
+                                                .fetch()
+                                                .into(EnumDto.class);
         log.info("sn2={}", sn2);
     }
 
@@ -618,8 +623,8 @@ public class TestJooqMostSelectSample {
         testcaseNotice("by DSL, get function of dialect",
                 "select `id` from `tst_sharding` where (`modify_dt` > date_add(?, interval ? day) and substring(`other_info`, ?, ?) like ?)");
 
-        final TstShardingTable t = dao.getTable();
-        final String sql1 = dao
+        final TstShardingTable t = tstShardingDao.getTable();
+        final String sql1 = tstShardingDao
                 .ctx()
                 .select(t.Id)
                 .from(t)
@@ -635,7 +640,7 @@ public class TestJooqMostSelectSample {
         rw2.add(DSL.row(1L, "1"));
         rw2.add(DSL.row(2L, "2"));
 
-        final String sql2 = dao
+        final String sql2 = tstShardingDao
                 .ctx()
                 .select(t.Id)
                 .from(t)

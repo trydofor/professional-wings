@@ -11,8 +11,6 @@ import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
-import java.util.SortedMap;
-
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_02_TestRecord;
 
 /**
@@ -32,18 +30,17 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_02_
 public class TestWingsSchemaGeneratorSample {
 
     @Setter(onMethod_ = {@Autowired})
-    private TestingDatabaseHelper testingDatabaseHelper;
+    private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private SchemaRevisionManager schemaRevisionManager;
+    private TestingDatabaseHelper testingDatabaseHelper;
 
     @Test
     @TmsLink("C12026")
     public void init060102() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
-                .scan(FlywaveRevisionScanner.REVISION_PATH_MASTER,
-                        WingsRevision.V01_19_0521_01_EnumI18n.classpath());
+        var sqls = FlywaveRevisionScanner.scan(FlywaveRevisionScanner.REVISION_PATH_MASTER,
+                WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), 0);
     }

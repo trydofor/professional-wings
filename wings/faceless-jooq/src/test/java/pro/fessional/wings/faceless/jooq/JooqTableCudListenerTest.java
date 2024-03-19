@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
@@ -79,7 +78,7 @@ public class JooqTableCudListenerTest {
     @TmsLink("C12104")
     public void test0Init() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
+        var sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), -1);
     }

@@ -22,7 +22,6 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,7 +50,7 @@ public class WingsJooqDaoAliasImplTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private TstShardingDao dao;
+    private TstShardingDao tstShardingDao;
 
     private final TstShardingTable tbl = TstShardingTable.TstSharding;
     private final LocalDateTime now = LocalDateTime.now();
@@ -60,7 +59,7 @@ public class WingsJooqDaoAliasImplTest {
     @TmsLink("C12081")
     public void test0DropAndInit() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
+        var sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), -1);
     }
@@ -79,9 +78,9 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(303L, now, now, now, 9L, "batch load 303", "", ZH_CN)
         );
         testcaseNotice("batch load, check log, ignore, 301-303, use `from dual where exists` check, then insert");
-        dao.batchLoad(rds, true);
+        tstShardingDao.batchLoad(rds, true);
         testcaseNotice("batch load, check log, replace, 301-303, use on duplicate key update");
-        dao.batchLoad(rds, false);
+        tstShardingDao.batchLoad(rds, false);
     }
 
     @Test
@@ -93,7 +92,7 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(306L, now, now, now, 9L, "batch load 306", "", ZH_CN)
         );
         testcaseNotice("batch Insert, check log, 304-306, in 2 batch");
-        final var rs = dao.batchInsert(rds, 2);
+        final var rs = tstShardingDao.batchInsert(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
@@ -106,16 +105,16 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(309L, now, now, now, 9L, "batch load 309", "", ZH_CN)
         );
         testcaseNotice("batch Insert, check log, ignore, 307-309, in 2 batch, insert ignore");
-        final var rs1 = dao.batchInsert(rds, 2, true);
+        final var rs1 = tstShardingDao.batchInsert(rds, 2, true);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
         testcaseNotice("batch Insert, check log, replace, 307-309, in 2 batch, replace into", "BUG https://github.com/apache/shardingsphere/issues/8226\n");
-        final var rs2 = dao.batchInsert(rds, 2, false);
+        final var rs2 = tstShardingDao.batchInsert(rds, 2, false);
         assertArrayEquals(new int[]{1, 1, 1}, rs2);
 
         testcaseNotice("batch Merge, check log, on dupkey, 307-309, in 2 batch, duplicate");
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
-        final var rs3 = dao.batchMerge(tbl, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        final var rs3 = tstShardingDao.batchMerge(tbl, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
 
@@ -128,7 +127,7 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(312L, now, now, now, 9L, "batch load 312", "merge", ZH_CN)
         );
         testcaseNotice("batch Insert, check log, ignore, 307-309, in 2 batch");
-        final var rs = dao.batchStore(rds, 2);
+        final var rs = tstShardingDao.batchStore(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
@@ -141,10 +140,10 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(311L, now, now, now, 9L, "batch load 311", "update", ZH_CN)
         );
         testcaseNotice("batch Update, check log, 307-309, in 2 batch");
-        final var rs1 = dao.batchUpdate(rds, 2);
+        final var rs1 = tstShardingDao.batchUpdate(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        final var rs2 = dao.batchUpdate(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        final var rs2 = tstShardingDao.batchUpdate(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs2);
     }
 
@@ -153,7 +152,7 @@ public class WingsJooqDaoAliasImplTest {
     public void test6SingleMergeSeeLog() {
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         TstSharding pojo = new TstSharding(312L, now, now, now, 9L, "batch load 312", "update-bymerge", ZH_CN);
-        final var rs = dao.mergeInto(tbl, pojo, tbl.LoginInfo, tbl.OtherInfo);
+        final var rs = tstShardingDao.mergeInto(tbl, pojo, tbl.LoginInfo, tbl.OtherInfo);
         assertEquals(2, rs);
     }
 
@@ -166,17 +165,17 @@ public class WingsJooqDaoAliasImplTest {
                 new TstShardingRecord(311L, now, now, now, 9L, "batch 311-merge", "update-merge", ZH_CN)
         );
         testcaseNotice("313 insert, 310,311 update");
-        final var rs = dao.batchMerge(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        final var rs = tstShardingDao.batchMerge(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
     @Test
     @TmsLink("C12089")
     public void test8LogicDeleteSeeLog() {
-        dao.fetchById(1L);
-        dao.fetchOneById(1L);
-        dao.count();
-        final TstShardingTable tbl = dao.getTable();
-        dao.count(tbl, tbl.getOnlyLive());
+        tstShardingDao.fetchById(1L);
+        tstShardingDao.fetchOneById(1L);
+        tstShardingDao.count();
+        final TstShardingTable tbl = tstShardingDao.getTable();
+        tstShardingDao.count(tbl, tbl.getOnlyLive());
     }
 }
