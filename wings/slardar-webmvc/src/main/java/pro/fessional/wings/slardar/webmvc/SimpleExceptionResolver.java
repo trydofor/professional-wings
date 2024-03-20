@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.webmvc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author trydofor
@@ -14,7 +15,7 @@ public class SimpleExceptionResolver<T extends Exception> extends WingsException
     protected final SimpleResponse defaultResponse;
 
     @Override
-    protected SimpleResponse resolve(T ce) {
+    protected SimpleResponse resolve(@NotNull T ce) {
         return defaultResponse;
     }
 }
