@@ -25,7 +25,6 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_01_TestSchema;
@@ -60,7 +59,7 @@ public class JooqShardingTest {
     @TmsLink("C12135")
     public void test0CleanTables() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
+        var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
     }
 

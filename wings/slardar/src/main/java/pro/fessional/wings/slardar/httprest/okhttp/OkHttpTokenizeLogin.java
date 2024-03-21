@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 
+import java.util.function.Consumer;
+
 /**
  * Traditional Post-Form Login
  *
@@ -66,6 +68,7 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
     private String headerUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36";
 
     private transient String token;
+    private transient Consumer<String> initListener;
 
     @Override
     public boolean needToken(@NotNull Request request) {
@@ -104,11 +107,20 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
 
         if (cookieAuto) return true;
 
-        final String tkn = parseResponse(res);
-        if (tkn != null) {
-            token = tkn;
+        final String newTkn = parseResponse(res);
+        if (newTkn != null) {
+            token = newTkn;
+            if (initListener != null) {
+                try {
+                    initListener.accept(newTkn);
+                }
+                catch (Exception e) {
+                    log.warn("failed to listen login init", e);
+                }
+            }
+            return true;
         }
-        return tkn != null;
+        return false;
     }
 
     @Contract("_->param1")

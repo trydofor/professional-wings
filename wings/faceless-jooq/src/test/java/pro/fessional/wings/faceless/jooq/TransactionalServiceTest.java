@@ -15,6 +15,7 @@ import pro.fessional.wings.faceless.app.service.TestTransactionalClauseService;
 import pro.fessional.wings.faceless.app.service.TestTransactionalManageService;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -42,10 +43,14 @@ public class TransactionalServiceTest {
     @Setter(onMethod_ = {@Autowired})
     protected LightIdBufferedProvider lightIdBufferedProvider;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected TestingDatabaseHelper testingDatabaseHelper;
+
     @Test
     @TmsLink("C12108")
     public void test0Init() {
-        final var sqls = FlywaveRevisionScanner.scanMaster();
+        testingDatabaseHelper.cleanTable();
+        var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(V90_22_0601_01_TestSchema.revision(), 0);
     }
@@ -61,7 +66,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
-            log.info("insert failure", e);
+            log.info("should insert failure", e);
         }
         final long ild = id.get();
         final long nxt = testTransactionalClauseService.getNextSequence();
@@ -76,7 +81,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
-            log.info("update failure", e);
+            log.info("should update failure", e);
         }
 
         // rollback
@@ -89,7 +94,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
-            log.info("delete failure", e);
+            log.info("should delete failure", e);
         }
 
         // rollback
@@ -120,7 +125,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
-            log.info("insert failure", e);
+            log.info("should insert failure", e);
         }
         final long ild = id.get();
         final long nxt = testTransactionalClauseService.getNextSequence();
@@ -135,7 +140,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
-            log.info("update failure", e);
+            log.info("should update failure", e);
         }
 
         final Integer uc = testTransactionalClauseService.selectInt(id.get());
@@ -147,7 +152,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
-            log.info("delete failure", e);
+            log.info("should delete failure", e);
         }
 
         final Integer dc = testTransactionalClauseService.selectInt(id.get());
@@ -183,7 +188,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in create");
         }
         catch (Exception e) {
-            log.info("insert failure", e);
+            log.info("should insert failure", e);
         }
         final long ild = id.get();
         final long nxt = testTransactionalClauseService.getNextSequence();
@@ -199,7 +204,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in update");
         }
         catch (Exception e) {
-            log.info("update failure", e);
+            log.info("should update failure", e);
         }
         // rollback
         final Integer uc = testTransactionalClauseService.selectInt(id.get());
@@ -211,7 +216,7 @@ public class TransactionalServiceTest {
             Assertions.fail("should exception in delete");
         }
         catch (Exception e) {
-            log.info("delete failure", e);
+            log.info("should delete failure", e);
         }
         // rollback
         final Integer dc = testTransactionalClauseService.selectInt(id.get());

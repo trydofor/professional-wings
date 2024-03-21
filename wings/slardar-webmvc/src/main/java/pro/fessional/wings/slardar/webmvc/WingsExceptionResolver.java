@@ -2,11 +2,15 @@ package pro.fessional.wings.slardar.webmvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 
 import java.lang.reflect.ParameterizedType;
@@ -17,8 +21,11 @@ import java.lang.reflect.Type;
  * @since 2021-03-25
  */
 @Slf4j
-public abstract class WingsExceptionResolver<T extends Exception> extends AbstractHandlerExceptionResolver {
+@Getter
+@Setter
+public abstract class WingsExceptionResolver<T extends Exception> implements HandlerExceptionResolver, Ordered {
 
+    private int order = Ordered.LOWEST_PRECEDENCE;
     protected final Class<?> acceptClass;
 
     protected WingsExceptionResolver() {
@@ -32,14 +39,15 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
 
     @Override
     @SuppressWarnings("unchecked")
-    protected ModelAndView doResolveException(
+    public ModelAndView resolveException(
             @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response, Object handler,
+            @NotNull HttpServletResponse response,  @Nullable Object handler,
             @NotNull Exception ex) {
 
         if (acceptClass.isInstance(ex)) {
             final SimpleResponse body = resolve((T) ex);
             if (body == null) return null;
+
             ModelAndView mav = new ModelAndView();
             PlainTextView pv = new PlainTextView(body.getContentType(), body.getResponseBody());
             mav.setStatus(HttpStatus.valueOf(body.getHttpStatus()));
@@ -56,5 +64,6 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
      * @param ex current exception
      * @return null if not support
      */
-    protected abstract SimpleResponse resolve(T ex);
+    @Nullable
+    protected abstract SimpleResponse resolve(@NotNull T ex);
 }

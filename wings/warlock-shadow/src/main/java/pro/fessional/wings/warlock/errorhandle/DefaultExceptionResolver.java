@@ -1,8 +1,13 @@
 package pro.fessional.wings.warlock.errorhandle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,10 +37,14 @@ import java.util.Locale;
  * @since 2021-03-25
  */
 @Slf4j
+@Getter
 public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception> {
 
     protected final MessageSource messageSource;
     protected final ObjectMapper objectMapper;
+
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    protected Handler handler = null;
 
     public DefaultExceptionResolver(SimpleResponse defaultResponse, MessageSource messageSource, ObjectMapper objectMapper) {
         super(defaultResponse);
@@ -44,36 +53,49 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     }
 
     @Override
-    protected SimpleResponse resolve(Exception exception) {
+    protected SimpleResponse resolve(@NotNull Exception exception) {
+        SimpleResponse response = null;
         try {
-            Throwable tmp = exception;
-            for (; tmp != null; tmp = tmp.getCause()) {
-                if (tmp instanceof HttpStatusException ex) {
-                    return handle(ex);
+            Throwable cause = exception;
+            for (; response == null && cause != null; cause = cause.getCause()) {
+                if (cause instanceof HttpStatusException ex) {
+                    response = handle(ex);
                 }
-                else if (tmp instanceof TerminalContextException ex) {
-                    return handleUnauthorized(ex);
+                else if (cause instanceof TerminalContextException ex) {
+                    response = handleUnauthorized(ex);
                 }
-                else if (tmp instanceof CodeException ex) {
-                    return handle(ex);
+                else if (cause instanceof CodeException ex) {
+                    response = handle(ex);
                 }
-                else if (tmp instanceof DataResult<?> ex) {
-                    return handle(ex);
+                else if (cause instanceof DataResult<?> ex) {
+                    response = handle(ex);
                 }
-                else if (tmp instanceof AuthenticationException ex) {
-                    return handleUnauthorized(ex);
+                else if (cause instanceof AuthenticationException ex) {
+                    response = handleUnauthorized(ex);
                 }
-                else if (tmp instanceof AccessDeniedException ex) {
-                    return handleAccessDenied(ex);
+                else if (cause instanceof AccessDeniedException ex) {
+                    response = handleAccessDenied(ex);
                 }
             }
+            // handler
+            if (handler != null) {
+                // use original exception if response is null, otherwise the cause
+                response = handler.handle(response == null ? exception : cause, response);
+            }
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             DummyBlock.ignore(e);
         }
 
-        log.error("unhandled exception, response default", exception);
-        return defaultResponse;
+        if (response == null) {
+            log.error("unhandled exception, response default", exception);
+            response = defaultResponse;
+        }
+        else {
+            log.debug("handled exception, response simple", exception);
+        }
+
+        return response;
     }
 
     @SneakyThrows
@@ -131,5 +153,18 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     protected String resolveMessage(String code, Object... args) {
         Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
         return messageSource.getMessage(code, args, locale);
+    }
+
+    /**
+     * handle response and exception after resolving cause
+     */
+    public interface Handler {
+        /**
+         * use original exception if response is null, otherwise the cause
+         */
+        @Nullable
+        default SimpleResponse handle(@NotNull Throwable cause, @Nullable SimpleResponse response) {
+            return response;
+        }
     }
 }

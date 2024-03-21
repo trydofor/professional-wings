@@ -23,7 +23,6 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
@@ -60,7 +59,7 @@ public class JooqDeleteListenerTest {
     @TmsLink("C12095")
     public void test0CleanTables() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
+        var sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(V90_22_0601_02_TestRecord.revision(), -1);
     }

@@ -25,6 +25,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqConfProp;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 import java.time.LocalDateTime;
@@ -64,7 +65,10 @@ public class TestJooqDslAndDaoSample {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private TstShardingDao dao;
+    private TestingDatabaseHelper testingDatabaseHelper;
+
+    @Setter(onMethod_ = {@Autowired})
+    private TstShardingDao tstShardingDao;
 
     @Setter(onMethod_ = {@Autowired})
     private FacelessJooqConfProp prop;
@@ -72,7 +76,8 @@ public class TestJooqDslAndDaoSample {
     @Test
     @TmsLink("C12112")
     public void test0Init() {
-        final var sqls = FlywaveRevisionScanner.scanMaster();
+        testingDatabaseHelper.cleanTable();
+        var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(V90_22_0601_01_TestSchema.revision(), 0);
     }
@@ -91,35 +96,35 @@ public class TestJooqDslAndDaoSample {
         al.start();
 
         testcaseNotice("Use alias");
-        final var a = dao.getAlias();
+        final var a = tstShardingDao.getAlias();
         final var c = a.Id.gt(1L).and(a.CommitId.lt(200L));
 
 //        testcaseNotice("select count(*) from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
-        final var i = dao.count(a, c);
+        final var i = tstShardingDao.count(a, c);
 //        testcaseNotice("select * from `tst_sharding` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
-        final var ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
+        final var ft1 = tstShardingDao.fetch(a, 0, 2, c, a.Id.desc());
         log.info("============count {}, ft2'size={}", i, ft1.size());
 //        testcaseNotice("select `id`, `commit_id` from `tst_sharding` where (`id` > ? and `commit_id` < ?) order by `id` desc limit ? offset ?");
-        final var ft2 = dao.fetch(0, 2, (t, w) -> w
+        final var ft2 = tstShardingDao.fetch(0, 2, (t, w) -> w
                 .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
                 .query(t.Id, t.CommitId, t.Id.desc()));
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
         testcaseNotice("Use table");
-        final var t = dao.getTable();
+        final var t = tstShardingDao.getTable();
         final var setter = new LinkedHashMap<>();
         setter.put(t.CommitId, t.Id.add(1L));
         setter.put(t.LoginInfo, "info");
 //        testcaseNotice("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
-        final var u1 = dao.update(t, setter, t.Id.eq(2L));
+        final var u1 = tstShardingDao.update(t, setter, t.Id.eq(2L));
         log.info("============update {}", u1);
 
         final var po = new TstSharding();
         po.setCommitId(2L);
         po.setLoginInfo("info");
 //        testcaseNotice("update `tst_sharding` set `commit_id` = ?, `login_info` = ? where `id` = ?");
-        final var u2 = dao.update(t, po, t.Id.eq(2L));
+        final var u2 = tstShardingDao.update(t, po, t.Id.eq(2L));
         log.info("============update {}", u2);
 
         al.stop();
@@ -136,7 +141,7 @@ public class TestJooqDslAndDaoSample {
 //        final var nullOrder: OrderField<Long>? = null
         final var emptyOrder = new OrderField[]{};
         final var t = TstShardingTable.TstSharding;
-        DSLContext dsl = dao.ctx();
+        DSLContext dsl = tstShardingDao.ctx();
         final var sql = dsl.select(t.Id, nullField) // null safe
                            .from(t)
                            .where(nullCond)  // null safe
@@ -217,9 +222,9 @@ public class TestJooqDslAndDaoSample {
     @TmsLink("C12116")
     public void test4DeleteDt() {
         testcaseNotice("Logic delete");
-        final var c1 = dao.count();
+        final var c1 = tstShardingDao.count();
         log.info("count1={}", c1);
-        final var c2 = dao.count(TstShardingTable::getOnlyDied);
+        final var c2 = tstShardingDao.count(TstShardingTable::getOnlyDied);
         log.info("count2={}", c2);
     }
 
@@ -227,8 +232,8 @@ public class TestJooqDslAndDaoSample {
     @TmsLink("C12117")
     public void test4Shadow() {
         testcaseNotice("Shadow table");
-        TstShardingTable upd = dao.newTable("", "_postfix");
-        final var c1 = dao.count(upd, null);
+        TstShardingTable upd = tstShardingDao.newTable("", "_postfix");
+        final var c1 = tstShardingDao.count(upd, null);
         log.info("count1={}", c1);
     }
 
@@ -238,7 +243,7 @@ public class TestJooqDslAndDaoSample {
         testcaseNotice("Diff Dao");
         TstSharding po = new TstSharding();
         final long id = 20221024L;
-        final TstShardingTable t = dao.getTable();
+        final TstShardingTable t = tstShardingDao.getTable();
         final LocalDateTime now = LocalDateTime.of(2022, 10, 24, 12, 34, 56);
 
         po.setId(id);
@@ -250,7 +255,7 @@ public class TestJooqDslAndDaoSample {
         po.setOtherInfo("other by diff insert");
         po.setLanguage(ZH_CN);
 
-        final JournalDiff d0 = dao.diffInsert(po);
+        final JournalDiff d0 = tstShardingDao.diffInsert(po);
         log.warn("diffInsert0={}", d0);
         Assertions.assertNotNull(d0);
         Assertions.assertEquals(1, d0.getCount());
@@ -261,7 +266,7 @@ public class TestJooqDslAndDaoSample {
         Assertions.assertEquals(Arrays.asList(id, now, DATE_TIME, DATE_TIME, id, "login by diff insert", "other by diff insert", ZH_CN), d0.getValue2());
 
         po.setId(id + 1);
-        final JournalDiff d1 = dao.diffInsert(po);
+        final JournalDiff d1 = tstShardingDao.diffInsert(po);
         log.warn("diffInsert1={}", d1);
         Assertions.assertNotNull(d1);
         Assertions.assertEquals(Arrays.asList(id + 1, now, DATE_TIME, DATE_TIME, id, "login by diff insert", "other by diff insert", ZH_CN), d1.getValue2());
@@ -270,7 +275,7 @@ public class TestJooqDslAndDaoSample {
         setter.put(t.CommitId, t.CommitId.add(1));
         setter.put(t.LoginInfo, "login by diff update");
 
-        final JournalDiff d2 = dao.diffUpdate(t, setter, t.Id.ge(id));
+        final JournalDiff d2 = tstShardingDao.diffUpdate(t, setter, t.Id.ge(id));
         log.warn("diffUpdate2={}", d2);
         Assertions.assertNotNull(d2);
         Assertions.assertEquals(2, d2.getCount());
@@ -280,7 +285,7 @@ public class TestJooqDslAndDaoSample {
         Assertions.assertEquals(Arrays.asList(id + 1, "login by diff update", id + 1, "login by diff update"), d2.getValue2());
 
 
-        final JournalDiff d3 = dao.diffDelete(t, t.Id.ge(id));
+        final JournalDiff d3 = tstShardingDao.diffDelete(t, t.Id.ge(id));
         log.warn("diffDelete3={}", d3);
         JournalDiffHelper.tidy(d3, t.Language); // withDefault
         Assertions.assertNotNull(d3);
@@ -300,8 +305,8 @@ public class TestJooqDslAndDaoSample {
         testcaseNotice("Diff Dsl");
         TstSharding po = new TstSharding();
         final long id = 20221024L;
-        final TstShardingTable t = dao.getTable();
-        final DSLContext dsl = dao.ctx();
+        final TstShardingTable t = tstShardingDao.getTable();
+        final DSLContext dsl = tstShardingDao.ctx();
         final LocalDateTime now = LocalDateTime.of(2022, 10, 24, 12, 34, 56);
 
         po.setId(id);
@@ -314,7 +319,7 @@ public class TestJooqDslAndDaoSample {
         po.setLanguage(ZH_CN);
 
         final SelectConditionStep<TstShardingRecord> query = dsl.selectFrom(t).where(t.Id.eq(id));
-        final JournalDiff d0 = JournalDiffHelper.diffInsert(t, query, () -> dao.insert(po));
+        final JournalDiff d0 = JournalDiffHelper.diffInsert(t, query, () -> tstShardingDao.insert(po));
         log.warn("diffInsert0={}", d0);
         Assertions.assertNotNull(d0);
         Assertions.assertEquals(1, d0.getCount());

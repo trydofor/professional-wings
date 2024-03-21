@@ -14,8 +14,6 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.testing.database.TestingDataSource;
 import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper;
 
-import java.util.SortedMap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_01_TestSchema;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V90_22_0601_02_TestRecord;
@@ -45,7 +43,7 @@ public class FlywaveShardingTest {
     @TmsLink("C12131")
     public void test0CleanTables() {
         testingDatabaseHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
+        var sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
     }
 
