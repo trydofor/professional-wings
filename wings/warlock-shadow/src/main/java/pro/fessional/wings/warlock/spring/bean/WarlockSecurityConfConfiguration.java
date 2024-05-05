@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.DispatcherServlet;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
@@ -303,6 +305,15 @@ public class WarlockSecurityConfConfiguration {
         log.info("WarlockShadow spring-runs securityCheckUrlRunner");
         return new ApplicationRunnerOrdered(WingsOrdered.Lv1Config, ignored -> {
             log.info("WarlockShadow check security url config");
+
+            String servletName = "dispatcherServlet";
+            for (ServletRegistrationBean<?> srb : ctx.getBeanProvider(ServletRegistrationBean.class)) {
+                if (srb.getServlet() instanceof DispatcherServlet) {
+                    servletName = srb.getServletName();
+                    break;
+                }
+            }
+
             Map<String, String> matchers = new LinkedHashMap<>();
             Map<String, FakeHttpServletRequest> requests = new LinkedHashMap<>();
 
@@ -310,19 +321,19 @@ public class WarlockSecurityConfConfiguration {
                 String ptn = en.getValue();
                 if (!StringUtils.hasText(ptn)) continue;
                 matchers.put("WebIgnore:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
             }
             for (var en : securityProp.getPermitAll().entrySet()) {
                 String ptn = en.getValue();
                 if (!StringUtils.hasText(ptn)) continue;
                 matchers.put("PermitAll:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
             }
             for (var en : securityProp.getAuthenticated().entrySet()) {
                 String ptn = en.getValue();
                 if (!StringUtils.hasText(ptn)) continue;
                 matchers.put("Authenticated:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
             }
             for (var en : securityProp.getAuthority().entrySet()) {
                 int c = 0;
@@ -330,7 +341,7 @@ public class WarlockSecurityConfConfiguration {
                 for (String ptn : en.getValue()) {
                     if (!StringUtils.hasText(ptn)) continue;
                     matchers.put("Authority:" + k + "[" + (c++) + "]", ptn);
-                    requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn));
+                    requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
                 }
             }
             final AtomicReference<RequestMatcher> opt = new AtomicReference<>();
@@ -345,8 +356,14 @@ public class WarlockSecurityConfConfiguration {
                 matcherHelper.requestMatchers(ptn);
                 RequestMatcher mt = opt.get();
                 for (var er : requests.entrySet()) {
-                    if (mt.matches(er.getValue())) {
-                        log.warn(en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                    try {
+                        if (mt.matches(er.getValue())) {
+                            log.warn(en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                        }
+                    }
+                    catch (RuntimeException e) {
+                        log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                        throw e;
                     }
                 }
             }
@@ -356,26 +373,34 @@ public class WarlockSecurityConfConfiguration {
             // check auth url
             String loginPage = securityProp.getLoginPage();
             if (StringUtils.hasText(loginPage)) {
-                requests.put(loginPage, SecurityConfigHelper.fakeMatcherRequest(loginPage));
+                requests.put(loginPage, SecurityConfigHelper.fakeMatcherRequest(loginPage, servletName));
             }
             String logoutUrl = securityProp.getLogoutUrl();
             if (StringUtils.hasText(logoutUrl)) {
-                requests.put(logoutUrl, SecurityConfigHelper.fakeMatcherRequest(logoutUrl));
+                requests.put(logoutUrl, SecurityConfigHelper.fakeMatcherRequest(logoutUrl, servletName));
             }
             String loginProcUrl = securityProp.getLoginProcUrl();
             if (StringUtils.hasText(loginProcUrl)) {
-                requests.put(loginProcUrl, SecurityConfigHelper.fakeMatcherRequest(loginProcUrl));
+                requests.put(loginProcUrl, SecurityConfigHelper.fakeMatcherRequest(loginProcUrl, servletName));
             }
 
             StringBuilder err = new StringBuilder();
             for (var en : securityProp.getWebIgnore().entrySet()) {
                 String ptn = en.getValue();
                 if (!StringUtils.hasText(ptn)) continue;
+                if (requests.isEmpty()) break;
+
                 matcherHelper.requestMatchers(ptn);
                 RequestMatcher mt = opt.get();
-                for (var e : requests.entrySet()) {
-                    if (mt.matches(e.getValue())) {
-                        err.append("\nWebIgnore:").append(en.getKey()).append(" should exclude ").append(e.getKey());
+                for (var er : requests.entrySet()) {
+                    try {
+                        if (mt.matches(er.getValue())) {
+                            err.append("\nWebIgnore:").append(en.getKey()).append(" should exclude ").append(er.getKey());
+                        }
+                    }
+                    catch (RuntimeException e) {
+                        log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                        throw e;
                     }
                 }
             }
@@ -393,9 +418,15 @@ public class WarlockSecurityConfConfiguration {
                     RequestMatcher mt = opt.get();
                     for (var it = requests.entrySet().iterator(); it.hasNext(); ) {
                         var er = it.next();
-                        if (mt.matches(er.getValue())) {
-                            log.debug("WarlockShadow security url permit all include " + er.getKey());
-                            it.remove();
+                        try {
+                            if (mt.matches(er.getValue())) {
+                                log.debug("WarlockShadow security url permit all include " + er.getKey());
+                                it.remove();
+                            }
+                        }
+                        catch (RuntimeException e) {
+                            log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                            throw e;
                         }
                     }
                 }

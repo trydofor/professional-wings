@@ -81,6 +81,22 @@ public class SecurityConfigHelper {
         return request;
     }
 
+    /**
+     * fake the HttpServletRequest with servletName to test matcher.
+     * see <a href="https://github.com/trydofor/professional-wings/issues/226">Failed to find servlet xx in the servlet context</a>
+     */
+    @NotNull
+    public static FakeHttpServletRequest fakeMatcherRequest(@NotNull String path, String servletName) {
+        path = encodePathPattern(path);
+        FakeHttpServletRequest request = new FakeHttpServletRequest();
+        request.setPathInfo(path);
+        request.setRequestURI(path);
+        if (servletName != null) {
+            request.getHttpServletMapping().setServletName(servletName);
+        }
+        return request;
+    }
+
     // ////
     @NotNull
     public static CorsConfigurationSource corsPermitAll() {
