@@ -185,6 +185,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12146 WingsEnumConvertersTest: enum converter
 * 12147 WingsRevisionTest: module root and path
 * 12148 JdbcTemplateHelperTest: safe table
+* 12149 FormatSugarTest: format datetime and number
 
 ## 13 Slardar
 
