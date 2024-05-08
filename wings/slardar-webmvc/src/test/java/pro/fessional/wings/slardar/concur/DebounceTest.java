@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.mirana.data.Q;
+import pro.fessional.mirana.time.Sleep;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -63,7 +64,7 @@ class DebounceTest {
         debounce(true, "/test/debounce-body.json?p=p2");
     }
 
-    private void debounce(boolean reuse, String url) throws InterruptedException {
+    private void debounce(boolean reuse, String url) {
 
         final Q<String> q = new Q<>("123");
 
@@ -82,7 +83,7 @@ class DebounceTest {
             assertEquals("debounced", r2.getBody());
         }
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         final ResponseEntity<String> r3 = restTemplate.postForEntity(this.doubleKillHost + url, q, String.class);
         log.info(">>r3>>" + r3.getBody());
         assertEquals(HttpStatus.OK, r3.getStatusCode());

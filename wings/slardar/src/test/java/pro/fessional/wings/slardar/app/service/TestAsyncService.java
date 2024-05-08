@@ -16,19 +16,50 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class TestAsyncService {
 
+    public enum AsyncType {
+        UncaughtException,
+        Return,
+        FailedFuture
+    }
+
+    public static String UserIdUncaughtException = "asyncUserId UncaughtException";
+    public static String UserIdFailedFuture = "asyncUserId FailedFuture";
+
     @Async
-    public CompletableFuture<Long> asyncUserId() {
+    public CompletableFuture<Long> asyncUserId(AsyncType type) {
         final String name = Thread.currentThread().getName();
         final long uid;
-        if (name.startsWith("win-async-")) {
+        if (name.contains("exec-")) {
             final TerminalContext.Context ctx = TerminalContext.get();
             uid = ctx.getUserId();
-            log.info("AsyncService userId={}", uid);
+            log.info("asyncUserId={}", uid);
         }
         else {
-            log.error("bad thread name prefix, should start with 'win-async-'");
+            log.error("bad thread name prefix, asyncUserId should contain 'exec-'");
             uid = DefaultUserId.Null;
         }
-        return CompletableFuture.completedFuture(uid);
+
+        return switch (type) {
+            case UncaughtException -> throw new RuntimeException(UserIdUncaughtException);
+            case Return -> CompletableFuture.completedFuture(uid);
+            case FailedFuture -> CompletableFuture.failedFuture(new RuntimeException(UserIdFailedFuture));
+        };
+    }
+
+    public static String VoidUncaughtException = "asyncVoid UncaughtException";
+
+    @Async
+    public void asyncVoid(AsyncType type) {
+        final String name = Thread.currentThread().getName();
+        if (name.contains("exec-")) {
+            log.info("asyncVoid");
+        }
+        else {
+            log.error("bad thread name prefix, asyncVoid should contain 'exec-'");
+        }
+
+        if (type == AsyncType.UncaughtException) {
+            throw new RuntimeException(VoidUncaughtException);
+        }
     }
 }

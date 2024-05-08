@@ -46,6 +46,9 @@ public class SlardarAsyncConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
+    /**
+     * Executor in the context, regular (@Async) execution (that is @EnableAsync) will use it transparently
+     */
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     @ConditionalWingsEnabled
     public Executor taskExecutor(ThreadPoolTaskExecutorBuilder builder) {
@@ -55,10 +58,14 @@ public class SlardarAsyncConfiguration {
         return TtlExecutors.getTtlExecutor(executor);
     }
 
+    /**
+     * Spring (Callable) MVC requires an AsyncTaskExecutor implementation (named applicationTaskExecutor)
+     */
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     @ConditionalWingsEnabled
     public AsyncTaskExecutor applicationTaskExecutor(ThreadPoolTaskExecutorBuilder builder) {
         final ThreadPoolTaskExecutor executor = builder.build();
+        executor.setThreadNamePrefix("app-" + executor.getThreadNamePrefix());
         executor.initialize();
         final Executor ttlExecutor = TtlExecutors.getTtlExecutor(executor);
         log.info("Slardar spring-bean applicationTaskExecutor via ttlExecutor, prefix=" + executor.getThreadNamePrefix());

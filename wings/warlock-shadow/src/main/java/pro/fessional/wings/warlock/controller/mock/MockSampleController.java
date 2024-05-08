@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.FirstBlood;
@@ -91,9 +92,9 @@ public class MockSampleController {
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockDoubler + "}")
     @ResponseBody
     @DoubleKill(principal = false, expression = "#root.method")
-    public R<Integer> mockDoubler(@RequestParam(value = "sleep", required = false) Integer sleep) throws InterruptedException {
+    public R<Integer> mockDoubler(@RequestParam(value = "sleep", required = false) Integer sleep) {
         if (sleep == null || sleep <= 0) sleep = 30;
-        Thread.sleep(sleep * 1000L);
+        Sleep.ignoreInterrupt(sleep * 1000L);
         return R.okData(sleep);
     }
 

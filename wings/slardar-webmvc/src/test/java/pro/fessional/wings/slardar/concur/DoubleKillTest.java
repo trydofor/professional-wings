@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.app.service.TestDoubleKillService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,14 +44,14 @@ class DoubleKillTest {
 
     @Test
     @TmsLink("C13035")
-    void doubleKillUrl() throws InterruptedException {
+    void doubleKillUrl() {
         final String url = this.doubleKillHost + "/test/double-kill.json";
         new Thread(() -> {
             final ResponseEntity<String> r1 = restTemplate.getForEntity(url, String.class);
             assertEquals(HttpStatus.OK, r1.getStatusCode());
         }).start();
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         final ResponseEntity<String> r2 = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.ACCEPTED, r2.getStatusCode());
         final String ct = r2.getHeaders().getFirst("Content-Type");
@@ -67,14 +68,14 @@ class DoubleKillTest {
 
     @Test
     @TmsLink("C13036")
-    void doubleKillAsync() throws InterruptedException {
+    void doubleKillAsync() {
         final String url = this.doubleKillHost + "/test/double-kill-async.json";
         new Thread(() -> {
             final ResponseEntity<String> r1 = restTemplate.getForEntity(url, String.class);
             assertEquals(HttpStatus.OK, r1.getStatusCode());
         }).start();
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         final ResponseEntity<String> r2 = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.ACCEPTED, r2.getStatusCode());
         final String ct = r2.getHeaders().getFirst("Content-Type");
@@ -91,60 +92,63 @@ class DoubleKillTest {
 
     @Test
     @TmsLink("C13037")
-    void doubleKillArg() throws InterruptedException {
+    void doubleKillArg() {
         new Thread(() -> {
             log.info("before thread call");
             testDoubleKillService.sleepSecond("sleep", 10);
             log.info("after  thread call");
         }).start();
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         try {
             log.info("before main call");
             testDoubleKillService.sleepSecond("sleep", 10);
             log.info("after  main call");
             fail();
-        } catch (DoubleKillException e) {
+        }
+        catch (DoubleKillException e) {
             assertTrue(true);
         }
     }
 
     @Test
     @TmsLink("C13038")
-    void doubleKillStr() throws InterruptedException {
+    void doubleKillStr() {
         new Thread(() -> {
             log.info("before thread call");
             testDoubleKillService.sleepSecondStr("sleep", 10);
             log.info("after  thread call");
         }).start();
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         try {
             log.info("before main call");
             testDoubleKillService.sleepSecondStr("sleep", 10);
             log.info("after  main call");
             fail();
-        } catch (DoubleKillException e) {
+        }
+        catch (DoubleKillException e) {
             assertTrue(true);
         }
     }
 
     @Test
     @TmsLink("C13039")
-    void doubleKillExp() throws InterruptedException {
+    void doubleKillExp() {
         new Thread(() -> {
             log.info("before thread call");
             testDoubleKillService.sleepSecondExp("sleep", 10);
             log.info("after  thread call");
         }).start();
 
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         try {
             log.info("before main call");
             testDoubleKillService.sleepSecondExp("sleep", 10);
             log.info("after  main call");
             fail();
-        } catch (DoubleKillException e) {
+        }
+        catch (DoubleKillException e) {
             assertTrue(true);
         }
     }
