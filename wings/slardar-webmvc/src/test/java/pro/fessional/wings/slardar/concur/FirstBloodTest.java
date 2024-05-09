@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,13 +53,13 @@ class FirstBloodTest {
 
     @Test
     @TmsLink("C13041")
-    public void testFirstBlood30() throws InterruptedException {
+    public void testFirstBlood30() {
         new Thread(() -> {
             try (Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false)) {
                 assertEquals(HttpStatus.OK.value(), r1.code());
             }
         }).start();
-        Thread.sleep(1000);
+        Sleep.ignoreInterrupt(1000);
         checkFirstBlood(firstBloodUrl30);
     }
 

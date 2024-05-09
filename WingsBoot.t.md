@@ -185,6 +185,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12146 WingsEnumConvertersTest: enum converter
 * 12147 WingsRevisionTest: module root and path
 * 12148 JdbcTemplateHelperTest: safe table
+* 12149 FormatSugarTest: format datetime and number
 
 ## 13 Slardar
 
@@ -306,7 +307,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13116 WingsCookieTest: encrypt cookie by forward
 * 13117 AttributeHolderTest: Attribute expiry
 * 13118 EventPublishHelperTest: async global AttributeRidEvent
-* 13119 WingsCacheInterceptorTest: evict mulitple cache keys
+* 13119 WingsCacheInterceptorTest: evict multiple cache keys
+* 13120 AsyncControllerTest: Future request mapping with async service
 
 ## 14 Warlock
 

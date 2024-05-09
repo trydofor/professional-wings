@@ -62,13 +62,10 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
                 build.build(builder, request);
             }
 
-            if (request.getAttribute(AttrTerminalLogin) == Boolean.TRUE) {
-                log.warn("should NOT loginTerminal more than once");
-            }
-            else {
-                request.setAttribute(AttrTerminalLogin, Boolean.TRUE);
-            }
-
+            // in CompletableFuture<String> mapping, request set twice
+            // (1) normal requst
+            // (2) WebAsyncManager: "ASYNC" dispatch
+            request.setAttribute(AttrTerminalLogin, Boolean.TRUE);
             final Context ctx = builder.build();
             TerminalContext.login(ctx);
             return ctx;

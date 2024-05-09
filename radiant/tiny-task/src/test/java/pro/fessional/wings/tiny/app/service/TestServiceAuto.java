@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 
 /**
@@ -12,27 +13,27 @@ import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 public class TestServiceAuto {
 
     @TinyTasker(cron = "0 * * * * *")
-    public String strStr(String msg) throws Exception {
+    public String strStr(String msg) {
         log.info("TestServiceAuto.strStr {}", msg);
-        Thread.sleep(1500);
+        Sleep.ignoreInterrupt(1500);
         return msg;
     }
 
     @TinyTasker(rate = 60)// use prop value, 30
-    public void strVoid(String msg) throws Exception {
+    public void strVoid(String msg) {
         log.info("TestServiceAuto.strVoid {}", msg);
-        Thread.sleep(1500);
+        Sleep.ignoreInterrupt(1500);
     }
 
     @TinyTasker(value = "voidStrAuto", idle = 60) // use annotation value
-    public void voidStr(String msg) throws Exception {
+    public void voidStr(String msg) {
         log.info("TestServiceAuto.voidStr {}", msg);
-        Thread.sleep(1500);
+        Sleep.ignoreInterrupt(1500);
     }
 
     @TinyTasker(value = "voidVoidAuto", cron = "0 * * * * *") // use prop value, enabled=false
-    public void voidVoid() throws Exception {
+    public void voidVoid() {
         log.info("TestServiceAuto.voidVoid");
-        Thread.sleep(1500);
+        Sleep.ignoreInterrupt(1500);
     }
 }

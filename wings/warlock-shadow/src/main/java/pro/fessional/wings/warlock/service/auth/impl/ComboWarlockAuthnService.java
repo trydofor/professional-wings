@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
@@ -127,13 +128,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             lastTiming[0] = cost;
         }
 
-        if (slp <= 10) return;
-
-        try {
-            Thread.sleep(slp);
-        }
-        catch (InterruptedException e) {
-            // ignore
+        if (slp > 10) {
+            Sleep.ignoreInterrupt(slp);
         }
     }
 

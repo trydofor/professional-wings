@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.app.service.TestAsyncService;
+import pro.fessional.wings.slardar.app.service.TestAsyncService.AsyncType;
 import pro.fessional.wings.slardar.context.TerminalContext;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,25 +45,53 @@ public class TaskSchedulerTest {
         builder.user(userId);
         TerminalContext.login(builder.build());
 
-        CompletableFuture<Long> uid = testAsyncService.asyncUserId();
+        CompletableFuture<Long> uid = testAsyncService.asyncUserId(AsyncType.Return);
         Assertions.assertEquals(userId, uid.get());
 
         final AtomicInteger cnt1 = new AtomicInteger(0);
         final AtomicInteger eqs1 = new AtomicInteger(0);
-        Thread.sleep(500);
+        Sleep.ignoreInterrupt(500);
         // If a non-TtlThreadPoolTaskScheduler is set up, but a ttlExecutor is used.
         // then only one thread will succeed in TTL, others will fail
         final ScheduledFuture<?> task1 = threadPoolTaskScheduler.scheduleWithFixedDelay(() -> delayUid("TaskSchedulerTest Default", userId, cnt1, eqs1), Duration.ofMillis(1_000));
-        Thread.sleep(5_000);
+        Sleep.ignoreInterrupt(5_000);
         task1.cancel(false);
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");
         cnt1.set(0);
         eqs1.set(0);
-        Thread.sleep(500);
+        Sleep.ignoreInterrupt(500);
         final ScheduledFuture<?> task2 = threadPoolTaskScheduler.scheduleWithFixedDelay(TtlRunnable.get(() -> delayUid("TaskSchedulerTest TtlRun", userId, cnt1, eqs1), false, true), Duration.ofMillis(1_000));
-        Thread.sleep(5_000);
+        Sleep.ignoreInterrupt(5_000);
         task2.cancel(false);
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");
+
+        // exception
+        failedFuture(testAsyncService.asyncUserId(AsyncType.FailedFuture), TestAsyncService.UserIdFailedFuture);
+        failedFuture(testAsyncService.asyncUserId(AsyncType.UncaughtException), TestAsyncService.UserIdUncaughtException);
+
+        /*
+         * == by default ==
+         * SimpleAsyncUncaughtExceptionHandler : Unexpected exception occurred invoking async method:
+         * public void pro.fessional.wings.slardar.app.service.TestAsyncService.asyncVoid(pro.fessional.wings.slardar.app.service.TestAsyncService$AsyncType)
+         * java.lang.RuntimeException: asyncVoid UncaughtException
+         */
+        testAsyncService.asyncVoid(AsyncType.UncaughtException);
+    }
+
+    private void failedFuture(CompletableFuture<?> future, String msg) {
+        try {
+            future.get();
+            Assertions.fail();
+        }
+        catch (Exception e) {
+            boolean got = false;
+            if (e instanceof ExecutionException ee) {
+                if (ee.getCause() instanceof RuntimeException re) {
+                    got = msg.equals(re.getMessage());
+                }
+            }
+            Assertions.assertTrue(got);
+        }
     }
 
     private void delayUid(String caller, long userId, AtomicInteger cnt, AtomicInteger eqs) {

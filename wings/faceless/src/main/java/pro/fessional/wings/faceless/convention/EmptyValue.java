@@ -14,9 +14,6 @@ import java.time.LocalTime;
 @SuppressWarnings("CanBeFinal")
 public class EmptyValue {
 
-    private EmptyValue() {
-    }
-
     public static final int INT = 0;
     public static final long BIGINT = 0L;
     public static final double DOUBLE = 0.0D;

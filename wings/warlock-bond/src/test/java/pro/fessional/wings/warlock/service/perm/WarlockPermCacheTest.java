@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 
 /**
@@ -28,7 +29,7 @@ class WarlockPermCacheTest {
 
     @Test
     @TmsLink("C14064")
-    void cleanCache() throws InterruptedException {
+    void cleanCache() {
         TestingLoggerAssert al = TestingLoggerAssert.install();
         al.rule("loadPermAll", event -> event.getFormattedMessage().contains("loadPermAll size="));
         al.rule("loadRoleAll", event -> event.getFormattedMessage().contains("loadRoleAll size="));
@@ -46,7 +47,7 @@ class WarlockPermCacheTest {
         log.warn("Modify Perm=1, trigger jooq CUD event");
         warlockPermServer.modify(1, "test cleanCache");
         log.info("Sleep 2s, Wait async event");
-        Thread.sleep(2000);
+        Sleep.ignoreInterrupt(2000);
 
         log.warn("No cache, select Perm from Db");
         warlockPermServer.loadPermAll();

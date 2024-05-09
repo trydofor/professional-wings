@@ -1,11 +1,11 @@
 package pro.fessional.wings.slardar.app.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.slardar.app.service.TestDoubleKillService;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 
@@ -21,8 +21,8 @@ public class TestDoubleKillController {
 
     @GetMapping("/test/double-kill.json")
     @DoubleKill(expression = "@httpSessionIdResolver.resolveSessionIds(#p0)")
-    public R<String> doubleKill(HttpServletRequest request) throws InterruptedException {
-        Thread.sleep(10_000);
+    public R<String> doubleKill() {
+        Sleep.ignoreInterrupt(10_000);
         return R.ok("login page");
     }
 

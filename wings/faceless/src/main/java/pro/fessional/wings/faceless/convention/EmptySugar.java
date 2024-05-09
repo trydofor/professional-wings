@@ -1,9 +1,12 @@
 package pro.fessional.wings.faceless.convention;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 
 /**
@@ -38,6 +41,10 @@ public class EmptySugar {
         return v == null || v.equals(EmptyValue.DECIMAL);
     }
 
+    public static boolean isEmptyValue(BigInteger v) {
+        return v == null || v.intValue() == EmptyValue.INT;
+    }
+
     public static boolean isEmptyValue(LocalDate v) {
         return v == null || v.equals(EmptyValue.DATE);
     }
@@ -48,6 +55,14 @@ public class EmptySugar {
 
     public static boolean isEmptyValue(LocalDateTime v) {
         return v == null || v.equals(EmptyValue.DATE_TIME);
+    }
+
+    public static boolean isEmptyValue(ZonedDateTime v) {
+        return v == null || isEmptyValue(v.toLocalDateTime());
+    }
+
+    public static boolean isEmptyValue(OffsetDateTime v) {
+        return v == null || isEmptyValue(v.toLocalDateTime());
     }
 
     // ///
@@ -79,6 +94,10 @@ public class EmptySugar {
         return v == null || (v.compareTo(EmptyValue.DECIMAL_AS_MIN) > 0 && v.compareTo(EmptyValue.DECIMAL_AS_MAX) < 0);
     }
 
+    public static boolean asEmptyValue(BigInteger v) {
+        return v == null || v.intValue() == EmptyValue.INT;
+    }
+
     /**
      * Consider time zone, ±24H
      */
@@ -103,6 +122,20 @@ public class EmptySugar {
      * Compare date only, without time
      */
     public static boolean asEmptyValue(LocalDateTime v) {
+        return v == null || asEmptyValue(v.toLocalDate());
+    }
+
+    /**
+     * Compare date only, without time
+     */
+    public static boolean asEmptyValue(ZonedDateTime v) {
+        return v == null || asEmptyValue(v.toLocalDate());
+    }
+
+    /**
+     * Compare date only, without time
+     */
+    public static boolean asEmptyValue(OffsetDateTime v) {
         return v == null || asEmptyValue(v.toLocalDate());
     }
 
@@ -176,6 +209,10 @@ public class EmptySugar {
         return asEmptyValue(v) ? null : v;
     }
 
+    public static BigInteger emptyToNull(BigInteger v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
     public static LocalDate emptyToNull(LocalDate v) {
         return asEmptyValue(v) ? null : v;
     }
@@ -185,6 +222,15 @@ public class EmptySugar {
     }
 
     public static LocalDateTime emptyToNull(LocalDateTime v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
+    public static ZonedDateTime emptyToNull(ZonedDateTime v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
+
+    public static OffsetDateTime emptyToNull(OffsetDateTime v) {
         return asEmptyValue(v) ? null : v;
     }
 
@@ -216,6 +262,10 @@ public class EmptySugar {
         if (!asEmptyValue(v)) con.accept(v);
     }
 
+    public static void ifNotAsEmpty(BigInteger v, Consumer<BigInteger> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
     public static void ifNotAsEmpty(LocalDate v, Consumer<LocalDate> con) {
         if (!asEmptyValue(v)) con.accept(v);
     }
@@ -225,6 +275,14 @@ public class EmptySugar {
     }
 
     public static void ifNotAsEmpty(LocalDateTime v, Consumer<LocalDateTime> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(ZonedDateTime v, Consumer<ZonedDateTime> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(OffsetDateTime v, Consumer<OffsetDateTime> con) {
         if (!asEmptyValue(v)) con.accept(v);
     }
 }

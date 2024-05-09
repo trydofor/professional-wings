@@ -9,11 +9,14 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.MappingMatch;
 import jakarta.servlet.http.Part;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.LinkedMultiValueMap;
@@ -81,6 +84,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
     private String requestId;
     private String protocolRequestId;
     private ServletConnection servletConnection;
+    private FakeHttpServletMapping httpServletMapping = new FakeHttpServletMapping();
 
     private final Map<String, Part> parts = new LinkedHashMap<>();
     private final Map<String, Object> attributes = new LinkedHashMap<>();
@@ -221,4 +225,16 @@ public class FakeHttpServletRequest implements HttpServletRequest {
         return getAsyncContext();
     }
 
+    @Override
+    public FakeHttpServletMapping getHttpServletMapping() {
+        return httpServletMapping;
+    }
+
+    @Data
+    public static class FakeHttpServletMapping implements HttpServletMapping {
+        private String matchValue = "";
+        private String pattern = "";
+        private String servletName = "dispatcherServlet";
+        private MappingMatch mappingMatch = MappingMatch.PATH;
+    }
 }
