@@ -2,11 +2,15 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import pro.fessional.wings.silencer.enhance.ThisLazyAware;
 import pro.fessional.wings.silencer.message.MessageSourceHelper;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
@@ -40,6 +44,22 @@ public class SilencerConfiguration {
             log.info("Silencer spring-auto MessageSourceHelper skip CombinableMessageSource");
         }
         return bean;
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    @SuppressWarnings("all")
+    public static BeanPostProcessor thisLazyAwarePostProcessor() {
+        log.info("Silencer spring-auto thisLazyAwarePostProcessor");
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+                if (bean instanceof ThisLazyAware self) {
+                    self.setThisLazy(self);
+                }
+                return bean;
+            }
+        };
     }
 
     /**

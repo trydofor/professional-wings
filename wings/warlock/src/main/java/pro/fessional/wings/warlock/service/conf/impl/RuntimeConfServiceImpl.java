@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
@@ -16,6 +15,7 @@ import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
+import pro.fessional.wings.silencer.enhance.ThisLazy;
 import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinConfRuntimeDao;
@@ -41,7 +41,7 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
  */
 @Slf4j
 @CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
-public class RuntimeConfServiceImpl implements RuntimeConfService {
+public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> implements RuntimeConfService {
 
     public static final String PropHandler = "prop";
     public static final String JsonHandler = "json";
@@ -61,7 +61,7 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
 
     @Override
     public <T> T getObject(String key, TypeDescriptor type) {
-        return selfLazy.getObjectCache(key, type);
+        return thisLazy.getObjectCache(key, type);
     }
 
     @Override
@@ -132,10 +132,6 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
         }
         return false;
     }
-
-    // cache self-invoke
-    @Setter(onMethod_ = {@Autowired, @Lazy})
-    protected RuntimeConfServiceImpl selfLazy;
 
     @Cacheable
     @SuppressWarnings("unchecked")
