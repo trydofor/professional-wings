@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -16,6 +17,7 @@ import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.AssertArgs;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -93,6 +95,7 @@ public class SlardarSessionConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Order(WingsOrdered.Lv4Application + 10)
     public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer(SlardarSessionProp prop) {
         log.info("SlardarWebmvc spring-bean slardarCookieSerializerCustomizer");
         return it -> {

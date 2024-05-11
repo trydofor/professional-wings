@@ -29,7 +29,8 @@ import java.util.Set;
  * @since 2021-03-09
  */
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {"wings.slardar.terminal.locale-request=true"})
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemLoginTest {
@@ -74,6 +75,19 @@ class MemLoginTest {
                 .url(host + "/auth/current-principal.json"), false);
         String au5 = OkHttpClientHelper.extractString(r5, false);
         log.info("current-principal={}", au5);
+
+        // CodeException i18n
+        final Response r6 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/test/code-exception.json")
+                .header("Accept-Language", "zh_CN"), false);
+        String er6 = OkHttpClientHelper.extractString(r6, false);
+        Assertions.assertTrue(er6.contains("test不能为空"));
+
+        final Response r7 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/test/code-exception.json")
+                .header("Accept-Language", "en_US"), false);
+        String er7 = OkHttpClientHelper.extractString(r7, false);
+        Assertions.assertTrue(er7.contains("test should not empty"));
     }
 
     @Test
@@ -114,9 +128,10 @@ class MemLoginTest {
     @Order(3)
     @TmsLink("C14049")
     public void testListSession() {
-        final String r4 = OkHttpClientHelper.postJson(okHttpClient, host + "/user/list-session.json", "");
-        log.info("list-session auth4={}", r4);
-        Assertions.assertTrue(r4.contains("\"username\":\"trydofor@qq.com\""));
-        Assertions.assertTrue(r4.contains("\"username\":\"trydofor\""));
+        final String r6 = OkHttpClientHelper.postJson(okHttpClient, host + "/user/list-session.json", "");
+        log.info("list-session auth4={}", r6);
+        Assertions.assertTrue(r6.contains("\"username\":\"trydofor@qq.com\""));
+        Assertions.assertTrue(r6.contains("\"username\":\"trydofor\""));
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
     }
 }
