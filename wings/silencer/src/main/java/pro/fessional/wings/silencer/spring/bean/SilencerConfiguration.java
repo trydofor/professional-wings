@@ -15,6 +15,8 @@ import pro.fessional.wings.silencer.message.MessageSourceHelper;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.silencer.spring.boot.WingsReorderProcessor;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 import java.util.Map;
 
@@ -29,10 +31,19 @@ public class SilencerConfiguration {
     private static final Log log = LogFactory.getLog(SilencerConfiguration.class);
 
     /**
+     * reorder beans by config
+     */
+    @Bean
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$beanReorder)
+    public static WingsReorderProcessor wingsReorderProcessor() {
+        log.info("Silencer spring-auto wingsReorderProcessor");
+        return new WingsReorderProcessor();
+    }
+
+    /**
      * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.internationalization">Internationalization</a>
      * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
      */
-
     @Bean
     @ConditionalWingsEnabled
     public MessageSourceHelper messageSourceHelper(MessageSource messageSource) {

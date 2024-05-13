@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.app.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import pro.fessional.wings.slardar.concur.DoubleKill;
  * @since 2021-02-01
  */
 @RestController
+@Slf4j
 public class TestDoubleKillController {
 
     @Setter(onMethod_ = {@Autowired})
@@ -21,8 +24,9 @@ public class TestDoubleKillController {
 
     @GetMapping("/test/double-kill.json")
     @DoubleKill(expression = "@httpSessionIdResolver.resolveSessionIds(#p0)")
-    public R<String> doubleKill() {
+    public R<String> doubleKill(HttpServletRequest requiredBySpel) {
         Sleep.ignoreInterrupt(10_000);
+        log.info("just log uri={}", requiredBySpel.getRequestURI());
         return R.ok("login page");
     }
 

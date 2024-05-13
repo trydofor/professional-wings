@@ -82,4 +82,12 @@ public class SilencerEnabledProp {
      */
     private boolean tweakStack = true;
     public static final String Key$tweakStack = Key + ".tweak-stack";
+
+    /**
+     * Whether to enable bean reorder with `wings.reorder.*`
+     *
+     * @see #Key$beanReorder
+     */
+    private boolean beanReorder = true;
+    public static final String Key$beanReorder = Key + ".bean-reorder";
 }
