@@ -10,6 +10,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.LocaleResolver;
@@ -274,6 +275,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Order(WingsOrdered.Lv3Service + 10)
     public AuthZonePermChecker authZonePermChecker(WarlockSecurityProp prop) {
         log.info("WarlockShadow spring-bean authZonePermChecker");
         final AuthZonePermChecker bean = new AuthZonePermChecker();
@@ -283,6 +285,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Order(WingsOrdered.Lv3Service + 20)
     public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name:wings-default}") String appName, WarlockSecurityProp prop) {
         log.info("WarlockShadow spring-bean authAppPermChecker");
         final AuthAppPermChecker bean = new AuthAppPermChecker();
@@ -416,6 +419,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    @Order(WingsOrdered.Lv4Application + 10)
     public ListAllLoginPageCombo listAllLoginPageCombo() {
         log.info("WarlockShadow spring-bean listAllLoginPageCombo");
         return new ListAllLoginPageCombo();
@@ -423,6 +427,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
+    @Order(WingsOrdered.Lv4Application + 20)
     public JustAuthLoginPageCombo justAuthLoginPageCombo() {
         log.info("WarlockShadow spring-bean justAuthLoginPageCombo");
         return new JustAuthLoginPageCombo();

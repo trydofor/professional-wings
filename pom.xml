@@ -20,8 +20,8 @@
     <url>https://wings.fessional.pro</url>
 
     <properties>
-        <!-- https://maven.apache.org/maven-ci-friendly.html -->
-        <revision>3.2.111-SNAPSHOT</revision>
+        <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
+        <revision>3.2.120-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.2</spring-boot.version>
         <!--  -->

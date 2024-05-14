@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -61,6 +62,7 @@ public class SlardarOkhttpConfiguration {
     @Bean
     @ConditionalWingsEnabled
     @ConditionalOnExpression("${" + SlardarOkhttpProp.Key$followRedirect + ":false} || ${" + SlardarOkhttpProp.Key$followRedirectSsl + ":false}")
+    @Order(WingsOrdered.Lv4Application)
     public OkHttpRedirectNopInterceptor okhttpRedirectNopInterceptor() {
         log.info("Slardar spring-bean okhttpRedirectNopInterceptor");
         return new OkHttpRedirectNopInterceptor();

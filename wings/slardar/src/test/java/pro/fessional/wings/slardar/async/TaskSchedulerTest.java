@@ -45,7 +45,7 @@ public class TaskSchedulerTest {
         builder.user(userId);
         TerminalContext.login(builder.build());
 
-        CompletableFuture<Long> uid = testAsyncService.asyncUserId(AsyncType.Return);
+        CompletableFuture<Long> uid = testAsyncService.userIdAsync(AsyncType.Return);
         Assertions.assertEquals(userId, uid.get());
 
         final AtomicInteger cnt1 = new AtomicInteger(0);
@@ -56,18 +56,22 @@ public class TaskSchedulerTest {
         final ScheduledFuture<?> task1 = threadPoolTaskScheduler.scheduleWithFixedDelay(() -> delayUid("TaskSchedulerTest Default", userId, cnt1, eqs1), Duration.ofMillis(1_000));
         Sleep.ignoreInterrupt(5_000);
         task1.cancel(false);
+        Assertions.assertTrue(eqs1.get() > 0, "userid not equals, see log");
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");
         cnt1.set(0);
         eqs1.set(0);
         Sleep.ignoreInterrupt(500);
-        final ScheduledFuture<?> task2 = threadPoolTaskScheduler.scheduleWithFixedDelay(TtlRunnable.get(() -> delayUid("TaskSchedulerTest TtlRun", userId, cnt1, eqs1), false, true), Duration.ofMillis(1_000));
+        final ScheduledFuture<?> task2 = threadPoolTaskScheduler.scheduleWithFixedDelay(
+                TtlRunnable.get(() -> delayUid("TaskSchedulerTest TtlRun", userId, cnt1, eqs1),
+                        false, true), Duration.ofMillis(1_000));
         Sleep.ignoreInterrupt(5_000);
         task2.cancel(false);
+        Assertions.assertTrue(eqs1.get() > 0, "userid not equals, see log");
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");
 
         // exception
-        failedFuture(testAsyncService.asyncUserId(AsyncType.FailedFuture), TestAsyncService.UserIdFailedFuture);
-        failedFuture(testAsyncService.asyncUserId(AsyncType.UncaughtException), TestAsyncService.UserIdUncaughtException);
+        failedFuture(testAsyncService.userIdAsync(AsyncType.FailedFuture), TestAsyncService.UserIdFailedFuture);
+        failedFuture(testAsyncService.userIdAsync(AsyncType.UncaughtException), TestAsyncService.UserIdUncaughtException);
 
         /*
          * == by default ==
@@ -75,7 +79,7 @@ public class TaskSchedulerTest {
          * public void pro.fessional.wings.slardar.app.service.TestAsyncService.asyncVoid(pro.fessional.wings.slardar.app.service.TestAsyncService$AsyncType)
          * java.lang.RuntimeException: asyncVoid UncaughtException
          */
-        testAsyncService.asyncVoid(AsyncType.UncaughtException);
+        testAsyncService.voidAsync(AsyncType.UncaughtException);
     }
 
     private void failedFuture(CompletableFuture<?> future, String msg) {
@@ -96,7 +100,7 @@ public class TaskSchedulerTest {
 
     private void delayUid(String caller, long userId, AtomicInteger cnt, AtomicInteger eqs) {
         final String name = Thread.currentThread().getName();
-        if (name.startsWith("win-task-")) {
+        if (name.contains("task-")) {
             final long ud = TerminalContext.get().getUserId();
             log.info("{} delay {}, uid={}", caller, cnt.incrementAndGet(), ud);
             if (ud == userId) {
@@ -104,7 +108,7 @@ public class TaskSchedulerTest {
             }
         }
         else {
-            log.error("bad thread prefix, should start with 'win-task-'");
+            Assertions.fail("bad thread prefix, should start with 'task-'");
         }
     }
 }

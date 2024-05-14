@@ -56,5 +56,6 @@ class NonceLoginTest {
         log.warn("get zones = " + zones);
         Assertions.assertTrue(zones.contains("America/New_York"));
         Assertions.assertTrue(zones.contains("2021-01-01 05:00:00"));
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
     }
 }

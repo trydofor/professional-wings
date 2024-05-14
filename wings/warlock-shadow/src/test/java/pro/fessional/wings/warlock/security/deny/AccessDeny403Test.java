@@ -122,6 +122,7 @@ class AccessDeny403Test {
                 .url(host + "/test/prepost-update.json"), false);
         String ok5 = OkHttpClientHelper.extractString(r5, false);
         Assertions.assertTrue(ok5.contains("error.authz.accessDenied"));
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
     }
 
     @Test
@@ -148,5 +149,6 @@ class AccessDeny403Test {
                 .url(host + "/test/secured-create.json"), false);
         String ok7 = OkHttpClientHelper.extractString(r7, false);
         Assertions.assertTrue(ok7.contains("error.authz.accessDenied"));
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
     }
 }

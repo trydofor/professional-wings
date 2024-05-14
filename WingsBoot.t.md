@@ -34,6 +34,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11028 WingsEnabledFalseTest: disable config and bean
 * 11029 WingsEnabledTopFalseTest: disable top config
 * 11030 TtlMDCAdapterTest: ttl MDC in multiple thread
+* 11031 WingsReorderDefaultTest: default Order/Ordered
+* 11032 WingsReorderEnableTest: configed Order/Ordered
 
 ## 12 Faceless
 
@@ -309,6 +311,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13118 EventPublishHelperTest: async global AttributeRidEvent
 * 13119 WingsCacheInterceptorTest: evict multiple cache keys
 * 13120 AsyncControllerTest: Future request mapping with async service
+* 13121 BootAdminServerTest: servlet mapping order
+* 13122 AsyncHelperTest: async ttl decorator
 
 ## 14 Warlock
 

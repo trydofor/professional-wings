@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -97,8 +95,6 @@ public class DoubleKillAround {
                 final ProgressContext.Bar bar = ProgressContext.gen(arrKey, now, ttl);
                 if (doubleKill.async()) {
 
-                    checkTtlExecutor();
-
                     asyncExecutor.execute(() -> {
                         try {
                             syncProceed(joinPoint, bar);
@@ -125,20 +121,6 @@ public class DoubleKillAround {
             else {
                 throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);
             }
-        }
-    }
-
-    private void checkTtlExecutor() {
-        if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
-
-        synchronized (evaluator) {
-            if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
-
-            if (asyncExecutor == null) {
-                log.warn("config default Executors use newWorkStealingPool");
-                asyncExecutor = Executors.newWorkStealingPool();
-            }
-            asyncExecutor = TtlExecutors.getTtlExecutor(asyncExecutor);
         }
     }
 

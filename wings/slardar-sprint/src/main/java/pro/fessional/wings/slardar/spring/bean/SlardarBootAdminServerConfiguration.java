@@ -10,13 +10,10 @@ import de.codecentric.boot.admin.server.domain.values.StatusInfo;
 import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider.InstanceCredentials;
-import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -45,22 +42,6 @@ import java.util.Objects;
 @ConditionalOnClass(SpringBootAdminServerEnabledCondition.class)
 public class SlardarBootAdminServerConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminServerConfiguration.class);
-
-    @Bean
-    @ConditionalWingsEnabled
-    @Conditional(SpringBootAdminServerEnabledCondition.class)
-    public static BeanPostProcessor bootAdminMappingOrderPostProcessor() {
-        log.info("SlardarSprint spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (bean instanceof AdminControllerHandlerMapping ob) {
-                    ob.setOrder(-1);
-                }
-                return bean;
-            }
-        };
-    }
 
     @Bean
     @ConditionalWingsEnabled

@@ -6,9 +6,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodHandler;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
@@ -33,6 +35,7 @@ public class SlardarFirstBloodConfiguration {
 
     @Bean
     @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$firstBloodImage)
+    @Order(WingsOrdered.Lv4Application)
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver, SlardarFirstBloodProp prop) {
         log.info("SlardarWebmvc spring-bean firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();

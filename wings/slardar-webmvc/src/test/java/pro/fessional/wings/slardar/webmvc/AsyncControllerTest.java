@@ -100,6 +100,9 @@ public class AsyncControllerTest {
                 // [root]
                 Assertions.assertTrue(e.getMessage().contains("timeToWait"));
             }
+            else {
+                Assertions.fail(e);
+            }
         }
     }
 }
