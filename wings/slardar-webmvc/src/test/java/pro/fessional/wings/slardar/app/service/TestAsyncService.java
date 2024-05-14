@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -25,13 +26,13 @@ public class TestAsyncService {
     public static String UserIdFailedFuture = "asyncType FailedFuture";
 
     @Async
-    public CompletableFuture<String> asyncType(AsyncType type) {
+    public CompletableFuture<String> typeAsync(AsyncType type) {
         final String name = Thread.currentThread().getName();
         if (name.contains("exec-")) {
             log.info("asyncType={}", type);
         }
         else {
-            log.error("bad thread name prefix, asyncType should contain 'exec-'");
+            Assertions.fail("bad thread prefix, should start with 'exec-'");
         }
 
         return switch (type) {
@@ -45,7 +46,7 @@ public class TestAsyncService {
     public static String VoidFailedFuture = "asyncVoid FailedFuture";
 
     @Async
-    public void asyncVoid(AsyncType type) {
+    public void voidAsync(AsyncType type) {
         syncResult(type);
     }
 
@@ -66,7 +67,7 @@ public class TestAsyncService {
             log.info("asyncVoid");
         }
         else {
-            log.error("bad thread name prefix, asyncVoid should contain 'exec-'");
+            Assertions.fail("bad thread prefix, should start with 'exec-'");
         }
 
         if (type == AsyncType.UncaughtException) {
@@ -79,13 +80,13 @@ public class TestAsyncService {
     }
 
     @Async
-    public void asyncDefer(DeferredResult<String> result, AsyncType type) {
+    public void deferAsync(DeferredResult<String> result, AsyncType type) {
         final String name = Thread.currentThread().getName();
         if (name.contains("exec-")) {
             log.info("asyncVoid");
         }
         else {
-            log.error("bad thread name prefix, asyncVoid should contain 'exec-'");
+            Assertions.fail("bad thread prefix, should start with 'exec-'");
         }
 
         if (type == AsyncType.UncaughtException) {

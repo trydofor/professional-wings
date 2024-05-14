@@ -56,8 +56,8 @@ public class WingsReorderProcessor implements BeanFactoryPostProcessor, Environm
                                                  .bind(PrefixPrimary, Bindable.mapOf(String.class, Boolean.class))
                                                  .orElseGet(Collections::emptyMap);
 
-        if (reorderProp.isEmpty() || primaryProp.isEmpty()) {
-            log.info("WingsReorderProcessor skipped, for empty properties under " + PrefixReorder);
+        if (reorderProp.isEmpty() && primaryProp.isEmpty()) {
+            log.info("WingsReorderProcessor skipped, for no properties under " + PrefixReorder + " and " + PrefixPrimary);
             return;
         }
 

@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.async;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.mirana.time.ThreadNow;
@@ -15,79 +15,102 @@ import java.util.concurrent.ScheduledFuture;
  */
 public class TaskSchedulerHelper {
 
-    protected static ThreadPoolTaskScheduler LightTasker;
-    protected static ThreadPoolTaskScheduler HeavyTasker;
+    protected static ThreadPoolTaskScheduler FastScheduler;
+    protected static ThreadPoolTaskScheduler ScheduledScheduler;
 
-    protected TaskSchedulerHelper(ThreadPoolTaskScheduler light, ThreadPoolTaskScheduler heavy) {
-        LightTasker = light;
-        HeavyTasker = heavy;
+    protected TaskSchedulerHelper(ThreadPoolTaskScheduler fast, ThreadPoolTaskScheduler scheduled) {
+        FastScheduler = fast;
+        ScheduledScheduler = scheduled;
+    }
+
+    /**
+     * configure TtlThreadPoolTaskScheduler by builder
+     */
+    public static TtlThreadPoolTaskScheduler Ttl(ThreadPoolTaskSchedulerBuilder builder) {
+        return builder.configure(new TtlThreadPoolTaskScheduler());
     }
 
     /**
      * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
      */
-    @Contract("true->!null")
-    public static ThreadPoolTaskScheduler Light(boolean nonnull) {
-        if (nonnull && LightTasker == null) {
-            throw new IllegalStateException("LightTasker must init before using");
+    @NotNull
+    public static ThreadPoolTaskScheduler Fast() {
+        if (FastScheduler == null) {
+            throw new IllegalStateException("FastScheduler must init before using");
         }
-        return LightTasker;
+        return FastScheduler;
     }
 
     /**
      * see NamingSlardarConst#slardarHeavyScheduler
      */
-    @Contract("true->!null")
-    public static ThreadPoolTaskScheduler Heavy(boolean nonnull) {
-        if (nonnull && HeavyTasker == null) {
-            throw new IllegalStateException("HeavyTasker must init before using");
+    @NotNull
+    public static ThreadPoolTaskScheduler Scheduled() {
+        if (ScheduledScheduler == null) {
+            throw new IllegalStateException("ScheduledScheduler must init before using");
         }
 
-        return HeavyTasker;
+        return ScheduledScheduler;
     }
 
     /**
-     * Get Light Scheduler if fast, otherwise Heavy.
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     */
+    public static void Scheduled(@NotNull Runnable task) {
+        Scheduled().execute(task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     */
+    public static ScheduledFuture<?> Scheduled(long delayMs, @NotNull Runnable task) {
+        return Scheduled().schedule(task, Instant.ofEpochMilli(ThreadNow.millis() + delayMs));
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     */
+    public static ScheduledFuture<?> Scheduled(Instant start, @NotNull Runnable task) {
+        return Scheduled().schedule(task, start);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     */
+    public static ScheduledFuture<?> Scheduled(Trigger trigger, @NotNull Runnable task) {
+        return Scheduled().schedule(task, trigger);
+    }
+
+    protected static ThreadPoolTaskSchedulerBuilder FastBuilder;
+    protected static ThreadPoolTaskSchedulerBuilder ScheduledBuilder;
+
+    /**
+     * Get Light ThreadPoolTaskSchedulerBuilder, IllegalStateException if nonull but null.
      */
     @NotNull
-    public static ThreadPoolTaskScheduler referScheduler(boolean fast) {
-        return fast ? Light(true) : Heavy(true);
+    public static ThreadPoolTaskSchedulerBuilder FastBuilder() {
+        if (FastBuilder == null) {
+            throw new IllegalStateException("FastBuilder must init before using");
+        }
+        return FastBuilder;
     }
 
     /**
-     * Execute an async task immediately, `fast` means that the task will be finished soon, e.g. 10s.
-     *
-     * @see ThreadPoolTaskScheduler#execute(Runnable)
+     * Get Light ThreadPoolTaskSchedulerBuilder, IllegalStateException if nonull but null.
      */
-    public static void execute(boolean fast, @NotNull Runnable task) {
-        referScheduler(fast).execute(task);
-    }
-
-    /**
-     * Execute an async task after delayMs millis (ThreadNow), `fast` means that the task will be finished soon, e.g. 10s.
-     *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
-     */
-    public static ScheduledFuture<?> execute(boolean fast, long delayMs, @NotNull Runnable task) {
-        return referScheduler(fast).schedule(task, Instant.ofEpochMilli(ThreadNow.millis() + delayMs));
-    }
-
-    /**
-     * Execute an async task at specified instant, `fast` means that the task will be finished soon, e.g. 10s.
-     *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
-     */
-    public static ScheduledFuture<?> execute(boolean fast, Instant start, @NotNull Runnable task) {
-        return referScheduler(fast).schedule(task, start);
-    }
-
-    /**
-     * Execute an async task by given trigger, `fast` means that the task will be finished soon, e.g. 10s.
-     * Note, errorHandler, unlike other methods, does not handle DelegatingErrorHandlingRunnable.
-     *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
-     */
-    public static ScheduledFuture<?> execute(boolean fast, Trigger trigger, @NotNull Runnable task) {
-        return referScheduler(fast).schedule(task, trigger);
+    @NotNull
+    public static ThreadPoolTaskSchedulerBuilder ScheduledBuilder() {
+        if (ScheduledBuilder == null) {
+            throw new IllegalStateException("ScheduledBuilder must init before using");
+        }
+        return ScheduledBuilder;
     }
 }

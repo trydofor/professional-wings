@@ -25,10 +25,30 @@ public class SlardarAsyncProp {
 
 
     /**
-     * heavy thread pool
+     * fast thread pool
      *
      * @see #Key$heavy
      */
-    private TaskSchedulingProperties heavy;
-    public static final String Key$heavy = Key + ".heavy";
+    private TaskSchedulingProperties fast;
+    public static final String Key$heavy = Key + ".fast";
+
+    /**
+     * executor prefix
+     *
+     * @see #Key$execPrefix
+     */
+    private ExecPrefix execPrefix = new ExecPrefix();
+    public static final String Key$execPrefix = Key + ".exec-prefix";
+
+    @Data
+    public static class ExecPrefix {
+        /**
+         * AsyncHelper lite Pool
+         */
+        private String lite = "lite-";
+        /**
+         * Callable MVC mapping
+         */
+        private String application = "app-exec-";
+    }
 }

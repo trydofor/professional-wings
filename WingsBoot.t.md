@@ -312,6 +312,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13119 WingsCacheInterceptorTest: evict multiple cache keys
 * 13120 AsyncControllerTest: Future request mapping with async service
 * 13121 BootAdminServerTest: servlet mapping order
+* 13122 AsyncHelperTest: async ttl decorator
 
 ## 14 Warlock
 

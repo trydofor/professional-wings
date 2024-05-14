@@ -4,6 +4,7 @@ import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.List;
                 "spring.boot.admin.server.enabled=true",
         })
 @EnableAdminServer
+@Slf4j
 public class BootAdminServerTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -44,6 +46,7 @@ public class BootAdminServerTest {
     public void mappingOrder() {
         int good = 0;
         for (RequestMappingHandlerMapping mapping : requestMappingHandlerMapping) {
+            log.info("requestMappingHandlerMapping class=" + mapping.getClass().getName());
             if (mapping instanceof AdminControllerHandlerMapping) {
                 good = 1;
             }

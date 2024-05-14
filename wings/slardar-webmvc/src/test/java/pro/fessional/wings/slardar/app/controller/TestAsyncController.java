@@ -29,13 +29,13 @@ public class TestAsyncController {
     @RequestMapping(value = "/test/asyn-type.json")
     public CompletableFuture<String> testAsyncType(@RequestParam("err") AsyncType err) {
         log.info("testAsyncType type={}", err);
-        return testAsyncService.asyncType(err);
+        return testAsyncService.typeAsync(err);
     }
 
     @RequestMapping(value = "/test/asyn-void.json")
     public CompletableFuture<String> testAsyncVoid(@RequestParam("err") AsyncType err) {
         log.info("testAsyncVoid type={}", err);
-        testAsyncService.asyncVoid(err);
+        testAsyncService.voidAsync(err);
         return CompletableFuture.completedFuture(err.name());
     }
 
@@ -43,7 +43,7 @@ public class TestAsyncController {
     public DeferredResult<String> testAsyncDefer(@RequestParam("err") AsyncType err) {
         DeferredResult<String> result = new DeferredResult<>(1000L);
         log.info("testAsyncDefer type={}", err);
-        testAsyncService.asyncDefer(result, err);
+        testAsyncService.deferAsync(result, err);
         return result;
     }
 

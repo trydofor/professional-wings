@@ -36,7 +36,7 @@ public class TinyTaskServiceImpl implements TinyTaskService {
     @Override
     @NotNull
     public ThreadPoolTaskScheduler referScheduler(boolean fast) {
-        return TaskSchedulerHelper.referScheduler(fast);
+        return fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
     }
 
     @Override

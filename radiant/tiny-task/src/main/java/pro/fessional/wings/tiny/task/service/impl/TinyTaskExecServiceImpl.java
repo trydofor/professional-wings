@@ -7,7 +7,6 @@ import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
@@ -107,7 +106,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         }
 
         final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
-        TaskSchedulerHelper.referScheduler(fast).schedule(() -> {
+        final var scheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
+        scheduler.schedule(() -> {
             long execTms = ThreadNow.millis();
             long doneTms = -1;
             long failTms = -1;
@@ -213,7 +213,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             saveNextExec(next, td);
 
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
-            final ThreadPoolTaskScheduler taskScheduler = TaskSchedulerHelper.referScheduler(fast);
+            final var taskScheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
 
             if (taskScheduler.getScheduledExecutor().isShutdown()) {
                 log.error("TaskScheduler={} is shutdown, name={} id={}", fast, td.getTaskerName(), td.getId());

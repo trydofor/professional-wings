@@ -38,7 +38,7 @@ class ExecutorServiceTest {
         al.rule(".. cancel", event -> event.getFormattedMessage().contains(".. cancel=true"));
         al.start();
 
-        final ThreadPoolTaskScheduler scheduler = TaskSchedulerHelper.referScheduler(false);
+        final ThreadPoolTaskScheduler scheduler = TaskSchedulerHelper.Scheduled();
         final ScheduledFuture<?> f1 = scheduler.schedule(() -> log.info("-1 run={}", System.currentTimeMillis()),
                 Instant.ofEpochMilli(System.currentTimeMillis() - 1000));
         Sleep.ignoreInterrupt(500);
