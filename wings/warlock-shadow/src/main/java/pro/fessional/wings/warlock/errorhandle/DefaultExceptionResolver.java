@@ -18,6 +18,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.HttpStatusException;
+import pro.fessional.mirana.pain.MessageException;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 import pro.fessional.wings.slardar.context.TerminalContextException;
@@ -55,8 +56,8 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     @Override
     protected SimpleResponse resolve(@NotNull Exception exception) {
         SimpleResponse response = null;
+        Throwable cause = exception;
         try {
-            Throwable cause = exception;
             for (; response == null && cause != null; cause = cause.getCause()) {
                 if (cause instanceof HttpStatusException ex) {
                     response = handle(ex);
@@ -77,10 +78,14 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
                     response = handleAccessDenied(ex);
                 }
             }
+
+            if (response == null) {
+                cause = exception;
+            }
             // handler
             if (handler != null) {
                 // use original exception if response is null, otherwise the cause
-                response = handler.handle(response == null ? exception : cause, response);
+                response = handler.handle(cause, response);
             }
         }
         catch (Throwable e) {
@@ -92,7 +97,12 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
             response = defaultResponse;
         }
         else {
-            log.debug("handled exception, response simple", exception);
+            if (cause instanceof MessageException) {
+                log.debug("handled MessageException, response simple", exception);
+            }
+            else {
+                log.info("handled exception, response simple", exception);
+            }
         }
 
         return response;
@@ -123,7 +133,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
         return new SimpleResponse(defaultResponse.getHttpStatus(), defaultResponse.getContentType(), body);
     }
 
-    protected SimpleResponse handleUnauthorized(Exception ex) {
+    protected SimpleResponse handleUnauthorized(Exception ignore) {
         final String body = JsonTemplate.obj(obj -> {
             obj.putVal("success", false);
             String code = AuthnErrorEnum.Unauthorized.getCode();
@@ -133,7 +143,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
         return new SimpleResponse(HttpStatus.UNAUTHORIZED.value(), defaultResponse.getContentType(), body);
     }
 
-    protected SimpleResponse handleAccessDenied(Exception ex) {
+    protected SimpleResponse handleAccessDenied(Exception ignore) {
         final String body = JsonTemplate.obj(obj -> {
             obj.putVal("success", false);
             String code = AuthzErrorEnum.AccessDenied.getCode();
