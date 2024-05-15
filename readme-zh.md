@@ -39,12 +39,12 @@
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
 ## ② 安装依赖，可跳过，支持java8编译
-# asdf shell java temurin-8.0.382+5
+# asdf shell java temurin-8.0.412+8
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
 ## ③ 安装wings，java-21
-# asdf shell java temurin-21.0.1+12.0.LTS
+# asdf shell java temurin-21.0.3+9.0.LTS
 mvn package install
 ## ④ 报告Issue
 java -jar silencer-*-SNAPSHOT.jar
