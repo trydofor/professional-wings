@@ -36,6 +36,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11030 TtlMDCAdapterTest: ttl MDC in multiple thread
 * 11031 WingsReorderDefaultTest: default Order/Ordered
 * 11032 WingsReorderEnableTest: configed Order/Ordered
+* 11033 ThisLazyCglibTest: thisLazy with cglib
+* 11034 ThisLazyProxyTest: thisLazy with default jdk proxy
 
 ## 12 Faceless
 
