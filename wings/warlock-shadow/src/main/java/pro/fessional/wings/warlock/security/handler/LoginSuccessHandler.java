@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -40,23 +39,24 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
 
     @Override
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
-                              @Nullable String sid, long uid, @Nullable String state) throws IOException, ServletException {
+                              @NotNull State state) throws IOException, ServletException {
 
-        if (state != null && !state.isEmpty()) {
-            if (state.startsWith("/") || isSafeRedirect(state)) {
-                log.debug("redirect to {}", state);
-                res.sendRedirect(state);
+        String cts = state.getStateClient();
+        if (cts != null && !cts.isEmpty()) {
+            if (cts.startsWith("/") || isSafeRedirect(cts)) {
+                log.debug("redirect to {}", cts);
+                res.sendRedirect(cts);
             }
             else {
-                writeResponseBody(state, req, res, aun, sid, uid, state);
+                writeResponseBody(req, res, aun, state, cts);
             }
         }
         else {
             if (warlockSecurityProp.isLoginSuccessRedirect()) {
-                super.onResponse(req, res, aun, sid, uid, state);
+                super.onResponse(req, res, aun, state);
             }
             else {
-                writeResponseBody(warlockSecurityProp.getLoginSuccessBody(), req, res, aun, sid, uid, state);
+                writeResponseBody(req, res, aun, state, warlockSecurityProp.getLoginSuccessBody());
             }
         }
     }
@@ -65,8 +65,8 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
         return SafeHttpHelper.isSafeRedirect(state, warlockJustAuthProp.getSafeHost());
     }
 
-    protected void writeResponseBody(@NotNull String body, @NotNull HttpServletRequest req, @NotNull HttpServletResponse res,
-                                     @NotNull Authentication aun, @Nullable String sid, long uid, @Nullable String state) {
+    protected void writeResponseBody(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
+                                     @NotNull State state, @NotNull String body) {
         ResponseHelper.writeBodyUtf8(res, body);
     }
 
