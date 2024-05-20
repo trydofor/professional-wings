@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,5 +33,15 @@ public class TestingPropertyHelper {
     public Path modulePath(String root, String path) {
         Path dir = Path.of(wingsRootdir, root, path);
         return Files.exists(dir) ? dir : null;
+    }
+
+    /**
+     * init WINGS_ROOTDIR for main and test auto
+     */
+    public static void autoSetWingsRootDir() {
+        if (System.getProperty(ENV_WINGS_ROOTDIR) != null) return;
+
+        String dir = RuntimeMode.isUnitTest() ? "../.." : "./";
+        System.setProperty(ENV_WINGS_ROOTDIR, dir);
     }
 }

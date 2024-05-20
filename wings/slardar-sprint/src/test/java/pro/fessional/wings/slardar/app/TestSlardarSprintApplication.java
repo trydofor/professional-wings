@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
+import pro.fessional.wings.testing.silencer.TestingPropertyHelper;
 
 /**
  * @author trydofor
@@ -12,6 +13,7 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 public class TestSlardarSprintApplication {
 
     public static void main(String[] args) {
+        TestingPropertyHelper.autoSetWingsRootDir();
         SpringApplication app = new SpringApplication(TestSlardarSprintApplication.class);
         app.setApplicationStartup(new BufferingApplicationStartup(4096));
         app.run(args);
