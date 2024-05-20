@@ -23,6 +23,7 @@ public interface DefaultUserId {
      * Null User
      */
     long Null = Long.MIN_VALUE;
+
     /**
      * Non-login User
      */
@@ -56,4 +57,45 @@ public interface DefaultUserId {
     static boolean asGuest(Long uid) {
         return uid == null || uid <= Guest;
     }
+
+    /**
+     * Whether Null value
+     */
+    static boolean isNull(long uid) {
+        return uid == Null;
+    }
+
+    /**
+     * Whether null Object or Null value
+     */
+    static boolean asNull(Long uid) {
+        return uid == null || uid == Null;
+    }
+
+    /**
+     * trim value or Null
+     */
+    static long value(Long uid){
+        return uid == null ? Null : uid;
+    }
+
+    /**
+     * 0-99 are reserved Wings users.
+     */
+    long Wings = 99;
+
+    /**
+     * Whether reserved Wings users.
+     */
+    static boolean isWings(long uid) {
+        return uid >= Nobody && uid <= Wings;
+    }
+
+    /**
+     * Whether null or reserved Wings users.
+     */
+    static boolean asWings(Long uid) {
+        return uid == null || (uid >= Nobody && uid <= Wings);
+    }
+
 }
