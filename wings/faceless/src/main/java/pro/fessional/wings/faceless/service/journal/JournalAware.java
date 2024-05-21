@@ -36,6 +36,6 @@ public interface JournalAware {
     }
 
     default boolean isDeleted() {
-        return !EmptySugar.asEmptyValue(getDeleteDt());
+        return EmptySugar.nonEmptyValue(getDeleteDt());
     }
 }

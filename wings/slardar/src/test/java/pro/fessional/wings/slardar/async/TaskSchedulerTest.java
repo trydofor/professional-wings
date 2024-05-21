@@ -101,7 +101,7 @@ public class TaskSchedulerTest {
     private void delayUid(String caller, long userId, AtomicInteger cnt, AtomicInteger eqs) {
         final String name = Thread.currentThread().getName();
         if (name.contains("task-")) {
-            final long ud = TerminalContext.get().getUserId();
+            final long ud = TerminalContext.currentLoginUser();
             log.info("{} delay {}, uid={}", caller, cnt.incrementAndGet(), ud);
             if (ud == userId) {
                 eqs.incrementAndGet();

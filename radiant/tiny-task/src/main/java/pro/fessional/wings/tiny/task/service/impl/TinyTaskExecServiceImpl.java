@@ -540,13 +540,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         // can Not replace util.Date with Instance
         Instant lastActual = null;
         final LocalDateTime lastExec = td.getLastExec();
-        if (!EmptySugar.asEmptyValue(lastExec)) {
+        if (EmptySugar.nonEmptyValue(lastExec)) {
             lastActual = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastExec));
         }
 
         Instant lastCompletion = null;
         final LocalDateTime lastDone = td.getLastDone();
-        if (!EmptySugar.asEmptyValue(lastDone)) {
+        if (EmptySugar.nonEmptyValue(lastDone)) {
             lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastDone));
         }
 

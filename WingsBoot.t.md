@@ -190,6 +190,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12147 WingsRevisionTest: module root and path
 * 12148 JdbcTemplateHelperTest: safe table
 * 12149 FormatSugarTest: format datetime and number
+* 12150 SetterSugarTest: one line setter sugar
 
 ## 13 Slardar
 
