@@ -31,7 +31,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.DoublePredicate;
+import java.util.function.DoubleSupplier;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
+import java.util.function.IntSupplier;
+import java.util.function.IntUnaryOperator;
+import java.util.function.LongPredicate;
+import java.util.function.LongSupplier;
+import java.util.function.LongUnaryOperator;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_COMMIT_ID;
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_DELETE_DT;
@@ -241,10 +253,11 @@ public class WingsJavaGenerator extends JavaGenerator {
     @Override // Confirm the replacement code and diff it
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
+
+        // 🦁>>>
         if (generateSpringAnnotations()) {
             out.ref(ConditionalWingsEnabled.class);
         }
-        // 🦁>>>
         final Class<?> implClass;
         if (table.getColumns().stream().anyMatch(WingsJooqGenHelper.JournalAware)) {
             implClass = WingsJooqDaoJournalImpl.class;
@@ -263,8 +276,194 @@ public class WingsJavaGenerator extends JavaGenerator {
         // 🦁<<<
     }
 
+    @Override
+    protected void generatePojoSetter(TypedElementDefinition<?> column, int index, JavaWriter out) {
+        super.generatePojoSetter(column, index, out);
+        out.println();
 
-    /////////////////
+        // 🦁>>>
+        final String className = getStrategy().getJavaClassName(column.getContainer(), GeneratorStrategy.Mode.POJO);
+        final String columnTypeFull = getJavaType(column.getType(resolver(out, GeneratorStrategy.Mode.POJO)), out, GeneratorStrategy.Mode.POJO);
+        final String columnType = out.ref(columnTypeFull);
+        boolean fluentSetters = generateFluentSetters();
+        final String columnSetterReturnType = fluentSetters ? className : "void";
+        final String columnSetter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.POJO);
+        final String columnMember = getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO);
+        final String visibility = "public ";
+
+        final String supplierType, predicateType, unaryOperatorType;
+        String callAsType = "", castType = "";
+        if ("int".equals(columnType)) {
+            out.ref(IntSupplier.class); // getAsInt();
+            out.ref(IntPredicate.class);
+            out.ref(IntUnaryOperator.class);   // applyAsInt(int operand);
+            supplierType = "IntSupplier";
+            predicateType = "IntPredicate";
+            unaryOperatorType = "IntUnaryOperator";
+            callAsType = "AsInt";
+        }
+        else if ("long".equals(columnType)) {
+            out.ref(LongSupplier.class); // getAsLong();
+            out.ref(LongPredicate.class);
+            out.ref(LongUnaryOperator.class); // applyAsLong(long operand);
+            supplierType = "LongSupplier";
+            predicateType = "LongPredicate";
+            unaryOperatorType = "LongUnaryOperator";
+            callAsType = "AsLong";
+        }
+        else if ("double".equals(columnType) || "float".equals(columnType)) {
+            out.ref(DoubleSupplier.class); // getAsDouble();
+            out.ref(DoublePredicate.class);
+            out.ref(DoubleUnaryOperator.class); // applyAsDouble(double operand)
+            supplierType = "DoubleSupplier";
+            predicateType = "DoublePredicate";
+            unaryOperatorType = "DoubleUnaryOperator";
+            if ("float".equals(columnType)) castType = "(float) ";
+            callAsType = "AsDouble";
+        }
+        else {
+            out.ref(Supplier.class);
+            out.ref(Predicate.class);
+            out.ref(UnaryOperator.class);
+            String ct = switch (columnType) {
+                case "boolean" -> "Boolean";
+                case "char" -> "Character";
+                case "byte" -> "Byte";
+                default -> columnType;
+            };
+            supplierType = "Supplier<" + ct + ">";
+            predicateType = "Predicate<" + ct + ">";
+            unaryOperatorType = "UnaryOperator<" + ct + ">";
+        }
+
+        /**
+         *  public void setUkeyIf(String ukey, boolean bool) {
+         *      if (bool) this.ukey = ukey;
+         *  }
+         */
+        out.println("%s%s %sIf(%s %s, boolean bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember);
+        out.println("if (bool) {");
+        out.println("this.%s = %s;", columnMember, columnMember);
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println("}");
+        out.println();
+
+        /**
+         *  public void setUkeyIf(Supplier<String> ukey, boolean bool) {
+         *      if (bool) this.ukey = ukey.get();
+         *  }
+         */
+        out.println("%s%s %sIf(%s %s, boolean bool) {", visibility, columnSetterReturnType, columnSetter, supplierType, columnMember);
+        out.println("if (bool) {");
+        out.println("this.%s = %s.get%s();", columnMember, columnMember, callAsType);
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println("}");
+        out.println();
+
+        /**
+         *  public void setUkeyIf(String ukey, Predicate<String> bool) {
+         *      if (bool.test(ukey)) this.ukey = ukey;
+         *  }
+         */
+        out.println("%s%s %sIf(%s %s, %s bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType);
+        out.println("if (bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println("}");
+        out.println();
+
+        /**
+         *  public void setUkeyIf(String ukey, Predicate<String> bool, Supplier<String>... values) {
+         *      if (bool.test(ukey)) {
+         *          this.ukey = ukey;
+         *          return;
+         *      }
+         *      for (Supplier<String> supplier : values) {
+         *          String v = supplier.get();
+         *          if (bool.test(v)) {
+         *              this.ukey = v;
+         *              return;
+         *          }
+         *      }
+         *  }
+         */
+        out.println("%s%s %sIf(%s %s, %s bool, %s... %ss) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType, supplierType, columnMember);
+        out.println("if (bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        out.println(fluentSetters ? "return this;" : "return;");
+        out.println("}");
+        out.println("for (%s supplier : %ss) {", supplierType, columnMember);
+        out.println("%s = supplier.get%s();", columnMember, callAsType);
+        out.println("if (bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        out.println(fluentSetters ? "return this;" : "return;");
+        out.println("}");
+        out.println("}");
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println();
+
+        /**
+         * public void setUkeyIfNot(String ukey, Predicate<String> bool) {
+         *     if (!bool.test(ukey)) this.ukey = ukey;
+         * }
+         */
+        out.println("%s%s %sIfNot(%s %s, %s bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType);
+        out.println("if (!bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println("}");
+        out.println();
+
+        /**
+         *  public void setUkeyIfNot(String ukey, Predicate<String> bool, Supplier<String>... values) {
+         *      if (!bool.test(ukey)) {
+         *          this.ukey = ukey;
+         *          return;
+         *      }
+         *      for (Supplier<String> supplier : values) {
+         *          String v = supplier.get();
+         *          if (!bool.test(v)) {
+         *              this.ukey = v;
+         *              return;
+         *          }
+         *      }
+         *  }
+         */
+        out.println("%s%s %sIfNot(%s %s, %s bool, %s... %ss) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType, supplierType, columnMember);
+        out.println("if (!bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        out.println(fluentSetters ? "return this;" : "return;");
+        out.println("}");
+        out.println("for (%s supplier : %ss) {", supplierType, columnMember);
+        out.println("%s = supplier.get%s();", columnMember, callAsType);
+        out.println("if (!bool.test(%s)) {", columnMember);
+        out.println("this.%s = %s;", columnMember, columnMember);
+        out.println(fluentSetters ? "return this;" : "return;");
+        out.println("}");
+        out.println("}");
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println();
+
+        /**
+         * public void setUkeyIf(UnaryOperator<String> unary) {
+         *     this.ukey = unary.apply(this.ukey);
+         * }
+         */
+        out.println("%s%s %sIf(%s %s) {", visibility, columnSetterReturnType, columnSetter, unaryOperatorType, columnMember);
+        out.println("this.%s = %s%s.apply%s(this.%s);", columnMember, castType, columnMember, callAsType, columnMember);
+        if (fluentSetters) out.println("return this;");
+        out.println("}");
+        out.println();
+        // 🦁<<<
+    }
+
+/////////////////
 
     private String genAlias(String id) {
         final String chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -27,6 +27,7 @@ import java.util.List;
  * @since 2023-01-23
  */
 @SpringBootTest(properties = "testing.dbname=wings")
+// @SpringBootTest(properties = "testing.dbname=wings_faceless")
 @EnabledIfSystemProperty(named = "devs-autogen", matches = "true")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenCodeTest {
