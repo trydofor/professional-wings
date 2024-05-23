@@ -21,6 +21,7 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V91_22_0222_01_
 @SpringBootTest(properties = "testing.dbname=wings_example")
 @EnabledIfSystemProperty(named = "devs-initdb", matches = "true")
 public class DatabaseExampleTest extends TestingDatabase {
+
     @Test
     void resetSchemaWings() {
         reset(

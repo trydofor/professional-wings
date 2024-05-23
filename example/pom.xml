@@ -22,7 +22,6 @@
         <module>winx-admin</module>
         <module>winx-api</module>
         <!-- <module>winx-batch</module> -->
-        <module>winx-codegen</module>
         <module>winx-common</module>
         <module>winx-devops</module>
         <module>winx-front</module>
@@ -47,11 +46,6 @@
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
                 <artifactId>winx-front</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>winx-codegen</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
