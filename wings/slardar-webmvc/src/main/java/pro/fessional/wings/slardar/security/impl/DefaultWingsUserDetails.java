@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security.impl;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +19,6 @@ import java.util.Locale;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true, builderMethodName = "")
 public class DefaultWingsUserDetails implements WingsUserDetails {
 
     private long userId;
