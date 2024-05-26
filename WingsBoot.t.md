@@ -316,6 +316,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13120 AsyncControllerTest: Future request mapping with async service
 * 13121 BootAdminServerTest: servlet mapping order
 * 13122 AsyncHelperTest: async ttl decorator
+* 13123 DoubleKillTest: bad SpEL, check null
 
 ## 14 Warlock
 
