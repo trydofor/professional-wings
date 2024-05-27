@@ -10,12 +10,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>pro.fessional.wings</groupId>
-    <artifactId>ancient</artifactId>
+    <groupId>pro.fessional</groupId>
+    <artifactId>wings-boot</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>Ancient::</name>
+    <name>WingsBoot::</name>
     <description>万物生长靠日 ☀️ Growing Need the F^king Sun</description>
     <url>https://wings.fessional.pro</url>
 
@@ -283,7 +283,7 @@
                 <artifactId>testing-batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!-- pro.fessional.wings radiant -->
+            <!-- pro.fessional.wings:radiant -->
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>tiny-task</artifactId>

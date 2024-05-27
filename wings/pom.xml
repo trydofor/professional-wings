@@ -4,12 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>pro.fessional.wings</groupId>
-        <artifactId>ancient</artifactId>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings-boot</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <groupId>pro.fessional</groupId>
     <artifactId>wings</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
