@@ -404,6 +404,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14082 DatabaseFacelessTest: clean and init faceless schema
 * 14083 DatabaseShard0Test: clean and init shard_0 schema
 * 14084 DatabaseShard1Test: clean and init shard_1 schema
+* 14085 ExceptionStackTest: MessageException is stackless by default
 
 ## 15 Tiny
 
