@@ -44,12 +44,14 @@ public class AutogenCodeTest {
 
     @Test
     void autogen01AllTestJooq() {
+        // use wings_faceless database
         autogen11FacelessJooqTest();// faceless-jooq
         autogen11FacelessShardTest();// faceless-shard
     }
 
     @Test
     void autogen01AllMainCode() {
+        // use wings database
         autogen01AllMainJooq();
 
         autogen10FacelessAutogen();// faceless/enums

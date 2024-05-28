@@ -7,6 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinRoleEntry;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -83,24 +84,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -115,12 +120,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -135,6 +142,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -156,24 +164,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -188,12 +200,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -208,6 +222,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -229,24 +244,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -261,12 +280,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -281,6 +302,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -302,24 +324,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -334,12 +360,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -354,6 +382,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -375,24 +404,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -407,12 +440,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -427,6 +462,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -448,24 +484,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.name = name;
     }
 
+    @Transient
     public void setNameIf(String name, boolean bool) {
         if (bool) {
             this.name = name;
         }
     }
 
+    @Transient
     public void setNameIf(Supplier<String> name, boolean bool) {
         if (bool) {
             this.name = name.get();
         }
     }
 
+    @Transient
     public void setNameIf(String name, Predicate<String> bool) {
         if (bool.test(name)) {
             this.name = name;
         }
     }
 
+    @Transient
     public void setNameIf(String name, Predicate<String> bool, Supplier<String>... names) {
         if (bool.test(name)) {
             this.name = name;
@@ -480,12 +520,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setNameIfNot(String name, Predicate<String> bool) {
         if (!bool.test(name)) {
             this.name = name;
         }
     }
 
+    @Transient
     public void setNameIfNot(String name, Predicate<String> bool, Supplier<String>... names) {
         if (!bool.test(name)) {
             this.name = name;
@@ -500,6 +542,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setNameIf(UnaryOperator<String> name) {
         this.name = name.apply(this.name);
     }
@@ -521,24 +564,28 @@ public class WinRoleEntry implements IWinRoleEntry {
         this.remark = remark;
     }
 
+    @Transient
     public void setRemarkIf(String remark, boolean bool) {
         if (bool) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIf(Supplier<String> remark, boolean bool) {
         if (bool) {
             this.remark = remark.get();
         }
     }
 
+    @Transient
     public void setRemarkIf(String remark, Predicate<String> bool) {
         if (bool.test(remark)) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIf(String remark, Predicate<String> bool, Supplier<String>... remarks) {
         if (bool.test(remark)) {
             this.remark = remark;
@@ -553,12 +600,14 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setRemarkIfNot(String remark, Predicate<String> bool) {
         if (!bool.test(remark)) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIfNot(String remark, Predicate<String> bool, Supplier<String>... remarks) {
         if (!bool.test(remark)) {
             this.remark = remark;
@@ -573,6 +622,7 @@ public class WinRoleEntry implements IWinRoleEntry {
         }
     }
 
+    @Transient
     public void setRemarkIf(UnaryOperator<String> remark) {
         this.remark = remark.apply(this.remark);
     }

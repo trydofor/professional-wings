@@ -9,6 +9,7 @@ import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
@@ -111,24 +112,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -143,12 +148,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -163,6 +170,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -184,24 +192,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -216,12 +228,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -236,6 +250,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -257,24 +272,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -289,12 +308,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -309,6 +330,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -330,24 +352,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -362,12 +388,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -382,6 +410,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -403,24 +432,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -435,12 +468,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -455,6 +490,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -476,24 +512,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.nickname = nickname;
     }
 
+    @Transient
     public void setNicknameIf(String nickname, boolean bool) {
         if (bool) {
             this.nickname = nickname;
         }
     }
 
+    @Transient
     public void setNicknameIf(Supplier<String> nickname, boolean bool) {
         if (bool) {
             this.nickname = nickname.get();
         }
     }
 
+    @Transient
     public void setNicknameIf(String nickname, Predicate<String> bool) {
         if (bool.test(nickname)) {
             this.nickname = nickname;
         }
     }
 
+    @Transient
     public void setNicknameIf(String nickname, Predicate<String> bool, Supplier<String>... nicknames) {
         if (bool.test(nickname)) {
             this.nickname = nickname;
@@ -508,12 +548,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setNicknameIfNot(String nickname, Predicate<String> bool) {
         if (!bool.test(nickname)) {
             this.nickname = nickname;
         }
     }
 
+    @Transient
     public void setNicknameIfNot(String nickname, Predicate<String> bool, Supplier<String>... nicknames) {
         if (!bool.test(nickname)) {
             this.nickname = nickname;
@@ -528,6 +570,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setNicknameIf(UnaryOperator<String> nickname) {
         this.nickname = nickname.apply(this.nickname);
     }
@@ -549,24 +592,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.passsalt = passsalt;
     }
 
+    @Transient
     public void setPasssaltIf(String passsalt, boolean bool) {
         if (bool) {
             this.passsalt = passsalt;
         }
     }
 
+    @Transient
     public void setPasssaltIf(Supplier<String> passsalt, boolean bool) {
         if (bool) {
             this.passsalt = passsalt.get();
         }
     }
 
+    @Transient
     public void setPasssaltIf(String passsalt, Predicate<String> bool) {
         if (bool.test(passsalt)) {
             this.passsalt = passsalt;
         }
     }
 
+    @Transient
     public void setPasssaltIf(String passsalt, Predicate<String> bool, Supplier<String>... passsalts) {
         if (bool.test(passsalt)) {
             this.passsalt = passsalt;
@@ -581,12 +628,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setPasssaltIfNot(String passsalt, Predicate<String> bool) {
         if (!bool.test(passsalt)) {
             this.passsalt = passsalt;
         }
     }
 
+    @Transient
     public void setPasssaltIfNot(String passsalt, Predicate<String> bool, Supplier<String>... passsalts) {
         if (!bool.test(passsalt)) {
             this.passsalt = passsalt;
@@ -601,6 +650,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setPasssaltIf(UnaryOperator<String> passsalt) {
         this.passsalt = passsalt.apply(this.passsalt);
     }
@@ -622,24 +672,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.gender = gender;
     }
 
+    @Transient
     public void setGenderIf(UserGender gender, boolean bool) {
         if (bool) {
             this.gender = gender;
         }
     }
 
+    @Transient
     public void setGenderIf(Supplier<UserGender> gender, boolean bool) {
         if (bool) {
             this.gender = gender.get();
         }
     }
 
+    @Transient
     public void setGenderIf(UserGender gender, Predicate<UserGender> bool) {
         if (bool.test(gender)) {
             this.gender = gender;
         }
     }
 
+    @Transient
     public void setGenderIf(UserGender gender, Predicate<UserGender> bool, Supplier<UserGender>... genders) {
         if (bool.test(gender)) {
             this.gender = gender;
@@ -654,12 +708,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setGenderIfNot(UserGender gender, Predicate<UserGender> bool) {
         if (!bool.test(gender)) {
             this.gender = gender;
         }
     }
 
+    @Transient
     public void setGenderIfNot(UserGender gender, Predicate<UserGender> bool, Supplier<UserGender>... genders) {
         if (!bool.test(gender)) {
             this.gender = gender;
@@ -674,6 +730,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setGenderIf(UnaryOperator<UserGender> gender) {
         this.gender = gender.apply(this.gender);
     }
@@ -695,24 +752,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.avatar = avatar;
     }
 
+    @Transient
     public void setAvatarIf(String avatar, boolean bool) {
         if (bool) {
             this.avatar = avatar;
         }
     }
 
+    @Transient
     public void setAvatarIf(Supplier<String> avatar, boolean bool) {
         if (bool) {
             this.avatar = avatar.get();
         }
     }
 
+    @Transient
     public void setAvatarIf(String avatar, Predicate<String> bool) {
         if (bool.test(avatar)) {
             this.avatar = avatar;
         }
     }
 
+    @Transient
     public void setAvatarIf(String avatar, Predicate<String> bool, Supplier<String>... avatars) {
         if (bool.test(avatar)) {
             this.avatar = avatar;
@@ -727,12 +788,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setAvatarIfNot(String avatar, Predicate<String> bool) {
         if (!bool.test(avatar)) {
             this.avatar = avatar;
         }
     }
 
+    @Transient
     public void setAvatarIfNot(String avatar, Predicate<String> bool, Supplier<String>... avatars) {
         if (!bool.test(avatar)) {
             this.avatar = avatar;
@@ -747,6 +810,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setAvatarIf(UnaryOperator<String> avatar) {
         this.avatar = avatar.apply(this.avatar);
     }
@@ -768,24 +832,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.locale = locale;
     }
 
+    @Transient
     public void setLocaleIf(Locale locale, boolean bool) {
         if (bool) {
             this.locale = locale;
         }
     }
 
+    @Transient
     public void setLocaleIf(Supplier<Locale> locale, boolean bool) {
         if (bool) {
             this.locale = locale.get();
         }
     }
 
+    @Transient
     public void setLocaleIf(Locale locale, Predicate<Locale> bool) {
         if (bool.test(locale)) {
             this.locale = locale;
         }
     }
 
+    @Transient
     public void setLocaleIf(Locale locale, Predicate<Locale> bool, Supplier<Locale>... locales) {
         if (bool.test(locale)) {
             this.locale = locale;
@@ -800,12 +868,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setLocaleIfNot(Locale locale, Predicate<Locale> bool) {
         if (!bool.test(locale)) {
             this.locale = locale;
         }
     }
 
+    @Transient
     public void setLocaleIfNot(Locale locale, Predicate<Locale> bool, Supplier<Locale>... locales) {
         if (!bool.test(locale)) {
             this.locale = locale;
@@ -820,6 +890,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setLocaleIf(UnaryOperator<Locale> locale) {
         this.locale = locale.apply(this.locale);
     }
@@ -841,24 +912,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.zoneid = zoneid;
     }
 
+    @Transient
     public void setZoneidIf(ZoneId zoneid, boolean bool) {
         if (bool) {
             this.zoneid = zoneid;
         }
     }
 
+    @Transient
     public void setZoneidIf(Supplier<ZoneId> zoneid, boolean bool) {
         if (bool) {
             this.zoneid = zoneid.get();
         }
     }
 
+    @Transient
     public void setZoneidIf(ZoneId zoneid, Predicate<ZoneId> bool) {
         if (bool.test(zoneid)) {
             this.zoneid = zoneid;
         }
     }
 
+    @Transient
     public void setZoneidIf(ZoneId zoneid, Predicate<ZoneId> bool, Supplier<ZoneId>... zoneids) {
         if (bool.test(zoneid)) {
             this.zoneid = zoneid;
@@ -873,12 +948,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setZoneidIfNot(ZoneId zoneid, Predicate<ZoneId> bool) {
         if (!bool.test(zoneid)) {
             this.zoneid = zoneid;
         }
     }
 
+    @Transient
     public void setZoneidIfNot(ZoneId zoneid, Predicate<ZoneId> bool, Supplier<ZoneId>... zoneids) {
         if (!bool.test(zoneid)) {
             this.zoneid = zoneid;
@@ -893,6 +970,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setZoneidIf(UnaryOperator<ZoneId> zoneid) {
         this.zoneid = zoneid.apply(this.zoneid);
     }
@@ -914,24 +992,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.remark = remark;
     }
 
+    @Transient
     public void setRemarkIf(String remark, boolean bool) {
         if (bool) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIf(Supplier<String> remark, boolean bool) {
         if (bool) {
             this.remark = remark.get();
         }
     }
 
+    @Transient
     public void setRemarkIf(String remark, Predicate<String> bool) {
         if (bool.test(remark)) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIf(String remark, Predicate<String> bool, Supplier<String>... remarks) {
         if (bool.test(remark)) {
             this.remark = remark;
@@ -946,12 +1028,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setRemarkIfNot(String remark, Predicate<String> bool) {
         if (!bool.test(remark)) {
             this.remark = remark;
         }
     }
 
+    @Transient
     public void setRemarkIfNot(String remark, Predicate<String> bool, Supplier<String>... remarks) {
         if (!bool.test(remark)) {
             this.remark = remark;
@@ -966,6 +1050,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setRemarkIf(UnaryOperator<String> remark) {
         this.remark = remark.apply(this.remark);
     }
@@ -987,24 +1072,28 @@ public class WinUserBasis implements IWinUserBasis {
         this.status = status;
     }
 
+    @Transient
     public void setStatusIf(UserStatus status, boolean bool) {
         if (bool) {
             this.status = status;
         }
     }
 
+    @Transient
     public void setStatusIf(Supplier<UserStatus> status, boolean bool) {
         if (bool) {
             this.status = status.get();
         }
     }
 
+    @Transient
     public void setStatusIf(UserStatus status, Predicate<UserStatus> bool) {
         if (bool.test(status)) {
             this.status = status;
         }
     }
 
+    @Transient
     public void setStatusIf(UserStatus status, Predicate<UserStatus> bool, Supplier<UserStatus>... statuss) {
         if (bool.test(status)) {
             this.status = status;
@@ -1019,12 +1108,14 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setStatusIfNot(UserStatus status, Predicate<UserStatus> bool) {
         if (!bool.test(status)) {
             this.status = status;
         }
     }
 
+    @Transient
     public void setStatusIfNot(UserStatus status, Predicate<UserStatus> bool, Supplier<UserStatus>... statuss) {
         if (!bool.test(status)) {
             this.status = status;
@@ -1039,6 +1130,7 @@ public class WinUserBasis implements IWinUserBasis {
         }
     }
 
+    @Transient
     public void setStatusIf(UnaryOperator<UserStatus> status) {
         this.status = status.apply(this.status);
     }

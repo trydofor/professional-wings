@@ -7,6 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.ISysStandardI18n;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -74,24 +75,28 @@ public class SysStandardI18n implements ISysStandardI18n {
         this.base = base;
     }
 
+    @Transient
     public void setBaseIf(String base, boolean bool) {
         if (bool) {
             this.base = base;
         }
     }
 
+    @Transient
     public void setBaseIf(Supplier<String> base, boolean bool) {
         if (bool) {
             this.base = base.get();
         }
     }
 
+    @Transient
     public void setBaseIf(String base, Predicate<String> bool) {
         if (bool.test(base)) {
             this.base = base;
         }
     }
 
+    @Transient
     public void setBaseIf(String base, Predicate<String> bool, Supplier<String>... bases) {
         if (bool.test(base)) {
             this.base = base;
@@ -106,12 +111,14 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setBaseIfNot(String base, Predicate<String> bool) {
         if (!bool.test(base)) {
             this.base = base;
         }
     }
 
+    @Transient
     public void setBaseIfNot(String base, Predicate<String> bool, Supplier<String>... bases) {
         if (!bool.test(base)) {
             this.base = base;
@@ -126,6 +133,7 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setBaseIf(UnaryOperator<String> base) {
         this.base = base.apply(this.base);
     }
@@ -147,24 +155,28 @@ public class SysStandardI18n implements ISysStandardI18n {
         this.kind = kind;
     }
 
+    @Transient
     public void setKindIf(String kind, boolean bool) {
         if (bool) {
             this.kind = kind;
         }
     }
 
+    @Transient
     public void setKindIf(Supplier<String> kind, boolean bool) {
         if (bool) {
             this.kind = kind.get();
         }
     }
 
+    @Transient
     public void setKindIf(String kind, Predicate<String> bool) {
         if (bool.test(kind)) {
             this.kind = kind;
         }
     }
 
+    @Transient
     public void setKindIf(String kind, Predicate<String> bool, Supplier<String>... kinds) {
         if (bool.test(kind)) {
             this.kind = kind;
@@ -179,12 +191,14 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setKindIfNot(String kind, Predicate<String> bool) {
         if (!bool.test(kind)) {
             this.kind = kind;
         }
     }
 
+    @Transient
     public void setKindIfNot(String kind, Predicate<String> bool, Supplier<String>... kinds) {
         if (!bool.test(kind)) {
             this.kind = kind;
@@ -199,6 +213,7 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setKindIf(UnaryOperator<String> kind) {
         this.kind = kind.apply(this.kind);
     }
@@ -220,24 +235,28 @@ public class SysStandardI18n implements ISysStandardI18n {
         this.ukey = ukey;
     }
 
+    @Transient
     public void setUkeyIf(String ukey, boolean bool) {
         if (bool) {
             this.ukey = ukey;
         }
     }
 
+    @Transient
     public void setUkeyIf(Supplier<String> ukey, boolean bool) {
         if (bool) {
             this.ukey = ukey.get();
         }
     }
 
+    @Transient
     public void setUkeyIf(String ukey, Predicate<String> bool) {
         if (bool.test(ukey)) {
             this.ukey = ukey;
         }
     }
 
+    @Transient
     public void setUkeyIf(String ukey, Predicate<String> bool, Supplier<String>... ukeys) {
         if (bool.test(ukey)) {
             this.ukey = ukey;
@@ -252,12 +271,14 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setUkeyIfNot(String ukey, Predicate<String> bool) {
         if (!bool.test(ukey)) {
             this.ukey = ukey;
         }
     }
 
+    @Transient
     public void setUkeyIfNot(String ukey, Predicate<String> bool, Supplier<String>... ukeys) {
         if (!bool.test(ukey)) {
             this.ukey = ukey;
@@ -272,6 +293,7 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setUkeyIf(UnaryOperator<String> ukey) {
         this.ukey = ukey.apply(this.ukey);
     }
@@ -293,24 +315,28 @@ public class SysStandardI18n implements ISysStandardI18n {
         this.lang = lang;
     }
 
+    @Transient
     public void setLangIf(String lang, boolean bool) {
         if (bool) {
             this.lang = lang;
         }
     }
 
+    @Transient
     public void setLangIf(Supplier<String> lang, boolean bool) {
         if (bool) {
             this.lang = lang.get();
         }
     }
 
+    @Transient
     public void setLangIf(String lang, Predicate<String> bool) {
         if (bool.test(lang)) {
             this.lang = lang;
         }
     }
 
+    @Transient
     public void setLangIf(String lang, Predicate<String> bool, Supplier<String>... langs) {
         if (bool.test(lang)) {
             this.lang = lang;
@@ -325,12 +351,14 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setLangIfNot(String lang, Predicate<String> bool) {
         if (!bool.test(lang)) {
             this.lang = lang;
         }
     }
 
+    @Transient
     public void setLangIfNot(String lang, Predicate<String> bool, Supplier<String>... langs) {
         if (!bool.test(lang)) {
             this.lang = lang;
@@ -345,6 +373,7 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setLangIf(UnaryOperator<String> lang) {
         this.lang = lang.apply(this.lang);
     }
@@ -366,24 +395,28 @@ public class SysStandardI18n implements ISysStandardI18n {
         this.hint = hint;
     }
 
+    @Transient
     public void setHintIf(String hint, boolean bool) {
         if (bool) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIf(Supplier<String> hint, boolean bool) {
         if (bool) {
             this.hint = hint.get();
         }
     }
 
+    @Transient
     public void setHintIf(String hint, Predicate<String> bool) {
         if (bool.test(hint)) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIf(String hint, Predicate<String> bool, Supplier<String>... hints) {
         if (bool.test(hint)) {
             this.hint = hint;
@@ -398,12 +431,14 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setHintIfNot(String hint, Predicate<String> bool) {
         if (!bool.test(hint)) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIfNot(String hint, Predicate<String> bool, Supplier<String>... hints) {
         if (!bool.test(hint)) {
             this.hint = hint;
@@ -418,6 +453,7 @@ public class SysStandardI18n implements ISysStandardI18n {
         }
     }
 
+    @Transient
     public void setHintIf(UnaryOperator<String> hint) {
         this.hint = hint.apply(this.hint);
     }

@@ -7,6 +7,7 @@ package pro.fessional.wings.tiny.mail.database.autogen.tables.pojos;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.interfaces.IWinMailSender;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -187,24 +188,28 @@ public class WinMailSender implements IWinMailSender {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -219,12 +224,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -239,6 +246,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -260,24 +268,28 @@ public class WinMailSender implements IWinMailSender {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -292,12 +304,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -312,6 +326,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -333,24 +348,28 @@ public class WinMailSender implements IWinMailSender {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -365,12 +384,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -385,6 +406,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -406,24 +428,28 @@ public class WinMailSender implements IWinMailSender {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -438,12 +464,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -458,6 +486,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -479,24 +508,28 @@ public class WinMailSender implements IWinMailSender {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -511,12 +544,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -531,6 +566,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -552,24 +588,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailApps = mailApps;
     }
 
+    @Transient
     public void setMailAppsIf(String mailApps, boolean bool) {
         if (bool) {
             this.mailApps = mailApps;
         }
     }
 
+    @Transient
     public void setMailAppsIf(Supplier<String> mailApps, boolean bool) {
         if (bool) {
             this.mailApps = mailApps.get();
         }
     }
 
+    @Transient
     public void setMailAppsIf(String mailApps, Predicate<String> bool) {
         if (bool.test(mailApps)) {
             this.mailApps = mailApps;
         }
     }
 
+    @Transient
     public void setMailAppsIf(String mailApps, Predicate<String> bool, Supplier<String>... mailAppss) {
         if (bool.test(mailApps)) {
             this.mailApps = mailApps;
@@ -584,12 +624,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailAppsIfNot(String mailApps, Predicate<String> bool) {
         if (!bool.test(mailApps)) {
             this.mailApps = mailApps;
         }
     }
 
+    @Transient
     public void setMailAppsIfNot(String mailApps, Predicate<String> bool, Supplier<String>... mailAppss) {
         if (!bool.test(mailApps)) {
             this.mailApps = mailApps;
@@ -604,6 +646,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailAppsIf(UnaryOperator<String> mailApps) {
         this.mailApps = mailApps.apply(this.mailApps);
     }
@@ -625,24 +668,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailRuns = mailRuns;
     }
 
+    @Transient
     public void setMailRunsIf(String mailRuns, boolean bool) {
         if (bool) {
             this.mailRuns = mailRuns;
         }
     }
 
+    @Transient
     public void setMailRunsIf(Supplier<String> mailRuns, boolean bool) {
         if (bool) {
             this.mailRuns = mailRuns.get();
         }
     }
 
+    @Transient
     public void setMailRunsIf(String mailRuns, Predicate<String> bool) {
         if (bool.test(mailRuns)) {
             this.mailRuns = mailRuns;
         }
     }
 
+    @Transient
     public void setMailRunsIf(String mailRuns, Predicate<String> bool, Supplier<String>... mailRunss) {
         if (bool.test(mailRuns)) {
             this.mailRuns = mailRuns;
@@ -657,12 +704,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailRunsIfNot(String mailRuns, Predicate<String> bool) {
         if (!bool.test(mailRuns)) {
             this.mailRuns = mailRuns;
         }
     }
 
+    @Transient
     public void setMailRunsIfNot(String mailRuns, Predicate<String> bool, Supplier<String>... mailRunss) {
         if (!bool.test(mailRuns)) {
             this.mailRuns = mailRuns;
@@ -677,6 +726,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailRunsIf(UnaryOperator<String> mailRuns) {
         this.mailRuns = mailRuns.apply(this.mailRuns);
     }
@@ -698,24 +748,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailConf = mailConf;
     }
 
+    @Transient
     public void setMailConfIf(String mailConf, boolean bool) {
         if (bool) {
             this.mailConf = mailConf;
         }
     }
 
+    @Transient
     public void setMailConfIf(Supplier<String> mailConf, boolean bool) {
         if (bool) {
             this.mailConf = mailConf.get();
         }
     }
 
+    @Transient
     public void setMailConfIf(String mailConf, Predicate<String> bool) {
         if (bool.test(mailConf)) {
             this.mailConf = mailConf;
         }
     }
 
+    @Transient
     public void setMailConfIf(String mailConf, Predicate<String> bool, Supplier<String>... mailConfs) {
         if (bool.test(mailConf)) {
             this.mailConf = mailConf;
@@ -730,12 +784,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailConfIfNot(String mailConf, Predicate<String> bool) {
         if (!bool.test(mailConf)) {
             this.mailConf = mailConf;
         }
     }
 
+    @Transient
     public void setMailConfIfNot(String mailConf, Predicate<String> bool, Supplier<String>... mailConfs) {
         if (!bool.test(mailConf)) {
             this.mailConf = mailConf;
@@ -750,6 +806,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailConfIf(UnaryOperator<String> mailConf) {
         this.mailConf = mailConf.apply(this.mailConf);
     }
@@ -771,24 +828,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailFrom = mailFrom;
     }
 
+    @Transient
     public void setMailFromIf(String mailFrom, boolean bool) {
         if (bool) {
             this.mailFrom = mailFrom;
         }
     }
 
+    @Transient
     public void setMailFromIf(Supplier<String> mailFrom, boolean bool) {
         if (bool) {
             this.mailFrom = mailFrom.get();
         }
     }
 
+    @Transient
     public void setMailFromIf(String mailFrom, Predicate<String> bool) {
         if (bool.test(mailFrom)) {
             this.mailFrom = mailFrom;
         }
     }
 
+    @Transient
     public void setMailFromIf(String mailFrom, Predicate<String> bool, Supplier<String>... mailFroms) {
         if (bool.test(mailFrom)) {
             this.mailFrom = mailFrom;
@@ -803,12 +864,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailFromIfNot(String mailFrom, Predicate<String> bool) {
         if (!bool.test(mailFrom)) {
             this.mailFrom = mailFrom;
         }
     }
 
+    @Transient
     public void setMailFromIfNot(String mailFrom, Predicate<String> bool, Supplier<String>... mailFroms) {
         if (!bool.test(mailFrom)) {
             this.mailFrom = mailFrom;
@@ -823,6 +886,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailFromIf(UnaryOperator<String> mailFrom) {
         this.mailFrom = mailFrom.apply(this.mailFrom);
     }
@@ -844,24 +908,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailTo = mailTo;
     }
 
+    @Transient
     public void setMailToIf(String mailTo, boolean bool) {
         if (bool) {
             this.mailTo = mailTo;
         }
     }
 
+    @Transient
     public void setMailToIf(Supplier<String> mailTo, boolean bool) {
         if (bool) {
             this.mailTo = mailTo.get();
         }
     }
 
+    @Transient
     public void setMailToIf(String mailTo, Predicate<String> bool) {
         if (bool.test(mailTo)) {
             this.mailTo = mailTo;
         }
     }
 
+    @Transient
     public void setMailToIf(String mailTo, Predicate<String> bool, Supplier<String>... mailTos) {
         if (bool.test(mailTo)) {
             this.mailTo = mailTo;
@@ -876,12 +944,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailToIfNot(String mailTo, Predicate<String> bool) {
         if (!bool.test(mailTo)) {
             this.mailTo = mailTo;
         }
     }
 
+    @Transient
     public void setMailToIfNot(String mailTo, Predicate<String> bool, Supplier<String>... mailTos) {
         if (!bool.test(mailTo)) {
             this.mailTo = mailTo;
@@ -896,6 +966,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailToIf(UnaryOperator<String> mailTo) {
         this.mailTo = mailTo.apply(this.mailTo);
     }
@@ -917,24 +988,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailCc = mailCc;
     }
 
+    @Transient
     public void setMailCcIf(String mailCc, boolean bool) {
         if (bool) {
             this.mailCc = mailCc;
         }
     }
 
+    @Transient
     public void setMailCcIf(Supplier<String> mailCc, boolean bool) {
         if (bool) {
             this.mailCc = mailCc.get();
         }
     }
 
+    @Transient
     public void setMailCcIf(String mailCc, Predicate<String> bool) {
         if (bool.test(mailCc)) {
             this.mailCc = mailCc;
         }
     }
 
+    @Transient
     public void setMailCcIf(String mailCc, Predicate<String> bool, Supplier<String>... mailCcs) {
         if (bool.test(mailCc)) {
             this.mailCc = mailCc;
@@ -949,12 +1024,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailCcIfNot(String mailCc, Predicate<String> bool) {
         if (!bool.test(mailCc)) {
             this.mailCc = mailCc;
         }
     }
 
+    @Transient
     public void setMailCcIfNot(String mailCc, Predicate<String> bool, Supplier<String>... mailCcs) {
         if (!bool.test(mailCc)) {
             this.mailCc = mailCc;
@@ -969,6 +1046,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailCcIf(UnaryOperator<String> mailCc) {
         this.mailCc = mailCc.apply(this.mailCc);
     }
@@ -990,24 +1068,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailBcc = mailBcc;
     }
 
+    @Transient
     public void setMailBccIf(String mailBcc, boolean bool) {
         if (bool) {
             this.mailBcc = mailBcc;
         }
     }
 
+    @Transient
     public void setMailBccIf(Supplier<String> mailBcc, boolean bool) {
         if (bool) {
             this.mailBcc = mailBcc.get();
         }
     }
 
+    @Transient
     public void setMailBccIf(String mailBcc, Predicate<String> bool) {
         if (bool.test(mailBcc)) {
             this.mailBcc = mailBcc;
         }
     }
 
+    @Transient
     public void setMailBccIf(String mailBcc, Predicate<String> bool, Supplier<String>... mailBccs) {
         if (bool.test(mailBcc)) {
             this.mailBcc = mailBcc;
@@ -1022,12 +1104,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailBccIfNot(String mailBcc, Predicate<String> bool) {
         if (!bool.test(mailBcc)) {
             this.mailBcc = mailBcc;
         }
     }
 
+    @Transient
     public void setMailBccIfNot(String mailBcc, Predicate<String> bool, Supplier<String>... mailBccs) {
         if (!bool.test(mailBcc)) {
             this.mailBcc = mailBcc;
@@ -1042,6 +1126,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailBccIf(UnaryOperator<String> mailBcc) {
         this.mailBcc = mailBcc.apply(this.mailBcc);
     }
@@ -1063,24 +1148,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailReply = mailReply;
     }
 
+    @Transient
     public void setMailReplyIf(String mailReply, boolean bool) {
         if (bool) {
             this.mailReply = mailReply;
         }
     }
 
+    @Transient
     public void setMailReplyIf(Supplier<String> mailReply, boolean bool) {
         if (bool) {
             this.mailReply = mailReply.get();
         }
     }
 
+    @Transient
     public void setMailReplyIf(String mailReply, Predicate<String> bool) {
         if (bool.test(mailReply)) {
             this.mailReply = mailReply;
         }
     }
 
+    @Transient
     public void setMailReplyIf(String mailReply, Predicate<String> bool, Supplier<String>... mailReplys) {
         if (bool.test(mailReply)) {
             this.mailReply = mailReply;
@@ -1095,12 +1184,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailReplyIfNot(String mailReply, Predicate<String> bool) {
         if (!bool.test(mailReply)) {
             this.mailReply = mailReply;
         }
     }
 
+    @Transient
     public void setMailReplyIfNot(String mailReply, Predicate<String> bool, Supplier<String>... mailReplys) {
         if (!bool.test(mailReply)) {
             this.mailReply = mailReply;
@@ -1115,6 +1206,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailReplyIf(UnaryOperator<String> mailReply) {
         this.mailReply = mailReply.apply(this.mailReply);
     }
@@ -1136,24 +1228,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailSubj = mailSubj;
     }
 
+    @Transient
     public void setMailSubjIf(String mailSubj, boolean bool) {
         if (bool) {
             this.mailSubj = mailSubj;
         }
     }
 
+    @Transient
     public void setMailSubjIf(Supplier<String> mailSubj, boolean bool) {
         if (bool) {
             this.mailSubj = mailSubj.get();
         }
     }
 
+    @Transient
     public void setMailSubjIf(String mailSubj, Predicate<String> bool) {
         if (bool.test(mailSubj)) {
             this.mailSubj = mailSubj;
         }
     }
 
+    @Transient
     public void setMailSubjIf(String mailSubj, Predicate<String> bool, Supplier<String>... mailSubjs) {
         if (bool.test(mailSubj)) {
             this.mailSubj = mailSubj;
@@ -1168,12 +1264,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailSubjIfNot(String mailSubj, Predicate<String> bool) {
         if (!bool.test(mailSubj)) {
             this.mailSubj = mailSubj;
         }
     }
 
+    @Transient
     public void setMailSubjIfNot(String mailSubj, Predicate<String> bool, Supplier<String>... mailSubjs) {
         if (!bool.test(mailSubj)) {
             this.mailSubj = mailSubj;
@@ -1188,6 +1286,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailSubjIf(UnaryOperator<String> mailSubj) {
         this.mailSubj = mailSubj.apply(this.mailSubj);
     }
@@ -1209,24 +1308,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailText = mailText;
     }
 
+    @Transient
     public void setMailTextIf(String mailText, boolean bool) {
         if (bool) {
             this.mailText = mailText;
         }
     }
 
+    @Transient
     public void setMailTextIf(Supplier<String> mailText, boolean bool) {
         if (bool) {
             this.mailText = mailText.get();
         }
     }
 
+    @Transient
     public void setMailTextIf(String mailText, Predicate<String> bool) {
         if (bool.test(mailText)) {
             this.mailText = mailText;
         }
     }
 
+    @Transient
     public void setMailTextIf(String mailText, Predicate<String> bool, Supplier<String>... mailTexts) {
         if (bool.test(mailText)) {
             this.mailText = mailText;
@@ -1241,12 +1344,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailTextIfNot(String mailText, Predicate<String> bool) {
         if (!bool.test(mailText)) {
             this.mailText = mailText;
         }
     }
 
+    @Transient
     public void setMailTextIfNot(String mailText, Predicate<String> bool, Supplier<String>... mailTexts) {
         if (!bool.test(mailText)) {
             this.mailText = mailText;
@@ -1261,6 +1366,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailTextIf(UnaryOperator<String> mailText) {
         this.mailText = mailText.apply(this.mailText);
     }
@@ -1282,24 +1388,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailHtml = mailHtml;
     }
 
+    @Transient
     public void setMailHtmlIf(Boolean mailHtml, boolean bool) {
         if (bool) {
             this.mailHtml = mailHtml;
         }
     }
 
+    @Transient
     public void setMailHtmlIf(Supplier<Boolean> mailHtml, boolean bool) {
         if (bool) {
             this.mailHtml = mailHtml.get();
         }
     }
 
+    @Transient
     public void setMailHtmlIf(Boolean mailHtml, Predicate<Boolean> bool) {
         if (bool.test(mailHtml)) {
             this.mailHtml = mailHtml;
         }
     }
 
+    @Transient
     public void setMailHtmlIf(Boolean mailHtml, Predicate<Boolean> bool, Supplier<Boolean>... mailHtmls) {
         if (bool.test(mailHtml)) {
             this.mailHtml = mailHtml;
@@ -1314,12 +1424,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailHtmlIfNot(Boolean mailHtml, Predicate<Boolean> bool) {
         if (!bool.test(mailHtml)) {
             this.mailHtml = mailHtml;
         }
     }
 
+    @Transient
     public void setMailHtmlIfNot(Boolean mailHtml, Predicate<Boolean> bool, Supplier<Boolean>... mailHtmls) {
         if (!bool.test(mailHtml)) {
             this.mailHtml = mailHtml;
@@ -1334,6 +1446,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailHtmlIf(UnaryOperator<Boolean> mailHtml) {
         this.mailHtml = mailHtml.apply(this.mailHtml);
     }
@@ -1355,24 +1468,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailFile = mailFile;
     }
 
+    @Transient
     public void setMailFileIf(String mailFile, boolean bool) {
         if (bool) {
             this.mailFile = mailFile;
         }
     }
 
+    @Transient
     public void setMailFileIf(Supplier<String> mailFile, boolean bool) {
         if (bool) {
             this.mailFile = mailFile.get();
         }
     }
 
+    @Transient
     public void setMailFileIf(String mailFile, Predicate<String> bool) {
         if (bool.test(mailFile)) {
             this.mailFile = mailFile;
         }
     }
 
+    @Transient
     public void setMailFileIf(String mailFile, Predicate<String> bool, Supplier<String>... mailFiles) {
         if (bool.test(mailFile)) {
             this.mailFile = mailFile;
@@ -1387,12 +1504,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailFileIfNot(String mailFile, Predicate<String> bool) {
         if (!bool.test(mailFile)) {
             this.mailFile = mailFile;
         }
     }
 
+    @Transient
     public void setMailFileIfNot(String mailFile, Predicate<String> bool, Supplier<String>... mailFiles) {
         if (!bool.test(mailFile)) {
             this.mailFile = mailFile;
@@ -1407,6 +1526,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailFileIf(UnaryOperator<String> mailFile) {
         this.mailFile = mailFile.apply(this.mailFile);
     }
@@ -1428,24 +1548,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailMark = mailMark;
     }
 
+    @Transient
     public void setMailMarkIf(String mailMark, boolean bool) {
         if (bool) {
             this.mailMark = mailMark;
         }
     }
 
+    @Transient
     public void setMailMarkIf(Supplier<String> mailMark, boolean bool) {
         if (bool) {
             this.mailMark = mailMark.get();
         }
     }
 
+    @Transient
     public void setMailMarkIf(String mailMark, Predicate<String> bool) {
         if (bool.test(mailMark)) {
             this.mailMark = mailMark;
         }
     }
 
+    @Transient
     public void setMailMarkIf(String mailMark, Predicate<String> bool, Supplier<String>... mailMarks) {
         if (bool.test(mailMark)) {
             this.mailMark = mailMark;
@@ -1460,12 +1584,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailMarkIfNot(String mailMark, Predicate<String> bool) {
         if (!bool.test(mailMark)) {
             this.mailMark = mailMark;
         }
     }
 
+    @Transient
     public void setMailMarkIfNot(String mailMark, Predicate<String> bool, Supplier<String>... mailMarks) {
         if (!bool.test(mailMark)) {
             this.mailMark = mailMark;
@@ -1480,6 +1606,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailMarkIf(UnaryOperator<String> mailMark) {
         this.mailMark = mailMark.apply(this.mailMark);
     }
@@ -1501,24 +1628,28 @@ public class WinMailSender implements IWinMailSender {
         this.mailDate = mailDate;
     }
 
+    @Transient
     public void setMailDateIf(LocalDateTime mailDate, boolean bool) {
         if (bool) {
             this.mailDate = mailDate;
         }
     }
 
+    @Transient
     public void setMailDateIf(Supplier<LocalDateTime> mailDate, boolean bool) {
         if (bool) {
             this.mailDate = mailDate.get();
         }
     }
 
+    @Transient
     public void setMailDateIf(LocalDateTime mailDate, Predicate<LocalDateTime> bool) {
         if (bool.test(mailDate)) {
             this.mailDate = mailDate;
         }
     }
 
+    @Transient
     public void setMailDateIf(LocalDateTime mailDate, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... mailDates) {
         if (bool.test(mailDate)) {
             this.mailDate = mailDate;
@@ -1533,12 +1664,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailDateIfNot(LocalDateTime mailDate, Predicate<LocalDateTime> bool) {
         if (!bool.test(mailDate)) {
             this.mailDate = mailDate;
         }
     }
 
+    @Transient
     public void setMailDateIfNot(LocalDateTime mailDate, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... mailDates) {
         if (!bool.test(mailDate)) {
             this.mailDate = mailDate;
@@ -1553,6 +1686,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMailDateIf(UnaryOperator<LocalDateTime> mailDate) {
         this.mailDate = mailDate.apply(this.mailDate);
     }
@@ -1574,24 +1708,28 @@ public class WinMailSender implements IWinMailSender {
         this.lastSend = lastSend;
     }
 
+    @Transient
     public void setLastSendIf(LocalDateTime lastSend, boolean bool) {
         if (bool) {
             this.lastSend = lastSend;
         }
     }
 
+    @Transient
     public void setLastSendIf(Supplier<LocalDateTime> lastSend, boolean bool) {
         if (bool) {
             this.lastSend = lastSend.get();
         }
     }
 
+    @Transient
     public void setLastSendIf(LocalDateTime lastSend, Predicate<LocalDateTime> bool) {
         if (bool.test(lastSend)) {
             this.lastSend = lastSend;
         }
     }
 
+    @Transient
     public void setLastSendIf(LocalDateTime lastSend, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastSends) {
         if (bool.test(lastSend)) {
             this.lastSend = lastSend;
@@ -1606,12 +1744,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastSendIfNot(LocalDateTime lastSend, Predicate<LocalDateTime> bool) {
         if (!bool.test(lastSend)) {
             this.lastSend = lastSend;
         }
     }
 
+    @Transient
     public void setLastSendIfNot(LocalDateTime lastSend, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastSends) {
         if (!bool.test(lastSend)) {
             this.lastSend = lastSend;
@@ -1626,6 +1766,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastSendIf(UnaryOperator<LocalDateTime> lastSend) {
         this.lastSend = lastSend.apply(this.lastSend);
     }
@@ -1647,24 +1788,28 @@ public class WinMailSender implements IWinMailSender {
         this.lastFail = lastFail;
     }
 
+    @Transient
     public void setLastFailIf(String lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIf(Supplier<String> lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail.get();
         }
     }
 
+    @Transient
     public void setLastFailIf(String lastFail, Predicate<String> bool) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIf(String lastFail, Predicate<String> bool, Supplier<String>... lastFails) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
@@ -1679,12 +1824,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastFailIfNot(String lastFail, Predicate<String> bool) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIfNot(String lastFail, Predicate<String> bool, Supplier<String>... lastFails) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
@@ -1699,6 +1846,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastFailIf(UnaryOperator<String> lastFail) {
         this.lastFail = lastFail.apply(this.lastFail);
     }
@@ -1720,24 +1868,28 @@ public class WinMailSender implements IWinMailSender {
         this.lastDone = lastDone;
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, boolean bool) {
         if (bool) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIf(Supplier<LocalDateTime> lastDone, boolean bool) {
         if (bool) {
             this.lastDone = lastDone.get();
         }
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
         if (bool.test(lastDone)) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
         if (bool.test(lastDone)) {
             this.lastDone = lastDone;
@@ -1752,12 +1904,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
         if (!bool.test(lastDone)) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
         if (!bool.test(lastDone)) {
             this.lastDone = lastDone;
@@ -1772,6 +1926,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastDoneIf(UnaryOperator<LocalDateTime> lastDone) {
         this.lastDone = lastDone.apply(this.lastDone);
     }
@@ -1793,24 +1948,28 @@ public class WinMailSender implements IWinMailSender {
         this.lastCost = lastCost;
     }
 
+    @Transient
     public void setLastCostIf(Integer lastCost, boolean bool) {
         if (bool) {
             this.lastCost = lastCost;
         }
     }
 
+    @Transient
     public void setLastCostIf(Supplier<Integer> lastCost, boolean bool) {
         if (bool) {
             this.lastCost = lastCost.get();
         }
     }
 
+    @Transient
     public void setLastCostIf(Integer lastCost, Predicate<Integer> bool) {
         if (bool.test(lastCost)) {
             this.lastCost = lastCost;
         }
     }
 
+    @Transient
     public void setLastCostIf(Integer lastCost, Predicate<Integer> bool, Supplier<Integer>... lastCosts) {
         if (bool.test(lastCost)) {
             this.lastCost = lastCost;
@@ -1825,12 +1984,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastCostIfNot(Integer lastCost, Predicate<Integer> bool) {
         if (!bool.test(lastCost)) {
             this.lastCost = lastCost;
         }
     }
 
+    @Transient
     public void setLastCostIfNot(Integer lastCost, Predicate<Integer> bool, Supplier<Integer>... lastCosts) {
         if (!bool.test(lastCost)) {
             this.lastCost = lastCost;
@@ -1845,6 +2006,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setLastCostIf(UnaryOperator<Integer> lastCost) {
         this.lastCost = lastCost.apply(this.lastCost);
     }
@@ -1866,24 +2028,28 @@ public class WinMailSender implements IWinMailSender {
         this.nextSend = nextSend;
     }
 
+    @Transient
     public void setNextSendIf(LocalDateTime nextSend, boolean bool) {
         if (bool) {
             this.nextSend = nextSend;
         }
     }
 
+    @Transient
     public void setNextSendIf(Supplier<LocalDateTime> nextSend, boolean bool) {
         if (bool) {
             this.nextSend = nextSend.get();
         }
     }
 
+    @Transient
     public void setNextSendIf(LocalDateTime nextSend, Predicate<LocalDateTime> bool) {
         if (bool.test(nextSend)) {
             this.nextSend = nextSend;
         }
     }
 
+    @Transient
     public void setNextSendIf(LocalDateTime nextSend, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... nextSends) {
         if (bool.test(nextSend)) {
             this.nextSend = nextSend;
@@ -1898,12 +2064,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setNextSendIfNot(LocalDateTime nextSend, Predicate<LocalDateTime> bool) {
         if (!bool.test(nextSend)) {
             this.nextSend = nextSend;
         }
     }
 
+    @Transient
     public void setNextSendIfNot(LocalDateTime nextSend, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... nextSends) {
         if (!bool.test(nextSend)) {
             this.nextSend = nextSend;
@@ -1918,6 +2086,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setNextSendIf(UnaryOperator<LocalDateTime> nextSend) {
         this.nextSend = nextSend.apply(this.nextSend);
     }
@@ -1939,24 +2108,28 @@ public class WinMailSender implements IWinMailSender {
         this.nextLock = nextLock;
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, boolean bool) {
         if (bool) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIf(Supplier<Integer> nextLock, boolean bool) {
         if (bool) {
             this.nextLock = nextLock.get();
         }
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, Predicate<Integer> bool) {
         if (bool.test(nextLock)) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, Predicate<Integer> bool, Supplier<Integer>... nextLocks) {
         if (bool.test(nextLock)) {
             this.nextLock = nextLock;
@@ -1971,12 +2144,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setNextLockIfNot(Integer nextLock, Predicate<Integer> bool) {
         if (!bool.test(nextLock)) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIfNot(Integer nextLock, Predicate<Integer> bool, Supplier<Integer>... nextLocks) {
         if (!bool.test(nextLock)) {
             this.nextLock = nextLock;
@@ -1991,6 +2166,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setNextLockIf(UnaryOperator<Integer> nextLock) {
         this.nextLock = nextLock.apply(this.nextLock);
     }
@@ -2012,24 +2188,28 @@ public class WinMailSender implements IWinMailSender {
         this.sumSend = sumSend;
     }
 
+    @Transient
     public void setSumSendIf(Integer sumSend, boolean bool) {
         if (bool) {
             this.sumSend = sumSend;
         }
     }
 
+    @Transient
     public void setSumSendIf(Supplier<Integer> sumSend, boolean bool) {
         if (bool) {
             this.sumSend = sumSend.get();
         }
     }
 
+    @Transient
     public void setSumSendIf(Integer sumSend, Predicate<Integer> bool) {
         if (bool.test(sumSend)) {
             this.sumSend = sumSend;
         }
     }
 
+    @Transient
     public void setSumSendIf(Integer sumSend, Predicate<Integer> bool, Supplier<Integer>... sumSends) {
         if (bool.test(sumSend)) {
             this.sumSend = sumSend;
@@ -2044,12 +2224,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumSendIfNot(Integer sumSend, Predicate<Integer> bool) {
         if (!bool.test(sumSend)) {
             this.sumSend = sumSend;
         }
     }
 
+    @Transient
     public void setSumSendIfNot(Integer sumSend, Predicate<Integer> bool, Supplier<Integer>... sumSends) {
         if (!bool.test(sumSend)) {
             this.sumSend = sumSend;
@@ -2064,6 +2246,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumSendIf(UnaryOperator<Integer> sumSend) {
         this.sumSend = sumSend.apply(this.sumSend);
     }
@@ -2085,24 +2268,28 @@ public class WinMailSender implements IWinMailSender {
         this.sumFail = sumFail;
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, boolean bool) {
         if (bool) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIf(Supplier<Integer> sumFail, boolean bool) {
         if (bool) {
             this.sumFail = sumFail.get();
         }
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, Predicate<Integer> bool) {
         if (bool.test(sumFail)) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, Predicate<Integer> bool, Supplier<Integer>... sumFails) {
         if (bool.test(sumFail)) {
             this.sumFail = sumFail;
@@ -2117,12 +2304,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumFailIfNot(Integer sumFail, Predicate<Integer> bool) {
         if (!bool.test(sumFail)) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIfNot(Integer sumFail, Predicate<Integer> bool, Supplier<Integer>... sumFails) {
         if (!bool.test(sumFail)) {
             this.sumFail = sumFail;
@@ -2137,6 +2326,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumFailIf(UnaryOperator<Integer> sumFail) {
         this.sumFail = sumFail.apply(this.sumFail);
     }
@@ -2158,24 +2348,28 @@ public class WinMailSender implements IWinMailSender {
         this.sumDone = sumDone;
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, boolean bool) {
         if (bool) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIf(Supplier<Integer> sumDone, boolean bool) {
         if (bool) {
             this.sumDone = sumDone.get();
         }
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, Predicate<Integer> bool) {
         if (bool.test(sumDone)) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, Predicate<Integer> bool, Supplier<Integer>... sumDones) {
         if (bool.test(sumDone)) {
             this.sumDone = sumDone;
@@ -2190,12 +2384,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumDoneIfNot(Integer sumDone, Predicate<Integer> bool) {
         if (!bool.test(sumDone)) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIfNot(Integer sumDone, Predicate<Integer> bool, Supplier<Integer>... sumDones) {
         if (!bool.test(sumDone)) {
             this.sumDone = sumDone;
@@ -2210,6 +2406,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setSumDoneIf(UnaryOperator<Integer> sumDone) {
         this.sumDone = sumDone.apply(this.sumDone);
     }
@@ -2231,24 +2428,28 @@ public class WinMailSender implements IWinMailSender {
         this.maxFail = maxFail;
     }
 
+    @Transient
     public void setMaxFailIf(Integer maxFail, boolean bool) {
         if (bool) {
             this.maxFail = maxFail;
         }
     }
 
+    @Transient
     public void setMaxFailIf(Supplier<Integer> maxFail, boolean bool) {
         if (bool) {
             this.maxFail = maxFail.get();
         }
     }
 
+    @Transient
     public void setMaxFailIf(Integer maxFail, Predicate<Integer> bool) {
         if (bool.test(maxFail)) {
             this.maxFail = maxFail;
         }
     }
 
+    @Transient
     public void setMaxFailIf(Integer maxFail, Predicate<Integer> bool, Supplier<Integer>... maxFails) {
         if (bool.test(maxFail)) {
             this.maxFail = maxFail;
@@ -2263,12 +2464,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMaxFailIfNot(Integer maxFail, Predicate<Integer> bool) {
         if (!bool.test(maxFail)) {
             this.maxFail = maxFail;
         }
     }
 
+    @Transient
     public void setMaxFailIfNot(Integer maxFail, Predicate<Integer> bool, Supplier<Integer>... maxFails) {
         if (!bool.test(maxFail)) {
             this.maxFail = maxFail;
@@ -2283,6 +2486,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMaxFailIf(UnaryOperator<Integer> maxFail) {
         this.maxFail = maxFail.apply(this.maxFail);
     }
@@ -2304,24 +2508,28 @@ public class WinMailSender implements IWinMailSender {
         this.maxDone = maxDone;
     }
 
+    @Transient
     public void setMaxDoneIf(Integer maxDone, boolean bool) {
         if (bool) {
             this.maxDone = maxDone;
         }
     }
 
+    @Transient
     public void setMaxDoneIf(Supplier<Integer> maxDone, boolean bool) {
         if (bool) {
             this.maxDone = maxDone.get();
         }
     }
 
+    @Transient
     public void setMaxDoneIf(Integer maxDone, Predicate<Integer> bool) {
         if (bool.test(maxDone)) {
             this.maxDone = maxDone;
         }
     }
 
+    @Transient
     public void setMaxDoneIf(Integer maxDone, Predicate<Integer> bool, Supplier<Integer>... maxDones) {
         if (bool.test(maxDone)) {
             this.maxDone = maxDone;
@@ -2336,12 +2544,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMaxDoneIfNot(Integer maxDone, Predicate<Integer> bool) {
         if (!bool.test(maxDone)) {
             this.maxDone = maxDone;
         }
     }
 
+    @Transient
     public void setMaxDoneIfNot(Integer maxDone, Predicate<Integer> bool, Supplier<Integer>... maxDones) {
         if (!bool.test(maxDone)) {
             this.maxDone = maxDone;
@@ -2356,6 +2566,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setMaxDoneIf(UnaryOperator<Integer> maxDone) {
         this.maxDone = maxDone.apply(this.maxDone);
     }
@@ -2377,24 +2588,28 @@ public class WinMailSender implements IWinMailSender {
         this.refType = refType;
     }
 
+    @Transient
     public void setRefTypeIf(Integer refType, boolean bool) {
         if (bool) {
             this.refType = refType;
         }
     }
 
+    @Transient
     public void setRefTypeIf(Supplier<Integer> refType, boolean bool) {
         if (bool) {
             this.refType = refType.get();
         }
     }
 
+    @Transient
     public void setRefTypeIf(Integer refType, Predicate<Integer> bool) {
         if (bool.test(refType)) {
             this.refType = refType;
         }
     }
 
+    @Transient
     public void setRefTypeIf(Integer refType, Predicate<Integer> bool, Supplier<Integer>... refTypes) {
         if (bool.test(refType)) {
             this.refType = refType;
@@ -2409,12 +2624,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefTypeIfNot(Integer refType, Predicate<Integer> bool) {
         if (!bool.test(refType)) {
             this.refType = refType;
         }
     }
 
+    @Transient
     public void setRefTypeIfNot(Integer refType, Predicate<Integer> bool, Supplier<Integer>... refTypes) {
         if (!bool.test(refType)) {
             this.refType = refType;
@@ -2429,6 +2646,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefTypeIf(UnaryOperator<Integer> refType) {
         this.refType = refType.apply(this.refType);
     }
@@ -2450,24 +2668,28 @@ public class WinMailSender implements IWinMailSender {
         this.refKey1 = refKey1;
     }
 
+    @Transient
     public void setRefKey1If(Long refKey1, boolean bool) {
         if (bool) {
             this.refKey1 = refKey1;
         }
     }
 
+    @Transient
     public void setRefKey1If(Supplier<Long> refKey1, boolean bool) {
         if (bool) {
             this.refKey1 = refKey1.get();
         }
     }
 
+    @Transient
     public void setRefKey1If(Long refKey1, Predicate<Long> bool) {
         if (bool.test(refKey1)) {
             this.refKey1 = refKey1;
         }
     }
 
+    @Transient
     public void setRefKey1If(Long refKey1, Predicate<Long> bool, Supplier<Long>... refKey1s) {
         if (bool.test(refKey1)) {
             this.refKey1 = refKey1;
@@ -2482,12 +2704,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefKey1IfNot(Long refKey1, Predicate<Long> bool) {
         if (!bool.test(refKey1)) {
             this.refKey1 = refKey1;
         }
     }
 
+    @Transient
     public void setRefKey1IfNot(Long refKey1, Predicate<Long> bool, Supplier<Long>... refKey1s) {
         if (!bool.test(refKey1)) {
             this.refKey1 = refKey1;
@@ -2502,6 +2726,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefKey1If(UnaryOperator<Long> refKey1) {
         this.refKey1 = refKey1.apply(this.refKey1);
     }
@@ -2523,24 +2748,28 @@ public class WinMailSender implements IWinMailSender {
         this.refKey2 = refKey2;
     }
 
+    @Transient
     public void setRefKey2If(String refKey2, boolean bool) {
         if (bool) {
             this.refKey2 = refKey2;
         }
     }
 
+    @Transient
     public void setRefKey2If(Supplier<String> refKey2, boolean bool) {
         if (bool) {
             this.refKey2 = refKey2.get();
         }
     }
 
+    @Transient
     public void setRefKey2If(String refKey2, Predicate<String> bool) {
         if (bool.test(refKey2)) {
             this.refKey2 = refKey2;
         }
     }
 
+    @Transient
     public void setRefKey2If(String refKey2, Predicate<String> bool, Supplier<String>... refKey2s) {
         if (bool.test(refKey2)) {
             this.refKey2 = refKey2;
@@ -2555,12 +2784,14 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefKey2IfNot(String refKey2, Predicate<String> bool) {
         if (!bool.test(refKey2)) {
             this.refKey2 = refKey2;
         }
     }
 
+    @Transient
     public void setRefKey2IfNot(String refKey2, Predicate<String> bool, Supplier<String>... refKey2s) {
         if (!bool.test(refKey2)) {
             this.refKey2 = refKey2;
@@ -2575,6 +2806,7 @@ public class WinMailSender implements IWinMailSender {
         }
     }
 
+    @Transient
     public void setRefKey2If(UnaryOperator<String> refKey2) {
         this.refKey2 = refKey2.apply(this.refKey2);
     }

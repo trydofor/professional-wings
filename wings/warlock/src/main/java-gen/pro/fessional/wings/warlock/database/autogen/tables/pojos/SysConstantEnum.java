@@ -7,6 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.ISysConstantEnum;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -74,24 +75,28 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Integer id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Integer> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Integer id, Predicate<Integer> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Integer id, Predicate<Integer> bool, Supplier<Integer>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -106,12 +111,14 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setIdIfNot(Integer id, Predicate<Integer> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Integer id, Predicate<Integer> bool, Supplier<Integer>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -126,6 +133,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Integer> id) {
         this.id = id.apply(this.id);
     }
@@ -147,24 +155,28 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.type = type;
     }
 
+    @Transient
     public void setTypeIf(String type, boolean bool) {
         if (bool) {
             this.type = type;
         }
     }
 
+    @Transient
     public void setTypeIf(Supplier<String> type, boolean bool) {
         if (bool) {
             this.type = type.get();
         }
     }
 
+    @Transient
     public void setTypeIf(String type, Predicate<String> bool) {
         if (bool.test(type)) {
             this.type = type;
         }
     }
 
+    @Transient
     public void setTypeIf(String type, Predicate<String> bool, Supplier<String>... types) {
         if (bool.test(type)) {
             this.type = type;
@@ -179,12 +191,14 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setTypeIfNot(String type, Predicate<String> bool) {
         if (!bool.test(type)) {
             this.type = type;
         }
     }
 
+    @Transient
     public void setTypeIfNot(String type, Predicate<String> bool, Supplier<String>... types) {
         if (!bool.test(type)) {
             this.type = type;
@@ -199,6 +213,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setTypeIf(UnaryOperator<String> type) {
         this.type = type.apply(this.type);
     }
@@ -220,24 +235,28 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.code = code;
     }
 
+    @Transient
     public void setCodeIf(String code, boolean bool) {
         if (bool) {
             this.code = code;
         }
     }
 
+    @Transient
     public void setCodeIf(Supplier<String> code, boolean bool) {
         if (bool) {
             this.code = code.get();
         }
     }
 
+    @Transient
     public void setCodeIf(String code, Predicate<String> bool) {
         if (bool.test(code)) {
             this.code = code;
         }
     }
 
+    @Transient
     public void setCodeIf(String code, Predicate<String> bool, Supplier<String>... codes) {
         if (bool.test(code)) {
             this.code = code;
@@ -252,12 +271,14 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setCodeIfNot(String code, Predicate<String> bool) {
         if (!bool.test(code)) {
             this.code = code;
         }
     }
 
+    @Transient
     public void setCodeIfNot(String code, Predicate<String> bool, Supplier<String>... codes) {
         if (!bool.test(code)) {
             this.code = code;
@@ -272,6 +293,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setCodeIf(UnaryOperator<String> code) {
         this.code = code.apply(this.code);
     }
@@ -293,24 +315,28 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.hint = hint;
     }
 
+    @Transient
     public void setHintIf(String hint, boolean bool) {
         if (bool) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIf(Supplier<String> hint, boolean bool) {
         if (bool) {
             this.hint = hint.get();
         }
     }
 
+    @Transient
     public void setHintIf(String hint, Predicate<String> bool) {
         if (bool.test(hint)) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIf(String hint, Predicate<String> bool, Supplier<String>... hints) {
         if (bool.test(hint)) {
             this.hint = hint;
@@ -325,12 +351,14 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setHintIfNot(String hint, Predicate<String> bool) {
         if (!bool.test(hint)) {
             this.hint = hint;
         }
     }
 
+    @Transient
     public void setHintIfNot(String hint, Predicate<String> bool, Supplier<String>... hints) {
         if (!bool.test(hint)) {
             this.hint = hint;
@@ -345,6 +373,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setHintIf(UnaryOperator<String> hint) {
         this.hint = hint.apply(this.hint);
     }
@@ -366,24 +395,28 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.info = info;
     }
 
+    @Transient
     public void setInfoIf(String info, boolean bool) {
         if (bool) {
             this.info = info;
         }
     }
 
+    @Transient
     public void setInfoIf(Supplier<String> info, boolean bool) {
         if (bool) {
             this.info = info.get();
         }
     }
 
+    @Transient
     public void setInfoIf(String info, Predicate<String> bool) {
         if (bool.test(info)) {
             this.info = info;
         }
     }
 
+    @Transient
     public void setInfoIf(String info, Predicate<String> bool, Supplier<String>... infos) {
         if (bool.test(info)) {
             this.info = info;
@@ -398,12 +431,14 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setInfoIfNot(String info, Predicate<String> bool) {
         if (!bool.test(info)) {
             this.info = info;
         }
     }
 
+    @Transient
     public void setInfoIfNot(String info, Predicate<String> bool, Supplier<String>... infos) {
         if (!bool.test(info)) {
             this.info = info;
@@ -418,6 +453,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
     }
 
+    @Transient
     public void setInfoIf(UnaryOperator<String> info) {
         this.info = info.apply(this.info);
     }

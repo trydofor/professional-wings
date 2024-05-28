@@ -7,6 +7,7 @@ package pro.fessional.wings.faceless.app.database.autogen.tables.pojos;
 import pro.fessional.wings.faceless.app.database.autogen.tables.interfaces.ITstNormalTable;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -110,24 +111,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -142,12 +147,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -162,6 +169,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -183,24 +191,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -215,12 +227,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -235,6 +249,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -256,24 +271,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -288,12 +307,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -308,6 +329,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -329,24 +351,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -361,12 +387,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -381,6 +409,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -402,24 +431,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -434,12 +467,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -454,6 +489,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -475,24 +511,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueVarchar = valueVarchar;
     }
 
+    @Transient
     public void setValueVarcharIf(String valueVarchar, boolean bool) {
         if (bool) {
             this.valueVarchar = valueVarchar;
         }
     }
 
+    @Transient
     public void setValueVarcharIf(Supplier<String> valueVarchar, boolean bool) {
         if (bool) {
             this.valueVarchar = valueVarchar.get();
         }
     }
 
+    @Transient
     public void setValueVarcharIf(String valueVarchar, Predicate<String> bool) {
         if (bool.test(valueVarchar)) {
             this.valueVarchar = valueVarchar;
         }
     }
 
+    @Transient
     public void setValueVarcharIf(String valueVarchar, Predicate<String> bool, Supplier<String>... valueVarchars) {
         if (bool.test(valueVarchar)) {
             this.valueVarchar = valueVarchar;
@@ -507,12 +547,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueVarcharIfNot(String valueVarchar, Predicate<String> bool) {
         if (!bool.test(valueVarchar)) {
             this.valueVarchar = valueVarchar;
         }
     }
 
+    @Transient
     public void setValueVarcharIfNot(String valueVarchar, Predicate<String> bool, Supplier<String>... valueVarchars) {
         if (!bool.test(valueVarchar)) {
             this.valueVarchar = valueVarchar;
@@ -527,6 +569,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueVarcharIf(UnaryOperator<String> valueVarchar) {
         this.valueVarchar = valueVarchar.apply(this.valueVarchar);
     }
@@ -548,24 +591,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueDecimal = valueDecimal;
     }
 
+    @Transient
     public void setValueDecimalIf(BigDecimal valueDecimal, boolean bool) {
         if (bool) {
             this.valueDecimal = valueDecimal;
         }
     }
 
+    @Transient
     public void setValueDecimalIf(Supplier<BigDecimal> valueDecimal, boolean bool) {
         if (bool) {
             this.valueDecimal = valueDecimal.get();
         }
     }
 
+    @Transient
     public void setValueDecimalIf(BigDecimal valueDecimal, Predicate<BigDecimal> bool) {
         if (bool.test(valueDecimal)) {
             this.valueDecimal = valueDecimal;
         }
     }
 
+    @Transient
     public void setValueDecimalIf(BigDecimal valueDecimal, Predicate<BigDecimal> bool, Supplier<BigDecimal>... valueDecimals) {
         if (bool.test(valueDecimal)) {
             this.valueDecimal = valueDecimal;
@@ -580,12 +627,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueDecimalIfNot(BigDecimal valueDecimal, Predicate<BigDecimal> bool) {
         if (!bool.test(valueDecimal)) {
             this.valueDecimal = valueDecimal;
         }
     }
 
+    @Transient
     public void setValueDecimalIfNot(BigDecimal valueDecimal, Predicate<BigDecimal> bool, Supplier<BigDecimal>... valueDecimals) {
         if (!bool.test(valueDecimal)) {
             this.valueDecimal = valueDecimal;
@@ -600,6 +649,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueDecimalIf(UnaryOperator<BigDecimal> valueDecimal) {
         this.valueDecimal = valueDecimal.apply(this.valueDecimal);
     }
@@ -621,24 +671,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueBoolean = valueBoolean;
     }
 
+    @Transient
     public void setValueBooleanIf(Boolean valueBoolean, boolean bool) {
         if (bool) {
             this.valueBoolean = valueBoolean;
         }
     }
 
+    @Transient
     public void setValueBooleanIf(Supplier<Boolean> valueBoolean, boolean bool) {
         if (bool) {
             this.valueBoolean = valueBoolean.get();
         }
     }
 
+    @Transient
     public void setValueBooleanIf(Boolean valueBoolean, Predicate<Boolean> bool) {
         if (bool.test(valueBoolean)) {
             this.valueBoolean = valueBoolean;
         }
     }
 
+    @Transient
     public void setValueBooleanIf(Boolean valueBoolean, Predicate<Boolean> bool, Supplier<Boolean>... valueBooleans) {
         if (bool.test(valueBoolean)) {
             this.valueBoolean = valueBoolean;
@@ -653,12 +707,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueBooleanIfNot(Boolean valueBoolean, Predicate<Boolean> bool) {
         if (!bool.test(valueBoolean)) {
             this.valueBoolean = valueBoolean;
         }
     }
 
+    @Transient
     public void setValueBooleanIfNot(Boolean valueBoolean, Predicate<Boolean> bool, Supplier<Boolean>... valueBooleans) {
         if (!bool.test(valueBoolean)) {
             this.valueBoolean = valueBoolean;
@@ -673,6 +729,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueBooleanIf(UnaryOperator<Boolean> valueBoolean) {
         this.valueBoolean = valueBoolean.apply(this.valueBoolean);
     }
@@ -694,24 +751,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueInt = valueInt;
     }
 
+    @Transient
     public void setValueIntIf(Integer valueInt, boolean bool) {
         if (bool) {
             this.valueInt = valueInt;
         }
     }
 
+    @Transient
     public void setValueIntIf(Supplier<Integer> valueInt, boolean bool) {
         if (bool) {
             this.valueInt = valueInt.get();
         }
     }
 
+    @Transient
     public void setValueIntIf(Integer valueInt, Predicate<Integer> bool) {
         if (bool.test(valueInt)) {
             this.valueInt = valueInt;
         }
     }
 
+    @Transient
     public void setValueIntIf(Integer valueInt, Predicate<Integer> bool, Supplier<Integer>... valueInts) {
         if (bool.test(valueInt)) {
             this.valueInt = valueInt;
@@ -726,12 +787,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueIntIfNot(Integer valueInt, Predicate<Integer> bool) {
         if (!bool.test(valueInt)) {
             this.valueInt = valueInt;
         }
     }
 
+    @Transient
     public void setValueIntIfNot(Integer valueInt, Predicate<Integer> bool, Supplier<Integer>... valueInts) {
         if (!bool.test(valueInt)) {
             this.valueInt = valueInt;
@@ -746,6 +809,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueIntIf(UnaryOperator<Integer> valueInt) {
         this.valueInt = valueInt.apply(this.valueInt);
     }
@@ -767,24 +831,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueLong = valueLong;
     }
 
+    @Transient
     public void setValueLongIf(Long valueLong, boolean bool) {
         if (bool) {
             this.valueLong = valueLong;
         }
     }
 
+    @Transient
     public void setValueLongIf(Supplier<Long> valueLong, boolean bool) {
         if (bool) {
             this.valueLong = valueLong.get();
         }
     }
 
+    @Transient
     public void setValueLongIf(Long valueLong, Predicate<Long> bool) {
         if (bool.test(valueLong)) {
             this.valueLong = valueLong;
         }
     }
 
+    @Transient
     public void setValueLongIf(Long valueLong, Predicate<Long> bool, Supplier<Long>... valueLongs) {
         if (bool.test(valueLong)) {
             this.valueLong = valueLong;
@@ -799,12 +867,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueLongIfNot(Long valueLong, Predicate<Long> bool) {
         if (!bool.test(valueLong)) {
             this.valueLong = valueLong;
         }
     }
 
+    @Transient
     public void setValueLongIfNot(Long valueLong, Predicate<Long> bool, Supplier<Long>... valueLongs) {
         if (!bool.test(valueLong)) {
             this.valueLong = valueLong;
@@ -819,6 +889,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueLongIf(UnaryOperator<Long> valueLong) {
         this.valueLong = valueLong.apply(this.valueLong);
     }
@@ -840,24 +911,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueDate = valueDate;
     }
 
+    @Transient
     public void setValueDateIf(LocalDate valueDate, boolean bool) {
         if (bool) {
             this.valueDate = valueDate;
         }
     }
 
+    @Transient
     public void setValueDateIf(Supplier<LocalDate> valueDate, boolean bool) {
         if (bool) {
             this.valueDate = valueDate.get();
         }
     }
 
+    @Transient
     public void setValueDateIf(LocalDate valueDate, Predicate<LocalDate> bool) {
         if (bool.test(valueDate)) {
             this.valueDate = valueDate;
         }
     }
 
+    @Transient
     public void setValueDateIf(LocalDate valueDate, Predicate<LocalDate> bool, Supplier<LocalDate>... valueDates) {
         if (bool.test(valueDate)) {
             this.valueDate = valueDate;
@@ -872,12 +947,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueDateIfNot(LocalDate valueDate, Predicate<LocalDate> bool) {
         if (!bool.test(valueDate)) {
             this.valueDate = valueDate;
         }
     }
 
+    @Transient
     public void setValueDateIfNot(LocalDate valueDate, Predicate<LocalDate> bool, Supplier<LocalDate>... valueDates) {
         if (!bool.test(valueDate)) {
             this.valueDate = valueDate;
@@ -892,6 +969,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueDateIf(UnaryOperator<LocalDate> valueDate) {
         this.valueDate = valueDate.apply(this.valueDate);
     }
@@ -913,24 +991,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueTime = valueTime;
     }
 
+    @Transient
     public void setValueTimeIf(LocalTime valueTime, boolean bool) {
         if (bool) {
             this.valueTime = valueTime;
         }
     }
 
+    @Transient
     public void setValueTimeIf(Supplier<LocalTime> valueTime, boolean bool) {
         if (bool) {
             this.valueTime = valueTime.get();
         }
     }
 
+    @Transient
     public void setValueTimeIf(LocalTime valueTime, Predicate<LocalTime> bool) {
         if (bool.test(valueTime)) {
             this.valueTime = valueTime;
         }
     }
 
+    @Transient
     public void setValueTimeIf(LocalTime valueTime, Predicate<LocalTime> bool, Supplier<LocalTime>... valueTimes) {
         if (bool.test(valueTime)) {
             this.valueTime = valueTime;
@@ -945,12 +1027,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueTimeIfNot(LocalTime valueTime, Predicate<LocalTime> bool) {
         if (!bool.test(valueTime)) {
             this.valueTime = valueTime;
         }
     }
 
+    @Transient
     public void setValueTimeIfNot(LocalTime valueTime, Predicate<LocalTime> bool, Supplier<LocalTime>... valueTimes) {
         if (!bool.test(valueTime)) {
             this.valueTime = valueTime;
@@ -965,6 +1049,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueTimeIf(UnaryOperator<LocalTime> valueTime) {
         this.valueTime = valueTime.apply(this.valueTime);
     }
@@ -986,24 +1071,28 @@ public class TstNormalTable implements ITstNormalTable {
         this.valueLang = valueLang;
     }
 
+    @Transient
     public void setValueLangIf(Integer valueLang, boolean bool) {
         if (bool) {
             this.valueLang = valueLang;
         }
     }
 
+    @Transient
     public void setValueLangIf(Supplier<Integer> valueLang, boolean bool) {
         if (bool) {
             this.valueLang = valueLang.get();
         }
     }
 
+    @Transient
     public void setValueLangIf(Integer valueLang, Predicate<Integer> bool) {
         if (bool.test(valueLang)) {
             this.valueLang = valueLang;
         }
     }
 
+    @Transient
     public void setValueLangIf(Integer valueLang, Predicate<Integer> bool, Supplier<Integer>... valueLangs) {
         if (bool.test(valueLang)) {
             this.valueLang = valueLang;
@@ -1018,12 +1107,14 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueLangIfNot(Integer valueLang, Predicate<Integer> bool) {
         if (!bool.test(valueLang)) {
             this.valueLang = valueLang;
         }
     }
 
+    @Transient
     public void setValueLangIfNot(Integer valueLang, Predicate<Integer> bool, Supplier<Integer>... valueLangs) {
         if (!bool.test(valueLang)) {
             this.valueLang = valueLang;
@@ -1038,6 +1129,7 @@ public class TstNormalTable implements ITstNormalTable {
         }
     }
 
+    @Transient
     public void setValueLangIf(UnaryOperator<Integer> valueLang) {
         this.valueLang = valueLang.apply(this.valueLang);
     }

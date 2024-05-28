@@ -21,6 +21,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
+import java.beans.Transient;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -336,11 +337,13 @@ public class WingsJavaGenerator extends JavaGenerator {
             unaryOperatorType = "UnaryOperator<" + ct + ">";
         }
 
+        out.ref(Transient.class);
         /**
          *  public void setUkeyIf(String ukey, boolean bool) {
          *      if (bool) this.ukey = ukey;
          *  }
          */
+        out.println("@Transient");
         out.println("%s%s %sIf(%s %s, boolean bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember);
         out.println("if (bool) {");
         out.println("this.%s = %s;", columnMember, columnMember);
@@ -354,6 +357,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *      if (bool) this.ukey = ukey.get();
          *  }
          */
+        out.println("@Transient");
         out.println("%s%s %sIf(%s %s, boolean bool) {", visibility, columnSetterReturnType, columnSetter, supplierType, columnMember);
         out.println("if (bool) {");
         out.println("this.%s = %s.get%s();", columnMember, columnMember, callAsType);
@@ -367,6 +371,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *      if (bool.test(ukey)) this.ukey = ukey;
          *  }
          */
+        out.println("@Transient");
         out.println("%s%s %sIf(%s %s, %s bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType);
         out.println("if (bool.test(%s)) {", columnMember);
         out.println("this.%s = %s;", columnMember, columnMember);
@@ -390,6 +395,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *      }
          *  }
          */
+        out.println("@Transient");
         out.println("%s%s %sIf(%s %s, %s bool, %s... %ss) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType, supplierType, columnMember);
         out.println("if (bool.test(%s)) {", columnMember);
         out.println("this.%s = %s;", columnMember, columnMember);
@@ -411,6 +417,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *     if (!bool.test(ukey)) this.ukey = ukey;
          * }
          */
+        out.println("@Transient");
         out.println("%s%s %sIfNot(%s %s, %s bool) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType);
         out.println("if (!bool.test(%s)) {", columnMember);
         out.println("this.%s = %s;", columnMember, columnMember);
@@ -434,6 +441,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *      }
          *  }
          */
+        out.println("@Transient");
         out.println("%s%s %sIfNot(%s %s, %s bool, %s... %ss) {", visibility, columnSetterReturnType, columnSetter, columnType, columnMember, predicateType, supplierType, columnMember);
         out.println("if (!bool.test(%s)) {", columnMember);
         out.println("this.%s = %s;", columnMember, columnMember);
@@ -455,6 +463,7 @@ public class WingsJavaGenerator extends JavaGenerator {
          *     this.ukey = unary.apply(this.ukey);
          * }
          */
+        out.println("@Transient");
         out.println("%s%s %sIf(%s %s) {", visibility, columnSetterReturnType, columnSetter, unaryOperatorType, columnMember);
         out.println("this.%s = %s%s.apply%s(this.%s);", columnMember, castType, columnMember, callAsType, columnMember);
         if (fluentSetters) out.println("return this;");

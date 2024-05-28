@@ -7,6 +7,7 @@ package pro.fessional.wings.faceless.app.database.autogen.tables.pojos;
 import pro.fessional.wings.faceless.app.database.autogen.tables.interfaces.ITstSharding;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -87,24 +88,28 @@ public class TstSharding implements ITstSharding {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -119,12 +124,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -139,6 +146,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -160,24 +168,28 @@ public class TstSharding implements ITstSharding {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -192,12 +204,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -212,6 +226,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -233,24 +248,28 @@ public class TstSharding implements ITstSharding {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -265,12 +284,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -285,6 +306,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -306,24 +328,28 @@ public class TstSharding implements ITstSharding {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -338,12 +364,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -358,6 +386,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -379,24 +408,28 @@ public class TstSharding implements ITstSharding {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -411,12 +444,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -431,6 +466,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -452,24 +488,28 @@ public class TstSharding implements ITstSharding {
         this.loginInfo = loginInfo;
     }
 
+    @Transient
     public void setLoginInfoIf(String loginInfo, boolean bool) {
         if (bool) {
             this.loginInfo = loginInfo;
         }
     }
 
+    @Transient
     public void setLoginInfoIf(Supplier<String> loginInfo, boolean bool) {
         if (bool) {
             this.loginInfo = loginInfo.get();
         }
     }
 
+    @Transient
     public void setLoginInfoIf(String loginInfo, Predicate<String> bool) {
         if (bool.test(loginInfo)) {
             this.loginInfo = loginInfo;
         }
     }
 
+    @Transient
     public void setLoginInfoIf(String loginInfo, Predicate<String> bool, Supplier<String>... loginInfos) {
         if (bool.test(loginInfo)) {
             this.loginInfo = loginInfo;
@@ -484,12 +524,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setLoginInfoIfNot(String loginInfo, Predicate<String> bool) {
         if (!bool.test(loginInfo)) {
             this.loginInfo = loginInfo;
         }
     }
 
+    @Transient
     public void setLoginInfoIfNot(String loginInfo, Predicate<String> bool, Supplier<String>... loginInfos) {
         if (!bool.test(loginInfo)) {
             this.loginInfo = loginInfo;
@@ -504,6 +546,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setLoginInfoIf(UnaryOperator<String> loginInfo) {
         this.loginInfo = loginInfo.apply(this.loginInfo);
     }
@@ -525,24 +568,28 @@ public class TstSharding implements ITstSharding {
         this.otherInfo = otherInfo;
     }
 
+    @Transient
     public void setOtherInfoIf(String otherInfo, boolean bool) {
         if (bool) {
             this.otherInfo = otherInfo;
         }
     }
 
+    @Transient
     public void setOtherInfoIf(Supplier<String> otherInfo, boolean bool) {
         if (bool) {
             this.otherInfo = otherInfo.get();
         }
     }
 
+    @Transient
     public void setOtherInfoIf(String otherInfo, Predicate<String> bool) {
         if (bool.test(otherInfo)) {
             this.otherInfo = otherInfo;
         }
     }
 
+    @Transient
     public void setOtherInfoIf(String otherInfo, Predicate<String> bool, Supplier<String>... otherInfos) {
         if (bool.test(otherInfo)) {
             this.otherInfo = otherInfo;
@@ -557,12 +604,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setOtherInfoIfNot(String otherInfo, Predicate<String> bool) {
         if (!bool.test(otherInfo)) {
             this.otherInfo = otherInfo;
         }
     }
 
+    @Transient
     public void setOtherInfoIfNot(String otherInfo, Predicate<String> bool, Supplier<String>... otherInfos) {
         if (!bool.test(otherInfo)) {
             this.otherInfo = otherInfo;
@@ -577,6 +626,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setOtherInfoIf(UnaryOperator<String> otherInfo) {
         this.otherInfo = otherInfo.apply(this.otherInfo);
     }
@@ -598,24 +648,28 @@ public class TstSharding implements ITstSharding {
         this.language = language;
     }
 
+    @Transient
     public void setLanguageIf(Integer language, boolean bool) {
         if (bool) {
             this.language = language;
         }
     }
 
+    @Transient
     public void setLanguageIf(Supplier<Integer> language, boolean bool) {
         if (bool) {
             this.language = language.get();
         }
     }
 
+    @Transient
     public void setLanguageIf(Integer language, Predicate<Integer> bool) {
         if (bool.test(language)) {
             this.language = language;
         }
     }
 
+    @Transient
     public void setLanguageIf(Integer language, Predicate<Integer> bool, Supplier<Integer>... languages) {
         if (bool.test(language)) {
             this.language = language;
@@ -630,12 +684,14 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setLanguageIfNot(Integer language, Predicate<Integer> bool) {
         if (!bool.test(language)) {
             this.language = language;
         }
     }
 
+    @Transient
     public void setLanguageIfNot(Integer language, Predicate<Integer> bool, Supplier<Integer>... languages) {
         if (!bool.test(language)) {
             this.language = language;
@@ -650,6 +706,7 @@ public class TstSharding implements ITstSharding {
         }
     }
 
+    @Transient
     public void setLanguageIf(UnaryOperator<Integer> language) {
         this.language = language.apply(this.language);
     }

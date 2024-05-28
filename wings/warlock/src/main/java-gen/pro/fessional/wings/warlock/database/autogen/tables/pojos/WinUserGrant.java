@@ -8,6 +8,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserGr
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -76,24 +77,28 @@ public class WinUserGrant implements IWinUserGrant {
         this.referUser = referUser;
     }
 
+    @Transient
     public void setReferUserIf(Long referUser, boolean bool) {
         if (bool) {
             this.referUser = referUser;
         }
     }
 
+    @Transient
     public void setReferUserIf(Supplier<Long> referUser, boolean bool) {
         if (bool) {
             this.referUser = referUser.get();
         }
     }
 
+    @Transient
     public void setReferUserIf(Long referUser, Predicate<Long> bool) {
         if (bool.test(referUser)) {
             this.referUser = referUser;
         }
     }
 
+    @Transient
     public void setReferUserIf(Long referUser, Predicate<Long> bool, Supplier<Long>... referUsers) {
         if (bool.test(referUser)) {
             this.referUser = referUser;
@@ -108,12 +113,14 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setReferUserIfNot(Long referUser, Predicate<Long> bool) {
         if (!bool.test(referUser)) {
             this.referUser = referUser;
         }
     }
 
+    @Transient
     public void setReferUserIfNot(Long referUser, Predicate<Long> bool, Supplier<Long>... referUsers) {
         if (!bool.test(referUser)) {
             this.referUser = referUser;
@@ -128,6 +135,7 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setReferUserIf(UnaryOperator<Long> referUser) {
         this.referUser = referUser.apply(this.referUser);
     }
@@ -149,24 +157,28 @@ public class WinUserGrant implements IWinUserGrant {
         this.grantType = grantType;
     }
 
+    @Transient
     public void setGrantTypeIf(GrantType grantType, boolean bool) {
         if (bool) {
             this.grantType = grantType;
         }
     }
 
+    @Transient
     public void setGrantTypeIf(Supplier<GrantType> grantType, boolean bool) {
         if (bool) {
             this.grantType = grantType.get();
         }
     }
 
+    @Transient
     public void setGrantTypeIf(GrantType grantType, Predicate<GrantType> bool) {
         if (bool.test(grantType)) {
             this.grantType = grantType;
         }
     }
 
+    @Transient
     public void setGrantTypeIf(GrantType grantType, Predicate<GrantType> bool, Supplier<GrantType>... grantTypes) {
         if (bool.test(grantType)) {
             this.grantType = grantType;
@@ -181,12 +193,14 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setGrantTypeIfNot(GrantType grantType, Predicate<GrantType> bool) {
         if (!bool.test(grantType)) {
             this.grantType = grantType;
         }
     }
 
+    @Transient
     public void setGrantTypeIfNot(GrantType grantType, Predicate<GrantType> bool, Supplier<GrantType>... grantTypes) {
         if (!bool.test(grantType)) {
             this.grantType = grantType;
@@ -201,6 +215,7 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setGrantTypeIf(UnaryOperator<GrantType> grantType) {
         this.grantType = grantType.apply(this.grantType);
     }
@@ -222,24 +237,28 @@ public class WinUserGrant implements IWinUserGrant {
         this.grantEntry = grantEntry;
     }
 
+    @Transient
     public void setGrantEntryIf(Long grantEntry, boolean bool) {
         if (bool) {
             this.grantEntry = grantEntry;
         }
     }
 
+    @Transient
     public void setGrantEntryIf(Supplier<Long> grantEntry, boolean bool) {
         if (bool) {
             this.grantEntry = grantEntry.get();
         }
     }
 
+    @Transient
     public void setGrantEntryIf(Long grantEntry, Predicate<Long> bool) {
         if (bool.test(grantEntry)) {
             this.grantEntry = grantEntry;
         }
     }
 
+    @Transient
     public void setGrantEntryIf(Long grantEntry, Predicate<Long> bool, Supplier<Long>... grantEntrys) {
         if (bool.test(grantEntry)) {
             this.grantEntry = grantEntry;
@@ -254,12 +273,14 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setGrantEntryIfNot(Long grantEntry, Predicate<Long> bool) {
         if (!bool.test(grantEntry)) {
             this.grantEntry = grantEntry;
         }
     }
 
+    @Transient
     public void setGrantEntryIfNot(Long grantEntry, Predicate<Long> bool, Supplier<Long>... grantEntrys) {
         if (!bool.test(grantEntry)) {
             this.grantEntry = grantEntry;
@@ -274,6 +295,7 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setGrantEntryIf(UnaryOperator<Long> grantEntry) {
         this.grantEntry = grantEntry.apply(this.grantEntry);
     }
@@ -295,24 +317,28 @@ public class WinUserGrant implements IWinUserGrant {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -327,12 +353,14 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -347,6 +375,7 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -368,24 +397,28 @@ public class WinUserGrant implements IWinUserGrant {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -400,12 +433,14 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -420,6 +455,7 @@ public class WinUserGrant implements IWinUserGrant {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }

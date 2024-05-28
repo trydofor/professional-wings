@@ -7,6 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinConfRuntime;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -78,24 +79,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.key = key;
     }
 
+    @Transient
     public void setKeyIf(String key, boolean bool) {
         if (bool) {
             this.key = key;
         }
     }
 
+    @Transient
     public void setKeyIf(Supplier<String> key, boolean bool) {
         if (bool) {
             this.key = key.get();
         }
     }
 
+    @Transient
     public void setKeyIf(String key, Predicate<String> bool) {
         if (bool.test(key)) {
             this.key = key;
         }
     }
 
+    @Transient
     public void setKeyIf(String key, Predicate<String> bool, Supplier<String>... keys) {
         if (bool.test(key)) {
             this.key = key;
@@ -110,12 +115,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setKeyIfNot(String key, Predicate<String> bool) {
         if (!bool.test(key)) {
             this.key = key;
         }
     }
 
+    @Transient
     public void setKeyIfNot(String key, Predicate<String> bool, Supplier<String>... keys) {
         if (!bool.test(key)) {
             this.key = key;
@@ -130,6 +137,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setKeyIf(UnaryOperator<String> key) {
         this.key = key.apply(this.key);
     }
@@ -151,24 +159,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.current = current;
     }
 
+    @Transient
     public void setCurrentIf(String current, boolean bool) {
         if (bool) {
             this.current = current;
         }
     }
 
+    @Transient
     public void setCurrentIf(Supplier<String> current, boolean bool) {
         if (bool) {
             this.current = current.get();
         }
     }
 
+    @Transient
     public void setCurrentIf(String current, Predicate<String> bool) {
         if (bool.test(current)) {
             this.current = current;
         }
     }
 
+    @Transient
     public void setCurrentIf(String current, Predicate<String> bool, Supplier<String>... currents) {
         if (bool.test(current)) {
             this.current = current;
@@ -183,12 +195,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setCurrentIfNot(String current, Predicate<String> bool) {
         if (!bool.test(current)) {
             this.current = current;
         }
     }
 
+    @Transient
     public void setCurrentIfNot(String current, Predicate<String> bool, Supplier<String>... currents) {
         if (!bool.test(current)) {
             this.current = current;
@@ -203,6 +217,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setCurrentIf(UnaryOperator<String> current) {
         this.current = current.apply(this.current);
     }
@@ -224,24 +239,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.previous = previous;
     }
 
+    @Transient
     public void setPreviousIf(String previous, boolean bool) {
         if (bool) {
             this.previous = previous;
         }
     }
 
+    @Transient
     public void setPreviousIf(Supplier<String> previous, boolean bool) {
         if (bool) {
             this.previous = previous.get();
         }
     }
 
+    @Transient
     public void setPreviousIf(String previous, Predicate<String> bool) {
         if (bool.test(previous)) {
             this.previous = previous;
         }
     }
 
+    @Transient
     public void setPreviousIf(String previous, Predicate<String> bool, Supplier<String>... previouss) {
         if (bool.test(previous)) {
             this.previous = previous;
@@ -256,12 +275,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setPreviousIfNot(String previous, Predicate<String> bool) {
         if (!bool.test(previous)) {
             this.previous = previous;
         }
     }
 
+    @Transient
     public void setPreviousIfNot(String previous, Predicate<String> bool, Supplier<String>... previouss) {
         if (!bool.test(previous)) {
             this.previous = previous;
@@ -276,6 +297,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setPreviousIf(UnaryOperator<String> previous) {
         this.previous = previous.apply(this.previous);
     }
@@ -297,24 +319,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.initial = initial;
     }
 
+    @Transient
     public void setInitialIf(String initial, boolean bool) {
         if (bool) {
             this.initial = initial;
         }
     }
 
+    @Transient
     public void setInitialIf(Supplier<String> initial, boolean bool) {
         if (bool) {
             this.initial = initial.get();
         }
     }
 
+    @Transient
     public void setInitialIf(String initial, Predicate<String> bool) {
         if (bool.test(initial)) {
             this.initial = initial;
         }
     }
 
+    @Transient
     public void setInitialIf(String initial, Predicate<String> bool, Supplier<String>... initials) {
         if (bool.test(initial)) {
             this.initial = initial;
@@ -329,12 +355,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setInitialIfNot(String initial, Predicate<String> bool) {
         if (!bool.test(initial)) {
             this.initial = initial;
         }
     }
 
+    @Transient
     public void setInitialIfNot(String initial, Predicate<String> bool, Supplier<String>... initials) {
         if (!bool.test(initial)) {
             this.initial = initial;
@@ -349,6 +377,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setInitialIf(UnaryOperator<String> initial) {
         this.initial = initial.apply(this.initial);
     }
@@ -370,24 +399,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.comment = comment;
     }
 
+    @Transient
     public void setCommentIf(String comment, boolean bool) {
         if (bool) {
             this.comment = comment;
         }
     }
 
+    @Transient
     public void setCommentIf(Supplier<String> comment, boolean bool) {
         if (bool) {
             this.comment = comment.get();
         }
     }
 
+    @Transient
     public void setCommentIf(String comment, Predicate<String> bool) {
         if (bool.test(comment)) {
             this.comment = comment;
         }
     }
 
+    @Transient
     public void setCommentIf(String comment, Predicate<String> bool, Supplier<String>... comments) {
         if (bool.test(comment)) {
             this.comment = comment;
@@ -402,12 +435,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setCommentIfNot(String comment, Predicate<String> bool) {
         if (!bool.test(comment)) {
             this.comment = comment;
         }
     }
 
+    @Transient
     public void setCommentIfNot(String comment, Predicate<String> bool, Supplier<String>... comments) {
         if (!bool.test(comment)) {
             this.comment = comment;
@@ -422,6 +457,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setCommentIf(UnaryOperator<String> comment) {
         this.comment = comment.apply(this.comment);
     }
@@ -443,24 +479,28 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.handler = handler;
     }
 
+    @Transient
     public void setHandlerIf(String handler, boolean bool) {
         if (bool) {
             this.handler = handler;
         }
     }
 
+    @Transient
     public void setHandlerIf(Supplier<String> handler, boolean bool) {
         if (bool) {
             this.handler = handler.get();
         }
     }
 
+    @Transient
     public void setHandlerIf(String handler, Predicate<String> bool) {
         if (bool.test(handler)) {
             this.handler = handler;
         }
     }
 
+    @Transient
     public void setHandlerIf(String handler, Predicate<String> bool, Supplier<String>... handlers) {
         if (bool.test(handler)) {
             this.handler = handler;
@@ -475,12 +515,14 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setHandlerIfNot(String handler, Predicate<String> bool) {
         if (!bool.test(handler)) {
             this.handler = handler;
         }
     }
 
+    @Transient
     public void setHandlerIfNot(String handler, Predicate<String> bool, Supplier<String>... handlers) {
         if (!bool.test(handler)) {
             this.handler = handler;
@@ -495,6 +537,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
     }
 
+    @Transient
     public void setHandlerIf(UnaryOperator<String> handler) {
         this.handler = handler.apply(this.handler);
     }

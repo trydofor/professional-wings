@@ -7,6 +7,7 @@ package pro.fessional.wings.tiny.task.database.autogen.tables.pojos;
 import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskDefine;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -219,24 +220,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -251,12 +256,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -271,6 +278,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -292,24 +300,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -324,12 +336,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -344,6 +358,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -365,24 +380,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -397,12 +416,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -417,6 +438,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -438,24 +460,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -470,12 +496,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -490,6 +518,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -511,24 +540,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -543,12 +576,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -563,6 +598,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -584,24 +620,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.propkey = propkey;
     }
 
+    @Transient
     public void setPropkeyIf(String propkey, boolean bool) {
         if (bool) {
             this.propkey = propkey;
         }
     }
 
+    @Transient
     public void setPropkeyIf(Supplier<String> propkey, boolean bool) {
         if (bool) {
             this.propkey = propkey.get();
         }
     }
 
+    @Transient
     public void setPropkeyIf(String propkey, Predicate<String> bool) {
         if (bool.test(propkey)) {
             this.propkey = propkey;
         }
     }
 
+    @Transient
     public void setPropkeyIf(String propkey, Predicate<String> bool, Supplier<String>... propkeys) {
         if (bool.test(propkey)) {
             this.propkey = propkey;
@@ -616,12 +656,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setPropkeyIfNot(String propkey, Predicate<String> bool) {
         if (!bool.test(propkey)) {
             this.propkey = propkey;
         }
     }
 
+    @Transient
     public void setPropkeyIfNot(String propkey, Predicate<String> bool, Supplier<String>... propkeys) {
         if (!bool.test(propkey)) {
             this.propkey = propkey;
@@ -636,6 +678,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setPropkeyIf(UnaryOperator<String> propkey) {
         this.propkey = propkey.apply(this.propkey);
     }
@@ -657,24 +700,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.enabled = enabled;
     }
 
+    @Transient
     public void setEnabledIf(Boolean enabled, boolean bool) {
         if (bool) {
             this.enabled = enabled;
         }
     }
 
+    @Transient
     public void setEnabledIf(Supplier<Boolean> enabled, boolean bool) {
         if (bool) {
             this.enabled = enabled.get();
         }
     }
 
+    @Transient
     public void setEnabledIf(Boolean enabled, Predicate<Boolean> bool) {
         if (bool.test(enabled)) {
             this.enabled = enabled;
         }
     }
 
+    @Transient
     public void setEnabledIf(Boolean enabled, Predicate<Boolean> bool, Supplier<Boolean>... enableds) {
         if (bool.test(enabled)) {
             this.enabled = enabled;
@@ -689,12 +736,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setEnabledIfNot(Boolean enabled, Predicate<Boolean> bool) {
         if (!bool.test(enabled)) {
             this.enabled = enabled;
         }
     }
 
+    @Transient
     public void setEnabledIfNot(Boolean enabled, Predicate<Boolean> bool, Supplier<Boolean>... enableds) {
         if (!bool.test(enabled)) {
             this.enabled = enabled;
@@ -709,6 +758,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setEnabledIf(UnaryOperator<Boolean> enabled) {
         this.enabled = enabled.apply(this.enabled);
     }
@@ -730,24 +780,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.autorun = autorun;
     }
 
+    @Transient
     public void setAutorunIf(Boolean autorun, boolean bool) {
         if (bool) {
             this.autorun = autorun;
         }
     }
 
+    @Transient
     public void setAutorunIf(Supplier<Boolean> autorun, boolean bool) {
         if (bool) {
             this.autorun = autorun.get();
         }
     }
 
+    @Transient
     public void setAutorunIf(Boolean autorun, Predicate<Boolean> bool) {
         if (bool.test(autorun)) {
             this.autorun = autorun;
         }
     }
 
+    @Transient
     public void setAutorunIf(Boolean autorun, Predicate<Boolean> bool, Supplier<Boolean>... autoruns) {
         if (bool.test(autorun)) {
             this.autorun = autorun;
@@ -762,12 +816,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setAutorunIfNot(Boolean autorun, Predicate<Boolean> bool) {
         if (!bool.test(autorun)) {
             this.autorun = autorun;
         }
     }
 
+    @Transient
     public void setAutorunIfNot(Boolean autorun, Predicate<Boolean> bool, Supplier<Boolean>... autoruns) {
         if (!bool.test(autorun)) {
             this.autorun = autorun;
@@ -782,6 +838,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setAutorunIf(UnaryOperator<Boolean> autorun) {
         this.autorun = autorun.apply(this.autorun);
     }
@@ -803,24 +860,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.version = version;
     }
 
+    @Transient
     public void setVersionIf(Integer version, boolean bool) {
         if (bool) {
             this.version = version;
         }
     }
 
+    @Transient
     public void setVersionIf(Supplier<Integer> version, boolean bool) {
         if (bool) {
             this.version = version.get();
         }
     }
 
+    @Transient
     public void setVersionIf(Integer version, Predicate<Integer> bool) {
         if (bool.test(version)) {
             this.version = version;
         }
     }
 
+    @Transient
     public void setVersionIf(Integer version, Predicate<Integer> bool, Supplier<Integer>... versions) {
         if (bool.test(version)) {
             this.version = version;
@@ -835,12 +896,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setVersionIfNot(Integer version, Predicate<Integer> bool) {
         if (!bool.test(version)) {
             this.version = version;
         }
     }
 
+    @Transient
     public void setVersionIfNot(Integer version, Predicate<Integer> bool, Supplier<Integer>... versions) {
         if (!bool.test(version)) {
             this.version = version;
@@ -855,6 +918,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setVersionIf(UnaryOperator<Integer> version) {
         this.version = version.apply(this.version);
     }
@@ -876,24 +940,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerBean = taskerBean;
     }
 
+    @Transient
     public void setTaskerBeanIf(String taskerBean, boolean bool) {
         if (bool) {
             this.taskerBean = taskerBean;
         }
     }
 
+    @Transient
     public void setTaskerBeanIf(Supplier<String> taskerBean, boolean bool) {
         if (bool) {
             this.taskerBean = taskerBean.get();
         }
     }
 
+    @Transient
     public void setTaskerBeanIf(String taskerBean, Predicate<String> bool) {
         if (bool.test(taskerBean)) {
             this.taskerBean = taskerBean;
         }
     }
 
+    @Transient
     public void setTaskerBeanIf(String taskerBean, Predicate<String> bool, Supplier<String>... taskerBeans) {
         if (bool.test(taskerBean)) {
             this.taskerBean = taskerBean;
@@ -908,12 +976,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerBeanIfNot(String taskerBean, Predicate<String> bool) {
         if (!bool.test(taskerBean)) {
             this.taskerBean = taskerBean;
         }
     }
 
+    @Transient
     public void setTaskerBeanIfNot(String taskerBean, Predicate<String> bool, Supplier<String>... taskerBeans) {
         if (!bool.test(taskerBean)) {
             this.taskerBean = taskerBean;
@@ -928,6 +998,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerBeanIf(UnaryOperator<String> taskerBean) {
         this.taskerBean = taskerBean.apply(this.taskerBean);
     }
@@ -949,24 +1020,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerPara = taskerPara;
     }
 
+    @Transient
     public void setTaskerParaIf(String taskerPara, boolean bool) {
         if (bool) {
             this.taskerPara = taskerPara;
         }
     }
 
+    @Transient
     public void setTaskerParaIf(Supplier<String> taskerPara, boolean bool) {
         if (bool) {
             this.taskerPara = taskerPara.get();
         }
     }
 
+    @Transient
     public void setTaskerParaIf(String taskerPara, Predicate<String> bool) {
         if (bool.test(taskerPara)) {
             this.taskerPara = taskerPara;
         }
     }
 
+    @Transient
     public void setTaskerParaIf(String taskerPara, Predicate<String> bool, Supplier<String>... taskerParas) {
         if (bool.test(taskerPara)) {
             this.taskerPara = taskerPara;
@@ -981,12 +1056,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerParaIfNot(String taskerPara, Predicate<String> bool) {
         if (!bool.test(taskerPara)) {
             this.taskerPara = taskerPara;
         }
     }
 
+    @Transient
     public void setTaskerParaIfNot(String taskerPara, Predicate<String> bool, Supplier<String>... taskerParas) {
         if (!bool.test(taskerPara)) {
             this.taskerPara = taskerPara;
@@ -1001,6 +1078,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerParaIf(UnaryOperator<String> taskerPara) {
         this.taskerPara = taskerPara.apply(this.taskerPara);
     }
@@ -1022,24 +1100,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerName = taskerName;
     }
 
+    @Transient
     public void setTaskerNameIf(String taskerName, boolean bool) {
         if (bool) {
             this.taskerName = taskerName;
         }
     }
 
+    @Transient
     public void setTaskerNameIf(Supplier<String> taskerName, boolean bool) {
         if (bool) {
             this.taskerName = taskerName.get();
         }
     }
 
+    @Transient
     public void setTaskerNameIf(String taskerName, Predicate<String> bool) {
         if (bool.test(taskerName)) {
             this.taskerName = taskerName;
         }
     }
 
+    @Transient
     public void setTaskerNameIf(String taskerName, Predicate<String> bool, Supplier<String>... taskerNames) {
         if (bool.test(taskerName)) {
             this.taskerName = taskerName;
@@ -1054,12 +1136,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerNameIfNot(String taskerName, Predicate<String> bool) {
         if (!bool.test(taskerName)) {
             this.taskerName = taskerName;
         }
     }
 
+    @Transient
     public void setTaskerNameIfNot(String taskerName, Predicate<String> bool, Supplier<String>... taskerNames) {
         if (!bool.test(taskerName)) {
             this.taskerName = taskerName;
@@ -1074,6 +1158,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerNameIf(UnaryOperator<String> taskerName) {
         this.taskerName = taskerName.apply(this.taskerName);
     }
@@ -1095,24 +1180,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerFast = taskerFast;
     }
 
+    @Transient
     public void setTaskerFastIf(Boolean taskerFast, boolean bool) {
         if (bool) {
             this.taskerFast = taskerFast;
         }
     }
 
+    @Transient
     public void setTaskerFastIf(Supplier<Boolean> taskerFast, boolean bool) {
         if (bool) {
             this.taskerFast = taskerFast.get();
         }
     }
 
+    @Transient
     public void setTaskerFastIf(Boolean taskerFast, Predicate<Boolean> bool) {
         if (bool.test(taskerFast)) {
             this.taskerFast = taskerFast;
         }
     }
 
+    @Transient
     public void setTaskerFastIf(Boolean taskerFast, Predicate<Boolean> bool, Supplier<Boolean>... taskerFasts) {
         if (bool.test(taskerFast)) {
             this.taskerFast = taskerFast;
@@ -1127,12 +1216,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerFastIfNot(Boolean taskerFast, Predicate<Boolean> bool) {
         if (!bool.test(taskerFast)) {
             this.taskerFast = taskerFast;
         }
     }
 
+    @Transient
     public void setTaskerFastIfNot(Boolean taskerFast, Predicate<Boolean> bool, Supplier<Boolean>... taskerFasts) {
         if (!bool.test(taskerFast)) {
             this.taskerFast = taskerFast;
@@ -1147,6 +1238,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerFastIf(UnaryOperator<Boolean> taskerFast) {
         this.taskerFast = taskerFast.apply(this.taskerFast);
     }
@@ -1168,24 +1260,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerApps = taskerApps;
     }
 
+    @Transient
     public void setTaskerAppsIf(String taskerApps, boolean bool) {
         if (bool) {
             this.taskerApps = taskerApps;
         }
     }
 
+    @Transient
     public void setTaskerAppsIf(Supplier<String> taskerApps, boolean bool) {
         if (bool) {
             this.taskerApps = taskerApps.get();
         }
     }
 
+    @Transient
     public void setTaskerAppsIf(String taskerApps, Predicate<String> bool) {
         if (bool.test(taskerApps)) {
             this.taskerApps = taskerApps;
         }
     }
 
+    @Transient
     public void setTaskerAppsIf(String taskerApps, Predicate<String> bool, Supplier<String>... taskerAppss) {
         if (bool.test(taskerApps)) {
             this.taskerApps = taskerApps;
@@ -1200,12 +1296,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerAppsIfNot(String taskerApps, Predicate<String> bool) {
         if (!bool.test(taskerApps)) {
             this.taskerApps = taskerApps;
         }
     }
 
+    @Transient
     public void setTaskerAppsIfNot(String taskerApps, Predicate<String> bool, Supplier<String>... taskerAppss) {
         if (!bool.test(taskerApps)) {
             this.taskerApps = taskerApps;
@@ -1220,6 +1318,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerAppsIf(UnaryOperator<String> taskerApps) {
         this.taskerApps = taskerApps.apply(this.taskerApps);
     }
@@ -1241,24 +1340,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.taskerRuns = taskerRuns;
     }
 
+    @Transient
     public void setTaskerRunsIf(String taskerRuns, boolean bool) {
         if (bool) {
             this.taskerRuns = taskerRuns;
         }
     }
 
+    @Transient
     public void setTaskerRunsIf(Supplier<String> taskerRuns, boolean bool) {
         if (bool) {
             this.taskerRuns = taskerRuns.get();
         }
     }
 
+    @Transient
     public void setTaskerRunsIf(String taskerRuns, Predicate<String> bool) {
         if (bool.test(taskerRuns)) {
             this.taskerRuns = taskerRuns;
         }
     }
 
+    @Transient
     public void setTaskerRunsIf(String taskerRuns, Predicate<String> bool, Supplier<String>... taskerRunss) {
         if (bool.test(taskerRuns)) {
             this.taskerRuns = taskerRuns;
@@ -1273,12 +1376,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerRunsIfNot(String taskerRuns, Predicate<String> bool) {
         if (!bool.test(taskerRuns)) {
             this.taskerRuns = taskerRuns;
         }
     }
 
+    @Transient
     public void setTaskerRunsIfNot(String taskerRuns, Predicate<String> bool, Supplier<String>... taskerRunss) {
         if (!bool.test(taskerRuns)) {
             this.taskerRuns = taskerRuns;
@@ -1293,6 +1398,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTaskerRunsIf(UnaryOperator<String> taskerRuns) {
         this.taskerRuns = taskerRuns.apply(this.taskerRuns);
     }
@@ -1314,24 +1420,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.noticeBean = noticeBean;
     }
 
+    @Transient
     public void setNoticeBeanIf(String noticeBean, boolean bool) {
         if (bool) {
             this.noticeBean = noticeBean;
         }
     }
 
+    @Transient
     public void setNoticeBeanIf(Supplier<String> noticeBean, boolean bool) {
         if (bool) {
             this.noticeBean = noticeBean.get();
         }
     }
 
+    @Transient
     public void setNoticeBeanIf(String noticeBean, Predicate<String> bool) {
         if (bool.test(noticeBean)) {
             this.noticeBean = noticeBean;
         }
     }
 
+    @Transient
     public void setNoticeBeanIf(String noticeBean, Predicate<String> bool, Supplier<String>... noticeBeans) {
         if (bool.test(noticeBean)) {
             this.noticeBean = noticeBean;
@@ -1346,12 +1456,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeBeanIfNot(String noticeBean, Predicate<String> bool) {
         if (!bool.test(noticeBean)) {
             this.noticeBean = noticeBean;
         }
     }
 
+    @Transient
     public void setNoticeBeanIfNot(String noticeBean, Predicate<String> bool, Supplier<String>... noticeBeans) {
         if (!bool.test(noticeBean)) {
             this.noticeBean = noticeBean;
@@ -1366,6 +1478,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeBeanIf(UnaryOperator<String> noticeBean) {
         this.noticeBean = noticeBean.apply(this.noticeBean);
     }
@@ -1387,24 +1500,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.noticeWhen = noticeWhen;
     }
 
+    @Transient
     public void setNoticeWhenIf(String noticeWhen, boolean bool) {
         if (bool) {
             this.noticeWhen = noticeWhen;
         }
     }
 
+    @Transient
     public void setNoticeWhenIf(Supplier<String> noticeWhen, boolean bool) {
         if (bool) {
             this.noticeWhen = noticeWhen.get();
         }
     }
 
+    @Transient
     public void setNoticeWhenIf(String noticeWhen, Predicate<String> bool) {
         if (bool.test(noticeWhen)) {
             this.noticeWhen = noticeWhen;
         }
     }
 
+    @Transient
     public void setNoticeWhenIf(String noticeWhen, Predicate<String> bool, Supplier<String>... noticeWhens) {
         if (bool.test(noticeWhen)) {
             this.noticeWhen = noticeWhen;
@@ -1419,12 +1536,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeWhenIfNot(String noticeWhen, Predicate<String> bool) {
         if (!bool.test(noticeWhen)) {
             this.noticeWhen = noticeWhen;
         }
     }
 
+    @Transient
     public void setNoticeWhenIfNot(String noticeWhen, Predicate<String> bool, Supplier<String>... noticeWhens) {
         if (!bool.test(noticeWhen)) {
             this.noticeWhen = noticeWhen;
@@ -1439,6 +1558,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeWhenIf(UnaryOperator<String> noticeWhen) {
         this.noticeWhen = noticeWhen.apply(this.noticeWhen);
     }
@@ -1460,24 +1580,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.noticeConf = noticeConf;
     }
 
+    @Transient
     public void setNoticeConfIf(String noticeConf, boolean bool) {
         if (bool) {
             this.noticeConf = noticeConf;
         }
     }
 
+    @Transient
     public void setNoticeConfIf(Supplier<String> noticeConf, boolean bool) {
         if (bool) {
             this.noticeConf = noticeConf.get();
         }
     }
 
+    @Transient
     public void setNoticeConfIf(String noticeConf, Predicate<String> bool) {
         if (bool.test(noticeConf)) {
             this.noticeConf = noticeConf;
         }
     }
 
+    @Transient
     public void setNoticeConfIf(String noticeConf, Predicate<String> bool, Supplier<String>... noticeConfs) {
         if (bool.test(noticeConf)) {
             this.noticeConf = noticeConf;
@@ -1492,12 +1616,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeConfIfNot(String noticeConf, Predicate<String> bool) {
         if (!bool.test(noticeConf)) {
             this.noticeConf = noticeConf;
         }
     }
 
+    @Transient
     public void setNoticeConfIfNot(String noticeConf, Predicate<String> bool, Supplier<String>... noticeConfs) {
         if (!bool.test(noticeConf)) {
             this.noticeConf = noticeConf;
@@ -1512,6 +1638,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNoticeConfIf(UnaryOperator<String> noticeConf) {
         this.noticeConf = noticeConf.apply(this.noticeConf);
     }
@@ -1533,24 +1660,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingZone = timingZone;
     }
 
+    @Transient
     public void setTimingZoneIf(String timingZone, boolean bool) {
         if (bool) {
             this.timingZone = timingZone;
         }
     }
 
+    @Transient
     public void setTimingZoneIf(Supplier<String> timingZone, boolean bool) {
         if (bool) {
             this.timingZone = timingZone.get();
         }
     }
 
+    @Transient
     public void setTimingZoneIf(String timingZone, Predicate<String> bool) {
         if (bool.test(timingZone)) {
             this.timingZone = timingZone;
         }
     }
 
+    @Transient
     public void setTimingZoneIf(String timingZone, Predicate<String> bool, Supplier<String>... timingZones) {
         if (bool.test(timingZone)) {
             this.timingZone = timingZone;
@@ -1565,12 +1696,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingZoneIfNot(String timingZone, Predicate<String> bool) {
         if (!bool.test(timingZone)) {
             this.timingZone = timingZone;
         }
     }
 
+    @Transient
     public void setTimingZoneIfNot(String timingZone, Predicate<String> bool, Supplier<String>... timingZones) {
         if (!bool.test(timingZone)) {
             this.timingZone = timingZone;
@@ -1585,6 +1718,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingZoneIf(UnaryOperator<String> timingZone) {
         this.timingZone = timingZone.apply(this.timingZone);
     }
@@ -1606,24 +1740,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingType = timingType;
     }
 
+    @Transient
     public void setTimingTypeIf(String timingType, boolean bool) {
         if (bool) {
             this.timingType = timingType;
         }
     }
 
+    @Transient
     public void setTimingTypeIf(Supplier<String> timingType, boolean bool) {
         if (bool) {
             this.timingType = timingType.get();
         }
     }
 
+    @Transient
     public void setTimingTypeIf(String timingType, Predicate<String> bool) {
         if (bool.test(timingType)) {
             this.timingType = timingType;
         }
     }
 
+    @Transient
     public void setTimingTypeIf(String timingType, Predicate<String> bool, Supplier<String>... timingTypes) {
         if (bool.test(timingType)) {
             this.timingType = timingType;
@@ -1638,12 +1776,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingTypeIfNot(String timingType, Predicate<String> bool) {
         if (!bool.test(timingType)) {
             this.timingType = timingType;
         }
     }
 
+    @Transient
     public void setTimingTypeIfNot(String timingType, Predicate<String> bool, Supplier<String>... timingTypes) {
         if (!bool.test(timingType)) {
             this.timingType = timingType;
@@ -1658,6 +1798,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingTypeIf(UnaryOperator<String> timingType) {
         this.timingType = timingType.apply(this.timingType);
     }
@@ -1679,24 +1820,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingCron = timingCron;
     }
 
+    @Transient
     public void setTimingCronIf(String timingCron, boolean bool) {
         if (bool) {
             this.timingCron = timingCron;
         }
     }
 
+    @Transient
     public void setTimingCronIf(Supplier<String> timingCron, boolean bool) {
         if (bool) {
             this.timingCron = timingCron.get();
         }
     }
 
+    @Transient
     public void setTimingCronIf(String timingCron, Predicate<String> bool) {
         if (bool.test(timingCron)) {
             this.timingCron = timingCron;
         }
     }
 
+    @Transient
     public void setTimingCronIf(String timingCron, Predicate<String> bool, Supplier<String>... timingCrons) {
         if (bool.test(timingCron)) {
             this.timingCron = timingCron;
@@ -1711,12 +1856,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingCronIfNot(String timingCron, Predicate<String> bool) {
         if (!bool.test(timingCron)) {
             this.timingCron = timingCron;
         }
     }
 
+    @Transient
     public void setTimingCronIfNot(String timingCron, Predicate<String> bool, Supplier<String>... timingCrons) {
         if (!bool.test(timingCron)) {
             this.timingCron = timingCron;
@@ -1731,6 +1878,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingCronIf(UnaryOperator<String> timingCron) {
         this.timingCron = timingCron.apply(this.timingCron);
     }
@@ -1752,24 +1900,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingIdle = timingIdle;
     }
 
+    @Transient
     public void setTimingIdleIf(Integer timingIdle, boolean bool) {
         if (bool) {
             this.timingIdle = timingIdle;
         }
     }
 
+    @Transient
     public void setTimingIdleIf(Supplier<Integer> timingIdle, boolean bool) {
         if (bool) {
             this.timingIdle = timingIdle.get();
         }
     }
 
+    @Transient
     public void setTimingIdleIf(Integer timingIdle, Predicate<Integer> bool) {
         if (bool.test(timingIdle)) {
             this.timingIdle = timingIdle;
         }
     }
 
+    @Transient
     public void setTimingIdleIf(Integer timingIdle, Predicate<Integer> bool, Supplier<Integer>... timingIdles) {
         if (bool.test(timingIdle)) {
             this.timingIdle = timingIdle;
@@ -1784,12 +1936,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingIdleIfNot(Integer timingIdle, Predicate<Integer> bool) {
         if (!bool.test(timingIdle)) {
             this.timingIdle = timingIdle;
         }
     }
 
+    @Transient
     public void setTimingIdleIfNot(Integer timingIdle, Predicate<Integer> bool, Supplier<Integer>... timingIdles) {
         if (!bool.test(timingIdle)) {
             this.timingIdle = timingIdle;
@@ -1804,6 +1958,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingIdleIf(UnaryOperator<Integer> timingIdle) {
         this.timingIdle = timingIdle.apply(this.timingIdle);
     }
@@ -1825,24 +1980,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingRate = timingRate;
     }
 
+    @Transient
     public void setTimingRateIf(Integer timingRate, boolean bool) {
         if (bool) {
             this.timingRate = timingRate;
         }
     }
 
+    @Transient
     public void setTimingRateIf(Supplier<Integer> timingRate, boolean bool) {
         if (bool) {
             this.timingRate = timingRate.get();
         }
     }
 
+    @Transient
     public void setTimingRateIf(Integer timingRate, Predicate<Integer> bool) {
         if (bool.test(timingRate)) {
             this.timingRate = timingRate;
         }
     }
 
+    @Transient
     public void setTimingRateIf(Integer timingRate, Predicate<Integer> bool, Supplier<Integer>... timingRates) {
         if (bool.test(timingRate)) {
             this.timingRate = timingRate;
@@ -1857,12 +2016,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingRateIfNot(Integer timingRate, Predicate<Integer> bool) {
         if (!bool.test(timingRate)) {
             this.timingRate = timingRate;
         }
     }
 
+    @Transient
     public void setTimingRateIfNot(Integer timingRate, Predicate<Integer> bool, Supplier<Integer>... timingRates) {
         if (!bool.test(timingRate)) {
             this.timingRate = timingRate;
@@ -1877,6 +2038,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingRateIf(UnaryOperator<Integer> timingRate) {
         this.timingRate = timingRate.apply(this.timingRate);
     }
@@ -1898,24 +2060,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingMiss = timingMiss;
     }
 
+    @Transient
     public void setTimingMissIf(Integer timingMiss, boolean bool) {
         if (bool) {
             this.timingMiss = timingMiss;
         }
     }
 
+    @Transient
     public void setTimingMissIf(Supplier<Integer> timingMiss, boolean bool) {
         if (bool) {
             this.timingMiss = timingMiss.get();
         }
     }
 
+    @Transient
     public void setTimingMissIf(Integer timingMiss, Predicate<Integer> bool) {
         if (bool.test(timingMiss)) {
             this.timingMiss = timingMiss;
         }
     }
 
+    @Transient
     public void setTimingMissIf(Integer timingMiss, Predicate<Integer> bool, Supplier<Integer>... timingMisss) {
         if (bool.test(timingMiss)) {
             this.timingMiss = timingMiss;
@@ -1930,12 +2096,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingMissIfNot(Integer timingMiss, Predicate<Integer> bool) {
         if (!bool.test(timingMiss)) {
             this.timingMiss = timingMiss;
         }
     }
 
+    @Transient
     public void setTimingMissIfNot(Integer timingMiss, Predicate<Integer> bool, Supplier<Integer>... timingMisss) {
         if (!bool.test(timingMiss)) {
             this.timingMiss = timingMiss;
@@ -1950,6 +2118,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingMissIf(UnaryOperator<Integer> timingMiss) {
         this.timingMiss = timingMiss.apply(this.timingMiss);
     }
@@ -1971,24 +2140,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingBeat = timingBeat;
     }
 
+    @Transient
     public void setTimingBeatIf(Integer timingBeat, boolean bool) {
         if (bool) {
             this.timingBeat = timingBeat;
         }
     }
 
+    @Transient
     public void setTimingBeatIf(Supplier<Integer> timingBeat, boolean bool) {
         if (bool) {
             this.timingBeat = timingBeat.get();
         }
     }
 
+    @Transient
     public void setTimingBeatIf(Integer timingBeat, Predicate<Integer> bool) {
         if (bool.test(timingBeat)) {
             this.timingBeat = timingBeat;
         }
     }
 
+    @Transient
     public void setTimingBeatIf(Integer timingBeat, Predicate<Integer> bool, Supplier<Integer>... timingBeats) {
         if (bool.test(timingBeat)) {
             this.timingBeat = timingBeat;
@@ -2003,12 +2176,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingBeatIfNot(Integer timingBeat, Predicate<Integer> bool) {
         if (!bool.test(timingBeat)) {
             this.timingBeat = timingBeat;
         }
     }
 
+    @Transient
     public void setTimingBeatIfNot(Integer timingBeat, Predicate<Integer> bool, Supplier<Integer>... timingBeats) {
         if (!bool.test(timingBeat)) {
             this.timingBeat = timingBeat;
@@ -2023,6 +2198,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setTimingBeatIf(UnaryOperator<Integer> timingBeat) {
         this.timingBeat = timingBeat.apply(this.timingBeat);
     }
@@ -2044,24 +2220,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringFrom = duringFrom;
     }
 
+    @Transient
     public void setDuringFromIf(String duringFrom, boolean bool) {
         if (bool) {
             this.duringFrom = duringFrom;
         }
     }
 
+    @Transient
     public void setDuringFromIf(Supplier<String> duringFrom, boolean bool) {
         if (bool) {
             this.duringFrom = duringFrom.get();
         }
     }
 
+    @Transient
     public void setDuringFromIf(String duringFrom, Predicate<String> bool) {
         if (bool.test(duringFrom)) {
             this.duringFrom = duringFrom;
         }
     }
 
+    @Transient
     public void setDuringFromIf(String duringFrom, Predicate<String> bool, Supplier<String>... duringFroms) {
         if (bool.test(duringFrom)) {
             this.duringFrom = duringFrom;
@@ -2076,12 +2256,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringFromIfNot(String duringFrom, Predicate<String> bool) {
         if (!bool.test(duringFrom)) {
             this.duringFrom = duringFrom;
         }
     }
 
+    @Transient
     public void setDuringFromIfNot(String duringFrom, Predicate<String> bool, Supplier<String>... duringFroms) {
         if (!bool.test(duringFrom)) {
             this.duringFrom = duringFrom;
@@ -2096,6 +2278,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringFromIf(UnaryOperator<String> duringFrom) {
         this.duringFrom = duringFrom.apply(this.duringFrom);
     }
@@ -2117,24 +2300,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringStop = duringStop;
     }
 
+    @Transient
     public void setDuringStopIf(String duringStop, boolean bool) {
         if (bool) {
             this.duringStop = duringStop;
         }
     }
 
+    @Transient
     public void setDuringStopIf(Supplier<String> duringStop, boolean bool) {
         if (bool) {
             this.duringStop = duringStop.get();
         }
     }
 
+    @Transient
     public void setDuringStopIf(String duringStop, Predicate<String> bool) {
         if (bool.test(duringStop)) {
             this.duringStop = duringStop;
         }
     }
 
+    @Transient
     public void setDuringStopIf(String duringStop, Predicate<String> bool, Supplier<String>... duringStops) {
         if (bool.test(duringStop)) {
             this.duringStop = duringStop;
@@ -2149,12 +2336,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringStopIfNot(String duringStop, Predicate<String> bool) {
         if (!bool.test(duringStop)) {
             this.duringStop = duringStop;
         }
     }
 
+    @Transient
     public void setDuringStopIfNot(String duringStop, Predicate<String> bool, Supplier<String>... duringStops) {
         if (!bool.test(duringStop)) {
             this.duringStop = duringStop;
@@ -2169,6 +2358,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringStopIf(UnaryOperator<String> duringStop) {
         this.duringStop = duringStop.apply(this.duringStop);
     }
@@ -2190,24 +2380,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringExec = duringExec;
     }
 
+    @Transient
     public void setDuringExecIf(Integer duringExec, boolean bool) {
         if (bool) {
             this.duringExec = duringExec;
         }
     }
 
+    @Transient
     public void setDuringExecIf(Supplier<Integer> duringExec, boolean bool) {
         if (bool) {
             this.duringExec = duringExec.get();
         }
     }
 
+    @Transient
     public void setDuringExecIf(Integer duringExec, Predicate<Integer> bool) {
         if (bool.test(duringExec)) {
             this.duringExec = duringExec;
         }
     }
 
+    @Transient
     public void setDuringExecIf(Integer duringExec, Predicate<Integer> bool, Supplier<Integer>... duringExecs) {
         if (bool.test(duringExec)) {
             this.duringExec = duringExec;
@@ -2222,12 +2416,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringExecIfNot(Integer duringExec, Predicate<Integer> bool) {
         if (!bool.test(duringExec)) {
             this.duringExec = duringExec;
         }
     }
 
+    @Transient
     public void setDuringExecIfNot(Integer duringExec, Predicate<Integer> bool, Supplier<Integer>... duringExecs) {
         if (!bool.test(duringExec)) {
             this.duringExec = duringExec;
@@ -2242,6 +2438,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringExecIf(UnaryOperator<Integer> duringExec) {
         this.duringExec = duringExec.apply(this.duringExec);
     }
@@ -2263,24 +2460,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringFail = duringFail;
     }
 
+    @Transient
     public void setDuringFailIf(Integer duringFail, boolean bool) {
         if (bool) {
             this.duringFail = duringFail;
         }
     }
 
+    @Transient
     public void setDuringFailIf(Supplier<Integer> duringFail, boolean bool) {
         if (bool) {
             this.duringFail = duringFail.get();
         }
     }
 
+    @Transient
     public void setDuringFailIf(Integer duringFail, Predicate<Integer> bool) {
         if (bool.test(duringFail)) {
             this.duringFail = duringFail;
         }
     }
 
+    @Transient
     public void setDuringFailIf(Integer duringFail, Predicate<Integer> bool, Supplier<Integer>... duringFails) {
         if (bool.test(duringFail)) {
             this.duringFail = duringFail;
@@ -2295,12 +2496,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringFailIfNot(Integer duringFail, Predicate<Integer> bool) {
         if (!bool.test(duringFail)) {
             this.duringFail = duringFail;
         }
     }
 
+    @Transient
     public void setDuringFailIfNot(Integer duringFail, Predicate<Integer> bool, Supplier<Integer>... duringFails) {
         if (!bool.test(duringFail)) {
             this.duringFail = duringFail;
@@ -2315,6 +2518,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringFailIf(UnaryOperator<Integer> duringFail) {
         this.duringFail = duringFail.apply(this.duringFail);
     }
@@ -2336,24 +2540,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringDone = duringDone;
     }
 
+    @Transient
     public void setDuringDoneIf(Integer duringDone, boolean bool) {
         if (bool) {
             this.duringDone = duringDone;
         }
     }
 
+    @Transient
     public void setDuringDoneIf(Supplier<Integer> duringDone, boolean bool) {
         if (bool) {
             this.duringDone = duringDone.get();
         }
     }
 
+    @Transient
     public void setDuringDoneIf(Integer duringDone, Predicate<Integer> bool) {
         if (bool.test(duringDone)) {
             this.duringDone = duringDone;
         }
     }
 
+    @Transient
     public void setDuringDoneIf(Integer duringDone, Predicate<Integer> bool, Supplier<Integer>... duringDones) {
         if (bool.test(duringDone)) {
             this.duringDone = duringDone;
@@ -2368,12 +2576,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringDoneIfNot(Integer duringDone, Predicate<Integer> bool) {
         if (!bool.test(duringDone)) {
             this.duringDone = duringDone;
         }
     }
 
+    @Transient
     public void setDuringDoneIfNot(Integer duringDone, Predicate<Integer> bool, Supplier<Integer>... duringDones) {
         if (!bool.test(duringDone)) {
             this.duringDone = duringDone;
@@ -2388,6 +2598,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringDoneIf(UnaryOperator<Integer> duringDone) {
         this.duringDone = duringDone.apply(this.duringDone);
     }
@@ -2409,24 +2620,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringBoot = duringBoot;
     }
 
+    @Transient
     public void setDuringBootIf(Integer duringBoot, boolean bool) {
         if (bool) {
             this.duringBoot = duringBoot;
         }
     }
 
+    @Transient
     public void setDuringBootIf(Supplier<Integer> duringBoot, boolean bool) {
         if (bool) {
             this.duringBoot = duringBoot.get();
         }
     }
 
+    @Transient
     public void setDuringBootIf(Integer duringBoot, Predicate<Integer> bool) {
         if (bool.test(duringBoot)) {
             this.duringBoot = duringBoot;
         }
     }
 
+    @Transient
     public void setDuringBootIf(Integer duringBoot, Predicate<Integer> bool, Supplier<Integer>... duringBoots) {
         if (bool.test(duringBoot)) {
             this.duringBoot = duringBoot;
@@ -2441,12 +2656,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringBootIfNot(Integer duringBoot, Predicate<Integer> bool) {
         if (!bool.test(duringBoot)) {
             this.duringBoot = duringBoot;
         }
     }
 
+    @Transient
     public void setDuringBootIfNot(Integer duringBoot, Predicate<Integer> bool, Supplier<Integer>... duringBoots) {
         if (!bool.test(duringBoot)) {
             this.duringBoot = duringBoot;
@@ -2461,6 +2678,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDuringBootIf(UnaryOperator<Integer> duringBoot) {
         this.duringBoot = duringBoot.apply(this.duringBoot);
     }
@@ -2482,24 +2700,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.resultKeep = resultKeep;
     }
 
+    @Transient
     public void setResultKeepIf(Integer resultKeep, boolean bool) {
         if (bool) {
             this.resultKeep = resultKeep;
         }
     }
 
+    @Transient
     public void setResultKeepIf(Supplier<Integer> resultKeep, boolean bool) {
         if (bool) {
             this.resultKeep = resultKeep.get();
         }
     }
 
+    @Transient
     public void setResultKeepIf(Integer resultKeep, Predicate<Integer> bool) {
         if (bool.test(resultKeep)) {
             this.resultKeep = resultKeep;
         }
     }
 
+    @Transient
     public void setResultKeepIf(Integer resultKeep, Predicate<Integer> bool, Supplier<Integer>... resultKeeps) {
         if (bool.test(resultKeep)) {
             this.resultKeep = resultKeep;
@@ -2514,12 +2736,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setResultKeepIfNot(Integer resultKeep, Predicate<Integer> bool) {
         if (!bool.test(resultKeep)) {
             this.resultKeep = resultKeep;
         }
     }
 
+    @Transient
     public void setResultKeepIfNot(Integer resultKeep, Predicate<Integer> bool, Supplier<Integer>... resultKeeps) {
         if (!bool.test(resultKeep)) {
             this.resultKeep = resultKeep;
@@ -2534,6 +2758,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setResultKeepIf(UnaryOperator<Integer> resultKeep) {
         this.resultKeep = resultKeep.apply(this.resultKeep);
     }
@@ -2555,24 +2780,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.lastExec = lastExec;
     }
 
+    @Transient
     public void setLastExecIf(LocalDateTime lastExec, boolean bool) {
         if (bool) {
             this.lastExec = lastExec;
         }
     }
 
+    @Transient
     public void setLastExecIf(Supplier<LocalDateTime> lastExec, boolean bool) {
         if (bool) {
             this.lastExec = lastExec.get();
         }
     }
 
+    @Transient
     public void setLastExecIf(LocalDateTime lastExec, Predicate<LocalDateTime> bool) {
         if (bool.test(lastExec)) {
             this.lastExec = lastExec;
         }
     }
 
+    @Transient
     public void setLastExecIf(LocalDateTime lastExec, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastExecs) {
         if (bool.test(lastExec)) {
             this.lastExec = lastExec;
@@ -2587,12 +2816,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastExecIfNot(LocalDateTime lastExec, Predicate<LocalDateTime> bool) {
         if (!bool.test(lastExec)) {
             this.lastExec = lastExec;
         }
     }
 
+    @Transient
     public void setLastExecIfNot(LocalDateTime lastExec, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastExecs) {
         if (!bool.test(lastExec)) {
             this.lastExec = lastExec;
@@ -2607,6 +2838,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastExecIf(UnaryOperator<LocalDateTime> lastExec) {
         this.lastExec = lastExec.apply(this.lastExec);
     }
@@ -2628,24 +2860,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.lastFail = lastFail;
     }
 
+    @Transient
     public void setLastFailIf(LocalDateTime lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIf(Supplier<LocalDateTime> lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail.get();
         }
     }
 
+    @Transient
     public void setLastFailIf(LocalDateTime lastFail, Predicate<LocalDateTime> bool) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIf(LocalDateTime lastFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastFails) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
@@ -2660,12 +2896,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastFailIfNot(LocalDateTime lastFail, Predicate<LocalDateTime> bool) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
+    @Transient
     public void setLastFailIfNot(LocalDateTime lastFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastFails) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
@@ -2680,6 +2918,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastFailIf(UnaryOperator<LocalDateTime> lastFail) {
         this.lastFail = lastFail.apply(this.lastFail);
     }
@@ -2701,24 +2940,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.lastDone = lastDone;
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, boolean bool) {
         if (bool) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIf(Supplier<LocalDateTime> lastDone, boolean bool) {
         if (bool) {
             this.lastDone = lastDone.get();
         }
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
         if (bool.test(lastDone)) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
         if (bool.test(lastDone)) {
             this.lastDone = lastDone;
@@ -2733,12 +2976,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
         if (!bool.test(lastDone)) {
             this.lastDone = lastDone;
         }
     }
 
+    @Transient
     public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
         if (!bool.test(lastDone)) {
             this.lastDone = lastDone;
@@ -2753,6 +2998,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setLastDoneIf(UnaryOperator<LocalDateTime> lastDone) {
         this.lastDone = lastDone.apply(this.lastDone);
     }
@@ -2774,24 +3020,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.nextExec = nextExec;
     }
 
+    @Transient
     public void setNextExecIf(LocalDateTime nextExec, boolean bool) {
         if (bool) {
             this.nextExec = nextExec;
         }
     }
 
+    @Transient
     public void setNextExecIf(Supplier<LocalDateTime> nextExec, boolean bool) {
         if (bool) {
             this.nextExec = nextExec.get();
         }
     }
 
+    @Transient
     public void setNextExecIf(LocalDateTime nextExec, Predicate<LocalDateTime> bool) {
         if (bool.test(nextExec)) {
             this.nextExec = nextExec;
         }
     }
 
+    @Transient
     public void setNextExecIf(LocalDateTime nextExec, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... nextExecs) {
         if (bool.test(nextExec)) {
             this.nextExec = nextExec;
@@ -2806,12 +3056,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNextExecIfNot(LocalDateTime nextExec, Predicate<LocalDateTime> bool) {
         if (!bool.test(nextExec)) {
             this.nextExec = nextExec;
         }
     }
 
+    @Transient
     public void setNextExecIfNot(LocalDateTime nextExec, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... nextExecs) {
         if (!bool.test(nextExec)) {
             this.nextExec = nextExec;
@@ -2826,6 +3078,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNextExecIf(UnaryOperator<LocalDateTime> nextExec) {
         this.nextExec = nextExec.apply(this.nextExec);
     }
@@ -2847,24 +3100,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.nextLock = nextLock;
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, boolean bool) {
         if (bool) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIf(Supplier<Integer> nextLock, boolean bool) {
         if (bool) {
             this.nextLock = nextLock.get();
         }
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, Predicate<Integer> bool) {
         if (bool.test(nextLock)) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIf(Integer nextLock, Predicate<Integer> bool, Supplier<Integer>... nextLocks) {
         if (bool.test(nextLock)) {
             this.nextLock = nextLock;
@@ -2879,12 +3136,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNextLockIfNot(Integer nextLock, Predicate<Integer> bool) {
         if (!bool.test(nextLock)) {
             this.nextLock = nextLock;
         }
     }
 
+    @Transient
     public void setNextLockIfNot(Integer nextLock, Predicate<Integer> bool, Supplier<Integer>... nextLocks) {
         if (!bool.test(nextLock)) {
             this.nextLock = nextLock;
@@ -2899,6 +3158,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setNextLockIf(UnaryOperator<Integer> nextLock) {
         this.nextLock = nextLock.apply(this.nextLock);
     }
@@ -2920,24 +3180,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.durFail = durFail;
     }
 
+    @Transient
     public void setDurFailIf(Integer durFail, boolean bool) {
         if (bool) {
             this.durFail = durFail;
         }
     }
 
+    @Transient
     public void setDurFailIf(Supplier<Integer> durFail, boolean bool) {
         if (bool) {
             this.durFail = durFail.get();
         }
     }
 
+    @Transient
     public void setDurFailIf(Integer durFail, Predicate<Integer> bool) {
         if (bool.test(durFail)) {
             this.durFail = durFail;
         }
     }
 
+    @Transient
     public void setDurFailIf(Integer durFail, Predicate<Integer> bool, Supplier<Integer>... durFails) {
         if (bool.test(durFail)) {
             this.durFail = durFail;
@@ -2952,12 +3216,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDurFailIfNot(Integer durFail, Predicate<Integer> bool) {
         if (!bool.test(durFail)) {
             this.durFail = durFail;
         }
     }
 
+    @Transient
     public void setDurFailIfNot(Integer durFail, Predicate<Integer> bool, Supplier<Integer>... durFails) {
         if (!bool.test(durFail)) {
             this.durFail = durFail;
@@ -2972,6 +3238,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setDurFailIf(UnaryOperator<Integer> durFail) {
         this.durFail = durFail.apply(this.durFail);
     }
@@ -2993,24 +3260,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.sumExec = sumExec;
     }
 
+    @Transient
     public void setSumExecIf(Integer sumExec, boolean bool) {
         if (bool) {
             this.sumExec = sumExec;
         }
     }
 
+    @Transient
     public void setSumExecIf(Supplier<Integer> sumExec, boolean bool) {
         if (bool) {
             this.sumExec = sumExec.get();
         }
     }
 
+    @Transient
     public void setSumExecIf(Integer sumExec, Predicate<Integer> bool) {
         if (bool.test(sumExec)) {
             this.sumExec = sumExec;
         }
     }
 
+    @Transient
     public void setSumExecIf(Integer sumExec, Predicate<Integer> bool, Supplier<Integer>... sumExecs) {
         if (bool.test(sumExec)) {
             this.sumExec = sumExec;
@@ -3025,12 +3296,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumExecIfNot(Integer sumExec, Predicate<Integer> bool) {
         if (!bool.test(sumExec)) {
             this.sumExec = sumExec;
         }
     }
 
+    @Transient
     public void setSumExecIfNot(Integer sumExec, Predicate<Integer> bool, Supplier<Integer>... sumExecs) {
         if (!bool.test(sumExec)) {
             this.sumExec = sumExec;
@@ -3045,6 +3318,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumExecIf(UnaryOperator<Integer> sumExec) {
         this.sumExec = sumExec.apply(this.sumExec);
     }
@@ -3066,24 +3340,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.sumFail = sumFail;
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, boolean bool) {
         if (bool) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIf(Supplier<Integer> sumFail, boolean bool) {
         if (bool) {
             this.sumFail = sumFail.get();
         }
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, Predicate<Integer> bool) {
         if (bool.test(sumFail)) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIf(Integer sumFail, Predicate<Integer> bool, Supplier<Integer>... sumFails) {
         if (bool.test(sumFail)) {
             this.sumFail = sumFail;
@@ -3098,12 +3376,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumFailIfNot(Integer sumFail, Predicate<Integer> bool) {
         if (!bool.test(sumFail)) {
             this.sumFail = sumFail;
         }
     }
 
+    @Transient
     public void setSumFailIfNot(Integer sumFail, Predicate<Integer> bool, Supplier<Integer>... sumFails) {
         if (!bool.test(sumFail)) {
             this.sumFail = sumFail;
@@ -3118,6 +3398,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumFailIf(UnaryOperator<Integer> sumFail) {
         this.sumFail = sumFail.apply(this.sumFail);
     }
@@ -3139,24 +3420,28 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.sumDone = sumDone;
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, boolean bool) {
         if (bool) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIf(Supplier<Integer> sumDone, boolean bool) {
         if (bool) {
             this.sumDone = sumDone.get();
         }
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, Predicate<Integer> bool) {
         if (bool.test(sumDone)) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIf(Integer sumDone, Predicate<Integer> bool, Supplier<Integer>... sumDones) {
         if (bool.test(sumDone)) {
             this.sumDone = sumDone;
@@ -3171,12 +3456,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumDoneIfNot(Integer sumDone, Predicate<Integer> bool) {
         if (!bool.test(sumDone)) {
             this.sumDone = sumDone;
         }
     }
 
+    @Transient
     public void setSumDoneIfNot(Integer sumDone, Predicate<Integer> bool, Supplier<Integer>... sumDones) {
         if (!bool.test(sumDone)) {
             this.sumDone = sumDone;
@@ -3191,6 +3478,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
     }
 
+    @Transient
     public void setSumDoneIf(UnaryOperator<Integer> sumDone) {
         this.sumDone = sumDone.apply(this.sumDone);
     }

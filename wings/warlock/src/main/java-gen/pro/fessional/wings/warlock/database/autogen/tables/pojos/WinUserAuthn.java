@@ -7,6 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserAuthn;
 
 import javax.annotation.processing.Generated;
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -111,24 +112,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.id = id;
     }
 
+    @Transient
     public void setIdIf(Long id, boolean bool) {
         if (bool) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Supplier<Long> id, boolean bool) {
         if (bool) {
             this.id = id.get();
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool) {
         if (bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIf(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (bool.test(id)) {
             this.id = id;
@@ -143,12 +148,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool) {
         if (!bool.test(id)) {
             this.id = id;
         }
     }
 
+    @Transient
     public void setIdIfNot(Long id, Predicate<Long> bool, Supplier<Long>... ids) {
         if (!bool.test(id)) {
             this.id = id;
@@ -163,6 +170,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setIdIf(UnaryOperator<Long> id) {
         this.id = id.apply(this.id);
     }
@@ -184,24 +192,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.createDt = createDt;
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(Supplier<LocalDateTime> createDt, boolean bool) {
         if (bool) {
             this.createDt = createDt.get();
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIf(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (bool.test(createDt)) {
             this.createDt = createDt;
@@ -216,12 +228,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
         }
     }
 
+    @Transient
     public void setCreateDtIfNot(LocalDateTime createDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... createDts) {
         if (!bool.test(createDt)) {
             this.createDt = createDt;
@@ -236,6 +250,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setCreateDtIf(UnaryOperator<LocalDateTime> createDt) {
         this.createDt = createDt.apply(this.createDt);
     }
@@ -257,24 +272,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.modifyDt = modifyDt;
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(Supplier<LocalDateTime> modifyDt, boolean bool) {
         if (bool) {
             this.modifyDt = modifyDt.get();
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIf(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -289,12 +308,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
         }
     }
 
+    @Transient
     public void setModifyDtIfNot(LocalDateTime modifyDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... modifyDts) {
         if (!bool.test(modifyDt)) {
             this.modifyDt = modifyDt;
@@ -309,6 +330,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setModifyDtIf(UnaryOperator<LocalDateTime> modifyDt) {
         this.modifyDt = modifyDt.apply(this.modifyDt);
     }
@@ -330,24 +352,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.deleteDt = deleteDt;
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(Supplier<LocalDateTime> deleteDt, boolean bool) {
         if (bool) {
             this.deleteDt = deleteDt.get();
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIf(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -362,12 +388,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
         }
     }
 
+    @Transient
     public void setDeleteDtIfNot(LocalDateTime deleteDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... deleteDts) {
         if (!bool.test(deleteDt)) {
             this.deleteDt = deleteDt;
@@ -382,6 +410,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setDeleteDtIf(UnaryOperator<LocalDateTime> deleteDt) {
         this.deleteDt = deleteDt.apply(this.deleteDt);
     }
@@ -403,24 +432,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.commitId = commitId;
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Supplier<Long> commitId, boolean bool) {
         if (bool) {
             this.commitId = commitId.get();
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIf(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (bool.test(commitId)) {
             this.commitId = commitId;
@@ -435,12 +468,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
         }
     }
 
+    @Transient
     public void setCommitIdIfNot(Long commitId, Predicate<Long> bool, Supplier<Long>... commitIds) {
         if (!bool.test(commitId)) {
             this.commitId = commitId;
@@ -455,6 +490,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setCommitIdIf(UnaryOperator<Long> commitId) {
         this.commitId = commitId.apply(this.commitId);
     }
@@ -476,24 +512,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.userId = userId;
     }
 
+    @Transient
     public void setUserIdIf(Long userId, boolean bool) {
         if (bool) {
             this.userId = userId;
         }
     }
 
+    @Transient
     public void setUserIdIf(Supplier<Long> userId, boolean bool) {
         if (bool) {
             this.userId = userId.get();
         }
     }
 
+    @Transient
     public void setUserIdIf(Long userId, Predicate<Long> bool) {
         if (bool.test(userId)) {
             this.userId = userId;
         }
     }
 
+    @Transient
     public void setUserIdIf(Long userId, Predicate<Long> bool, Supplier<Long>... userIds) {
         if (bool.test(userId)) {
             this.userId = userId;
@@ -508,12 +548,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setUserIdIfNot(Long userId, Predicate<Long> bool) {
         if (!bool.test(userId)) {
             this.userId = userId;
         }
     }
 
+    @Transient
     public void setUserIdIfNot(Long userId, Predicate<Long> bool, Supplier<Long>... userIds) {
         if (!bool.test(userId)) {
             this.userId = userId;
@@ -528,6 +570,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setUserIdIf(UnaryOperator<Long> userId) {
         this.userId = userId.apply(this.userId);
     }
@@ -549,24 +592,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.authType = authType;
     }
 
+    @Transient
     public void setAuthTypeIf(String authType, boolean bool) {
         if (bool) {
             this.authType = authType;
         }
     }
 
+    @Transient
     public void setAuthTypeIf(Supplier<String> authType, boolean bool) {
         if (bool) {
             this.authType = authType.get();
         }
     }
 
+    @Transient
     public void setAuthTypeIf(String authType, Predicate<String> bool) {
         if (bool.test(authType)) {
             this.authType = authType;
         }
     }
 
+    @Transient
     public void setAuthTypeIf(String authType, Predicate<String> bool, Supplier<String>... authTypes) {
         if (bool.test(authType)) {
             this.authType = authType;
@@ -581,12 +628,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setAuthTypeIfNot(String authType, Predicate<String> bool) {
         if (!bool.test(authType)) {
             this.authType = authType;
         }
     }
 
+    @Transient
     public void setAuthTypeIfNot(String authType, Predicate<String> bool, Supplier<String>... authTypes) {
         if (!bool.test(authType)) {
             this.authType = authType;
@@ -601,6 +650,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setAuthTypeIf(UnaryOperator<String> authType) {
         this.authType = authType.apply(this.authType);
     }
@@ -622,24 +672,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.username = username;
     }
 
+    @Transient
     public void setUsernameIf(String username, boolean bool) {
         if (bool) {
             this.username = username;
         }
     }
 
+    @Transient
     public void setUsernameIf(Supplier<String> username, boolean bool) {
         if (bool) {
             this.username = username.get();
         }
     }
 
+    @Transient
     public void setUsernameIf(String username, Predicate<String> bool) {
         if (bool.test(username)) {
             this.username = username;
         }
     }
 
+    @Transient
     public void setUsernameIf(String username, Predicate<String> bool, Supplier<String>... usernames) {
         if (bool.test(username)) {
             this.username = username;
@@ -654,12 +708,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setUsernameIfNot(String username, Predicate<String> bool) {
         if (!bool.test(username)) {
             this.username = username;
         }
     }
 
+    @Transient
     public void setUsernameIfNot(String username, Predicate<String> bool, Supplier<String>... usernames) {
         if (!bool.test(username)) {
             this.username = username;
@@ -674,6 +730,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setUsernameIf(UnaryOperator<String> username) {
         this.username = username.apply(this.username);
     }
@@ -695,24 +752,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.password = password;
     }
 
+    @Transient
     public void setPasswordIf(String password, boolean bool) {
         if (bool) {
             this.password = password;
         }
     }
 
+    @Transient
     public void setPasswordIf(Supplier<String> password, boolean bool) {
         if (bool) {
             this.password = password.get();
         }
     }
 
+    @Transient
     public void setPasswordIf(String password, Predicate<String> bool) {
         if (bool.test(password)) {
             this.password = password;
         }
     }
 
+    @Transient
     public void setPasswordIf(String password, Predicate<String> bool, Supplier<String>... passwords) {
         if (bool.test(password)) {
             this.password = password;
@@ -727,12 +788,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setPasswordIfNot(String password, Predicate<String> bool) {
         if (!bool.test(password)) {
             this.password = password;
         }
     }
 
+    @Transient
     public void setPasswordIfNot(String password, Predicate<String> bool, Supplier<String>... passwords) {
         if (!bool.test(password)) {
             this.password = password;
@@ -747,6 +810,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setPasswordIf(UnaryOperator<String> password) {
         this.password = password.apply(this.password);
     }
@@ -768,24 +832,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.extraPara = extraPara;
     }
 
+    @Transient
     public void setExtraParaIf(String extraPara, boolean bool) {
         if (bool) {
             this.extraPara = extraPara;
         }
     }
 
+    @Transient
     public void setExtraParaIf(Supplier<String> extraPara, boolean bool) {
         if (bool) {
             this.extraPara = extraPara.get();
         }
     }
 
+    @Transient
     public void setExtraParaIf(String extraPara, Predicate<String> bool) {
         if (bool.test(extraPara)) {
             this.extraPara = extraPara;
         }
     }
 
+    @Transient
     public void setExtraParaIf(String extraPara, Predicate<String> bool, Supplier<String>... extraParas) {
         if (bool.test(extraPara)) {
             this.extraPara = extraPara;
@@ -800,12 +868,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExtraParaIfNot(String extraPara, Predicate<String> bool) {
         if (!bool.test(extraPara)) {
             this.extraPara = extraPara;
         }
     }
 
+    @Transient
     public void setExtraParaIfNot(String extraPara, Predicate<String> bool, Supplier<String>... extraParas) {
         if (!bool.test(extraPara)) {
             this.extraPara = extraPara;
@@ -820,6 +890,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExtraParaIf(UnaryOperator<String> extraPara) {
         this.extraPara = extraPara.apply(this.extraPara);
     }
@@ -841,24 +912,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.extraUser = extraUser;
     }
 
+    @Transient
     public void setExtraUserIf(String extraUser, boolean bool) {
         if (bool) {
             this.extraUser = extraUser;
         }
     }
 
+    @Transient
     public void setExtraUserIf(Supplier<String> extraUser, boolean bool) {
         if (bool) {
             this.extraUser = extraUser.get();
         }
     }
 
+    @Transient
     public void setExtraUserIf(String extraUser, Predicate<String> bool) {
         if (bool.test(extraUser)) {
             this.extraUser = extraUser;
         }
     }
 
+    @Transient
     public void setExtraUserIf(String extraUser, Predicate<String> bool, Supplier<String>... extraUsers) {
         if (bool.test(extraUser)) {
             this.extraUser = extraUser;
@@ -873,12 +948,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExtraUserIfNot(String extraUser, Predicate<String> bool) {
         if (!bool.test(extraUser)) {
             this.extraUser = extraUser;
         }
     }
 
+    @Transient
     public void setExtraUserIfNot(String extraUser, Predicate<String> bool, Supplier<String>... extraUsers) {
         if (!bool.test(extraUser)) {
             this.extraUser = extraUser;
@@ -893,6 +970,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExtraUserIf(UnaryOperator<String> extraUser) {
         this.extraUser = extraUser.apply(this.extraUser);
     }
@@ -914,24 +992,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.expiredDt = expiredDt;
     }
 
+    @Transient
     public void setExpiredDtIf(LocalDateTime expiredDt, boolean bool) {
         if (bool) {
             this.expiredDt = expiredDt;
         }
     }
 
+    @Transient
     public void setExpiredDtIf(Supplier<LocalDateTime> expiredDt, boolean bool) {
         if (bool) {
             this.expiredDt = expiredDt.get();
         }
     }
 
+    @Transient
     public void setExpiredDtIf(LocalDateTime expiredDt, Predicate<LocalDateTime> bool) {
         if (bool.test(expiredDt)) {
             this.expiredDt = expiredDt;
         }
     }
 
+    @Transient
     public void setExpiredDtIf(LocalDateTime expiredDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... expiredDts) {
         if (bool.test(expiredDt)) {
             this.expiredDt = expiredDt;
@@ -946,12 +1028,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExpiredDtIfNot(LocalDateTime expiredDt, Predicate<LocalDateTime> bool) {
         if (!bool.test(expiredDt)) {
             this.expiredDt = expiredDt;
         }
     }
 
+    @Transient
     public void setExpiredDtIfNot(LocalDateTime expiredDt, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... expiredDts) {
         if (!bool.test(expiredDt)) {
             this.expiredDt = expiredDt;
@@ -966,6 +1050,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setExpiredDtIf(UnaryOperator<LocalDateTime> expiredDt) {
         this.expiredDt = expiredDt.apply(this.expiredDt);
     }
@@ -987,24 +1072,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.failedCnt = failedCnt;
     }
 
+    @Transient
     public void setFailedCntIf(Integer failedCnt, boolean bool) {
         if (bool) {
             this.failedCnt = failedCnt;
         }
     }
 
+    @Transient
     public void setFailedCntIf(Supplier<Integer> failedCnt, boolean bool) {
         if (bool) {
             this.failedCnt = failedCnt.get();
         }
     }
 
+    @Transient
     public void setFailedCntIf(Integer failedCnt, Predicate<Integer> bool) {
         if (bool.test(failedCnt)) {
             this.failedCnt = failedCnt;
         }
     }
 
+    @Transient
     public void setFailedCntIf(Integer failedCnt, Predicate<Integer> bool, Supplier<Integer>... failedCnts) {
         if (bool.test(failedCnt)) {
             this.failedCnt = failedCnt;
@@ -1019,12 +1108,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setFailedCntIfNot(Integer failedCnt, Predicate<Integer> bool) {
         if (!bool.test(failedCnt)) {
             this.failedCnt = failedCnt;
         }
     }
 
+    @Transient
     public void setFailedCntIfNot(Integer failedCnt, Predicate<Integer> bool, Supplier<Integer>... failedCnts) {
         if (!bool.test(failedCnt)) {
             this.failedCnt = failedCnt;
@@ -1039,6 +1130,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setFailedCntIf(UnaryOperator<Integer> failedCnt) {
         this.failedCnt = failedCnt.apply(this.failedCnt);
     }
@@ -1060,24 +1152,28 @@ public class WinUserAuthn implements IWinUserAuthn {
         this.failedMax = failedMax;
     }
 
+    @Transient
     public void setFailedMaxIf(Integer failedMax, boolean bool) {
         if (bool) {
             this.failedMax = failedMax;
         }
     }
 
+    @Transient
     public void setFailedMaxIf(Supplier<Integer> failedMax, boolean bool) {
         if (bool) {
             this.failedMax = failedMax.get();
         }
     }
 
+    @Transient
     public void setFailedMaxIf(Integer failedMax, Predicate<Integer> bool) {
         if (bool.test(failedMax)) {
             this.failedMax = failedMax;
         }
     }
 
+    @Transient
     public void setFailedMaxIf(Integer failedMax, Predicate<Integer> bool, Supplier<Integer>... failedMaxs) {
         if (bool.test(failedMax)) {
             this.failedMax = failedMax;
@@ -1092,12 +1188,14 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setFailedMaxIfNot(Integer failedMax, Predicate<Integer> bool) {
         if (!bool.test(failedMax)) {
             this.failedMax = failedMax;
         }
     }
 
+    @Transient
     public void setFailedMaxIfNot(Integer failedMax, Predicate<Integer> bool, Supplier<Integer>... failedMaxs) {
         if (!bool.test(failedMax)) {
             this.failedMax = failedMax;
@@ -1112,6 +1210,7 @@ public class WinUserAuthn implements IWinUserAuthn {
         }
     }
 
+    @Transient
     public void setFailedMaxIf(UnaryOperator<Integer> failedMax) {
         this.failedMax = failedMax.apply(this.failedMax);
     }
