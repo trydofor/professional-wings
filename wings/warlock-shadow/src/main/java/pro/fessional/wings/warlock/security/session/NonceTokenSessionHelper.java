@@ -83,7 +83,7 @@ public class NonceTokenSessionHelper {
 
         final Sf s = cache.get(token);
         if (s == null) return null;
-        if (s.result == null) return R.NG;
+        if (s.result == null) return R.NG();
 
         invalidNonce(token);
         return s.ip.equals(ip) ? s.result : null;

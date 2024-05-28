@@ -127,6 +127,6 @@ public class TestOtherController {
         testWatchingService.asyncAwait();
         testWatchingService.normalFetch();
         testWatchingService.errorFetch();
-        return R.OK;
+        return R.OK();
     }
 }

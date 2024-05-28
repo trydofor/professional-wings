@@ -144,7 +144,7 @@ public class LoginPageController {
         if (result == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(R.NG);
+                    .body(R.NG());
         }
 
         R<?> body = result;

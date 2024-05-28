@@ -25,6 +25,6 @@ public class AdminController {
     public R<Void> rootNeverLogin() {
         authnService.disable(DefaultUserId.Root, WarlockAuthType.USERNAME);
         log.debug("disable root");
-        return R.OK;
+        return R.OK();
     }
 }

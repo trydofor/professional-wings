@@ -34,7 +34,7 @@ public class AdminTweakController {
     @ResponseBody
     public R<Void> adminTweakLogger(@RequestBody TweakLoggerEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.OK;
+        return R.OK();
     }
 
     @Operation(summary = "Tweak the clock at the thread level", description = """
@@ -52,7 +52,7 @@ public class AdminTweakController {
     @ResponseBody
     public R<Void> adminTweakClock(@RequestBody TweakClockEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.OK;
+        return R.OK();
     }
 
     @Operation(summary = "Tweak ExceptionStack at the thread level", description = """
@@ -66,6 +66,6 @@ public class AdminTweakController {
     @ResponseBody
     public R<Void> adminTweakStack(@RequestBody TweakStackEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.OK;
+        return R.OK();
     }
 }
