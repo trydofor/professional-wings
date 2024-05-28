@@ -43,21 +43,37 @@ public class Param1ControllerTest {
         testMvc("/test/param1/str.json", objectMapper.writeValueAsString("string"), "\"string\"");
         testMvc("/test/param1/str.json", "\"string\"", "\"string\"");
         testMvc("/test/param1/str.json", "string", "string");
-        testMvc("/test/param1/int.json", objectMapper.writeValueAsString(123), "123", "\"123\"");
-        testMvc("/test/param1/int.json", objectMapper.writeValueAsString(Integer.valueOf("123")), "123", "\"123\"");
-        testMvc("/test/param1/int.json", "\"123\"", "123", "\"123\"");
-        testMvc("/test/param1/int.json", "123", "123", "\"123\"");
-        testMvc("/test/param1/bol.json", objectMapper.writeValueAsString(true), "true");
-        testMvc("/test/param1/bol.json", objectMapper.writeValueAsString(Boolean.TRUE), "true");
-        testMvc("/test/param1/bol.json", "\"true\"", "true");
-        testMvc("/test/param1/bol.json", "true", "true");
+
+        String intVal = String.valueOf(Integer.MAX_VALUE);
+        String intStr = "\"" + intVal + "\"";
+        testMvc("/test/param1/int.json", objectMapper.writeValueAsString(Integer.MAX_VALUE), intVal, intStr);
+        testMvc("/test/param1/int.json", objectMapper.writeValueAsString(Integer.valueOf(intVal)), intVal, intStr);
+        testMvc("/test/param1/int.json", intStr, intVal, intStr);
+        testMvc("/test/param1/int.json", intVal, intVal, intStr);
+
+        String int64Val = String.valueOf(Long.MAX_VALUE);
+        String int64Str = "\"" + int64Val + "\"";
+        testMvc("/test/param1/int64.json", objectMapper.writeValueAsString(Long.MAX_VALUE), int64Val, int64Str);
+        testMvc("/test/param1/int64.json", objectMapper.writeValueAsString(Long.valueOf(int64Val)), int64Val, int64Str);
+        testMvc("/test/param1/int64.json", int64Str, int64Val, int64Str);
+        testMvc("/test/param1/int64.json", int64Val, int64Val, int64Str);
+
+        String boolVal = "true";
+        String boolStr = "\"" + boolVal + "\"";
+        testMvc("/test/param1/bol.json", objectMapper.writeValueAsString(true), boolVal);
+        testMvc("/test/param1/bol.json", objectMapper.writeValueAsString(Boolean.TRUE), boolVal);
+        testMvc("/test/param1/bol.json", boolStr, boolVal);
+        testMvc("/test/param1/bol.json", boolVal, boolVal);
         testMvc("/test/param1/ldt.json", objectMapper.writeValueAsString(ldt), "\"2021-06-06 06:06:06\"");
         testMvc("/test/param1/ldt.json", "\"2021-06-06 06:06:06\"", "\"2021-06-06 06:06:06\"");
         testMvc("/test/param1/enu.json", objectMapper.writeValueAsString(LogLevel.TRACE), "\"TRACE\"");
         testMvc("/test/param1/enu.json", "\"TRACE\"", "\"TRACE\"");
-        testMvc("/test/param1/dec.json", objectMapper.writeValueAsString(BigDecimal.TEN), "10", "\"10\"");
-        testMvc("/test/param1/dec.json", "\"10\"", "10", "\"10\"");
-        testMvc("/test/param1/dec.json", "10", "10", "\"10\"");
+
+        String tenVal = "10";
+        String tenStr = "\"" + tenVal + "\"";
+        testMvc("/test/param1/dec.json", objectMapper.writeValueAsString(BigDecimal.TEN), tenVal, tenStr);
+        testMvc("/test/param1/dec.json", tenStr, tenVal, tenStr);
+        testMvc("/test/param1/dec.json", tenVal, tenVal, tenStr);
     }
 
     /**
@@ -86,26 +102,27 @@ public class Param1ControllerTest {
     private void testObj(Object obj, String... acc) throws JsonProcessingException {
         final String ft = FastJsonHelper.string(obj);
         final String jk = objectMapper.writeValueAsString(obj);
-        boolean ok = false;
+        String res = null;
         for (String s : acc) {
             if (s.equals(ft) || s.equals(jk)) {
-                ok = true;
+                res = s;
                 break;
             }
         }
         log.info("fastjson=[{}], jackson=[{}]", ft, jk);
-        Assertions.assertTrue(ok, String.join(",", acc));
+        Assertions.assertNotNull(res, String.join(",", acc));
     }
 
     private void testMvc(String uri, String body, String... acc) {
         final String str1 = OkHttpClientHelper.postJson(okHttpClient, host + uri, body);
-        boolean ok = false;
+        String res = null;
         for (String s : acc) {
             if (s.equals(str1)) {
-                ok = true;
+                res = s;
                 break;
             }
         }
-        Assertions.assertTrue(ok, str1 + " in " + String.join(",", acc));
+        log.info("uri={}, body={}, res={}", uri, body, str1);
+        Assertions.assertNotNull(res, str1 + " in " + String.join(",", acc));
     }
 }
