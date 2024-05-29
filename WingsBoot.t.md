@@ -36,6 +36,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11030 TtlMDCAdapterTest: ttl MDC in multiple thread
 * 11031 WingsReorderDefaultTest: default Order/Ordered
 * 11032 WingsReorderEnableTest: configed Order/Ordered
+* 11033 ThisLazyCglibTest: thisLazy with cglib
+* 11034 ThisLazyProxyTest: thisLazy with default jdk proxy
 
 ## 12 Faceless
 
@@ -188,6 +190,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12147 WingsRevisionTest: module root and path
 * 12148 JdbcTemplateHelperTest: safe table
 * 12149 FormatSugarTest: format datetime and number
+* 12150 SetterSugarTest: one line setter sugar
 
 ## 13 Slardar
 
@@ -313,6 +316,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13120 AsyncControllerTest: Future request mapping with async service
 * 13121 BootAdminServerTest: servlet mapping order
 * 13122 AsyncHelperTest: async ttl decorator
+* 13123 DoubleKillTest: bad SpEL, check null
 
 ## 14 Warlock
 
@@ -400,6 +404,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14082 DatabaseFacelessTest: clean and init faceless schema
 * 14083 DatabaseShard0Test: clean and init shard_0 schema
 * 14084 DatabaseShard1Test: clean and init shard_1 schema
+* 14085 ExceptionStackTest: MessageException is stackless by default
 
 ## 15 Tiny
 

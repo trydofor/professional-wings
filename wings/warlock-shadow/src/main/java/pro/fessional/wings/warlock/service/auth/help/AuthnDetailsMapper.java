@@ -25,12 +25,12 @@ public interface AuthnDetailsMapper {
     @Mapping(target = "authorities", ignore = true)
     @Mapping(target = "accountNonLocked", ignore = true)
     @Mapping(target = "accountNonExpired", ignore = true)
-    void mapping(WarlockAuthnService.Details source, @MappingTarget DefaultWingsUserDetails target);
+    void map(WarlockAuthnService.Details source, @MappingTarget DefaultWingsUserDetails target);
 
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "expiredDt", ignore = true)
     @InheritInverseConfiguration
-    void mapping(DefaultWingsUserDetails source, @MappingTarget WarlockAuthnService.Details target);
+    void map(DefaultWingsUserDetails source, @MappingTarget WarlockAuthnService.Details target);
 
     AuthnDetailsMapper INSTANCE = Mappers.getMapper(AuthnDetailsMapper.class);
 
@@ -41,20 +41,10 @@ public interface AuthnDetailsMapper {
      * @return new target
      */
     @NotNull
-    static DefaultWingsUserDetails into(@Nullable WarlockAuthnService.Details source) {
+    static DefaultWingsUserDetails of(@Nullable WarlockAuthnService.Details source) {
         final DefaultWingsUserDetails target = new DefaultWingsUserDetails();
-        INSTANCE.mapping(source, target);
+        INSTANCE.map(source, target);
         return target;
-    }
-
-    /**
-     * build the target DefaultWingsUserDetails from the source Details
-     *
-     * @param source the source from
-     * @param target the target into
-     */
-    static void into(@Nullable WarlockAuthnService.Details source, @NotNull DefaultWingsUserDetails target) {
-        INSTANCE.mapping(source, target);
     }
 
     /**
@@ -64,9 +54,9 @@ public interface AuthnDetailsMapper {
      * @return new target
      */
     @NotNull
-    static WarlockAuthnService.Details into(@Nullable DefaultWingsUserDetails source) {
+    static WarlockAuthnService.Details of(@Nullable DefaultWingsUserDetails source) {
         final WarlockAuthnService.Details target = new WarlockAuthnService.Details();
-        INSTANCE.mapping(source, target);
+        INSTANCE.map(source, target);
         return target;
     }
 
@@ -74,9 +64,20 @@ public interface AuthnDetailsMapper {
      * build the target DefaultWingsUserDetails from the source Details
      *
      * @param source the source from
-     * @param target the target into
+     * @param target the target to
      */
-    static void into(@Nullable DefaultWingsUserDetails source, @NotNull WarlockAuthnService.Details target) {
-        INSTANCE.mapping(source, target);
+    static void to(@Nullable DefaultWingsUserDetails source, @NotNull WarlockAuthnService.Details target) {
+        INSTANCE.map(source, target);
     }
+
+    /**
+     * build the target DefaultWingsUserDetails from the source Details
+     *
+     * @param source the source from
+     * @param target the target to
+     */
+    static void to(@Nullable WarlockAuthnService.Details source, @NotNull DefaultWingsUserDetails target) {
+        INSTANCE.map(source, target);
+    }
+
 }

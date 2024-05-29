@@ -122,7 +122,7 @@ public class TestToyApiController extends AbstractApiAuthController {
     public boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws IOException {
         final HashMap<String, String> head = new HashMap<>();
         head.put(ReqJsonBody, entity.getReqBody());
-        head.put(TerUserId, String.valueOf(TerminalContext.get().getUserId()));
+        head.put(TerUserId, String.valueOf(TerminalContext.currentLoginUser()));
 
         for (Map.Entry<String, Part> en : entity.getReqFile().entrySet()) {
             final Part pt = en.getValue();

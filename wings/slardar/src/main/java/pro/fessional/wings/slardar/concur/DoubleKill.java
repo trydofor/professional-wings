@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.concur;
 
+import org.intellij.lang.annotations.Language;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,6 +9,11 @@ import java.lang.annotation.Target;
 
 /**
  * <pre>
+ * the default key of @DoubleKill is array of [method, uid, args].
+ *  - if the args is not easy to equals, use expression() to pickup
+ *  - if uid is useless, use principal() to ignore
+ *  - if expression() is no problem, toggle checkNull() to skip
+ *
  * Note: When executing async and using with AOP annotations such as @Cacheable,
  * make sure that DK is executed first. Otherwise, the result of the async execution
  * cannot be processed correctly. If you can not guarantee the first execution,
@@ -33,6 +40,7 @@ public @interface DoubleKill {
     String value() default "";
 
     /**
+     * // @el(root: pro.fessional.wings.slardar.concur.impl.DoubleKillAround.Root)<p>
      * Used in the same way as `key` of `@Cacheable`, empty by default, with all arguments.
      * If a static-key exists, the expression is omitted.
      * Beans can be obtained using `@beanName`.
@@ -47,10 +55,16 @@ public @interface DoubleKill {
      * can be accessed via {@code #root.args[0]}, {@code #p0} or {@code #a0}. Arguments
      * can also be accessed by #name if that information is available.</li>
      * </ul>
-     *
      * @return SpEL
+     * @see pro.fessional.wings.slardar.concur.impl.DoubleKillAround.Root
      */
+    @Language("SpEL")
     String expression() default "";
+
+    /**
+     * check expression() result, failed if null or empty string or string null
+     */
+    boolean checkNull() default true;
 
     /**
      * Whether to use spring SecurityContextHolder.context.authentication.principal in keys

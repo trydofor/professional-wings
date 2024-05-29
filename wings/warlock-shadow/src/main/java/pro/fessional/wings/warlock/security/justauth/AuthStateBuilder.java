@@ -100,6 +100,16 @@ public class AuthStateBuilder {
         return args;
     }
 
+    /**
+     * <pre>
+     * parse client state, then merge them to safe format.
+     * e.g. given,
+     * (1) .safe-state[/order-list]={1}/#{0}
+     * (2) GET ?state=/order-list&state=http://localhost%3A8080
+     * then state=['/order-list', 'http://localhost:8080']
+     * and parseState returns http://localhost:8080/#/order-list
+     * </pre>
+     */
     @NotNull
     public String parseState(HttpServletRequest request) {
         final Map<String, String[]> map = parseParam(request);

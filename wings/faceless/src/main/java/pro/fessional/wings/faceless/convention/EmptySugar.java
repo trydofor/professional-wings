@@ -7,10 +7,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
-import java.util.function.Consumer;
 
 /**
- * `isXxx` for exact comparison, `asXxx` for range comparison
+ * `isXxx/notXxx` for exact comparison, `asXxx/nonXxx` for range comparison
  *
  * @author trydofor
  * @since 2019-05-13
@@ -25,16 +24,32 @@ public class EmptySugar {
         return v == null || v == EmptyValue.INT;
     }
 
+    public static boolean isEmptyValue(int v) {
+        return v == EmptyValue.INT;
+    }
+
     public static boolean isEmptyValue(Long v) {
         return v == null || v == EmptyValue.BIGINT;
+    }
+
+    public static boolean isEmptyValue(long v) {
+        return v == EmptyValue.BIGINT;
     }
 
     public static boolean isEmptyValue(Double v) {
         return v == null || v == EmptyValue.DOUBLE;
     }
 
+    public static boolean isEmptyValue(double v) {
+        return v == EmptyValue.DOUBLE;
+    }
+
     public static boolean isEmptyValue(Float v) {
         return v == null || v == EmptyValue.FLOAT;
+    }
+
+    public static boolean isEmptyValue(float v) {
+        return v == EmptyValue.FLOAT;
     }
 
     public static boolean isEmptyValue(BigDecimal v) {
@@ -65,7 +80,72 @@ public class EmptySugar {
         return v == null || isEmptyValue(v.toLocalDateTime());
     }
 
-    // ///
+    public static boolean notEmptyValue(String v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(Integer v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(int v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(Long v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(long v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(Double v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(double v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(Float v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(float v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(BigDecimal v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(BigInteger v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(LocalDate v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(LocalTime v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(LocalDateTime v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(ZonedDateTime v) {
+        return !isEmptyValue(v);
+    }
+
+    public static boolean notEmptyValue(OffsetDateTime v) {
+        return !isEmptyValue(v);
+    }
+
+    // /////////////////////
+
     public static boolean asEmptyValue(String v) {
         return v == null || v.trim().isEmpty();
     }
@@ -74,8 +154,16 @@ public class EmptySugar {
         return v == null || v == EmptyValue.INT;
     }
 
+    public static boolean asEmptyValue(int v) {
+        return v == EmptyValue.INT;
+    }
+
     public static boolean asEmptyValue(Long v) {
         return v == null || v == EmptyValue.BIGINT;
+    }
+
+    public static boolean asEmptyValue(long v) {
+        return v == EmptyValue.BIGINT;
     }
 
     public static boolean asEmptyValue(Double x) {
@@ -84,9 +172,17 @@ public class EmptySugar {
         return v > EmptyValue.DOUBLE_AS_MIN && v < EmptyValue.DOUBLE_AS_MAX;
     }
 
+    public static boolean asEmptyValue(double v) {
+        return v > EmptyValue.DOUBLE_AS_MIN && v < EmptyValue.DOUBLE_AS_MAX;
+    }
+
     public static boolean asEmptyValue(Float x) {
         if (x == null) return true;
         float v = x;
+        return v > EmptyValue.FLOAT_AS_MIN && v < EmptyValue.FLOAT_AS_MAX;
+    }
+
+    public static boolean asEmptyValue(float v) {
         return v > EmptyValue.FLOAT_AS_MIN && v < EmptyValue.FLOAT_AS_MAX;
     }
 
@@ -139,7 +235,89 @@ public class EmptySugar {
         return v == null || asEmptyValue(v.toLocalDate());
     }
 
-    //
+
+    public static boolean nonEmptyValue(String v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(Integer v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(int v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(Long v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(long v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(Double x) {
+        return !asEmptyValue(x);
+    }
+
+    public static boolean nonEmptyValue(double x) {
+        return !asEmptyValue(x);
+    }
+
+    public static boolean nonEmptyValue(Float x) {
+        return !asEmptyValue(x);
+    }
+
+    public static boolean nonEmptyValue(float x) {
+        return !asEmptyValue(x);
+    }
+
+    public static boolean nonEmptyValue(BigDecimal v) {
+        return !asEmptyValue(v);
+    }
+
+    public static boolean nonEmptyValue(BigInteger v) {
+        return !asEmptyValue(v);
+    }
+
+    /**
+     * Consider time zone, ±24H
+     */
+    public static boolean nonEmptyValue(LocalDate v) {
+        return !asEmptyValue(v);
+    }
+
+    /**
+     * Compare hour, minute and second only, without the time below the second
+     */
+    public static boolean nonEmptyValue(LocalTime v) {
+        return !asEmptyValue(v);
+    }
+
+    /**
+     * Compare date only, without time
+     */
+    public static boolean nonEmptyValue(LocalDateTime v) {
+        return !asEmptyValue(v);
+    }
+
+    /**
+     * Compare date only, without time
+     */
+    public static boolean nonEmptyValue(ZonedDateTime v) {
+        return !asEmptyValue(v);
+    }
+
+    /**
+     * Compare date only, without time
+     */
+    public static boolean nonEmptyValue(OffsetDateTime v) {
+        return !asEmptyValue(v);
+    }
+
+
+    // /////////////////////
+
     public static String nullToEmpty(String v) {
         return v == null ? EmptyValue.VARCHAR : v;
     }
@@ -184,7 +362,8 @@ public class EmptySugar {
         return v != null && v;
     }
 
-    //
+    // /////////////////////
+
     public static String emptyToNull(String v) {
         return asEmptyValue(v) ? null : v;
     }
@@ -193,7 +372,15 @@ public class EmptySugar {
         return asEmptyValue(v) ? null : v;
     }
 
+    public static Integer emptyToNull(int v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
     public static Long emptyToNull(Long v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
+    public static Long emptyToNull(long v) {
         return asEmptyValue(v) ? null : v;
     }
 
@@ -201,7 +388,16 @@ public class EmptySugar {
         return asEmptyValue(v) ? null : v;
     }
 
+
+    public static Double emptyToNull(double v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
     public static Float emptyToNull(Float v) {
+        return asEmptyValue(v) ? null : v;
+    }
+
+    public static Float emptyToNull(float v) {
         return asEmptyValue(v) ? null : v;
     }
 
@@ -236,53 +432,5 @@ public class EmptySugar {
 
     public static Boolean emptyToNull(Boolean v) {
         return nullToTrue(v) ? null : v;
-    }
-
-    public static void ifNotAsEmpty(String v, Consumer<String> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(Integer v, Consumer<Integer> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(Long v, Consumer<Long> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(Double v, Consumer<Double> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(Float v, Consumer<Float> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(BigDecimal v, Consumer<BigDecimal> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(BigInteger v, Consumer<BigInteger> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(LocalDate v, Consumer<LocalDate> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(LocalTime v, Consumer<LocalTime> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(LocalDateTime v, Consumer<LocalDateTime> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(ZonedDateTime v, Consumer<ZonedDateTime> con) {
-        if (!asEmptyValue(v)) con.accept(v);
-    }
-
-    public static void ifNotAsEmpty(OffsetDateTime v, Consumer<OffsetDateTime> con) {
-        if (!asEmptyValue(v)) con.accept(v);
     }
 }

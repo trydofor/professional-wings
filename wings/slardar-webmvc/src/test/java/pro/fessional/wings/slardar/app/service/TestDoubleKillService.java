@@ -40,13 +40,23 @@ public class TestDoubleKillService {
         return r;
     }
 
-    //    @DoubleKill(expression = "#root.methodName + #root.targetClass + #type + '-' + #p1 * 1000")
-//    @DoubleKill(expression = "{#type, #p1}")
+    // @DoubleKill(expression = "#root.methodName + #root.targetClass + #type + '-' + #p1 * 1000")
+    // @DoubleKill(expression = "{#type, #p1}")
     @DoubleKill(expression = "#root.args")
     public String sleepSecondExp(String type, int s) {
         Sleep.ignoreInterrupt(s * 1000L);
         final String r = type + "-" + s;
         log.info(">>>>>> sleepSecondExp " + r);
         return r;
+    }
+
+    @DoubleKill(expression = "#id")
+    public String badSpElNullObj() {
+        return "null";
+    }
+
+    @DoubleKill(expression = "#id + 'str'")
+    public String badSpElNullStr() {
+        return "null";
     }
 }

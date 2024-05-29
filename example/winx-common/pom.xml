@@ -26,10 +26,6 @@
             <artifactId>h2</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.moilioncircle.wings</groupId>
-            <artifactId>winx-codegen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>warlock</artifactId>
         </dependency>

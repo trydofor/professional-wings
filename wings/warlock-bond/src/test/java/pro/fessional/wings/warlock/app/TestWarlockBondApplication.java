@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import pro.fessional.wings.testing.silencer.TestingPropertyHelper;
 
 /**
  * @author trydofor
@@ -11,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TestWarlockBondApplication {
 
     public static void main(String[] args) {
+        TestingPropertyHelper.autoSetWingsRootDir();
         SpringApplication.run(TestWarlockBondApplication.class, args);
     }
-
 }

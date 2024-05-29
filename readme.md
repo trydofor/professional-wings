@@ -39,12 +39,12 @@
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
 ## (2) install dependency using java8
-# asdf shell java temurin-8.0.382+5
+# asdf shell java temurin-8.0.412+8
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
 ## (3) install wings using java-21
-# asdf shell java temurin-21.0.1+12.0.LTS
+# asdf shell java temurin-21.0.3+9.0.LTS
 mvn package install
 ## (4) report issue
 java -jar silencer-*-SNAPSHOT.jar

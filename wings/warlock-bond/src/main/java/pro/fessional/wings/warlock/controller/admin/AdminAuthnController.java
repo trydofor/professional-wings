@@ -66,6 +66,6 @@ public class AdminAuthnController {
             }
             warlockUserAuthnService.dander(ins.getUserId(), ins.isDanger(), types);
         }
-        return R.OK;
+        return R.OK();
     }
 }

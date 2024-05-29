@@ -27,6 +27,7 @@ import java.util.List;
  * @since 2023-01-23
  */
 @SpringBootTest(properties = "testing.dbname=wings")
+// @SpringBootTest(properties = "testing.dbname=wings_faceless")
 @EnabledIfSystemProperty(named = "devs-autogen", matches = "true")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenCodeTest {
@@ -43,12 +44,14 @@ public class AutogenCodeTest {
 
     @Test
     void autogen01AllTestJooq() {
+        // use wings_faceless database
         autogen11FacelessJooqTest();// faceless-jooq
         autogen11FacelessShardTest();// faceless-shard
     }
 
     @Test
     void autogen01AllMainCode() {
+        // use wings database
         autogen01AllMainJooq();
 
         autogen10FacelessAutogen();// faceless/enums

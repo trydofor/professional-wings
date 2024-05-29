@@ -75,6 +75,25 @@ public class DoubleKillAround {
                 final EvaluationContext ctx = evaluator.createContext(root, beanFactory);
                 final AnnotatedElementKey methodKey = new AnnotatedElementKey(root.method, root.targetClass);
                 final Object key = evaluator.key(spelKey, methodKey, ctx);
+                if (doubleKill.checkNull()) {
+                    if (key == null) {
+                        IllegalStateException ex = new IllegalStateException("expression result is null, SpEL=" + spelKey);
+                        log.error("please check the expression. use the static key or expressionCheck=false to skip checking", ex);
+                        throw ex;
+                    }
+                    else if (key instanceof String str) {
+                        if (str.isEmpty()) {
+                            IllegalStateException ex = new IllegalStateException("expression result is empty, SpEL=" + spelKey);
+                            log.error("please check the expression. use the static key or expressionCheck=false to skip checking", ex);
+                            throw ex;
+                        }
+                        else if (str.contains("null")) {
+                            IllegalStateException ex = new IllegalStateException("expression result contains 'null', SpEL=" + spelKey + ", result=" + str);
+                            log.error("please check the expression. use the static key or expressionCheck=false to skip checking", ex);
+                            throw ex;
+                        }
+                    }
+                }
                 arrKey = new ArrayKey(method, uid, key);
             }
             else {
@@ -172,7 +191,8 @@ public class DoubleKillAround {
 
         @Nullable
         public Object key(String keyExpression, AnnotatedElementKey methodKey, EvaluationContext evalContext) {
-            return getExpression(this.keyCache, methodKey, keyExpression).getValue(evalContext);
+            return getExpression(this.keyCache, methodKey, keyExpression)
+                    .getValue(evalContext);
         }
     }
 }

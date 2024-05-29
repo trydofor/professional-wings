@@ -32,7 +32,7 @@ public class NonceTokenSessionHelper {
      * Init one-time token
      */
     public static void initNonce(String token, String ip) {
-        if (token == null) return;
+        if (token == null || token.isEmpty()) return;
         final Sf s = new Sf();
         s.ip = ip;
         cache.put(token, s);
@@ -42,6 +42,7 @@ public class NonceTokenSessionHelper {
      * bind token to sessionId
      */
     public static void bindNonceSession(String token, String sid) {
+        if (token == null || token.isEmpty()) return;
         final SidData data = () -> sid;
         final R<?> result = R.okData(data);
         bindNonceResult(token, result);
@@ -51,6 +52,7 @@ public class NonceTokenSessionHelper {
      * bind token to result
      */
     public static void bindNonceResult(String token, R<?> result) {
+        if (token == null || token.isEmpty()) return;
         final Sf s = cache.get(token);
         if (s != null) {
             s.result = result;
@@ -61,6 +63,7 @@ public class NonceTokenSessionHelper {
      * invalid the token
      */
     public static void invalidNonce(String token) {
+        if (token == null || token.isEmpty()) return;
         cache.remove(token);
     }
 
@@ -80,7 +83,7 @@ public class NonceTokenSessionHelper {
 
         final Sf s = cache.get(token);
         if (s == null) return null;
-        if (s.result == null) return R.NG;
+        if (s.result == null) return R.NG();
 
         invalidNonce(token);
         return s.ip.equals(ip) ? s.result : null;

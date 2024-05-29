@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.mirana.pain.MessageException;
+import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.Duration;
@@ -45,17 +45,17 @@ public class SilenceDebugTest {
     @TmsLink("C11021")
     public void tweakStack() {
         TweakStack.tweakGlobal(true);
-        final MessageException me0 = new MessageException("test message");
+        final CodeException me0 = new CodeException("test message");
         final StackTraceElement[] st0 = me0.getStackTrace();
         Assertions.assertTrue(st0.length > 0);
 
         TweakStack.resetGlobal();
-        final MessageException me1 = new MessageException("test message");
+        final CodeException me1 = new CodeException("test message");
         final StackTraceElement[] st1 = me1.getStackTrace();
         Assertions.assertTrue(st1.length > 0);
 
         TweakStack.tweakGlobal(false);
-        final MessageException me2 = new MessageException("test message");
+        final CodeException me2 = new CodeException("test message");
         final StackTraceElement[] st2 = me2.getStackTrace();
         Assertions.assertFalse(st2.length > 0);
         TweakStack.resetGlobal();

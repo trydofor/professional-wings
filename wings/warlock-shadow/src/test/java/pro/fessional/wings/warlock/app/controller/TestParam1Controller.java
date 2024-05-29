@@ -27,6 +27,11 @@ public class TestParam1Controller {
         return data;
     }
 
+    @PostMapping("/test/param1/int64.json")
+    public Long str(@RequestBody Long data) {
+        return data;
+    }
+
     @PostMapping("/test/param1/bol.json")
     public Boolean str(@RequestBody Boolean data) {
         return data;

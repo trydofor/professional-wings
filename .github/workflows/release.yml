@@ -184,6 +184,9 @@ jobs:
           -P 'deploy,deploy-oss,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
+          -Dorg.slf4j.simpleLogger.log.lombok=WARN
+          -Dorg.slf4j.simpleLogger.log.org.jetbrains.dokka=WARN
+          -Dorg.slf4j.simpleLogger.log.pl.project13.maven.git=WARN
           deploy
         env:
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}
@@ -197,9 +200,12 @@ jobs:
         continue-on-error: ${{ inputs.deployAltrh != 'true' }}
         run: >
           mvn 
-          -P 'deploy,deploy-alt,!module-example,!module-devs'
+          -P 'deploy,deploy-alt,deploy-old,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
+          -Dorg.slf4j.simpleLogger.log.lombok=WARN
+          -Dorg.slf4j.simpleLogger.log.org.jetbrains.dokka=WARN
+          -Dorg.slf4j.simpleLogger.log.pl.project13.maven.git=WARN
           deploy
         env:
           JAVA_HOME: ${{ steps.settings.outputs.JAVA_HOME }}

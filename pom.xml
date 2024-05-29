@@ -10,18 +10,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>pro.fessional.wings</groupId>
-    <artifactId>ancient</artifactId>
+    <groupId>pro.fessional</groupId>
+    <artifactId>wings-boot</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>Ancient::</name>
+    <name>WingsBoot::</name>
     <description>万物生长靠日 ☀️ Growing Need the F^king Sun</description>
     <url>https://wings.fessional.pro</url>
 
     <properties>
         <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
-        <revision>3.2.120-SNAPSHOT</revision>
+        <revision>3.2.130-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.2</spring-boot.version>
         <!--  -->
@@ -39,13 +39,14 @@
         <annotations.version>24.1.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version> <!-- https://mapstruct.org/documentation/1.6/reference/html/#_set_up -->
         <guava.version>33.0.0-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.15.1</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
         <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
-        <mirana.version>2.7.2</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.7.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.5.1</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <fastjson2.version>2.0.47</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
@@ -282,7 +283,7 @@
                 <artifactId>testing-batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!-- pro.fessional.wings radiant -->
+            <!-- pro.fessional.wings:radiant -->
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>tiny-task</artifactId>
@@ -591,14 +592,19 @@
                         <annotationProcessorPaths>
                             <!--  find annotationProcessors in the following paths -->
                             <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                            <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                                 <version>${lombok.version}</version>
                             </path>
                             <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok-mapstruct-binding.version}</version>
                             </path>
                             <path>
                                 <groupId>org.springframework.boot</groupId>
@@ -1119,7 +1125,9 @@
         <profile>
             <id>deploy</id>
             <properties>
+                <deployAtEnd>true</deployAtEnd>
                 <maven.test.skip>true</maven.test.skip>
+                <maven.install.skip>true</maven.install.skip>
             </properties>
             <build>
                 <plugins>
@@ -1174,6 +1182,54 @@
                 <!--suppress UnresolvedMavenProperty -->
                 <altSnapshotDeploymentRepository>altrh::${MVN_ALT_SNAP}</altSnapshotDeploymentRepository>
             </properties>
+        </profile>
+        <profile>
+            <id>deploy-old</id>
+            <properties>
+                <deploy.old.todir>${project.build.directory}/old-build</deploy.old.todir>
+                <deploy.old.files>${project.artifactId}-${project.version}*</deploy.old.files>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <!-- Backup before packaging -->
+                            <execution>
+                                <id>backup-artifacts</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <delete dir="${deploy.old.todir}" failonerror="false"/>
+                                        <copy todir="${deploy.old.todir}" overwrite="true">
+                                            <fileset dir="${project.build.directory}" includes="${deploy.old.files}"/>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <!-- Restore artifacts before deployment -->
+                            <execution>
+                                <id>restore-artifacts</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <copy todir="${project.build.directory}" overwrite="true">
+                                            <fileset dir="${deploy.old.todir}" includes="${deploy.old.files}" erroronmissingdir="false"/>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>docker</id>

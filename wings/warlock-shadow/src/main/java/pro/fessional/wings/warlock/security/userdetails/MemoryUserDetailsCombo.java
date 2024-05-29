@@ -99,9 +99,8 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
         // shallow copy with authType
         if (dtl.getAuthType() == Null.Enm) {
-            dtl = dtl.toBuilder()
-                     .authType(authType)
-                     .build();
+            dtl = Details.$$.of(dtl);
+            dtl.setAuthType(authType);
         }
         else {
             LocalDateTime now = Now.localDateTime();

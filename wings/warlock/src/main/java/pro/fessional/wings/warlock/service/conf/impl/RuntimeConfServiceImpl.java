@@ -61,6 +61,10 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
 
     @Override
     public <T> T getObject(String key, TypeDescriptor type) {
+        // dot not @Cacheable it but thisLazy, because,
+        // (1) calling method inside make cache invalid
+        // (2) recursive calling
+        // (3) separating cache need copy dao and handlerMap
         return thisLazy.getObjectCache(key, type);
     }
 

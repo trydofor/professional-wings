@@ -53,10 +53,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.flow.FlowEnum;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
+import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import java.util.ArrayList;
@@ -87,14 +89,15 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
     public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
         AuthRequest ar = buildRequest(authType, request);
         if (ar == null) return null;
-        AuthCallback callback = new AuthCallback();
+        final String state = request.getParameter("state");
+        AssertArgs.notEmpty(state, CommonErrorEnum.AssertNotFound1, "state");
 
+        AuthCallback callback = new AuthCallback();
         callback.setAuth_code(request.getParameter("auth_code"));
         callback.setAuthorization_code(request.getParameter("authorization_code"));
         callback.setCode(request.getParameter("code"));
         callback.setOauth_token(request.getParameter("oauth_token"));
         callback.setOauth_verifier(request.getParameter("oauth_verifier"));
-        final String state = request.getParameter("state");
         callback.setState(state);
 
         try {
@@ -192,6 +195,6 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
          *
          * @throws InternalAuthenticationServiceException will not NonceTokenSessionHelper.invalidNonce
          */
-        FlowEnum handle(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, AuthUser authUser, DefaultWingsAuthDetails detail);
+        FlowEnum handle(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, @NotNull AuthUser authUser, @NotNull DefaultWingsAuthDetails detail);
     }
 }

@@ -54,7 +54,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     public void auth(DefaultWingsUserDetails userDetails, Details details) {
         if (userDetails == null || details == null) return;
 
-        AuthnDetailsMapper.into(details, userDetails);
+        AuthnDetailsMapper.to(details, userDetails);
 
         switch (details.getStatus()) {
             case UNINIT, ACTIVE, INFIRM, UNSAFE -> {

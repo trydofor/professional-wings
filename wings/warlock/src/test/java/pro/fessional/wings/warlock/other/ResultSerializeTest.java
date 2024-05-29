@@ -44,16 +44,24 @@ public class ResultSerializeTest {
     @Test
     @TmsLink("C14003")
     public void testJackson() {
-        final R<Object> r1 = R
-                .ok()
-                .setMessage("message")
-                .setData("data")
-                .setCode("code")
-                .setCause("cause")
-                .setI18nMessage("i18nCode", "1");
+        /**
+         * https://github.com/FasterXML/jackson-databind/issues/3125
+         * com.fasterxml.jackson.databind.exc.InvalidDefinitionException:
+         * Conflicting setter definitions for property "dataIfOk":
+         * pro.fessional.mirana.data.R#setDataIfOk(java.lang.Object)
+         * vs pro.fessional.mirana.data.R#setDataIfOk(java.util.function.Supplier)
+         */
+        final R<Object> r1 = new R<>(true);
+        r1.setMessage("message");
+        r1.setData("data");
+        r1.setCode("code");
+        r1.setCause("cause");
+        r1.setI18nMessage("i18nCode", "1");
+
+        log.info("toString={}", r1);
         ObjectMapper om = new ObjectMapper();
         final String json = om.writeValueAsString(r1);
-        log.info(json);
+        log.info("testJackson={}", json);
         final R<Object> r2 = om.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<R<Object>>() {});
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());

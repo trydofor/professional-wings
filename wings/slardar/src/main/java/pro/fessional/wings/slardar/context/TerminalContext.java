@@ -126,6 +126,15 @@ public class TerminalContext {
     }
 
     /**
+     * only login user, throw TerminalException if not login
+     *
+     * @throws TerminalContextException if not login
+     */
+    public static long currentLoginUser() throws TerminalContextException {
+        return get(true).getUserId();
+    }
+
+    /**
      * set login and logout listener. context is null for logout, else for login.
      *
      * @param name     name of listener

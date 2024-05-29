@@ -78,7 +78,7 @@ public class AsyncHelperTest {
     private void delayUid(String caller, long userId, AtomicInteger eqs) {
         final String name = Thread.currentThread().getName();
         if (name.contains("exec-")) {
-            final long ud = TerminalContext.get().getUserId();
+            final long ud = TerminalContext.currentLoginUser();
             log.info("{} , uid={}", caller, ud);
             if (ud == userId) {
                 eqs.incrementAndGet();

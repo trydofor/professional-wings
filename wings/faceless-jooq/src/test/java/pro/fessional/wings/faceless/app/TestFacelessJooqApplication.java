@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import pro.fessional.wings.testing.silencer.TestingPropertyHelper;
 
 /**
  * @author trydofor
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TestFacelessJooqApplication {
     public static void main(String[] args) {
+        TestingPropertyHelper.autoSetWingsRootDir();
         SpringApplication.run(TestFacelessJooqApplication.class, args);
     }
 }

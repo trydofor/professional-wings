@@ -152,4 +152,23 @@ class DoubleKillTest {
             assertTrue(true);
         }
     }
+
+    @Test
+    @TmsLink("C13123")
+    void doubleKillBad() {
+        try {
+            testDoubleKillService.badSpElNullObj();
+            fail();
+        }
+        catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("expression result is null"));
+        }
+        try {
+            testDoubleKillService.badSpElNullStr();
+            fail();
+        }
+        catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("expression result contains 'null'"));
+        }
+    }
 }

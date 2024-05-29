@@ -1,27 +1,27 @@
 package pro.fessional.wings.slardar.context;
 
 import pro.fessional.mirana.data.CodeEnum;
-import pro.fessional.mirana.pain.CodeException;
+import pro.fessional.mirana.pain.MessageException;
 
 /**
  * @author trydofor
- * @since 2023-10-2023/10/17
+ * @since 2023-10-20
  */
-public class TerminalContextException extends CodeException {
+public class TerminalContextException extends MessageException {
 
     public TerminalContextException(String code) {
-        super(code);
+        super(TweakStack.current(code, TerminalContextException.class, DefaultStack), code);
     }
 
     public TerminalContextException(String code, String message) {
-        super(code, message);
+        super(TweakStack.current(code, TerminalContextException.class, DefaultStack), code, message);
     }
 
     public TerminalContextException(CodeEnum code) {
-        super(code);
+        super(TweakStack.current(code, TerminalContextException.class, DefaultStack), code);
     }
 
     public TerminalContextException(CodeEnum code, Object... args) {
-        super(code, args);
+        super(TweakStack.current(code, TerminalContextException.class, DefaultStack), code, args);
     }
 }

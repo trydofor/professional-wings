@@ -20,7 +20,7 @@ public interface Devops0ProjectConstant {
     String JDBC_PASS = "moilioncircle";
 
     // Need set Working Directory=$MODULE_WORKING_DIR$
-    String JAVA_MAIN = "../winx-codegen/src/main/java/";
+    String JAVA_MAIN = "../winx-common/src/main/java-gen/";
 
     String PKG_ENUM = "com.moilioncircle.wings.codegen.enums";
     String PKG_JOOQ = "com.moilioncircle.wings.codegen.database";

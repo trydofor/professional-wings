@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -32,21 +32,49 @@ public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        final HttpSession session = request.getSession(false);
+        final State state = new State();
 
-        String sid = null;
         final long uid = SecurityContextUtil.getUserId();
-        final String state = request.getParameter(AuthStateBuilder.ParamState);
+        state.setUserId(uid);
 
+        final String sts = request.getParameter(AuthStateBuilder.ParamState);
+        state.setStateOauth(sts);
+
+        final HttpSession session = request.getSession(false);
         if (session != null) {
-            sid = session.getId();
-            if (state != null) {
-                NonceTokenSessionHelper.bindNonceSession(state, sid);
-                log.debug("parse client state={}, uid={}", state, uid);
+            String sid = session.getId();
+            state.setSessionId(sid);
+
+            if (sts != null) {
+                NonceTokenSessionHelper.bindNonceSession(sts, sid);
+                log.debug("parse oauth state={}, uid={}", sts, uid);
             }
         }
+        state.setStateClient(authStateBuilder.parseState(request));
+        onResponse(request, response, authentication, state);
+    }
 
-        onResponse(request, response, authentication, sid, uid, authStateBuilder.parseState(request));
+    @Data
+    public static class State {
+        /**
+         * SecurityContextUtil.getUserId()
+         */
+        private long userId;
+
+        /**
+         * session id, null if no-login
+         */
+        private String sessionId;
+
+        /**
+         * the state via oauth builder
+         */
+        private String stateOauth;
+
+        /**
+         * the safe-state send by client
+         */
+        private String stateClient;
     }
 
     /**
@@ -55,12 +83,10 @@ public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
      * @param req   HttpServletRequest
      * @param res   HttpServletResponse
      * @param aun   Authentication
-     * @param sid   session id, null if no-login
-     * @param uid   user id
-     * @param state The state set by the client contained in the oauth2 state
+     * @param state login state
      */
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
-                              @Nullable String sid, long uid, @Nullable String state) throws ServletException, IOException {
+                              @NotNull State state) throws ServletException, IOException {
         super.onAuthenticationSuccess(req, res, aun);
     }
 }

@@ -18,20 +18,20 @@ public class HashPasswordEncoder implements PasswordEncoder {
 
     private final MdHelp helper;
 
-    public HashPasswordEncoder(String algorithm) {
-        this.helper = MdHelp.of(algorithm);
+    public HashPasswordEncoder(String algorithm, int hexLen) {
+        this.helper = MdHelp.of(algorithm, hexLen);
     }
 
     public static HashPasswordEncoder md5() {
-        return new HashPasswordEncoder("MD5");
+        return new HashPasswordEncoder(MdHelp.MD_MD5, MdHelp.LEN_MD5_HEX);
     }
 
     public static HashPasswordEncoder sha1() {
-        return new HashPasswordEncoder("SHA-1");
+        return new HashPasswordEncoder(MdHelp.MD_SHA1, MdHelp.LEN_SHA1_HEX);
     }
 
     public static HashPasswordEncoder sha256() {
-        return new HashPasswordEncoder("SHA-256");
+        return new HashPasswordEncoder(MdHelp.MD_SHA256, MdHelp.LEN_SHA256_HEX);
     }
 
     @Override

@@ -53,7 +53,6 @@ public class WingsInitProjectUtil {
                 "pom.xml",
                 "winx-admin/",
                 "winx-api/",
-                "winx-codegen/",
                 "winx-common/",
                 "winx-devops/",
                 "winx-front/",

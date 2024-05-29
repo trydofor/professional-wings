@@ -23,7 +23,7 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
 public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
 
     @Override
-    protected Long beforeSave(Basis basis, String username, WingsAuthDetails details) {
+    protected Long beforeSave(@NotNull Basis basis, String username, WingsAuthDetails details) {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         basis.setNickname(user.getNickname());
@@ -46,7 +46,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    protected Long beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+    protected Long beforeSave(@NotNull Authn authn, String username, WingsAuthDetails details, long userId) {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         authn.setUsername(user.getUuid());
