@@ -195,6 +195,6 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
          *
          * @throws InternalAuthenticationServiceException will not NonceTokenSessionHelper.invalidNonce
          */
-        FlowEnum handle(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, AuthUser authUser, DefaultWingsAuthDetails detail);
+        FlowEnum handle(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, @NotNull AuthUser authUser, @NotNull DefaultWingsAuthDetails detail);
     }
 }

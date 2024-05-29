@@ -106,23 +106,29 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
     }
 
     /**
-     * nonnull return value means existed user
+     * return nonnull(userid) means existed user
      */
-    protected Long beforeSave(Basis basis, String username, WingsAuthDetails details) {
+    protected Long beforeSave(@NotNull Basis basis, String username, WingsAuthDetails details) {
         return null;
-    }
-
-    protected void afterSave(Basis basis, String username, WingsAuthDetails details, long userId) {
     }
 
     /**
-     * nonnull return value means existed authn
+     * execute only if new user (beforeSave return null)
      */
-    protected Long beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+    protected void afterSave(@NotNull Basis basis, String username, WingsAuthDetails details, long userId) {
+    }
+
+    /**
+     * return nonnull(Authn id) means existed authn
+     */
+    protected Long beforeSave(@NotNull Authn authn, String username, WingsAuthDetails details, long userId) {
         return null;
     }
 
-    protected void afterSave(Authn authn, String username, WingsAuthDetails details, long userId, long authId) {
+    /**
+     * execute only if new authn (beforeSave return null)
+     */
+    protected void afterSave(@NotNull Authn authn, String username, WingsAuthDetails details, long userId, long authId) {
     }
 
     @Override

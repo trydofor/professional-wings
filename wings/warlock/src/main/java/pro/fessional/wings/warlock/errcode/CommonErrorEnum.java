@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.errcode;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.CodeEnum;
@@ -8,6 +9,7 @@ import pro.fessional.mirana.data.CodeEnum;
  * @author trydofor
  * @since 2021-03-25
  */
+@Getter
 @RequiredArgsConstructor
 public enum CommonErrorEnum implements CodeEnum {
 
@@ -24,16 +26,6 @@ public enum CommonErrorEnum implements CodeEnum {
     MessageUnreadable("error.common.message.unreadable", "message not readable"),
     ;
 
-    private final String code;
-    private final String hint;
-
-    @Override
-    public @NotNull String getCode() {
-        return code;
-    }
-
-    @Override
-    public @NotNull String getHint() {
-        return hint;
-    }
+    private final @NotNull String code;
+    private final @NotNull String hint;
 }
