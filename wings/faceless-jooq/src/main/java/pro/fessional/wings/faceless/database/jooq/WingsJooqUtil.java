@@ -16,7 +16,9 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Z;
+import pro.fessional.wings.faceless.convention.EmptyValue;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -107,6 +109,20 @@ public class WingsJooqUtil extends DSL {
     }
 
     ///////////////// Condition /////////////////////
+
+    /**
+     * datetime &lt; DATE_TIME_AS_MAX
+     */
+    public static Condition condAsEmpty(@NotNull Field<LocalDateTime> datetime) {
+        return datetime.lt(EmptyValue.DATE_TIME_AS_MAX);
+    }
+
+    /**
+     * datetime &gt; DATE_TIME_AS_MAX
+     */
+    public static Condition condNonEmpty(@NotNull Field<LocalDateTime> datetime) {
+        return datetime.gt(EmptyValue.DATE_TIME_AS_MAX);
+    }
 
     /**
      * MATCH (a) AGAINST ('abc')
