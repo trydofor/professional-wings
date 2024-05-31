@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.database.jooq;
 
 import com.google.common.collect.Lists;
 import org.intellij.lang.annotations.MagicConstant;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.BatchBindStep;
@@ -27,15 +26,15 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
-import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.data.U;
 import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
+import pro.fessional.wings.faceless.database.jooq.support.SelectOrder;
+import pro.fessional.wings.faceless.database.jooq.support.SelectWhereOrder;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 
 import java.io.IOException;
@@ -766,57 +765,21 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public List<P> fetch(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(table, soc.getWhere(), soc.getParts());
-    }
-
-    @NotNull
-    public List<P> fetch(int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        return fetch(0, limit, fun);
-    }
-
-    @NotNull
-    public List<P> fetch(int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        final SelectWhereOrder soc = new SelectWhereOrder();
-        fun.accept(table, soc);
-        return fetch(table, offset, limit, soc.getWhere(), soc.getParts());
+        return fetch(table, soc.where(), soc.queries());
     }
 
     @NotNull
     public <E> List<E> fetch(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(claz, table, soc.getWhere(), soc.getParts());
-    }
-
-    @NotNull
-    public <E> List<E> fetch(Class<E> claz, int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        return fetch(claz, 0, limit, fun);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(Class<E> claz, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        final SelectWhereOrder soc = new SelectWhereOrder();
-        fun.accept(table, soc);
-        return fetch(claz, offset, limit, table, soc.getWhere(), soc.getParts());
+        return fetch(claz, table, soc.where(), soc.queries());
     }
 
     @NotNull
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(mapper, table, soc.getWhere(), soc.getParts());
-    }
-
-    @NotNull
-    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        return fetch(mapper, 0, limit, fun);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
-        final SelectWhereOrder soc = new SelectWhereOrder();
-        fun.accept(table, soc);
-        return fetch(mapper, offset, limit, table, soc.getWhere(), soc.getParts());
+        return fetch(mapper, table, soc.where(), soc.queries());
     }
 
     ////////
@@ -933,14 +896,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     @NotNull
     public <E> List<E> fetch(Class<E> claz, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetch(claz, offset, limit, table, cond, two.one(), two.two());
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetch(claz, offset, limit, table, cond, parts.selects, parts.orders);
     }
 
     @NotNull
     public <E> List<E> fetch(Class<E> claz, int offset, int limit, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetch(claz, offset, limit, table, cond, two.one(), two.two());
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetch(claz, offset, limit, table, cond, parts.selects, parts.orders);
     }
 
     @NotNull
@@ -1023,8 +986,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     @NotNull
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetch(mapper, offset, limit, table, cond, two.one(), two.two());
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetch(mapper, offset, limit, table, cond, parts.selects, parts.orders);
     }
 
     @NotNull
@@ -1075,14 +1038,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public P fetchOne(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(table, soc.getWhere(), soc.getParts());
+        return fetchOne(table, soc.where(), soc.queries());
     }
 
     @Nullable
     public P fetchLimitOne(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(table, soc.getWhere(), soc.getParts());
+        return fetchLimitOne(table, soc.where(), soc.queries());
     }
 
     @NotNull
@@ -1099,14 +1062,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public <E> E fetchOne(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(claz, table, soc.getWhere(), soc.getParts());
+        return fetchOne(claz, table, soc.where(), soc.queries());
     }
 
     @Nullable
     public <E> E fetchLimitOne(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(claz, table, soc.getWhere(), soc.getParts());
+        return fetchLimitOne(claz, table, soc.where(), soc.queries());
     }
 
     @NotNull
@@ -1123,14 +1086,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(mapper, table, soc.getWhere(), soc.getParts());
+        return fetchOne(mapper, table, soc.where(), soc.queries());
     }
 
     @Nullable
     public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(mapper, table, soc.getWhere(), soc.getParts());
+        return fetchLimitOne(mapper, table, soc.where(), soc.queries());
     }
 
     @NotNull
@@ -1186,25 +1149,25 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     public P fetchOne(T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(table, cond, parts.selects, parts.orders, false);
     }
 
     public P fetchOne(T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(table, cond, parts.selects, parts.orders, false);
     }
 
     @Nullable
     public P fetchLimitOne(T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(table, cond, parts.selects, parts.orders, true);
     }
 
     @Nullable
     public P fetchLimitOne(T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(table, cond, parts.selects, parts.orders, true);
     }
 
     @NotNull
@@ -1274,25 +1237,25 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     public <E> E fetchOne(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(claz, table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(claz, table, cond, parts.selects, parts.orders, false);
     }
 
     public <E> E fetchOne(Class<E> claz, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(claz, table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(claz, table, cond, parts.selects, parts.orders, false);
     }
 
     @Nullable
     public <E> E fetchLimitOne(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(claz, table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(claz, table, cond, parts.selects, parts.orders, true);
     }
 
     @Nullable
     public <E> E fetchLimitOne(Class<E> claz, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(claz, table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(claz, table, cond, parts.selects, parts.orders, true);
     }
 
     @NotNull
@@ -1378,25 +1341,25 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(mapper, table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(mapper, table, cond, parts.selects, parts.orders, false);
     }
 
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(mapper, table, cond, two.one(), two.two(), false);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(mapper, table, cond, parts.selects, parts.orders, false);
     }
 
     @Nullable
     public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
-        final var two = selectAndOrders(List.of(selectsOrders));
-        return fetchOne(mapper, table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(mapper, table, cond, parts.selects, parts.orders, true);
     }
 
     @Nullable
     public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
-        final var two = selectAndOrders(selectsOrders);
-        return fetchOne(mapper, table, cond, two.one(), two.two(), true);
+        final var parts = new SelectOrder.Parts(selectsOrders);
+        return fetchOne(mapper, table, cond, parts.selects, parts.orders, true);
     }
 
     @NotNull
@@ -1652,28 +1615,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         }
     }
 
-    ////////
-    private U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> selectAndOrders(Collection<? extends QueryPart> selectsOrders) {
-        if (selectsOrders == null || selectsOrders.isEmpty()) {
-            return U.of(Collections.emptyList(), Collections.emptyList());
-        }
-
-        int size = selectsOrders.size();
-        final ArrayList<SelectFieldOrAsterisk> fields = new ArrayList<>(size);
-        final ArrayList<OrderField<?>> orders = new ArrayList<>(size);
-
-        for (QueryPart qp : selectsOrders) {
-            if (qp instanceof SelectFieldOrAsterisk) {
-                fields.add((SelectFieldOrAsterisk) qp);
-            }
-            else if (qp instanceof OrderField) {
-                orders.add((OrderField<?>) qp);
-            }
-        }
-
-        return U.of(fields, orders);
-    }
-
+    ///
     private SelectConditionStep<R> selectWhere(T table, Condition cond, Collection<? extends SelectFieldOrAsterisk> selects) {
         if (selects == null || selects.isEmpty()) {
             return ctx().selectFrom(table).where(cond);
@@ -1681,82 +1623,6 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         else {
             final SelectSelectStep<R> select = TypedCastUtil.castObject(ctx().select(selects));
             return select.from(table).where(cond);
-        }
-    }
-
-    /////
-    public static class SelectWhereOrder {
-        private Condition where = null;
-        private final List<QueryPart> parts = new ArrayList<>(16);
-
-        /**
-         * t.Id.gt(1L).and(t.CommitId.lt(200L))
-         *
-         * @param cond condition
-         * @return this
-         */
-        @Contract("_ -> this")
-        public SelectWhereOrder where(Condition cond) {
-            where = cond;
-            return this;
-        }
-
-        /**
-         * t.Id, t.CommitId, t.Id.desc()
-         *
-         * @param part fields to select and order by
-         * @return this
-         */
-        @Contract("_ -> this")
-        public SelectWhereOrder query(QueryPart... part) {
-            Collections.addAll(parts, part);
-            return this;
-        }
-
-        /**
-         * t.Id, t.CommitId, t.Id.desc()
-         *
-         * @param part fields to select and order by
-         * @return this
-         */
-        @Contract("_ -> this")
-        public SelectWhereOrder query(Collection<? extends QueryPart> part) {
-            parts.addAll(part);
-            return this;
-        }
-
-        /**
-         * t.Id.desc()
-         *
-         * @param part fields to order by
-         * @return this
-         */
-        @Contract("_ -> this")
-        public SelectWhereOrder order(OrderField<?>... part) {
-            Collections.addAll(parts, part);
-            return this;
-        }
-
-        /**
-         * t.Id.desc()
-         *
-         * @param part fields to order by
-         * @return this
-         */
-        @Contract("_ -> this")
-        public SelectWhereOrder order(Collection<? extends OrderField<?>> part) {
-            parts.addAll(part);
-            return this;
-        }
-
-        @NotNull
-        public Condition getWhere() {
-            return where == null ? DSL.noCondition() : where;
-        }
-
-        @NotNull
-        public List<QueryPart> getParts() {
-            return parts;
         }
     }
 }

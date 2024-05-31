@@ -11,6 +11,7 @@ import org.jooq.RecordMapper;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
+import pro.fessional.wings.faceless.database.jooq.support.SelectWhereOrder;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
 import java.util.Arrays;
@@ -113,7 +114,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public List<P> fetchLive(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLive(table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLive(table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
@@ -125,14 +126,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public List<P> fetchLive(int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(table, offset, limit, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetch(table, offset, limit, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
     public <E> List<E> fetchLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLive(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLive(claz, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
@@ -144,7 +145,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> List<E> fetchLive(Class<E> claz, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(claz, offset, limit, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetch(claz, offset, limit, table, table.onlyLive(soc.where()), soc.queries());
     }
 
 
@@ -152,7 +153,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLive(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLive(mapper, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
@@ -164,7 +165,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetch(mapper, offset, limit, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetch(mapper, offset, limit, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     ////////
@@ -371,14 +372,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public P fetchOneLive(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchOne(table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @Nullable
     public P fetchLimitOneLive(BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLimitOne(table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
@@ -395,14 +396,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> E fetchOneLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchOne(claz, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @Nullable
     public <E> E fetchLimitOneLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLimitOne(claz, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull
@@ -419,14 +420,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchOne(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchOne(mapper, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @Nullable
     public <E> E fetchLimitOneLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
         final SelectWhereOrder soc = new SelectWhereOrder();
         fun.accept(table, soc);
-        return fetchLimitOne(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+        return fetchLimitOne(mapper, table, table.onlyLive(soc.where()), soc.queries());
     }
 
     @NotNull

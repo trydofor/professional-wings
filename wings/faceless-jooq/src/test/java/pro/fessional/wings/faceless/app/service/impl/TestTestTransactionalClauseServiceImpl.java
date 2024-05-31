@@ -98,7 +98,7 @@ public class TestTestTransactionalClauseServiceImpl implements TestTransactional
 
     @Override
     public Integer selectInt(long id) {
-        return tstNormalTableDao.fetchOne(Integer.class, (t, w) -> w.where(t.Id.eq(id)).query(t.ValueInt));
+        return tstNormalTableDao.fetchOne(Integer.class, (t, w) -> w.where(t.Id.eq(id)).select(t.ValueInt));
     }
 
     @Override

@@ -105,9 +105,12 @@ public class TestJooqDslAndDaoSample {
         final var ft1 = tstShardingDao.fetch(a, 0, 2, c, a.Id.desc());
         log.info("============count {}, ft2'size={}", i, ft1.size());
 //        testcaseNotice("select `id`, `commit_id` from `tst_sharding` where (`id` > ? and `commit_id` < ?) order by `id` desc limit ? offset ?");
-        final var ft2 = tstShardingDao.fetch(0, 2, (t, w) -> w
+        final var ft2 = tstShardingDao.fetch((t, w) -> w
                 .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
-                .query(t.Id, t.CommitId, t.Id.desc()));
+                .select(t.Id, t.CommitId)
+                .order(t.Id.desc())
+                .limit(2)
+        );
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
