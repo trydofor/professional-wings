@@ -14,9 +14,9 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 @AutoConfiguration
 @ConditionalWingsEnabled
 @Import({
-        SilencerCurseConfiguration.class,
-        SilencerEncryptConfiguration.class,
-        SilencerTweakConfiguration.class,
+    SilencerCurseConfiguration.class,
+    SilencerEncryptConfiguration.class,
+    SilencerTweakConfiguration.class,
 })
 public class SilencerCurseAutoConfiguration {
 }

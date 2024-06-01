@@ -31,7 +31,8 @@ public class SpringPageHelper {
         for (PageUtil.By by : bys) {
             if (by.asc) {
                 ods.add(Sort.Order.asc(by.key));
-            } else {
+            }
+            else {
                 ods.add(Sort.Order.desc(by.key));
             }
         }
@@ -41,9 +42,9 @@ public class SpringPageHelper {
     @NotNull
     public static PageQuery into(@NotNull Pageable pageable) {
         return new PageQuery()
-                .setPage(pageable.getPageNumber())
-                .setSize(pageable.getPageSize())
-                .setSort(into(pageable.getSort()));
+            .setPage(pageable.getPageNumber())
+            .setSize(pageable.getPageSize())
+            .setSort(into(pageable.getSort()));
     }
 
     @NotNull

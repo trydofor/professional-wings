@@ -327,9 +327,9 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public MemoryTypedAuthzCombo memoryTypedAuthzCombo(
-            @SuppressWarnings("all") WingsAuthTypeParser typeParser,
-            @SuppressWarnings("all") WarlockPermNormalizer normalizer,
-            WarlockSecurityProp prop) {
+        @SuppressWarnings("all") WingsAuthTypeParser typeParser,
+        @SuppressWarnings("all") WarlockPermNormalizer normalizer,
+        WarlockSecurityProp prop) {
         log.info("WarlockShadow spring-bean memoryTypedAuthzCombo");
         final MemoryTypedAuthzCombo bean = new MemoryTypedAuthzCombo();
         for (Map.Entry<String, Ma> en : prop.getMemAuth().entrySet()) {

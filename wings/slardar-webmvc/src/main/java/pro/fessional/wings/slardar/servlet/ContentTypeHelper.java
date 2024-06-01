@@ -249,9 +249,11 @@ public class ContentTypeHelper {
         int pos = fileName.lastIndexOf(".");
         if (pos < 0) {
             return "." + fileName.toLowerCase();
-        } else if (pos == 0) {
+        }
+        else if (pos == 0) {
             return fileName.toLowerCase();
-        } else {
+        }
+        else {
             return fileName.substring(pos).toLowerCase();
         }
     }

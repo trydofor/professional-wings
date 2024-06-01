@@ -23,7 +23,7 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingV
  */
 public class AesStringSerializer extends JsonSerializer<String> implements ContextualSerializer {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private Aes aes;
     @NotNull
     private String mis = MaskingValue;

@@ -34,7 +34,7 @@ public class JacksonOffsetDateTimeSerializer extends InstantSerializerBase<Offse
 
     public JacksonOffsetDateTimeSerializer(DateTimeFormatter formatter, AutoZoneType auto) {
         super(OffsetDateTime.class, dt -> dt.toInstant().toEpochMilli(),
-                OffsetDateTime::toEpochSecond, OffsetDateTime::getNano, formatter);
+            OffsetDateTime::toEpochSecond, OffsetDateTime::getNano, formatter);
         this.autoZone = auto;
     }
 

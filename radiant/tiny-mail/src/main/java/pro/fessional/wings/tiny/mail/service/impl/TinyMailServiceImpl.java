@@ -72,26 +72,26 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
 @Slf4j
 public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
-    @Setter(onMethod_ = {@Value("${spring.application.name}")})
+    @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinMailSenderDao winMailSenderDao;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MailConfigProvider mailConfigProvider;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MailSenderManager mailSenderManager;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyMailServiceProp tinyMailServiceProp;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected ResourceLoader resourceLoader;
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     protected List<StatusHook> statusHooks;
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
+    @Setter(onMethod_ = { @Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
     private ThreadPoolTaskScheduler taskScheduler;
 
     @SuppressWarnings("all")
@@ -247,15 +247,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final WinMailSenderTable t = winMailSenderDao.getTable();
         final List<AsyncMail> pos = winMailSenderDao
-                .ctx()
-                .selectFrom(t)
-                .where(t.NextSend.gt(min).and(t.NextSend.lt(max)))
-                .fetch()
-                .into(WinMailSender.class)
-                .stream()
-                .filter(po -> !notMatchProp(po))
-                .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, true, it, null))
-                .toList();
+            .ctx()
+            .selectFrom(t)
+            .where(t.NextSend.gt(min).and(t.NextSend.lt(max)))
+            .fetch()
+            .into(WinMailSender.class)
+            .stream()
+            .filter(po -> !notMatchProp(po))
+            .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, true, it, null))
+            .toList();
 
         //
         final int size = pos.size();
@@ -400,12 +400,12 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     private boolean notNextLock(WinMailSender po, long now) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         final int rc = winMailSenderDao
-                .ctx()
-                .update(t)
-                .set(t.NextLock, t.NextLock.add(1))
-                .set(t.LastSend, DateLocaling.sysLdt(now))
-                .where(t.Id.eq(po.getId()).and(t.NextLock.eq(po.getNextLock())))
-                .execute();
+            .ctx()
+            .update(t)
+            .set(t.NextLock, t.NextLock.add(1))
+            .set(t.LastSend, DateLocaling.sysLdt(now))
+            .where(t.Id.eq(po.getId()).and(t.NextLock.eq(po.getNextLock())))
+            .execute();
 
         if (rc <= 0) {
             log.debug("skip not-next-lock mail, id={}", po.getId());
@@ -633,11 +633,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (!dirtyIds.isEmpty()) {
                 final WinMailSenderTable t = winMailSenderDao.getTable();
                 winMailSenderDao
-                        .ctx()
-                        .selectFrom(t)
-                        .where(t.Id.in(dirtyIds))
-                        .fetchInto(WinMailSender.class)
-                        .forEach(po -> freshPo.put(po.getId(), po));
+                    .ctx()
+                    .selectFrom(t)
+                    .where(t.Id.in(dirtyIds))
+                    .fetchInto(WinMailSender.class)
+                    .forEach(po -> freshPo.put(po.getId(), po));
             }
 
             final List<TinyMailMessage> messages = new ArrayList<>(freshPo.size());
@@ -695,10 +695,10 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     @Nullable
     private String toString(String str, String[] elz) {
         return notValue(str)
-               ? (elz == null || elz.length == 0)
-                 ? null
-                 : String.join(",", elz)
-               : str;
+            ? (elz == null || elz.length == 0
+                   ? null
+                   : String.join(",", elz))
+            : str;
     }
 
     @Nullable

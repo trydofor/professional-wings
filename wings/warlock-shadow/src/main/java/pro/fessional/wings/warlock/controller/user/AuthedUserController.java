@@ -47,9 +47,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AuthedUserController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WingsSessionHelper wingsSessionHelper;
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     private SessionTokenEncoder sessionTokenEncoder;
 
     @Schema(description = "Basic info of login user")
@@ -72,12 +72,12 @@ public class AuthedUserController {
     }
 
     @Operation(summary = "Get authed info of current user", description = """
-            # Usage
-            Only logined user
-            ## Returns
-            * @return {200 | Result(Dto)} logined user and basis info
-            * @return {200 | Result(false)} not logined and the URL without perm
-            * @return {401} logined and no perm to the URL""")
+        # Usage
+        Only logined user
+        ## Returns
+        * @return {200 | Result(Dto)} logined user and basis info
+        * @return {200 | Result(false)} not logined and the URL without perm
+        * @return {401} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -124,18 +124,18 @@ public class AuthedUserController {
     }
 
     @Operation(summary = "Check the perm/role (case-insensitive) of the current user and returns the existing", description = """
-            # Usage
-            alias takes precedence over perm, and auto logout if check fails.
-            ## Params
-            * @param ins.alias - alias as map value for historical legacy
-            * @param ins.perms - perm/role original name
-            * @param ins.check - perm/role to check
-            * @param ins.any - check any or all
-            ## Returns
-            * @return {200 | Result(string[])} logined and perms
-            * @return {200 | Result(false)} not logined and the URL without perm
-            * @return {200 | Result(false,string[])} check fail, return failed perm and invalidate session
-            * @return {401} logined and no perm to the URL""")
+        # Usage
+        alias takes precedence over perm, and auto logout if check fails.
+        ## Params
+        * @param ins.alias - alias as map value for historical legacy
+        * @param ins.perms - perm/role original name
+        * @param ins.check - perm/role to check
+        * @param ins.any - check any or all
+        ## Returns
+        * @return {200 | Result(string[])} logined and perms
+        * @return {200 | Result(false)} not logined and the URL without perm
+        * @return {200 | Result(false,string[])} check fail, return failed perm and invalidate session
+        * @return {401} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(HttpServletRequest request, @RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -201,12 +201,12 @@ public class AuthedUserController {
     }
 
     @Operation(summary = "List all session of current user", description = """
-            # Usage
-            Only the logined user
-            ## Returns
-            * @return {200 | Result(Dto)} logined and basis info
-            * @return {200 | Result(false)} not logined and the URL without perm
-            * @return {401} logined and no perm to the URL""")
+        # Usage
+        Only the logined user
+        ## Returns
+        * @return {200 | Result(Dto)} logined and basis info
+        * @return {200 | Result(false)} not logined and the URL without perm
+        * @return {401} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userListSession + "}")
     public R<List<Ses>> listSession() {
         final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
@@ -237,14 +237,14 @@ public class AuthedUserController {
     }
 
     @Operation(summary = "drop the session of current user by id", description = """
-            # Usage
-            Only the logined user
-            ## Params
-            * @param sid - sessionId/token to drop
-            ## Returns
-            * @return {200 | Result(Dto)} logined
-            * @return {200 | Result(false)} not logined and the URL without perm
-            * @return {401} logined and no perm to the URL""")
+        # Usage
+        Only the logined user
+        ## Params
+        * @param sid - sessionId/token to drop
+        ## Returns
+        * @return {200 | Result(Dto)} logined
+        * @return {200 | Result(false)} not logined and the URL without perm
+        * @return {401} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
     public R<Boolean> dropSession(@RequestBody Sid sid) {
         final boolean b = wingsSessionHelper.dropSession(sid.sid);

@@ -16,8 +16,8 @@ import pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfigurati
 @ConditionalOnClass(SpringBootAdminClientAutoConfiguration.class)
 @ConditionalWingsEnabled
 @Import({
-        SlardarBootAdminClientConfiguration.class,
-        SlardarBootAdminServerConfiguration.class
+    SlardarBootAdminClientConfiguration.class,
+    SlardarBootAdminServerConfiguration.class
 })
 public class SlardarBootAdminAutoConfiguration {
 }

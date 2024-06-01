@@ -37,7 +37,7 @@ public class SlardarPasscoderProp {
 
 
     /**
-     *  default salting algorithm. support sha256|sha1|md5
+     * default salting algorithm. support sha256|sha1|md5
      *
      * @see #Key$saltEncoder
      */

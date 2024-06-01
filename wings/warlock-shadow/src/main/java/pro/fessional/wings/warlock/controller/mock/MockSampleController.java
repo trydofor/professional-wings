@@ -37,39 +37,39 @@ import java.util.Set;
 public class MockSampleController {
 
     @Operation(summary = "Get captcha image, handle by interceptor", description = """
-            # Usage
-            The GET is mainly used to get and refresh the CAPTCHA image.
-            If Accept contains `base64`, it returns the image in base64 format.
-            see mockCaptchaPost (POST method) and FirstBloodImageHandler
-            ## Params
-            * @param quest-captcha-image - Captcha, to check captcha or get a new captcha
-            ## Returns
-            * @return {200} captcha not matched, new image stream or base64 string
-            * @return {200} captcha matched, empty body
-            """)
+        # Usage
+        The GET is mainly used to get and refresh the CAPTCHA image.
+        If Accept contains `base64`, it returns the image in base64 format.
+        see mockCaptchaPost (POST method) and FirstBloodImageHandler
+        ## Params
+        * @param quest-captcha-image - Captcha, to check captcha or get a new captcha
+        ## Returns
+        * @return {200} captcha not matched, new image stream or base64 string
+        * @return {200} captcha matched, empty body
+        """)
     @GetMapping(value = "${" + WarlockUrlmapProp.Key$mockCaptcha + "}")
     @ResponseBody
     @FirstBlood
     public R<String> mockCaptchaGet(@RequestParam(value = "quest-captcha-image") String quest
-            , @RequestHeader(value = "Accept", defaultValue = "*") String accept) {
+        , @RequestHeader(value = "Accept", defaultValue = "*") String accept) {
         return R.ok("should NOT return this, Please use POST. Quest=" + quest + ", Accept=" + accept);
     }
 
     @Operation(summary = "Get captcha image, handle by interceptor", description = """
-            # Usage
-            The client accesses this URL normally, and the captcha image is handled by the interceptor
-            (1) Server returns json with 406(Not Acceptable) if CAPTCHA is required
-            (2) Client gets Client-Ticket token in header and cookie and sends it every time
-            (3) Client adds quest-captcha-image={vcode} after the URL to get the CAPTCHA image (can be used directly)
-            (4) Client adds check-captcha-image={vcode} after the URL to submit the CAPTCHA
-            (5) Server auto checks Client-Ticket and check-captcha-image
-            ## Params
-            * @param data - test data, return if pass
-            * @param check-captcha-image - submit captcha to check
-            ## Returns
-            * @return {200} pass captcha, response by the protected URL
-            * @return {406} trigger captcha, return `{"success":false,"message":"need a verify code"}`
-            """)
+        # Usage
+        The client accesses this URL normally, and the captcha image is handled by the interceptor
+        (1) Server returns json with 406(Not Acceptable) if CAPTCHA is required
+        (2) Client gets Client-Ticket token in header and cookie and sends it every time
+        (3) Client adds quest-captcha-image={vcode} after the URL to get the CAPTCHA image (can be used directly)
+        (4) Client adds check-captcha-image={vcode} after the URL to submit the CAPTCHA
+        (5) Server auto checks Client-Ticket and check-captcha-image
+        ## Params
+        * @param data - test data, return if pass
+        * @param check-captcha-image - submit captcha to check
+        ## Returns
+        * @return {200} pass captcha, response by the protected URL
+        * @return {406} trigger captcha, return `{"success":false,"message":"need a verify code"}`
+        """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockCaptcha + "}")
     @ResponseBody
     @FirstBlood
@@ -80,15 +80,15 @@ public class MockSampleController {
     }
 
     @Operation(summary = "Avoid double click, need 2 fast requests", description = """
-            # Usage
-            (1) 1st request, set `sleep` second, and waiting for response
-            (2) 2nd request during (1), will response 202(Accepted)
-            ## Params
-            * @param sleep - sleep to simulate slow operation
-            ## Returns
-            * @return {200 | Result(sleep)} return the sleep
-            * @return {202 | Result(false, data)} in 2nd request, return task id
-            """)
+        # Usage
+        (1) 1st request, set `sleep` second, and waiting for response
+        (2) 2nd request during (1), will response 202(Accepted)
+        ## Params
+        * @param sleep - sleep to simulate slow operation
+        ## Returns
+        * @return {200 | Result(sleep)} return the sleep
+        * @return {202 | Result(false, data)} in 2nd request, return task id
+        """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockDoubler + "}")
     @ResponseBody
     @DoubleKill(principal = false, expression = "#root.method")
@@ -99,14 +99,14 @@ public class MockSampleController {
     }
 
     @Operation(summary = "Tamper-proof, GET edit header (Right-Editor)", description = """
-            # Usage
-            (1) GET the edit header, default key is `Right-Editor`
-            (2) see mockRighterSave (POST method)
-            ## Params
-            * @param data - data to audit
-            ## Returns
-            * @return {200 | Result(data)} data
-            """)
+        # Usage
+        (1) GET the edit header, default key is `Right-Editor`
+        (2) see mockRighterSave (POST method)
+        ## Params
+        * @param data - data to audit
+        ## Returns
+        * @return {200 | Result(data)} data
+        """)
     @GetMapping(value = "${" + WarlockUrlmapProp.Key$mockRighter + "}")
     @ResponseBody
     @Righter(false)
@@ -117,15 +117,15 @@ public class MockSampleController {
 
     @SuppressWarnings("UastIncorrectHttpHeaderInspection")
     @Operation(summary = "Tamper-proof, Submit changed data with Edit Header (Right-Editor)", description = """
-            # Usage
-            (1) see GET
-            (2) submit changed data with the Edit Header
-            ## Params
-            * @param Right-Editor - Edit header, from the GET response
-            ## Returns
-            * @return {200 | Result(data)} return the data send in GET
-            * @return {409 | Result(false)} Right-Editor if audit fails
-            """)
+        # Usage
+        (1) see GET
+        (2) submit changed data with the Edit Header
+        ## Params
+        * @param Right-Editor - Edit header, from the GET response
+        ## Returns
+        * @return {200 | Result(data)} return the data send in GET
+        * @return {409 | Result(false)} Right-Editor if audit fails
+        """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockRighter + "}")
     @ResponseBody
     @Righter
@@ -135,27 +135,27 @@ public class MockSampleController {
     }
 
     @Operation(summary = "Echo test, output what you input", description = """
-            # Usage
-            Response the input status, header, cookie and RequestBody
-            ## Params
-            * @param [status=200] - http status, default 200
-            * @param [header] - http header k1=v1, `=` seperated
-            * @param [cookie] - http cookie k1=v1, `=` seperated
-            * @param [httponly] - cookie name that is httponly, e.g. k1
-            * @param [secure] - cookie name that is https, e.g. k1
-            * @param - request body
-            ## Returns
-            * @return {200 | Result(data)} response what input
-            """)
+        # Usage
+        Response the input status, header, cookie and RequestBody
+        ## Params
+        * @param [status=200] - http status, default 200
+        * @param [header] - http header k1=v1, `=` seperated
+        * @param [cookie] - http cookie k1=v1, `=` seperated
+        * @param [httponly] - cookie name that is httponly, e.g. k1
+        * @param [secure] - cookie name that is https, e.g. k1
+        * @param - request body
+        ## Returns
+        * @return {200 | Result(data)} response what input
+        """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockEcho0o0 + "}")
     public void mockEcho(
-            @RequestParam(value = "status", required = false, defaultValue = "200") int status,
-            @RequestParam(value = "header", required = false) Set<String> header,
-            @RequestParam(value = "cookie", required = false) Set<String> cookie,
-            @RequestParam(value = "httponly", required = false) Set<String> httponly,
-            @RequestParam(value = "secure", required = false) Set<String> secure,
-            @RequestBody(required = false) String body,
-            HttpServletResponse response) throws IOException {
+        @RequestParam(value = "status", required = false, defaultValue = "200") int status,
+        @RequestParam(value = "header", required = false) Set<String> header,
+        @RequestParam(value = "cookie", required = false) Set<String> cookie,
+        @RequestParam(value = "httponly", required = false) Set<String> httponly,
+        @RequestParam(value = "secure", required = false) Set<String> secure,
+        @RequestBody(required = false) String body,
+        HttpServletResponse response) throws IOException {
 
         if (header != null) {
             for (String g : header) {

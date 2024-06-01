@@ -10,7 +10,7 @@ import pro.fessional.mirana.cast.BiConvertor;
  * @since 2021-01-17
  */
 public interface WingsConverter<S, T> extends BiConvertor<S, T>,
-        org.springframework.core.convert.converter.Converter<S, T> {
+    org.springframework.core.convert.converter.Converter<S, T> {
 
     @Override
     @Nullable

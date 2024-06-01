@@ -41,9 +41,9 @@ public class DefaultJournalService implements JournalService {
             long id = lightIdService.getId(SEQ_JOURNAL, blockIdProvider.getBlockId());
 
             Journal journal = new Journal(id, ThreadNow.localDateTime(), eventName,
-                    targetKey == null ? EmptyValue.VARCHAR : targetKey,
-                    loginInfo == null ? EmptyValue.VARCHAR : loginInfo,
-                    otherInfo == null ? EmptyValue.VARCHAR : otherInfo
+                targetKey == null ? EmptyValue.VARCHAR : targetKey,
+                loginInfo == null ? EmptyValue.VARCHAR : loginInfo,
+                otherInfo == null ? EmptyValue.VARCHAR : otherInfo
             );
 
             int rc = journalModify.insert(journal);
@@ -53,10 +53,12 @@ public class DefaultJournalService implements JournalService {
             context.set(journal);
             try {
                 return commitSet.apply(journal);
-            } finally {
+            }
+            finally {
                 context.remove();
             }
-        } else {
+        }
+        else {
             return commitSet.apply(commit);
         }
     }

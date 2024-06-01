@@ -25,11 +25,11 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 public class LoginProcController {
 
     @Operation(summary = "Logout entry, handled by filter, used for document only", description = """
-            # Usage
-            Invalid all Session, see wings.warlock.security.logout-url
-            ## Returns
-            * @return {200} always
-            """)
+        # Usage
+        Invalid all Session, see wings.warlock.security.logout-url
+        ## Returns
+        * @return {200} always
+        """)
     @GetMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}")
     public R<Void> logout() {
         return R.ng("handler by filter, never here");
@@ -38,16 +38,16 @@ public class LoginProcController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "Login entry, handled by filter, used for document only", description = """
-            # Usage
-            Auto handle by authType, see wings.warlock.security.login-proc-url
-            username and password can be changed, see wings.warlock.security.username-para
-            After successfully login, the token and session can get in header
-            ## Params
-            * @param authType - PathVariable auth type in the config (email, github)
-            * @param authZone - help to grant perm, support in `path` and `param`
-            * @param username - Oauth2 use state as token
-            * @param password - Oauth2 use state as token
-            """)
+        # Usage
+        Auto handle by authType, see wings.warlock.security.login-proc-url
+        username and password can be changed, see wings.warlock.security.username-para
+        After successfully login, the token and session can get in header
+        ## Params
+        * @param authType - PathVariable auth type in the config (email, github)
+        * @param authZone - help to grant perm, support in `path` and `param`
+        * @param username - Oauth2 use state as token
+        * @param password - Oauth2 use state as token
+        """)
     @PostMapping(value = "${" + WarlockSecurityProp.Key$loginProcUrl + "}")
     public R<Void> login(@PathVariable(WingsAuthHelper.AuthType) String authType,
                          @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,

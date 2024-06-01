@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ProgressContext {
 
     private static final Cache<Object, Bar> Cache = WingsCache2k
-            .builder(ProgressContext.class, "bar", 0, 24 * 3600, 0, Object.class, Bar.class)
-            .build();
+        .builder(ProgressContext.class, "bar", 0, 24 * 3600, 0, Object.class, Bar.class)
+        .build();
 
     private static final AtomicLong Counter = new AtomicLong(0);
     private static final LeapCode Encoder = new LeapCode();

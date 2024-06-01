@@ -54,16 +54,16 @@ public class ConstantNaviGenerator {
 
         StringBuilder out = new StringBuilder();
         out.append(String.format("""
-                        package %s;
-                        
-                        import javax.annotation.processing.Generated;
+                package %s;
+                                        
+                import javax.annotation.processing.Generated;
 
-                        /**
-                         * @since %s
-                         */
-                        @Generated("wings faceless codegen")
-                        public interface %s {""",
-                packageName, LocalDate.now(), javaName));
+                /**
+                 * @since %s
+                 */
+                @Generated("wings faceless codegen")
+                public interface %s {""",
+            packageName, LocalDate.now(), javaName));
         if (!prefixCode.isEmpty()) {
             String indent = indent(1);
             out.append(format("\n\n" +
@@ -71,7 +71,7 @@ public class ConstantNaviGenerator {
                               indent + " * prefix={0}\n" +
                               indent + " */\n" +
                               indent + "String $PREFIX = \"{0}\";\n",
-                    prefixCode));
+                prefixCode));
         }
         genField(1, ROOT, list, out, prefixCode);
         genClass(1, ROOT, list, out, prefixCode);
@@ -123,7 +123,7 @@ public class ConstantNaviGenerator {
                               indent + " */\n" +
                               indent + "String {2} = \"{3}\";\n" +
                               indent + "long ID${2} = {0};",
-                    String.valueOf(en.id), en.remark, nm, tkn));
+                String.valueOf(en.id), en.remark, nm, tkn));
 
             if (!prefixCode.isEmpty()) {
                 String jf = prefixCode;
@@ -134,7 +134,7 @@ public class ConstantNaviGenerator {
 
                 out.append(format("\n" +
                                   indent + "String {2}{0} = \"{1}{0}\";",
-                        tkn, prefixCode, jf
+                    tkn, prefixCode, jf
                 ));
             }
         }

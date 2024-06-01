@@ -18,7 +18,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 @Slf4j
 public class AdminController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WarlockUserAuthnService authnService;
 
     @PostMapping("/admin/disable-root.json")

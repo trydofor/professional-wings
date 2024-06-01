@@ -29,7 +29,7 @@ import java.util.Map;
 @ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcConf)
 public class TaskConfController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskConfService tinyTaskConfService;
 
     @Data

@@ -38,8 +38,8 @@ public class FlywaveInteractiveGui {
         return msg -> {
             while (true) {
                 int res = showConfirmDialog(null, msg,
-                        "😺😸😹😻😼😽🙀😿😾😺",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    "😺😸😹😻😼😽🙀😿😾😺",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (res == 0) {
                     return true;
                 }
@@ -145,13 +145,13 @@ public class FlywaveInteractiveGui {
             hooked.add(fun);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 int res = showConfirmDialog(null, """
-                                The program exit, Please check ASAP!
-                                Focus on ERROR, more in the logger.
+                        The program exit, Please check ASAP!
+                        Focus on ERROR, more in the logger.
 
-                                [yes] Exit
-                                [no] show console, and press ENTER to exit""",
-                        "😺😸😹😻😼😽🙀😿😾😺",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        [yes] Exit
+                        [no] show console, and press ENTER to exit""",
+                    "😺😸😹😻😼😽🙀😿😾😺",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (res != 0) {
                     try {
                         for (BiConsumer<String, String> bc : hooked) {

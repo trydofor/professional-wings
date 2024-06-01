@@ -22,7 +22,7 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
     @Contract("->this")
     public WingsHttpPermitConfigurer permitLogin() {
         getBuilder().authorizeHttpRequests(
-                c -> c.requestMatchers(SecurityConfigHelper.loginAntPaths()).permitAll()
+            c -> c.requestMatchers(SecurityConfigHelper.loginAntPaths()).permitAll()
         );
         return this;
     }
@@ -31,7 +31,7 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
     @Contract("->this")
     public WingsHttpPermitConfigurer permitOAuth2() {
         getBuilder().authorizeHttpRequests(
-                c -> c.requestMatchers(SecurityConfigHelper.oauth2AntPaths()).permitAll()
+            c -> c.requestMatchers(SecurityConfigHelper.oauth2AntPaths()).permitAll()
         );
         return this;
     }
@@ -40,7 +40,7 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
     @Contract("->this")
     public WingsHttpPermitConfigurer permitSwagger() {
         getBuilder().authorizeHttpRequests(
-                c -> c.requestMatchers(SecurityConfigHelper.swaggerAntPaths()).permitAll()
+            c -> c.requestMatchers(SecurityConfigHelper.swaggerAntPaths()).permitAll()
         );
         return this;
     }
@@ -49,7 +49,7 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
     @Contract("->this")
     public WingsHttpPermitConfigurer permitTest() {
         getBuilder().authorizeHttpRequests(
-                c -> c.requestMatchers(SecurityConfigHelper.testAntPaths()).permitAll()
+            c -> c.requestMatchers(SecurityConfigHelper.testAntPaths()).permitAll()
         );
         return this;
     }

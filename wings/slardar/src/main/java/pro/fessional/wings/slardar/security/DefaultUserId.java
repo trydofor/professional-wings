@@ -75,7 +75,7 @@ public interface DefaultUserId {
     /**
      * trim value or Null
      */
-    static long value(Long uid){
+    static long value(Long uid) {
         return uid == null ? Null : uid;
     }
 

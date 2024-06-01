@@ -34,19 +34,19 @@ import static pro.fessional.wings.warlock.enums.autogen.GrantType.ROLE;
 @Slf4j
 public class ComboWarlockAuthzService implements WarlockAuthzService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockPermNormalizer permNormalizer;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockRoleService warlockRoleService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockPermService warlockPermService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockGrantService warlockGrantService;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     private List<Combo> authCombos = Collections.emptyList();
 
     @Setter @Getter

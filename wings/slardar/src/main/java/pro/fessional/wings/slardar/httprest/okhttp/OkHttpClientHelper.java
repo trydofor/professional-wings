@@ -61,15 +61,15 @@ public class OkHttpClientHelper {
     @NotNull
     public static MultipartBody.Builder postFile(@NotNull String key, @NotNull File file) {
         return new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(key, file.getName(), RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(key, file.getName(), RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
     public static MultipartBody.Builder postFile(@NotNull String key, byte @NotNull [] file, @NotNull String fileName) {
         return new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(key, fileName, RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(key, fileName, RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
@@ -115,8 +115,8 @@ public class OkHttpClientHelper {
     @NotNull
     public static String postFile(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull MultipartBody body) {
         Request.Builder builder = new Request.Builder()
-                .url(url)
-                .post(body);
+            .url(url)
+            .post(body);
         try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
@@ -220,8 +220,8 @@ public class OkHttpClientHelper {
     @NotNull
     public static String getText(@NotNull Call.Factory callFactory, @NotNull String url) {
         Request.Builder builder = new okhttp3.Request.Builder()
-                .url(url)
-                .get();
+            .url(url)
+            .get();
         try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
@@ -258,8 +258,8 @@ public class OkHttpClientHelper {
     public static String executeJson(@NotNull Call.Factory callFactory, @NotNull String url, @Nullable CharSequence json, @NotNull String method) {
         okhttp3.RequestBody body = json == null ? null : RequestBody.create(json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
         Request.Builder builder = new okhttp3.Request.Builder()
-                .url(url)
-                .method(method, body);
+            .url(url)
+            .method(method, body);
         try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
@@ -366,11 +366,11 @@ public class OkHttpClientHelper {
         final CookieJar cookieJar = client.cookieJar();
         final List<Cookie> list = cookieJar.loadForRequest(url).stream().map(it -> {
             final Cookie.Builder builder = new Cookie.Builder()
-                    .name(it.name())
-                    .path(it.path())
-                    .domain(it.domain())
-                    .value(it.value())
-                    .expiresAt(0);
+                .name(it.name())
+                .path(it.path())
+                .domain(it.domain())
+                .value(it.value())
+                .expiresAt(0);
             if (it.secure()) builder.secure();
             if (it.httpOnly()) builder.httpOnly();
             return builder.build();

@@ -73,8 +73,8 @@ public interface WarlockUserAuthnService {
     /**
      * set user status to danger or not
      *
-     * @param userId user
-     * @param danger danger or not
+     * @param userId   user
+     * @param danger   danger or not
      * @param authType auth type to reset
      */
     void dander(long userId, boolean danger, @NotNull Enum<?>... authType);

@@ -53,9 +53,9 @@ public class SlardarMonitorConfiguration {
         public void setEnvironment(@NotNull Environment environment) {
             log.info("Slardar spring-bind SlardarMonitorProp");
             slardarMonitorProp = Binder
-                    .get(environment)
-                    .bind(SlardarMonitorProp.Key, SlardarMonitorProp.class)
-                    .orElseGet(SlardarMonitorProp::new);
+                .get(environment)
+                .bind(SlardarMonitorProp.Key, SlardarMonitorProp.class)
+                .orElseGet(SlardarMonitorProp::new);
         }
 
         @Override

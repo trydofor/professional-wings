@@ -22,7 +22,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 @RequiredArgsConstructor
 public class LogoutOkHandler implements LogoutSuccessHandler {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockSecurityProp warlockSecurityProp;
 
     @Override

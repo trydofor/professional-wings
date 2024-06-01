@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class WarlockSuccessLoginListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockAuthnService warlockAuthnService;
 
     @Override

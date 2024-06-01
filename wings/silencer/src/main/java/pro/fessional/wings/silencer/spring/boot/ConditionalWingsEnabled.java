@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * @since 2023-11-17
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Conditional(WingsEnabledCondition.class)
 public @interface ConditionalWingsEnabled {

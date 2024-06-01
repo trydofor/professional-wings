@@ -32,13 +32,13 @@ public class PermGrantHelper {
     public static String[] splitPermit(String permit) {
         int p = permit.lastIndexOf(SPL);
         if (p > 0) {
-            return new String[]{permit.substring(0, p), permit.substring(p + 1)};
+            return new String[]{ permit.substring(0, p), permit.substring(p + 1) };
         }
         else if (p == 0) {
-            return new String[]{"", permit.substring(1)};
+            return new String[]{ "", permit.substring(1) };
         }
         else {
-            return new String[]{"", permit};
+            return new String[]{ "", permit };
         }
     }
 
@@ -112,7 +112,7 @@ public class PermGrantHelper {
      * Get the inherited permission by id. e.g. `system.menu` inherits from `system`
      *
      * @param permId  top perm id
-     * @param permAll  all perms id-code map
+     * @param permAll all perms id-code map
      * @return inherited perms
      */
     @NotNull

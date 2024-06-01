@@ -23,7 +23,7 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
 
     private final List<HttpSessionIdResolver> httpSessionIdResolvers;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     private SessionTokenEncoder sessionTokenEncoder;
 
     public WingsSessionIdResolver(List<HttpSessionIdResolver> httpSessionIdResolvers) {

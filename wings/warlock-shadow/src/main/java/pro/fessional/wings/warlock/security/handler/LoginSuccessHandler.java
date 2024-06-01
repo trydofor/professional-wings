@@ -28,13 +28,13 @@ import java.io.IOException;
 @Slf4j
 public class LoginSuccessHandler extends NonceLoginSuccessHandler implements InitializingBean {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockSecurityProp warlockSecurityProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockJustAuthProp warlockJustAuthProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected SlardarSessionProp slardarSessionProp;
 
     @Override

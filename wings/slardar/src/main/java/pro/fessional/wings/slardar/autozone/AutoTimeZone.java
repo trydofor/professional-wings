@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @since 2021-03-22
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface AutoTimeZone {
 
     /**

@@ -32,7 +32,7 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
     @NotNull @Getter
     protected final MailSenderManager senderManager;
 
-    @Setter(onMethod_ = {@Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
+    @Setter(onMethod_ = { @Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
     private Executor executor;
 
     @Setter @Getter

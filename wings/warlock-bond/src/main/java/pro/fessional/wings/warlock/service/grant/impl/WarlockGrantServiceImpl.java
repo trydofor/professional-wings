@@ -32,13 +32,13 @@ import java.util.Set;
 @Slf4j
 public class WarlockGrantServiceImpl implements WarlockGrantService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinRoleGrantDao winRoleGrantDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserGrantDao winUserGrantDao;
 
     @Override
@@ -110,11 +110,11 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
         final Map<Long, Set<Long>> result = new HashMap<>();
         final WinUserGrantTable t = winUserGrantDao.getTable();
         final var rs = winUserGrantDao
-                .ctx()
-                .select(t.GrantEntry, t.ReferUser)
-                .from(t)
-                .where(t.GrantType.eq(type).and(t.ReferUser.in(userId)))
-                .fetch();
+            .ctx()
+            .select(t.GrantEntry, t.ReferUser)
+            .from(t)
+            .where(t.GrantType.eq(type).and(t.ReferUser.in(userId)))
+            .fetch();
         for (Record2<Long, Long> r2 : rs) {
             Set<Long> set = result.computeIfAbsent(r2.value1(), (k) -> new HashSet<>());
             set.add(r2.value2());
@@ -130,11 +130,11 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
         final Map<Long, Set<Long>> result = new HashMap<>();
         final WinRoleGrantTable t = winRoleGrantDao.getTable();
         final var rs = winRoleGrantDao
-                .ctx()
-                .select(t.GrantEntry, t.ReferRole)
-                .from(t)
-                .where(t.GrantType.eq(type).and(t.ReferRole.in(roleId)))
-                .fetch();
+            .ctx()
+            .select(t.GrantEntry, t.ReferRole)
+            .from(t)
+            .where(t.GrantType.eq(type).and(t.ReferRole.in(roleId)))
+            .fetch();
 
         for (Record2<Long, Long> r2 : rs) {
             Set<Long> set = result.computeIfAbsent(r2.value1(), (k) -> new HashSet<>());

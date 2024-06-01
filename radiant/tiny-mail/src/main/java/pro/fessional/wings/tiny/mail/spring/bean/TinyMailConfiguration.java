@@ -33,7 +33,7 @@ public class TinyMailConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled
-    @ComponentScan(basePackageClasses = {TinyMailDatabase.class, TinyMailService.class})
+    @ComponentScan(basePackageClasses = { TinyMailDatabase.class, TinyMailService.class })
     public static class DaoServScan {
         public DaoServScan() {
             log.info("TinyMail spring-scan database, service");

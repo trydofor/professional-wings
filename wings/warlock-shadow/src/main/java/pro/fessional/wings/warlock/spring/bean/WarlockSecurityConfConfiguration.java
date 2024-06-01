@@ -89,13 +89,13 @@ public class WarlockSecurityConfConfiguration {
     @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpBind)
     @Order(WingsOrdered.Lv4Application + 200)
     public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
-            WarlockSecurityProp securityProp,
-            SessionRegistry sessionRegistry,
-            ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
-            ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
-            ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
-            ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler,
-            ObjectProvider<AccessDeniedHandler> accessDeniedHandler
+        WarlockSecurityProp securityProp,
+        SessionRegistry sessionRegistry,
+        ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
+        ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
+        ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
+        ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler,
+        ObjectProvider<AccessDeniedHandler> accessDeniedHandler
     ) {
         log.info("WarlockShadow spring-bean warlockSecurityBindHttpConfigure");
         return http -> {
@@ -106,44 +106,44 @@ public class WarlockSecurityConfConfiguration {
             log.info("WarlockShadow conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
 
             http.with(new WingsBindLoginConfigurer(), conf -> {
-                            conf.loginPage(securityProp.getLoginPage()) // init authenticationEntryPoint, 401 page
-                                // init filter.RequestMatcher
-                                .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // by filter,no controller
-                                .loginForward(securityProp.isLoginForward()) // forward or redirect
-                                .usernameParameter(securityProp.getUsernamePara())
-                                .passwordParameter(securityProp.getPasswordPara())
-                                .authenticationDetailsSource(authDetailSource)
-                                .bindAuthTypeDefault(securityProp.mapAuthTypeDefault())
-                                .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum());
+                        conf.loginPage(securityProp.getLoginPage()) // init authenticationEntryPoint, 401 page
+                            // init filter.RequestMatcher
+                            .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // by filter,no controller
+                            .loginForward(securityProp.isLoginForward()) // forward or redirect
+                            .usernameParameter(securityProp.getUsernamePara())
+                            .passwordParameter(securityProp.getPasswordPara())
+                            .authenticationDetailsSource(authDetailSource)
+                            .bindAuthTypeDefault(securityProp.mapAuthTypeDefault())
+                            .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum());
 
-                            if (authOkHandler != null) {
-                                log.info("WarlockShadow conf HttpSecurity, successHandler=" + authOkHandler.getClass());
-                                conf.successHandler(authOkHandler);
-                            }
-                            if (authNgHandler != null) {
-                                log.info("WarlockShadow conf HttpSecurity, failureHandler=" + authNgHandler.getClass());
-                                conf.failureHandler(authNgHandler);
-                            }
+                        if (authOkHandler != null) {
+                            log.info("WarlockShadow conf HttpSecurity, successHandler=" + authOkHandler.getClass());
+                            conf.successHandler(authOkHandler);
                         }
+                        if (authNgHandler != null) {
+                            log.info("WarlockShadow conf HttpSecurity, failureHandler=" + authNgHandler.getClass());
+                            conf.failureHandler(authNgHandler);
+                        }
+                    }
                 )
                 .logout(conf -> {
-                            conf.logoutUrl(securityProp.getLogoutUrl())
-                                .clearAuthentication(true)
-                                .invalidateHttpSession(true);
+                        conf.logoutUrl(securityProp.getLogoutUrl())
+                            .clearAuthentication(true)
+                            .invalidateHttpSession(true);
 
-                            if (logoutOkHandler != null) {
-                                log.info("WarlockShadow conf HttpSecurity, logoutSuccessHandler=" + logoutOkHandler.getClass());
-                                conf.logoutSuccessHandler(logoutOkHandler);
-                            }
+                        if (logoutOkHandler != null) {
+                            log.info("WarlockShadow conf HttpSecurity, logoutSuccessHandler=" + logoutOkHandler.getClass());
+                            conf.logoutSuccessHandler(logoutOkHandler);
                         }
+                    }
                 )
                 .sessionManagement(conf -> conf
-                        .maximumSessions(securityProp.getSessionMaximum())
-                        .sessionRegistry(sessionRegistry)
-                        .expiredSessionStrategy(event -> {
-                            HttpServletResponse response = event.getResponse();
-                            ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
-                        })
+                    .maximumSessions(securityProp.getSessionMaximum())
+                    .sessionRegistry(sessionRegistry)
+                    .expiredSessionStrategy(event -> {
+                        HttpServletResponse response = event.getResponse();
+                        ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
+                    })
                 )
                 .anonymous(conf -> {
                     if (!securityProp.isAnonymous()) {
@@ -217,8 +217,8 @@ public class WarlockSecurityConfConfiguration {
     @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpAuto)
     @Order(WingsOrdered.Lv4Application + 400)
     public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
-            ObjectProvider<CsrfTokenRepository> csrf,
-            ObjectProvider<RequestCache> cache) {
+        ObjectProvider<CsrfTokenRepository> csrf,
+        ObjectProvider<RequestCache> cache) {
         log.info("WarlockShadow spring-bean warlockSecurityAutoHttpConfigure");
         return http -> {
             // cors
@@ -439,9 +439,9 @@ public class WarlockSecurityConfConfiguration {
                 String msg = err.toString();
                 log.error(msg);
                 throw new IllegalStateException(
-                        "\nWarlockSecurityConfConfiguration has security url conflict to fix." +
-                        "\nor disable checking by `wings.enabled.warlock.sec-check-url=false`" +
-                        msg);
+                    "\nWarlockSecurityConfConfiguration has security url conflict to fix." +
+                    "\nor disable checking by `wings.enabled.warlock.sec-check-url=false`" +
+                    msg);
             }
         });
     }

@@ -25,7 +25,7 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
     public static final int ORDER = WingsOrdered.Lv3Service;
     private int order = ORDER;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockGrantService warlockGrantService;
 
     @Override

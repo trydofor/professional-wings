@@ -30,7 +30,8 @@ public class JooqConverterDelegate implements ConverterProvider {
         if (provider instanceof JooqConverterDelegate) {
             final List<ConverterProvider> pds = ((JooqConverterDelegate) provider).providers;
             providers.addAll(pds);
-        } else {
+        }
+        else {
             providers.add(provider);
         }
     }

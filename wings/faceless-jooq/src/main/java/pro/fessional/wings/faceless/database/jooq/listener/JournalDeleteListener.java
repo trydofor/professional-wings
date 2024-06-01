@@ -120,10 +120,10 @@ public class JournalDeleteListener implements ExecuteListener {
     // delete from `tst_sharding` where (`id` = ? and `commit_id` = ?)
     // commit_id = :commit_id and `id` = ?
     private final Pattern ptnCommitId = Pattern
-            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))" +
-                     "|" +
-                     "([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))\\s+and\\b"
-                    , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        .compile("\\band\\s+([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))" +
+                 "|" +
+                 "([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))\\s+and\\b"
+            , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private String buildUpdateSql(DSLContext dsl, String del, String table, Map<String, Param<?>> params) {
         Matcher matcher = ptnCommitId.matcher(del);

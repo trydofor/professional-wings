@@ -31,10 +31,10 @@ public class TestingWingsUserDetailsService implements WingsUserDetailsService {
     private final String hashPassword = "{bcrypt}" + new BCryptPasswordEncoder().encode(sendPassword);
 
     private final List<GrantedAuthority> auths = Arrays.asList(
-            new SimpleGrantedAuthority("ROLE_USER"),
-            new SimpleGrantedAuthority("ROLE_ADMIN"),
-            new SimpleGrantedAuthority("ROLE_CLURK"),
-            new SimpleGrantedAuthority("MENU_READ")
+        new SimpleGrantedAuthority("ROLE_USER"),
+        new SimpleGrantedAuthority("ROLE_ADMIN"),
+        new SimpleGrantedAuthority("ROLE_CLURK"),
+        new SimpleGrantedAuthority("MENU_READ")
     );
 
     @Override

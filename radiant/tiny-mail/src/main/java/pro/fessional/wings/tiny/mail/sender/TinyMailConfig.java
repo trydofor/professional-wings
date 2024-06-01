@@ -88,13 +88,13 @@ public class TinyMailConfig extends MailProperties {
     @Override
     public int hashCode() {
         int result = Objects.hash(
-                html,
-                from,
-                reply
-                , getHost()
-                , getPort()
-                , getUsername()
-                , getProtocol());
+            html,
+            from,
+            reply
+            , getHost()
+            , getPort()
+            , getUsername()
+            , getProtocol());
         result = 31 * result + Arrays.hashCode(to);
         result = 31 * result + Arrays.hashCode(cc);
         result = 31 * result + Arrays.hashCode(bcc);

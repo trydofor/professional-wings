@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @Slf4j
 public class WingsTableCudHandlerImpl implements WingsTableCudHandler {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TableChangePublisher tableChangePublisher;
 
     @Getter

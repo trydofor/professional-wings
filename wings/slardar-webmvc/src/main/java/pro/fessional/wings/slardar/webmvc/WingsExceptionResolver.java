@@ -40,9 +40,9 @@ public abstract class WingsExceptionResolver<T extends Exception> implements Han
     @Override
     @SuppressWarnings("unchecked")
     public ModelAndView resolveException(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,  @Nullable Object handler,
-            @NotNull Exception ex) {
+        @NotNull HttpServletRequest request,
+        @NotNull HttpServletResponse response, @Nullable Object handler,
+        @NotNull Exception ex) {
 
         if (acceptClass.isInstance(ex)) {
             final SimpleResponse body = resolve((T) ex);

@@ -41,11 +41,11 @@ public class RetrofitHelper {
 
     public static <T> T jackson(Class<T> caller, String url, Call.Factory factory, ObjectMapper mapper) {
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .callFactory(factory)
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .validateEagerly(true)
-                .build();
+            .baseUrl(url)
+            .callFactory(factory)
+            .addConverterFactory(JacksonConverterFactory.create(mapper))
+            .validateEagerly(true)
+            .build();
         return retrofit.create(caller);
     }
 }

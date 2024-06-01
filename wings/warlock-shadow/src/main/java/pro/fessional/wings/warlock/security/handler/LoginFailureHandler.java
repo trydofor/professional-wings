@@ -42,7 +42,7 @@ import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.Locked;
 @Slf4j
 public class LoginFailureHandler implements AuthenticationFailureHandler {
 
-    @Setter(onMethod_ = {@Autowired, @Lazy})
+    @Setter(onMethod_ = { @Autowired, @Lazy })
     private List<Handler> handlers = new ArrayList<>();
 
     @Override
@@ -71,13 +71,13 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     public static class DefaultHandler implements Handler {
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected WarlockSecurityProp warlockSecurityProp;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected ObjectMapper objectMapper;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected MessageSource messageSource;
 
         @Override

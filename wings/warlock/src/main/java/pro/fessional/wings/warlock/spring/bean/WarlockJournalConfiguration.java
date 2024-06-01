@@ -26,9 +26,9 @@ public class WarlockJournalConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public TerminalJournalService terminalJournalService(
-            @SuppressWarnings("all") LightIdService lightIdService,
-            @SuppressWarnings("all") BlockIdProvider blockIdProvider,
-            @SuppressWarnings("all") CommitJournalModify journalModify
+        @SuppressWarnings("all") LightIdService lightIdService,
+        @SuppressWarnings("all") BlockIdProvider blockIdProvider,
+        @SuppressWarnings("all") CommitJournalModify journalModify
     ) {
         log.info("WarlockShadow spring-bean terminalJournalService Overriding");
         return new TerminalJournalService(lightIdService, blockIdProvider, journalModify);

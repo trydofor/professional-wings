@@ -128,10 +128,10 @@ public class RestTemplateHelper {
         // Content-Disposition entry with metadata "name" and "filename"
         MultiValueMap<String, String> file = new LinkedMultiValueMap<>();
         ContentDisposition contentDisposition = ContentDisposition
-                .builder("form-data")
-                .name(key)
-                .filename(fileName)
-                .build();
+            .builder("form-data")
+            .name(key)
+            .filename(fileName)
+            .build();
         file.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
         body.add(key, new HttpEntity<>(res, file));

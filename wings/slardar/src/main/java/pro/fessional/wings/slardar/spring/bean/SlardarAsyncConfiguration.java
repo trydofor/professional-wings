@@ -119,9 +119,9 @@ public class SlardarAsyncConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public TaskSchedulerHelper taskSchedulerHelper(
-            @Qualifier(slardarFastScheduler) ThreadPoolTaskScheduler fast,
-            @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler scheduled,
-            ThreadPoolTaskSchedulerBuilder scheduledBuilder) {
+        @Qualifier(slardarFastScheduler) ThreadPoolTaskScheduler fast,
+        @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler scheduled,
+        ThreadPoolTaskSchedulerBuilder scheduledBuilder) {
         log.info("Slardar spring-bean taskSchedulerHelper");
         return new TaskSchedulerHelper(scheduled, fast) {{
             FastBuilder = fastSchedulerBuilder;
@@ -132,9 +132,9 @@ public class SlardarAsyncConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public AsyncHelper asyncHelper(
-            @Qualifier(DEFAULT_TASK_EXECUTOR_BEAN_NAME) Executor asyncExec,
-            @Qualifier(APPLICATION_TASK_EXECUTOR_BEAN_NAME) AsyncTaskExecutor appExec,
-            ThreadPoolTaskExecutorBuilder executorBuilder
+        @Qualifier(DEFAULT_TASK_EXECUTOR_BEAN_NAME) Executor asyncExec,
+        @Qualifier(APPLICATION_TASK_EXECUTOR_BEAN_NAME) AsyncTaskExecutor appExec,
+        ThreadPoolTaskExecutorBuilder executorBuilder
     ) {
         log.info("Slardar spring-bean asyncHelper");
         final ThreadPoolTaskExecutor executor = executorBuilder.build();

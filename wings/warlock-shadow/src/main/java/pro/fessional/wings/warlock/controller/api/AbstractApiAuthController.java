@@ -65,13 +65,13 @@ public abstract class AbstractApiAuthController {
     @Setter @Getter
     private boolean compatible = true;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockApiAuthProp apiAuthProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockTicketService ticketService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TerminalInterceptor terminalInterceptor;
 
     /**
@@ -261,7 +261,8 @@ public abstract class AbstractApiAuthController {
         entity.reqPara = par;
 
         final Collection<Part> pts = request.getContentType().contains(MULTIPART_FORM_DATA_VALUE)
-                                     ? request.getParts() : Collections.emptyList();
+            ? request.getParts()
+            : Collections.emptyList();
         // json mode
         if (pts.isEmpty()) {
             entity.reqBody = InputStreams.readText(request.getInputStream());

@@ -35,7 +35,7 @@ import java.util.Map;
 @Slf4j
 public class TinyMailListServiceImpl implements TinyMailListService, InitializingBean {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinMailSenderDao winMailSenderDao;
 
     /**
@@ -94,94 +94,94 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
     public PageResult<TinyMailPlain> listAll(PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .whereTrue()
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .whereTrue()
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listFailed(PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(t.SumDone.eq(0).and(t.SumFail.gt(0)))
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(t.SumDone.eq(0).and(t.SumFail.gt(0)))
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listUndone(PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(t.SumDone.eq(0))
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(t.SumDone.eq(0))
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listByBizMark(String mark, PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(WingsJooqUtil.condMatch(mark, t.MailMark))
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(WingsJooqUtil.condMatch(mark, t.MailMark))
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listByRecipient(String mailRegex, PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         final Condition cond = WingsJooqUtil
-                .concatWs(",", t.MailTo, t.MailCc, t.MailBcc)
-                .likeRegex(mailRegex);
+            .concatWs(",", t.MailTo, t.MailCc, t.MailBcc)
+            .likeRegex(mailRegex);
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(cond)
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(cond)
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listBySender(String mail, PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(t.MailFrom.eq(mail))
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(t.MailFrom.eq(mail))
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
     }
 
     @Override
     public PageResult<TinyMailPlain> listBySubject(String subjRegex, PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return PageJooqHelper
-                .use(winMailSenderDao, pq)
-                .count()
-                .from(t)
-                .where(t.MailSubj.eq(subjRegex))
-                .order(sortsFields, t.Id.desc())
-                .fetch(plainFields)
-                .into(mapper);
+            .use(winMailSenderDao, pq)
+            .count()
+            .from(t)
+            .where(t.MailSubj.eq(subjRegex))
+            .order(sortsFields, t.Id.desc())
+            .fetch(plainFields)
+            .into(mapper);
 
     }
 
@@ -189,23 +189,23 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
     public TinyMailPlain loadDetail(long id) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         return winMailSenderDao
-                .ctx()
-                .selectFrom(t)
-                .where(t.Id.eq(id))
-                .fetchOne(mapper);
+            .ctx()
+            .selectFrom(t)
+            .where(t.Id.eq(id))
+            .fetchOne(mapper);
     }
 
     @Override
     public void afterPropertiesSet() {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         plainFields = new SelectField[]{
-                t.Id, t.MailApps, t.MailRuns, t.MailConf,
-                t.MailFrom, t.MailTo, t.MailCc, t.MailBcc,
-                t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
-                t.MailHtml, t.MailMark, t.MailDate,
-                t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
-                t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
-                };
+            t.Id, t.MailApps, t.MailRuns, t.MailConf,
+            t.MailFrom, t.MailTo, t.MailCc, t.MailBcc,
+            t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
+            t.MailHtml, t.MailMark, t.MailDate,
+            t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
+            t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
+            };
 
         sortsFields.put("id", t.Id);
         sortsFields.put("done", t.LastDone);

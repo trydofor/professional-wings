@@ -20,10 +20,10 @@ public class TestingBatriderController {
 
     private final TestingHelloContract testingHelloContractProxy = Invoker.createProxy("batrider", "batrider-hello", TestingHelloContract.class);
 
-    @Setter(onMethod_ = {@RpcReference(microserviceName = "winx-api", schemaId = "winx-hello")})
+    @Setter(onMethod_ = { @RpcReference(microserviceName = "winx-api", schemaId = "winx-hello") })
     private TestingHelloContract testingHelloContractRpc;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private RestTemplate restTemplate;
 
     @RequestMapping(path = "/batrider/winx-hello-rpc", method = RequestMethod.GET)

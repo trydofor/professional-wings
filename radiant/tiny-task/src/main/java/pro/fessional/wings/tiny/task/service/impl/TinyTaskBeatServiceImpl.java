@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskDefineDao winTaskDefineDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskResultDao winTaskResultDao;
 
     @Setter @Getter
@@ -51,10 +51,10 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         final WinTaskResultTable tr = winTaskResultDao.getTable();
 
         final List<Long> tid = winTaskResultDao
-                .ctx()
-                .selectDistinct(tr.TaskId)
-                .from(tr)
-                .fetchInto(Long.class);
+            .ctx()
+            .selectDistinct(tr.TaskId)
+            .from(tr)
+            .fetchInto(Long.class);
         if (tid.isEmpty()) {
             log.debug("no task result to clean");
             return 0;
@@ -62,17 +62,17 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         final Result<Record2<Long, Integer>> hst = winTaskDefineDao
-                .ctx()
-                .select(td.Id, td.ResultKeep)
-                .from(td)
-                .where(td.Id.in(tid))
-                .fetch();
+            .ctx()
+            .select(td.Id, td.ResultKeep)
+            .from(td)
+            .where(td.Id.in(tid))
+            .fetch();
 
         final LocalDateTime now = ThreadNow.localDate().atStartOfDay();
         final List<Condition> cond = hst
-                .stream()
-                .map(it -> tr.TaskId.eq(it.value1()).and(tr.TimeExec.le(now.minusDays(it.value2()))))
-                .collect(Collectors.toList());
+            .stream()
+            .map(it -> tr.TaskId.eq(it.value1()).and(tr.TimeExec.le(now.minusDays(it.value2()))))
+            .collect(Collectors.toList());
 
         if (cond.isEmpty()) {
             log.debug("no task condition to clean");
@@ -80,10 +80,10 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         }
 
         final int rc = winTaskResultDao
-                .ctx()
-                .delete(tr)
-                .where(DSL.or(cond))
-                .execute();
+            .ctx()
+            .delete(tr)
+            .where(DSL.or(cond))
+            .execute();
         log.info("clean task result, count={}", rc);
 
         return rc;
@@ -95,13 +95,13 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         final long now = ThreadNow.millis();
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         List<WinTaskDefine> tks = winTaskDefineDao
-                .ctx()
-                .select(td.Id, td.TaskerName, td.LastExec,
-                        td.TimingBeat, td.TimingRate, td.TimingIdle)
-                .from(td)
-                .where(td.Enabled.eq(Boolean.TRUE))
-                .fetch()
-                .into(WinTaskDefine.class);
+            .ctx()
+            .select(td.Id, td.TaskerName, td.LastExec,
+                td.TimingBeat, td.TimingRate, td.TimingIdle)
+            .from(td)
+            .where(td.Enabled.eq(Boolean.TRUE))
+            .fetch()
+            .into(WinTaskDefine.class);
 
         final StringBuilder mis = new StringBuilder();
 
@@ -114,7 +114,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             if (beat <= 0) continue;
 
             final long last = DateLocaling.sysEpoch(r.getLastExec());
-            if (warmed && last + 1000L * beat * beatTimes  < now) {
+            if (warmed && last + 1000L * beat * beatTimes < now) {
                 log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
                 mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');
             }

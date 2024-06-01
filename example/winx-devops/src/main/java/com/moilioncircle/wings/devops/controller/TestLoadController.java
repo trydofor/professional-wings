@@ -49,7 +49,7 @@ public class TestLoadController {
     }
 
     @Operation(summary = "test speed")
-    @GetMapping({"/test/load/speed.html", "/index.html"})
+    @GetMapping({ "/test/load/speed.html", "/index.html" })
     public String speed() {
         return "speed";
     }

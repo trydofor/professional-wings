@@ -198,9 +198,9 @@ public class WingsJooqUtil extends DSL {
      */
     @NotNull
     public static <Z> Condition condInSkip(Field<Z> filed, Collection<Z> value, Predicate<Z> filter) {
-        return value == null || value.isEmpty() ?
-               noCondition() :
-               filed.in(value.stream().filter(filter).collect(Collectors.toList()));
+        return value == null || value.isEmpty()
+            ? noCondition()
+            : filed.in(value.stream().filter(filter).collect(Collectors.toList()));
     }
 
     /**

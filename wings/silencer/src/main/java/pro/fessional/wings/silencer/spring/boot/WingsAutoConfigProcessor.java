@@ -129,7 +129,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             String bundle = environment.getProperty(SilencerI18nProp.Key$bundle);
             String[] paths;
             if (bundle == null || bundle.isEmpty()) {
-                paths = new String[]{"classpath*:/" + WINGS_I18N};
+                paths = new String[]{ "classpath*:/" + WINGS_I18N };
             }
             else {
                 paths = bundle.split(",");
@@ -192,8 +192,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private static class AutoConf {
-        private String[] onces = {"git.properties", "META-INF/build-info.properties"};
-        private String[] mores = {"application*.*", "wings-conf/**/*.*"};
+        private String[] onces = { "git.properties", "META-INF/build-info.properties" };
+        private String[] mores = { "application*.*", "wings-conf/**/*.*" };
         private String block = "wings-conf-block-list.cnf";
         private String promo = "wings-prop-promotion.cnf";
     }
@@ -332,9 +332,9 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         log.info("🦁 current active profile=[" + String.join(",", activeProfs) + "]");
 
         Set<ConfResource> profiledConf = confResources
-                .stream()
-                .filter(it -> !it.profile.isEmpty())
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(it -> !it.profile.isEmpty())
+            .collect(Collectors.toSet());
 
         if (!profiledConf.isEmpty()) {
             if (activeProfs.length == 0) {

@@ -34,9 +34,9 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     private final AsyncTaskExecutor applicationTaskExecutor;
 
     public SlardarWebMvcConfiguration(
-            List<AutoRegisterInterceptor> interceptors,
-            @Autowired(required = false) PageQueryArgumentResolver pageQueryArgumentResolver,
-            @Qualifier(APPLICATION_TASK_EXECUTOR_BEAN_NAME) @Autowired(required = false) AsyncTaskExecutor applicationTaskExecutor) {
+        List<AutoRegisterInterceptor> interceptors,
+        @Autowired(required = false) PageQueryArgumentResolver pageQueryArgumentResolver,
+        @Qualifier(APPLICATION_TASK_EXECUTOR_BEAN_NAME) @Autowired(required = false) AsyncTaskExecutor applicationTaskExecutor) {
         this.interceptors = interceptors;
         this.pageQueryArgumentResolver = pageQueryArgumentResolver;
         this.applicationTaskExecutor = applicationTaskExecutor;

@@ -72,7 +72,7 @@ public class SlardarOverloadConfiguration {
                 if (response instanceof HttpServletResponse res) {
                     res.setStatus(config.getFallbackCode());
                 }
-                @SuppressWarnings({"resource", "RedundantSuppression"})
+                @SuppressWarnings({ "resource", "RedundantSuppression" })
                 PrintWriter writer = response.getWriter();
                 writer.println(config.getFallbackBody());
                 writer.flush();

@@ -29,10 +29,10 @@ public class BindExceptionAdvice {
 
     public static final int ORDER = WingsOrdered.Lv4Application;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MessageSource messageSource;
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+    @ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
     public ResponseEntity<R<?>> bindException(BindException ex) {
         final R<?> body = R.ng(allErrors(ex.getBindingResult()));
         return ResponseEntity.ok(body);

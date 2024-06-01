@@ -15,14 +15,14 @@ import pro.fessional.wings.warlock.spring.bean.WarlockSecurityDummyConfiguration
  * @since 2019-12-01
  */
 @AutoConfiguration(before = {
-        SecurityAutoConfiguration.class,
-        UserDetailsServiceAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
+    UserDetailsServiceAutoConfiguration.class,
 })
 @ConditionalWingsEnabled
 @Import({
-        WarlockSecurityBeanConfiguration.class,
-        WarlockSecurityConfConfiguration.class,
-        WarlockSecurityDummyConfiguration.class,
+    WarlockSecurityBeanConfiguration.class,
+    WarlockSecurityConfConfiguration.class,
+    WarlockSecurityDummyConfiguration.class,
 })
 public class WarlockSecurityAutoConfiguration {
 }

@@ -34,7 +34,7 @@ public class TinyTaskConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled
-    @ComponentScan(basePackageClasses = {TinyTaskDatabase.class, TinyTaskService.class})
+    @ComponentScan(basePackageClasses = { TinyTaskDatabase.class, TinyTaskService.class })
     public static class DaoServScan {
         public DaoServScan() {
             log.info("TinyTask spring-scan database, service");

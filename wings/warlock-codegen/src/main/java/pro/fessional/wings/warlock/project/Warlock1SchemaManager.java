@@ -27,11 +27,11 @@ public class Warlock1SchemaManager extends ProjectSchemaManager {
     ///
     public static Consumer<Helper> includeWarlockPath() {
         return helper -> helper.path(
-                WingsRevision.V00_19_0512_01_Schema,
-                WingsRevision.V01_19_0520_01_IdLog,
-                WingsRevision.V01_19_0521_01_EnumI18n,
-                WingsRevision.V03_20_1023_01_AuthEnum,
-                WingsRevision.V05_20_1025_01_ConfRuntime
+            WingsRevision.V00_19_0512_01_Schema,
+            WingsRevision.V01_19_0520_01_IdLog,
+            WingsRevision.V01_19_0521_01_EnumI18n,
+            WingsRevision.V03_20_1023_01_AuthEnum,
+            WingsRevision.V05_20_1025_01_ConfRuntime
         );
     }
 

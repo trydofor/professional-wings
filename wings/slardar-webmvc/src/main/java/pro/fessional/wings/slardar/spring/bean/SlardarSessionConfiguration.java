@@ -44,10 +44,10 @@ public class SlardarSessionConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public WingsSessionIdResolver httpSessionIdResolver(
-            ObjectProvider<ServerProperties> serverProperties,
-            ObjectProvider<CookieSerializer> cookieSerializer,
-            ObjectProvider<DefaultCookieSerializerCustomizer> cookieSerializerCustomizers,
-            SlardarSessionProp prop) {
+        ObjectProvider<ServerProperties> serverProperties,
+        ObjectProvider<CookieSerializer> cookieSerializer,
+        ObjectProvider<DefaultCookieSerializerCustomizer> cookieSerializerCustomizers,
+        SlardarSessionProp prop) {
         log.info("SlardarWebmvc spring-bean httpSessionIdResolver");
 
         final List<HttpSessionIdResolver> resolvers = new ArrayList<>();

@@ -25,7 +25,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 @ConditionalWingsEnabled(abs = TinyMailEnabledProp.Key$mvcList)
 public class MailListController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyMailListService tinyMailListService;
 
     @Operation(summary = "list summary of all messages, in reverse order by default.")
@@ -78,11 +78,11 @@ public class MailListController {
     }
 
     @Operation(summary = "get mail detail", description = """
-            # Usage
-            get mail detail
-            ## Params
-            * @param id - required, Mailid
-            """)
+        # Usage
+        get mail detail
+        ## Params
+        * @param id - required, Mailid
+        """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$loadDetail + "}")
     @ResponseBody
     public R<TinyMailPlain> loadDetail(@RequestBody Q.Id ins) {

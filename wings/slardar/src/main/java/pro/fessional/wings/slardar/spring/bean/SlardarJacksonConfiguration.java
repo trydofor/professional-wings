@@ -42,12 +42,13 @@ public class SlardarJacksonConfiguration {
     public AutoRegisterPropertyFilter emptyValuePropertyFilter(SlardarJacksonProp prop) {
         log.info("Slardar spring-bean emptyValuePropertyFilter");
 
-        final LocalDate ed = prop.getEmptyDate() == null ? null :
-                             DateParser.parseDate(prop.getEmptyDate());
+        final LocalDate ed = prop.getEmptyDate() == null
+            ? null
+            : DateParser.parseDate(prop.getEmptyDate());
         return new EmptyValuePropertyFilter(ed,
-                prop.getEmptyDateOffset(),
-                prop.isEmptyList(),
-                prop.isEmptyMap()
+            prop.getEmptyDateOffset(),
+            prop.isEmptyList(),
+            prop.isEmptyMap()
         );
     }
 

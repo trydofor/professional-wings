@@ -53,10 +53,10 @@ public class AttributeCache<K, V> {
     public AttributeCache(@NotNull Class<?> owner, @NotNull TypedReg<K, V> reg, int max, int ttl, int tti, @Nullable Function<K, V> loader) {
         final String use = reg.regType.getName().substring(reg.regType.getPackageName().length() + 1);
         this.cache = (Cache<K, V>) WingsCache2k
-                .builder(owner, use, max, ttl, tti)
-                .keyType(CacheType.of(reg.keyType))
-                .valueType(CacheType.of(reg.valType))
-                .build();
+            .builder(owner, use, max, ttl, tti)
+            .keyType(CacheType.of(reg.keyType))
+            .valueType(CacheType.of(reg.valType))
+            .build();
         this.loader = loader;
         this.owner = owner;
         this.typed = reg;

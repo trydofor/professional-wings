@@ -27,9 +27,9 @@ public class ProjectEnumGenerator {
     @SafeVarargs
     public final void gen(List<ConstantEnum> enums, Consumer<Builder>... customize) {
         final Builder builder = ConstantEnumGenerator
-                .builder()
-                .targetDirectory(targetDir)
-                .targetPackage(targetPkg);
+            .builder()
+            .targetDirectory(targetDir)
+            .targetPackage(targetPkg);
         for (Consumer<Builder> consumer : customize) {
             consumer.accept(builder);
         }
@@ -47,10 +47,10 @@ public class ProjectEnumGenerator {
     ///
     public static Consumer<Builder> excludeStandard() {
         return builder -> builder
-                .excludeType(builtinEnums)
-                .excludeType(facelessEnums);
+            .excludeType(builtinEnums)
+            .excludeType(facelessEnums);
     }
 
-    public static final String[] builtinEnums = {"standard_boolean"};
-    public static final String[] facelessEnums = {"standard_language", "standard_timezone"};
+    public static final String[] builtinEnums = { "standard_boolean" };
+    public static final String[] facelessEnums = { "standard_language", "standard_timezone" };
 }

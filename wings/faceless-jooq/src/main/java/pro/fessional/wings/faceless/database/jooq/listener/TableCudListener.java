@@ -83,7 +83,7 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
             final Clause clause = context.clause();
             if (clause == Clause.INSERT || clause == Clause.UPDATE || clause == Clause.DELETE) {
                 log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz
-                        , new DebugException("debug for call stack"));
+                    , new DebugException("debug for call stack"));
             }
             else {
                 log.warn(">>> clauseStart Clause={}, Query={}", clause, clz);
@@ -125,7 +125,7 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public void clauseEnd(VisitContext context) {
 
         if (WarnVisit) {
@@ -195,10 +195,10 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
             final Context<?> ctx = context.context();
             final Configuration cnf = ctx.configuration();
             log.warn("==> visitStart  Clause={}, Query={}, Context={}, Config={}",
-                    context.clause(),
-                    scn(context.queryPart()),
-                    ctx.getClass().getSimpleName() + "@" + System.identityHashCode(ctx),
-                    cnf.getClass().getSimpleName() + "@" + System.identityHashCode(cnf));
+                context.clause(),
+                scn(context.queryPart()),
+                ctx.getClass().getSimpleName() + "@" + System.identityHashCode(ctx),
+                cnf.getClass().getSimpleName() + "@" + System.identityHashCode(cnf));
         }
 
         if (handlers.isEmpty() || tableField.isEmpty()) return;
@@ -233,7 +233,7 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
         }
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private void handleUpdate(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -285,7 +285,7 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
         }
     }
 
-    @SuppressWarnings({"unchecked", "UnstableApiUsage"})
+    @SuppressWarnings({ "unchecked", "UnstableApiUsage" })
     private void handleWhere(VisitContext context, Clause clause, QueryPart query) {
         if (clause == Clause.FIELD_REFERENCE && query instanceof TableField<?, ?> field) {
             if (context.data(ContextKey.EXECUTING_WHERE_CMP) == null) {
@@ -383,7 +383,7 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
         }
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private void handleInsert(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();

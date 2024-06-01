@@ -36,12 +36,12 @@ public class JacksonOffsetDateTimeDeserializer extends InstantDeserializer<Offse
 
     public JacksonOffsetDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, AutoZoneType auto) {
         super(OffsetDateTime.class,
-                formatter,
-                temporal -> DateParser.parseOffset(temporal, ThreadNow.sysZoneId()),
-                a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
-                a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
-                (zonedDateTime, zoneId) -> zonedDateTime,
-                false // keep zero offset and Z separate since zones explicitly supported
+            formatter,
+            temporal -> DateParser.parseOffset(temporal, ThreadNow.sysZoneId()),
+            a -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
+            a -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
+            (zonedDateTime, zoneId) -> zonedDateTime,
+            false // keep zero offset and Z separate since zones explicitly supported
         );
         this.formats = formats;
         this.autoZone = auto;

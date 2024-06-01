@@ -21,17 +21,17 @@ public class OkHttpTokenClient implements Call.Factory, OkHttpBuildableClient {
     public OkHttpTokenClient(@NotNull final OkHttpClient client, @NotNull final Tokenize tokenize) {
         this.tokenize = tokenize;
         this.tkClient = (Call.Factory) client
-                .newBuilder()
-                .authenticator((ignored, response) -> {
-                    if (syncInitToken(tokenize, (Call.Factory) client)) {
-                        final Request.Builder bd = response.request().newBuilder();
-                        if (tokenize.fillToken(bd)) {
-                            return bd.build();
-                        }
+            .newBuilder()
+            .authenticator((ignored, response) -> {
+                if (syncInitToken(tokenize, (Call.Factory) client)) {
+                    final Request.Builder bd = response.request().newBuilder();
+                    if (tokenize.fillToken(bd)) {
+                        return bd.build();
                     }
-                    return null;
-                })
-                .build();
+                }
+                return null;
+            })
+            .build();
     }
 
     @NotNull

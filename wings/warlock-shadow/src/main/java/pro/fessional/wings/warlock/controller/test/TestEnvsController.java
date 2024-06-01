@@ -22,10 +22,10 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 public class TestEnvsController {
 
     @Operation(summary = "Get RunMode", description = """
-            # Usage
-            Return Product, Test, Develop, Local
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testRunMode + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        Return Product, Test, Develop, Local
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testRunMode + "}", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
     public R<String> testRunMode() {
         final RunMode rm = RuntimeMode.getRunMode();
@@ -33,10 +33,10 @@ public class TestEnvsController {
     }
 
     @Operation(summary = "Get system Timestamp", description = """
-            # Usage
-            Get the Timestamp from 1970 in mills
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testSystemMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        Get the Timestamp from 1970 in mills
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testSystemMills + "}", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
     public R<Long> testSystemMills() {
         final Long ms = System.currentTimeMillis();
@@ -44,10 +44,10 @@ public class TestEnvsController {
     }
 
     @Operation(summary = "Get thread Timestamp", description = """
-            # Usage
-            Get the Timestamp from 1970 in mills
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testThreadMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        Get the Timestamp from 1970 in mills
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testThreadMills + "}", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
     public R<Long> testThreadMills() {
         final Long ms = Now.millis();

@@ -63,11 +63,11 @@ public class AuthConfigWrapper extends AuthConfig {
         }
 
         return StringTemplate
-                .dyn(uri)
-                .bindStr(RedirectUriHost, host)
-                .bindStr(RedirectUriScheme, request.getScheme())
-                .bindStr(RedirectUriAuthType, request.getParameter(WingsAuthHelper.AuthType))
-                .bindStr(RedirectUriAuthZone, request.getParameter(WingsAuthHelper.AuthZone))
-                .toString();
+            .dyn(uri)
+            .bindStr(RedirectUriHost, host)
+            .bindStr(RedirectUriScheme, request.getScheme())
+            .bindStr(RedirectUriAuthType, request.getParameter(WingsAuthHelper.AuthType))
+            .bindStr(RedirectUriAuthZone, request.getParameter(WingsAuthHelper.AuthZone))
+            .toString();
     }
 }

@@ -95,8 +95,8 @@ public class JournalJooqHelper extends JournalJdbcHelper {
 
     public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Condition where) {
         UpdateSetMoreStep<? extends Record> update = dsl
-                                                             .update(table)
-                                                             .set(field(COL_COMMIT_ID, Long.class), commitId);
+            .update(table)
+            .set(field(COL_COMMIT_ID, Long.class), commitId);
 
         String jf = getJournalDateColumn(table);
         if (!jf.isEmpty()) {

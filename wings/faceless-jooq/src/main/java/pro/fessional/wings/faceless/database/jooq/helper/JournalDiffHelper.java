@@ -158,6 +158,7 @@ public class JournalDiffHelper {
     }
 
     // ////
+
     /**
      * Generate information about record count, field name, and data before and after the update.
      */

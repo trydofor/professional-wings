@@ -13,8 +13,8 @@ import pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration;
 @AutoConfiguration
 @ConditionalWingsEnabled
 @Import({
-        SlardarActuatorConfiguration.class,
-        SlardarSecurityConfiguration.class,
+    SlardarActuatorConfiguration.class,
+    SlardarSecurityConfiguration.class,
 })
 public class SlardarSprintAutoConfiguration {
 }

@@ -39,31 +39,31 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
     public static final int ORDER = WingsOrdered.Lv4Application;
     private int order = ORDER;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserBasisDao winUserBasisDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserAuthnDao winUserAuthnDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockUserLoginService warlockUserLoginService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockUserAuthnService warlockUserAuthnService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MessageSource messageSource;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockDangerProp warlockDangerProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockDangerService warlockDangerService;
 
     @Override
@@ -72,7 +72,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         if (block > 0) {
             final Locale locale = LocaleContextHolder.getLocale();
             final String code = AuthnErrorEnum.FailureWaiting.getCode();
-            final String message = messageSource.getMessage(code, new Object[]{block}, locale);
+            final String message = messageSource.getMessage(code, new Object[]{ block }, locale);
             throw new FailureWaitingInternalAuthenticationServiceException(block, code, message);
         }
 
@@ -123,13 +123,13 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
             final WinUserAuthnTable ta = winUserAuthnDao.getTable();
             winUserAuthnDao
-                    .ctx()
-                    .update(ta)
-                    .set(ta.FailedCnt, 0)
-                    .set(ta.CommitId, commit.getCommitId())
-                    .set(ta.ModifyDt, commit.getCommitDt())
-                    .where(ta.UserId.eq(userId).and(ta.AuthType.eq(at)))
-                    .execute();
+                .ctx()
+                .update(ta)
+                .set(ta.FailedCnt, 0)
+                .set(ta.CommitId, commit.getCommitId())
+                .set(ta.ModifyDt, commit.getCommitDt())
+                .where(ta.UserId.eq(userId).and(ta.AuthType.eq(at)))
+                .execute();
         });
         //
         final String username = TerminalContext.get().getUsername();
@@ -143,11 +143,11 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAuthnTable ta = winUserAuthnDao.getTable();
         var auth = winUserAuthnDao
-                .ctx()
-                .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
-                .from(ta)
-                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.getOnlyLive()))
-                .fetchOne();
+            .ctx()
+            .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
+            .from(ta)
+            .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.getOnlyLive()))
+            .fetchOne();
 
         if (auth == null) {
             log.debug("ignore login failure by not found auth-type={}, username={}", at, username);
@@ -175,13 +175,13 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
             }
 
             winUserAuthnDao
-                    .ctx()
-                    .update(ta)
-                    .set(ta.FailedCnt, ta.FailedCnt.add(1))
-                    .set(ta.CommitId, commit.getCommitId())
-                    .set(ta.ModifyDt, commit.getCommitDt())
-                    .where(ta.Id.eq(aid))
-                    .execute();
+                .ctx()
+                .update(ta)
+                .set(ta.FailedCnt, ta.FailedCnt.add(1))
+                .set(ta.CommitId, commit.getCommitId())
+                .set(ta.ModifyDt, commit.getCommitDt())
+                .where(ta.Id.eq(aid))
+                .execute();
 
             WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
             la.setAuthType(authType);
@@ -195,14 +195,14 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
     private WarlockAuthnService.Details selectDetails(WinUserBasisTable user, WinUserAuthnTable auth,
                                                       Enum<?> authType, Condition cond) {
         final WarlockAuthnService.Details details = winUserAuthnDao
-                .ctx()
-                .select(auth.UserId, user.Nickname,
-                        user.Locale, user.Zoneid.as("zoneId"),
-                        user.Status, auth.Username,
-                        auth.Password, auth.ExpiredDt)
-                .from(user, auth)
-                .where(cond)
-                .fetchOneInto(WarlockAuthnService.Details.class);
+            .ctx()
+            .select(auth.UserId, user.Nickname,
+                user.Locale, user.Zoneid.as("zoneId"),
+                user.Status, auth.Username,
+                auth.Password, auth.ExpiredDt)
+            .from(user, auth)
+            .where(cond)
+            .fetchOneInto(WarlockAuthnService.Details.class);
 
         if (details != null) {
             details.setAuthType(authType);

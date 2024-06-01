@@ -47,10 +47,10 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
     public static final String JsonHandler = "json";
     public static final String KryoHandler = "kryo";
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinConfRuntimeDao winConfRuntimeDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsTableCudHandler wingsTableCudHandler;
 
     private final Map<String, ConversionService> handlerMap = new LinkedHashMap<>();
@@ -77,12 +77,12 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
         final String str = service.convert(value, String.class);
         AssertArgs.notNull(str, "can not covert value to string, key={}", key);
         final int rc = winConfRuntimeDao
-                .ctx()
-                .update(t)
-                .set(t.Current, str)
-                .set(t.Previous, t.Current)
-                .where(t.Key.eq(key))
-                .execute();
+            .ctx()
+            .update(t)
+            .set(t.Current, str)
+            .set(t.Previous, t.Current)
+            .where(t.Key.eq(key))
+            .execute();
 
         if (rc > 0) {
             wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, () -> {
@@ -140,18 +140,18 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
     @Cacheable
     @SuppressWarnings("unchecked")
     public <T> T getObjectCache(String key, TypeDescriptor type) {
-        if (winConfRuntimeDao.notTableExist()){
+        if (winConfRuntimeDao.notTableExist()) {
             log.warn("winConfRuntimeDao.notTableExist, key={}", key);
             return null;
         }
 
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
         final Record2<String, String> r2 = winConfRuntimeDao
-                .ctx()
-                .select(t.Current, t.Handler)
-                .from(t)
-                .where(t.Key.eq(key))
-                .fetchOne();
+            .ctx()
+            .select(t.Current, t.Handler)
+            .from(t)
+            .where(t.Key.eq(key))
+            .fetchOne();
 
         if (r2 != null) {
             ConversionService service = handlerMap.get(r2.value2());

@@ -83,10 +83,10 @@ public class FacelessLightIdConfiguration {
     public LightSequenceSelectJdbc lightSequenceSelect(LightIdProviderProp prop, JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean lightSequenceSelect");
         return new LightSequenceSelectJdbc(
-                jdbcTemplate,
-                prop.getSequenceGetOne(),
-                prop.getSequenceGetAll(),
-                prop.getSequenceAdjust());
+            jdbcTemplate,
+            prop.getSequenceGetOne(),
+            prop.getSequenceGetAll(),
+            prop.getSequenceAdjust());
     }
 
     @Bean
@@ -99,8 +99,8 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public LightIdMysqlLoader lightIdLoader(LightSequenceSelect lightSequenceSelect,
-                                                LightSequenceModify lightSequenceModify,
-                                                LightIdInsertProp insertProp) {
+                                            LightSequenceModify lightSequenceModify,
+                                            LightIdInsertProp insertProp) {
         log.info("Faceless spring-bean lightIdLoader");
         return new LightIdMysqlLoader(lightSequenceSelect, lightSequenceModify, insertProp);
     }
@@ -109,8 +109,8 @@ public class FacelessLightIdConfiguration {
     @ConditionalWingsEnabled
     @ConditionalOnProperty(name = LightIdProviderProp.Key$monotonic, havingValue = "jvm")
     public LightIdBufferedProvider jvmLightIdProvider(LightIdProvider.Loader loader,
-                                              LightIdProviderProp prop,
-                                              ObjectProvider<LightIdProvider.Generator> generator) {
+                                                      LightIdProviderProp prop,
+                                                      ObjectProvider<LightIdProvider.Generator> generator) {
         log.info("Faceless spring-bean jvmLightIdProvider");
         // avg=0.039ms
         LightIdBufferedProvider provider = new LightIdBufferedProvider(loader);
@@ -139,7 +139,7 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public LightIdServiceImpl lightIdService(LightIdProvider lightIdProvider,
-                                         BlockIdProvider blockIdProvider) {
+                                             BlockIdProvider blockIdProvider) {
         log.info("Faceless spring-bean lightIdService");
         return new LightIdServiceImpl(lightIdProvider, blockIdProvider);
     }

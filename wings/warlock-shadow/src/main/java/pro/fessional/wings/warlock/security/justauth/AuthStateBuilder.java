@@ -58,7 +58,7 @@ public class AuthStateBuilder {
 
         final String az = request.getParameter(WingsAuthHelper.AuthZone);
         if (az != null && !az.isEmpty()) {
-            paraMap.put(KeyAuthZone, new String[]{az});
+            paraMap.put(KeyAuthZone, new String[]{ az });
         }
 
         buildParaMap(request, paraMap);
@@ -81,7 +81,7 @@ public class AuthStateBuilder {
         // for impl
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @NotNull
     public Map<String, String[]> parseParam(HttpServletRequest request) {
         final Object attr = request.getAttribute(AuthStateBuilder.class.getName());

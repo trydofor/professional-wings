@@ -71,23 +71,23 @@ public class SlardarOkhttpConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public Builder okhttpClientBuilder(
-            ObjectProvider<Cache> cacheProvider,
-            ObjectProvider<CookieJar> cookieProvider,
-            ObjectProvider<Dns> dnsProvider,
-            ConnectionPool connectionPool,
-            ObjectProvider<Interceptor> interceptors,
-            SlardarOkhttpProp properties
+        ObjectProvider<Cache> cacheProvider,
+        ObjectProvider<CookieJar> cookieProvider,
+        ObjectProvider<Dns> dnsProvider,
+        ConnectionPool connectionPool,
+        ObjectProvider<Interceptor> interceptors,
+        SlardarOkhttpProp properties
     ) {
         log.info("Slardar spring-bean okhttpClientBuilder");
         // check builder return new ...
         final Builder builder = new Builder()
-                .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
-                .readTimeout(Duration.ofSeconds(properties.getTimeoutRead()))
-                .writeTimeout(Duration.ofSeconds(properties.getTimeoutWrite()))
-                .pingInterval(Duration.ofSeconds(properties.getPingInterval()))
-                .followRedirects(properties.isFollowRedirect())
-                .followSslRedirects(properties.isFollowRedirectSsl())
-                .retryOnConnectionFailure(properties.isRetryFailure());
+            .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
+            .readTimeout(Duration.ofSeconds(properties.getTimeoutRead()))
+            .writeTimeout(Duration.ofSeconds(properties.getTimeoutWrite()))
+            .pingInterval(Duration.ofSeconds(properties.getPingInterval()))
+            .followRedirects(properties.isFollowRedirect())
+            .followSslRedirects(properties.isFollowRedirectSsl())
+            .retryOnConnectionFailure(properties.isRetryFailure());
 
         // interceptors
         interceptors.orderedStream().forEach(it -> {

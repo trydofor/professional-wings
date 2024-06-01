@@ -257,8 +257,8 @@ public class SlardarJacksonWebConfiguration {
         return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
-                    builder.createXmlMapper(false).build(),
-                    builder.createXmlMapper(true).build()
+                builder.createXmlMapper(false).build(),
+                builder.createXmlMapper(true).build()
             );
         });
     }

@@ -49,10 +49,10 @@ public class DoubleKillAround {
 
     private final Evaluator evaluator = new Evaluator();
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     protected BeanFactory beanFactory;
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier(AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME)})
+    @Setter(onMethod_ = { @Autowired, @Qualifier(AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME) })
     protected Executor asyncExecutor;
 
     @Around("@annotation(pro.fessional.wings.slardar.concur.DoubleKill)")
@@ -192,7 +192,7 @@ public class DoubleKillAround {
         @Nullable
         public Object key(String keyExpression, AnnotatedElementKey methodKey, EvaluationContext evalContext) {
             return getExpression(this.keyCache, methodKey, keyExpression)
-                    .getValue(evalContext);
+                .getValue(evalContext);
         }
     }
 }

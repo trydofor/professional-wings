@@ -22,7 +22,7 @@ public class AutoQualifyFieldListener implements VisitListener {
     @Override
     public void visitStart(VisitContext context) {
         // only rendering
-        if(context.renderContext() == null) return;
+        if (context.renderContext() == null) return;
 
         QueryPart qp = context.queryPart();
         if (qp instanceof TableField<?, ?> field) {

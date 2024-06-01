@@ -73,7 +73,7 @@ public class SimpleTicketServiceImpl implements WarlockTicketService {
     @Override
     public int nextSeq(long uid, int type) {
         final AtomicInteger cnt = getSeqMap(type)
-                .computeIfAbsent(uid, k -> new AtomicInteger(0));
+            .computeIfAbsent(uid, k -> new AtomicInteger(0));
         return cnt.incrementAndGet();
     }
 
@@ -83,7 +83,7 @@ public class SimpleTicketServiceImpl implements WarlockTicketService {
         // If it does not exist, the application may have been restarted.
         // If the token has not expired, set the current validated value.
         final int cur = getSeqMap(type)
-                .computeIfAbsent(uid, k -> new AtomicInteger(seq)).get();
+            .computeIfAbsent(uid, k -> new AtomicInteger(seq)).get();
 
         return cur - seq <= accessTokenMax;
     }

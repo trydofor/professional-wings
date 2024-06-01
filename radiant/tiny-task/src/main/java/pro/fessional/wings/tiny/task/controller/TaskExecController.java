@@ -22,7 +22,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 @ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcExec)
 public class TaskExecController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecService tinyTaskExecService;
 
 

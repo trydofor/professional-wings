@@ -49,14 +49,14 @@ public class WingsInitProjectUtil {
         }
 
         final String[] copyFiles = {
-                ".gitignore",
-                "pom.xml",
-                "winx-admin/",
-                "winx-api/",
-                "winx-common/",
-                "winx-devops/",
-                "winx-front/",
-                };
+            ".gitignore",
+            "pom.xml",
+            "winx-admin/",
+            "winx-api/",
+            "winx-common/",
+            "winx-devops/",
+            "winx-front/",
+            };
 
         final Predicate<String> excludes = (path) -> {
             if (path.endsWith(".out")) return true;
@@ -192,7 +192,7 @@ public class WingsInitProjectUtil {
         return text.replace("2022-02-22", ymd1)
                    .replace("2022_0222_01L", ymd2 + "_01L")
                    .replace("2022_0222_2222L", ymh + "_01L")
-                ;
+            ;
     }
 
     private static byte[] copyPomXml(Info info, File file) throws IOException {

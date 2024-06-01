@@ -14,8 +14,8 @@ import pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration;
 @AutoConfiguration(before = WebMvcAutoConfiguration.class)
 @ConditionalWingsEnabled
 @Import({
-        SlardarLocaleConfiguration.class,
-        SlardarOkhttpWebConfiguration.class,
+    SlardarLocaleConfiguration.class,
+    SlardarOkhttpWebConfiguration.class,
 })
 public class SlardarWebCnfAutoConfiguration {
 }

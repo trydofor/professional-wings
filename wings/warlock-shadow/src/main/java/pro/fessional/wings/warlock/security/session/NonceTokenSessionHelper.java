@@ -20,8 +20,8 @@ import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 public class NonceTokenSessionHelper {
 
     private static final Cache<String, Sf> cache = WingsCache2k
-            .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, 0, String.class, Sf.class)
-            .build();
+        .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, 0, String.class, Sf.class)
+        .build();
 
     private static class Sf {
         private String ip = null;

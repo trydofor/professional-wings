@@ -41,7 +41,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         ZoneId t = zoneIdOrNull(zoneId);
         if (t == null) {
             throw new IllegalArgumentException("can not found ZoneId by zoneId=" + zoneId);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -51,7 +52,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         ZoneId t = zoneIdOrNull(zoneId);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -76,7 +78,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         Integer t = zoneIdOrNull(zoneId);
         if (t == null) {
             throw new IllegalArgumentException("can not found ZoneId by zoneId=" + zoneId);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -86,7 +89,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         Integer t = zoneIdOrNull(zoneId);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -125,7 +129,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         T t = zoneIdOrNull(zoneId, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found StandardTimezoneEnum by zoneId=" + zoneId);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -136,7 +141,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         T t = zoneIdOrNull(zoneId, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found StandardTimezoneEnum by zoneId=" + zoneId);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -147,7 +153,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         T t = zoneIdOrNull(zoneId, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -158,7 +165,8 @@ public class TimezoneEnumUtil extends ConstantEnumUtil {
         T t = zoneIdOrNull(zoneId, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }

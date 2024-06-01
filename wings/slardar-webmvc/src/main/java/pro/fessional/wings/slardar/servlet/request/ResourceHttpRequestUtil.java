@@ -21,7 +21,8 @@ public class ResourceHttpRequestUtil {
     static {
         try {
             notFound = ResourceHttpRequestUtil.class.getMethod("returnNull");
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -34,7 +35,8 @@ public class ResourceHttpRequestUtil {
                 try {
                     md = clz.getDeclaredMethod("getResource", HttpServletRequest.class);
                     md.setAccessible(true);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     log.warn("failed to check resource=" + rq.getRequestURI(), e);
                 }
                 return md;
@@ -43,7 +45,8 @@ public class ResourceHttpRequestUtil {
             //
             rq.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, rq.getRequestURI());
             return method != notFound && method.invoke(rh, rq) != null;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return false;
         }
     }

@@ -36,7 +36,7 @@ public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ord
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
         String host = request.getServerName();
         String domain = null;

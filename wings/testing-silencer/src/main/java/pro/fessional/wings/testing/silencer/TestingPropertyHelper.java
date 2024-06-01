@@ -19,7 +19,7 @@ public class TestingPropertyHelper {
     public static final String ENV_WINGS_ROOTDIR = "WINGS_ROOTDIR";
 
     @Getter
-    @Setter(onMethod_ = {@Value("${" + KEY_WINGS_ROOTDIR + "}")})
+    @Setter(onMethod_ = { @Value("${" + KEY_WINGS_ROOTDIR + "}") })
     private String wingsRootdir = "../..";
 
     /**

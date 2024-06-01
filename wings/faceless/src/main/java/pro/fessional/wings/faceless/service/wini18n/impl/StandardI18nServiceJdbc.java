@@ -26,17 +26,17 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
     @Override
     public int reloadAll() {
         List<Po> pos = jdbcTemplate.query(
-                "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n",
-                poMapper);
+            "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n",
+            poMapper);
         return cache(pos);
     }
 
     @Override
     public int reloadBase(String base) {
         List<Po> pos = jdbcTemplate.query(
-                "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n WHERE base=?",
-                poMapper,
-                base);
+            "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n WHERE base=?",
+            poMapper,
+            base);
         return cache(pos);
     }
 
@@ -46,9 +46,9 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
         String key = key(base, kind, ukey, lan);
         return cache.computeIfAbsent(key, s -> {
             String txt = jdbcTemplate.query(
-                    "SELECT hint FROM sys_standard_i18n WHERE base=? AND kind=? AND ukey=? AND lang=?",
-                    JdbcTemplateHelper.FirstStringOrNull,
-                    base, kind, ukey, lan);
+                "SELECT hint FROM sys_standard_i18n WHERE base=? AND kind=? AND ukey=? AND lang=?",
+                JdbcTemplateHelper.FirstStringOrNull,
+                base, kind, ukey, lan);
             String hint = txt == null ? "" : txt;
             if (!hint.isEmpty()) {
                 MessageSourceHelper.Combine.addMessage(code(base, kind, ukey), lang, hint);

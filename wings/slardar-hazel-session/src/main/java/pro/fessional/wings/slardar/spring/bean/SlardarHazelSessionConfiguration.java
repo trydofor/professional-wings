@@ -37,9 +37,9 @@ public class SlardarHazelSessionConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public HazelcastSessionHelper wingsSessionHelper(
-            FindByIndexNameSessionRepository<Session> sessionRepository,
-            HazelcastInstance hazelcastInstance,
-            @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
+        FindByIndexNameSessionRepository<Session> sessionRepository,
+        HazelcastInstance hazelcastInstance,
+        @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
 
         log.info("SlardarHazelSession spring-bean wingsSessionHelper");
         return new HazelcastSessionHelper(sessionRepository, hazelcastInstance, mapName);

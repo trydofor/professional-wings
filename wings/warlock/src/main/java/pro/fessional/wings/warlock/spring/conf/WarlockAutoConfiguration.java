@@ -20,12 +20,12 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 @ConditionalWingsEnabled
 @ConfigurationPropertiesScan(basePackageClasses = WarlockEnabledProp.class)
 @Import({
-        WarlockAutoRunConfiguration.class,
-        WarlockAwesomeConfiguration.class,
-        WarlockJournalConfiguration.class,
-        WarlockLockBeanConfiguration.class,
-        WarlockTableChangeConfiguration.class,
-        WarlockWatchingConfiguration.class,
+    WarlockAutoRunConfiguration.class,
+    WarlockAwesomeConfiguration.class,
+    WarlockJournalConfiguration.class,
+    WarlockLockBeanConfiguration.class,
+    WarlockTableChangeConfiguration.class,
+    WarlockWatchingConfiguration.class,
 })
 public class WarlockAutoConfiguration {
 }

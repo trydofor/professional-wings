@@ -59,12 +59,13 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @NotNull
     public <Z> List<P> fetchRangeLive(TableField<R, Z> field, Z lowerInclusive, Z upperInclusive) {
         final Condition cond = lowerInclusive == null
-                               ? upperInclusive == null
-                                 ? noCondition()
-                                 : field.le(upperInclusive)
-                               : upperInclusive == null
-                                 ? field.ge(lowerInclusive)
-                                 : field.between(lowerInclusive, upperInclusive);
+            ? (upperInclusive == null
+                   ? noCondition()
+                   : field.le(upperInclusive))
+            : (upperInclusive == null
+                   ? field.ge(lowerInclusive)
+                   : field.between(lowerInclusive, upperInclusive)
+        );
         return fetchLive((T) field.getTable(), cond);
     }
 
@@ -230,7 +231,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         return fetch(claz, table, table.getOnlyLive(), selectsOrders);
     }
 
-     @NotNull
+    @NotNull
     public <E> List<E> fetchLive(Class<E> claz, T table, Collection<? extends QueryPart> selectsOrders) {
         return fetch(claz, table, table.getOnlyLive(), selectsOrders);
     }
@@ -340,6 +341,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
         return fetch(mapper, offset, limit, table, table.onlyLive(cond), selectsOrders);
     }
+
     @NotNull
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
         return fetch(mapper, offset, limit, table, table.onlyLive(cond), selectsOrders);
@@ -661,6 +663,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> Optional<E> fetchOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
         return Optional.ofNullable(fetchOne(mapper, table, table.onlyLive(cond), selectsOrders));
     }
+
     @NotNull
     public <E> Optional<E> fetchOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
         return Optional.ofNullable(fetchOne(mapper, table, table.onlyLive(cond), selectsOrders));
@@ -670,6 +673,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     public <E> Optional<E> fetchLimitOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
         return Optional.ofNullable(fetchLimitOne(mapper, table, table.onlyLive(cond), selectsOrders));
     }
+
     @NotNull
     public <E> Optional<E> fetchLimitOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
         return Optional.ofNullable(fetchLimitOne(mapper, table, table.onlyLive(cond), selectsOrders));
@@ -691,10 +695,10 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
      */
     public int delete(JournalService.Journal commit, T table, Condition cond) {
         return ctx()
-                .update(table)
-                .set(table.markDelete(commit))
-                .where(cond)
-                .execute();
+            .update(table)
+            .set(table.markDelete(commit))
+            .where(cond)
+            .execute();
     }
 
     /**

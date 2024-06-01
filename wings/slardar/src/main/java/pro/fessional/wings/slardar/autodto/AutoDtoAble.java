@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * AutoDtoAble
+ *
  * @author trydofor
  * @since 2022-10-06
  */

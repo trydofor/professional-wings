@@ -16,11 +16,11 @@ import java.util.TimeZone;
  * @author trydofor
  * @since 2021-02-01
  */
-@SuppressWarnings({"UastIncorrectHttpHeaderInspection", "CanBeFinal"})
+@SuppressWarnings({ "UastIncorrectHttpHeaderInspection", "CanBeFinal" })
 @Slf4j
 public class TestingLoginHandler {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WingsLocaleResolver wingsLocaleResolver;
 
     public AuthenticationSuccessHandler loginSuccess = (req, res, auth) -> {

@@ -26,7 +26,7 @@ public class WarlockOauthServiceImpl implements WarlockOauthService {
     protected Duration authCodeTtl;
     protected Duration accessTokenTtl;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockTicketService warlockTicketService;
 
     @Override

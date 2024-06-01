@@ -9,7 +9,7 @@ import pro.fessional.wings.faceless.converter.CodeEnumConverter;
  * @author trydofor
  * @since 2021-01-18
  */
-public class JooqCodeEnumConverter<E extends CodeEnum> extends CodeEnumConverter<E> implements Converter<String,E> {
+public class JooqCodeEnumConverter<E extends CodeEnum> extends CodeEnumConverter<E> implements Converter<String, E> {
 
     public JooqCodeEnumConverter(Class<E> toType) {
         super(toType, toType.getEnumConstants());

@@ -13,6 +13,6 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 @AutoConfiguration
 @ConditionalWingsEnabled
-@Import({FacelessJooqConfiguration.class, FacelessJooqCudConfiguration.class})
+@Import({ FacelessJooqConfiguration.class, FacelessJooqCudConfiguration.class })
 public class FacelessJooqAutoConfiguration {
 }

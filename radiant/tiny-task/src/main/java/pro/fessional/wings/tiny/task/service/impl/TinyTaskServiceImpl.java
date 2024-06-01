@@ -27,10 +27,10 @@ import java.util.Set;
 @Slf4j
 public class TinyTaskServiceImpl implements TinyTaskService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskConfService tinyTaskConfService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecService tinyTaskExecService;
 
     @Override

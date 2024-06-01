@@ -45,31 +45,31 @@ import java.util.Map;
 @Slf4j
 public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserAuthnDao winUserAuthnDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserBasisDao winUserBasisDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected PasswordEncoder passwordEncoder;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected PasssaltEncoder passsaltEncoder;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockSecurityProp warlockSecurityProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockDangerService warlockDangerService;
 
     @Override
@@ -212,13 +212,13 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         journalService.commit(Jane.Danger, userId, danger, commit -> {
             final WinUserBasisTable tu = winUserBasisDao.getTable();
             winUserBasisDao
-                    .ctx()
-                    .update(tu)
-                    .set(tu.Status, danger ? UserStatus.DANGER : UserStatus.ACTIVE)
-                    .set(tu.CommitId, commit.getCommitId())
-                    .set(tu.ModifyDt, commit.getCommitDt())
-                    .where(tu.Id.eq(userId))
-                    .execute();
+                .ctx()
+                .update(tu)
+                .set(tu.Status, danger ? UserStatus.DANGER : UserStatus.ACTIVE)
+                .set(tu.CommitId, commit.getCommitId())
+                .set(tu.ModifyDt, commit.getCommitDt())
+                .where(tu.Id.eq(userId))
+                .execute();
 
             if (!danger && !winUserAuthnDao.notTableExist()) {
                 final WinUserAuthnTable ta = winUserAuthnDao.getTable();
@@ -231,21 +231,21 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
                     cond = cond.and(ta.AuthType.in(ats));
                 }
                 winUserAuthnDao
-                        .ctx()
-                        .update(ta)
-                        .set(ta.FailedCnt, 0)
-                        .set(ta.CommitId, commit.getCommitId())
-                        .set(ta.ModifyDt, commit.getCommitDt())
-                        .where(cond)
-                        .execute();
+                    .ctx()
+                    .update(ta)
+                    .set(ta.FailedCnt, 0)
+                    .set(ta.CommitId, commit.getCommitId())
+                    .set(ta.ModifyDt, commit.getCommitDt())
+                    .where(cond)
+                    .execute();
 
                 // allow
                 final Result<Record2<String, String>> r2 = winUserAuthnDao
-                        .ctx()
-                        .select(ta.AuthType, ta.Username)
-                        .from(ta)
-                        .where(cond)
-                        .fetch();
+                    .ctx()
+                    .select(ta.AuthType, ta.Username)
+                    .from(ta)
+                    .where(cond)
+                    .fetch();
 
                 for (Record2<String, String> r : r2) {
                     warlockDangerService.allow(wingsAuthTypeParser.parse(r.value1()), r.value2());
@@ -260,9 +260,9 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
         final WinUserAuthnTable t = winUserAuthnDao.getTable();
         return winUserAuthnDao.fetchLive(Item.class, t,
-                t.Username,
-                t.AuthType,
-                t.ExpiredDt,
-                t.FailedCnt);
+            t.Username,
+            t.AuthType,
+            t.ExpiredDt,
+            t.FailedCnt);
     }
 }

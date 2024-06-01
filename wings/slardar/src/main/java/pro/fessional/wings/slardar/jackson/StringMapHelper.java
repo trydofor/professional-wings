@@ -48,7 +48,8 @@ public class StringMapHelper {
     public static Map<String, String> json(Object object, ObjectMapper mapper) {
         try {
             return treeJson(object, mapper);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -56,7 +57,8 @@ public class StringMapHelper {
     public static Map<String, String> jaxb(Object object) {
         try {
             return treeJaxb(object);
-        } catch (JAXBException e) {
+        }
+        catch (JAXBException e) {
             throw new IllegalStateException(e);
         }
     }

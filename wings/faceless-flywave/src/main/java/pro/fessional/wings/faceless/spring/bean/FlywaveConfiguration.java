@@ -44,18 +44,18 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaJournalManager schemaJournalManager(
-            DataSourceContext sourceContext,
-            SqlStatementParser statementParser,
-            SchemaDefinitionLoader schemaDefinitionLoader,
-            FlywaveVerProp properties) {
+        DataSourceContext sourceContext,
+        SqlStatementParser statementParser,
+        SchemaDefinitionLoader schemaDefinitionLoader,
+        FlywaveVerProp properties) {
 
         JournalDdl ddl = new JournalDdl(
-                properties.getJournalInsert(),
-                properties.getTriggerInsert(),
-                properties.getJournalUpdate(),
-                properties.getTriggerUpdate(),
-                properties.getJournalDelete(),
-                properties.getTriggerDelete()
+            properties.getJournalInsert(),
+            properties.getTriggerInsert(),
+            properties.getJournalUpdate(),
+            properties.getTriggerUpdate(),
+            properties.getJournalDelete(),
+            properties.getTriggerDelete()
         );
         log.info("FacelessFlywave spring-bean schemaJournalManager");
         return new SchemaJournalManager(sourceContext.getBackends(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
@@ -65,15 +65,15 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DefaultRevisionManager schemaVersionManger(
-            DataSourceContext sourceContext,
-            SqlStatementParser statementParser,
-            SqlSegmentProcessor segmentProcessor,
-            SchemaDefinitionLoader schemaDefinitionLoader,
-            FlywaveVerProp properties) {
+        DataSourceContext sourceContext,
+        SqlStatementParser statementParser,
+        SqlSegmentProcessor segmentProcessor,
+        SchemaDefinitionLoader schemaDefinitionLoader,
+        FlywaveVerProp properties) {
         DefaultRevisionManager bean = new DefaultRevisionManager(
-                sourceContext.getBackends(), null,//sourceContext.getCurrent(),
-                statementParser, segmentProcessor, schemaDefinitionLoader,
-                properties.getSchemaVersionTable());
+            sourceContext.getBackends(), null,//sourceContext.getCurrent(),
+            statementParser, segmentProcessor, schemaDefinitionLoader,
+            properties.getSchemaVersionTable());
         for (String s : new TreeSet<>(properties.getDropReg().values())) {
             if (s != null && !s.isEmpty()) {
                 bean.addDropRegexp(s);
@@ -87,19 +87,19 @@ public class FlywaveConfiguration {
     @ConditionalWingsEnabled
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaShardingManager schemaShardingManager(
-            DataSourceContext sourceContext,
-            SqlStatementParser statementParser,
-            SchemaDefinitionLoader schemaDefinitionLoader) {
+        DataSourceContext sourceContext,
+        SqlStatementParser statementParser,
+        SchemaDefinitionLoader schemaDefinitionLoader) {
         log.info("FacelessFlywave spring-bean schemaShardingManager");
         return new SchemaShardingManager(sourceContext.getBackends(), sourceContext.getCurrent(),
-                statementParser, schemaDefinitionLoader);
+            statementParser, schemaDefinitionLoader);
     }
 
     @Bean
     @ConditionalWingsEnabled
     public SchemaFulldumpManager schemaFulldumpManager(
-            SqlStatementParser statementParser,
-            SchemaDefinitionLoader schemaDefinitionLoader) {
+        SqlStatementParser statementParser,
+        SchemaDefinitionLoader schemaDefinitionLoader) {
         log.info("FacelessFlywave spring-bean schemaFulldumpManager");
         return new SchemaFulldumpManager(statementParser, schemaDefinitionLoader);
     }
@@ -132,9 +132,9 @@ public class FlywaveConfiguration {
             }
             log.info("FacelessFlywave spring-bean sqlSegmentParser");
             return new SqlSegmentProcessor(conf.getCommentSingle(),
-                    conf.getCommentMultiple(),
-                    conf.getDelimiterDefault(),
-                    conf.getDelimiterCommand());
+                conf.getCommentMultiple(),
+                conf.getDelimiterDefault(),
+                conf.getDelimiterCommand());
         }
         else {
             throw new IllegalArgumentException("only support mysql");

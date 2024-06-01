@@ -16,8 +16,8 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 @ConditionalWingsEnabled
 @ConfigurationPropertiesScan(basePackageClasses = SilencerEnabledProp.class)
 @Import({
-        SilencerConfiguration.class,
-        SilencerRunnerConfiguration.class,
+    SilencerConfiguration.class,
+    SilencerRunnerConfiguration.class,
 })
 public class SilencerAutoConfiguration {
 }

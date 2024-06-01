@@ -55,7 +55,7 @@ public class OkHttpHostCookie implements CookieJar {
 
     private static class Lk {
         private final int maxCookies;
-        private final LinkedHashMap<Ck,Cookie> cookies = new LinkedHashMap<>();
+        private final LinkedHashMap<Ck, Cookie> cookies = new LinkedHashMap<>();
         private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
         public Lk(int max) {
@@ -76,7 +76,8 @@ public class OkHttpHostCookie implements CookieJar {
                     final Ck k = new Ck(ck);
                     if (ck.expiresAt() > now) {
                         cookies.put(k, ck);
-                    }else{
+                    }
+                    else {
                         cookies.remove(k);
                     }
                 }

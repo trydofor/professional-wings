@@ -38,8 +38,8 @@ public class SlardarBootAdminClientConfiguration {
     public BlockingRegistrationClient registrationClient(RestTemplateBuilder builder, ClientProperties prop) {
         log.info("SlardarSprint spring-bean registrationClient of BootAdmin client");
         builder = builder
-                .setConnectTimeout(prop.getConnectTimeout())
-                .setReadTimeout(prop.getReadTimeout());
+            .setConnectTimeout(prop.getConnectTimeout())
+            .setReadTimeout(prop.getReadTimeout());
         if (prop.getUsername() != null && prop.getPassword() != null) {
             builder = builder.basicAuthentication(prop.getUsername(), prop.getPassword());
         }

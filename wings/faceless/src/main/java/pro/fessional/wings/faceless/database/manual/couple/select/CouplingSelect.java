@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * @since 2023-02-03
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Documented
 public @interface CouplingSelect {
 }

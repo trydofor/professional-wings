@@ -47,14 +47,14 @@ public class FacelessJooqConfiguration {
         log.info("FacelessJooq spring-bean jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
-    
+
     @Bean
     @ConditionalWingsEnabled
     public DefaultConfigurationCustomizer jooqWingsConfigCustomizer(
-            FacelessJooqConfProp config,
-            ObjectProvider<ConverterProvider> providers,
-            ObjectProvider<org.jooq.Converter<?, ?>> converters,
-            ObjectProvider<VisitListenerProvider> visitListenerProviders
+        FacelessJooqConfProp config,
+        ObjectProvider<ConverterProvider> providers,
+        ObjectProvider<org.jooq.Converter<?, ?>> converters,
+        ObjectProvider<VisitListenerProvider> visitListenerProviders
     ) {
         log.info("FacelessJooq spring-bean jooqWingsConfigCustomizer");
         return configuration -> {
@@ -69,7 +69,7 @@ public class FacelessJooqConfiguration {
                     .withRenderSchema(config.isRenderSchema())
                     .withRenderGroupConcatMaxLenSessionVariable(config.isRenderGroupConcat())
 //                  .withParseDialect(SQLDialect.MYSQL)
-                .withRenderTable(config.getRenderTable());
+                    .withRenderTable(config.getRenderTable());
 
             log.info("FacelessJooq conf jooq setting, dialect=" + settings.getParseDialect());
 

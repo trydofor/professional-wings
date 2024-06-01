@@ -80,7 +80,8 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
             if (p != null && !p.isEmpty()) {
                 try {
                     return Integer.parseInt(p);
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     // continue
                 }
             }
@@ -91,7 +92,8 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
     private String notEmpty(String df, String s1) {
         if (s1 == null || s1.isEmpty()) {
             return df;
-        } else {
+        }
+        else {
             return s1;
         }
     }
@@ -99,7 +101,8 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
     private String[] notEmpty(String[] df, String[] s1) {
         if (s1 != null && s1.length > 0) {
             return s1;
-        } else {
+        }
+        else {
             return df;
         }
     }

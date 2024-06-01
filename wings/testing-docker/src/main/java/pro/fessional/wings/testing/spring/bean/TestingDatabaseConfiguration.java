@@ -27,10 +27,10 @@ public class TestingDatabaseConfiguration {
     public TestingDataSource dataSource(DataSourceProperties prop) {
         log.info("TestingDatabase provide dataSource instead of docker compose");
         return new TestingDataSource(
-                prop.determineDriverClassName(),
-                prop.determineUrl(),
-                prop.determineUsername(),
-                prop.determinePassword()
+            prop.determineDriverClassName(),
+            prop.determineUrl(),
+            prop.determineUsername(),
+            prop.determinePassword()
         );
     }
 }

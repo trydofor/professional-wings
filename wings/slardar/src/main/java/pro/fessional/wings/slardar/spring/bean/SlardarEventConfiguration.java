@@ -59,9 +59,9 @@ public class SlardarEventConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public ApplicationStartedEventRunner eventPublishHelperRunner(
-            ApplicationEventPublisher publisher,
-            ApplicationEventMulticaster multicaster,
-            @Qualifier(slardarEventExecutor) Executor executor) {
+        ApplicationEventPublisher publisher,
+        ApplicationEventMulticaster multicaster,
+        @Qualifier(slardarEventExecutor) Executor executor) {
         log.info("Slardar spring-runs eventPublishHelperRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv4Application, ignored -> {
             EventPublishHelper.setExecutor(executor);

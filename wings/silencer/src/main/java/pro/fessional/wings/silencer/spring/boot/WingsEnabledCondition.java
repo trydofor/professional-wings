@@ -231,8 +231,9 @@ public class WingsEnabledCondition extends SpringBootCondition {
             throw new IllegalStateException("set " + SilencerFeatureProp.Key$error + "[" + id + "]=true/false to skip error by match/no-match", t);
         }
         else {
-            return b ? ConditionOutcome.match(t.getMessage())
-                     : ConditionOutcome.noMatch(t.getMessage());
+            return b
+                ? ConditionOutcome.match(t.getMessage())
+                : ConditionOutcome.noMatch(t.getMessage());
         }
     }
 
@@ -245,28 +246,30 @@ public class WingsEnabledCondition extends SpringBootCondition {
 
             Boolean bb = WingsEnabledContext.handleEnabled(key);
             if (bb != null) {
-                return bb ? ConditionOutcome.match(ConditionMessage
-                        .forCondition(ConditionalWingsEnabled.class)
-                        .found(key)
-                        .items(true))
-                          : ConditionOutcome.noMatch(ConditionMessage
-                        .forCondition(ConditionalWingsEnabled.class)
-                        .found(key)
-                        .items(false));
+                return bb
+                    ? ConditionOutcome.match(ConditionMessage
+                    .forCondition(ConditionalWingsEnabled.class)
+                    .found(key)
+                    .items(true))
+                    : ConditionOutcome.noMatch(ConditionMessage
+                    .forCondition(ConditionalWingsEnabled.class)
+                    .found(key)
+                    .items(false));
             }
         }
 
         // one-many
         Boolean bf = WingsEnabledContext.handleFeature(id);
         if (bf != null) {
-            return bf ? ConditionOutcome.match(ConditionMessage
-                    .forCondition(ConditionalWingsEnabled.class)
-                    .found(id)
-                    .items(true))
-                      : ConditionOutcome.noMatch(ConditionMessage
-                    .forCondition(ConditionalWingsEnabled.class)
-                    .found(id)
-                    .items(false));
+            return bf
+                ? ConditionOutcome.match(ConditionMessage
+                .forCondition(ConditionalWingsEnabled.class)
+                .found(id)
+                .items(true))
+                : ConditionOutcome.noMatch(ConditionMessage
+                .forCondition(ConditionalWingsEnabled.class)
+                .found(id)
+                .items(false));
         }
 
         return null;
@@ -275,12 +278,12 @@ public class WingsEnabledCondition extends SpringBootCondition {
     @NotNull
     private ConditionOutcome conditionOutcome(boolean falsy) {
         return falsy
-               ? ConditionOutcome.noMatch(ConditionMessage
-                .forCondition(ConditionalWingsEnabled.class)
-                .found("value")
-                .items("false"))
-               : ConditionOutcome.match(ConditionMessage
-                .forCondition(ConditionalWingsEnabled.class)
-                .because("default true"));
+            ? ConditionOutcome.noMatch(ConditionMessage
+            .forCondition(ConditionalWingsEnabled.class)
+            .found("value")
+            .items("false"))
+            : ConditionOutcome.match(ConditionMessage
+            .forCondition(ConditionalWingsEnabled.class)
+            .because("default true"));
     }
 }

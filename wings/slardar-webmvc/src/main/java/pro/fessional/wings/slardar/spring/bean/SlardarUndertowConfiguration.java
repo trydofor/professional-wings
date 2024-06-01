@@ -48,9 +48,9 @@ public class SlardarUndertowConfiguration {
             int wks = wt == null ? its * 8 : wt;
 
             log.info("config Undertow websocket buffer, direct=" + dtb
-                        + ", bufferSize=" + bss
-                        + ",maximumPoolSize=" + wks
-                        + ", threadLocalCacheSize=" + its);
+                     + ", bufferSize=" + bss
+                     + ",maximumPoolSize=" + wks
+                     + ", threadLocalCacheSize=" + its);
 
             ByteBufferPool buffers = new DefaultByteBufferPool(dtb, bss, wks, its);
 

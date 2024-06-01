@@ -45,7 +45,7 @@ public class FacelessConfiguration {
         for (Customizer it : customizes) {
             final boolean md = it.customize(ctx);
             log.info("Faceless spring-bean dataSourceContext by modifier skipOthers=" + md + ", clz=" + it.getClass());
-            if(md) break;
+            if (md) break;
         }
 
         log.info("Faceless🦄 database-current-url=" + ctx.cacheJdbcUrl(ctx.getCurrent()));

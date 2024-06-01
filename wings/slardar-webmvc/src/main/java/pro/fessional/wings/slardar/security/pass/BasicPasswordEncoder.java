@@ -41,7 +41,7 @@ public class BasicPasswordEncoder implements PasswordEncoder {
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         final String raw = rawPassword.toString();
-        if(rawPassword.equals(encodedPassword)){
+        if (rawPassword.equals(encodedPassword)) {
             return true;
         }
 

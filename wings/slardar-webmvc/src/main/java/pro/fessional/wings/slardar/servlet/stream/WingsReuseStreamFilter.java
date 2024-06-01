@@ -26,7 +26,7 @@ public class WingsReuseStreamFilter extends OncePerRequestFilter implements Orde
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
         ReuseStreamRequestWrapper request = new ReuseStreamRequestWrapper(req);
         ReuseStreamResponseWrapper response = new ReuseStreamResponseWrapper(res);

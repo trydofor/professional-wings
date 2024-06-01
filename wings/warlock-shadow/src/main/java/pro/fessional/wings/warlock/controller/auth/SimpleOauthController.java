@@ -32,28 +32,28 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 @Slf4j
 public class SimpleOauthController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockOauthService warlockOauthService;
 
     @Operation(summary = "Simple simulation of Oauth2 AuthorizationCode", description = """
-            # Usage
-            see https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
-            see https://www.oauth.com/oauth2-servers/authorization/the-authorization-response
-            * Default standard 302 redirect
-            * return json if Accept: application/json
-            * return xml if Accept: application/xml
-            * return error, error_description if error
-            ## Params
-            * @param client_id  - Required. The client ID
-            * @param redirect_uri - redirect_uri if 302, or in json
-            * @param scope - scope seperated by space
-            * @param state - anti SCRF, return the raw value
-            * @header Accept  - help to content type
-            ## Returns
-            * @return {302} redirect to redirect_uri
-            * @return {200} json/xml
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthAuthorize + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        see https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
+        see https://www.oauth.com/oauth2-servers/authorization/the-authorization-response
+        * Default standard 302 redirect
+        * return json if Accept: application/json
+        * return xml if Accept: application/xml
+        * return error, error_description if error
+        ## Params
+        * @param client_id  - Required. The client ID
+        * @param redirect_uri - redirect_uri if 302, or in json
+        * @param scope - scope seperated by space
+        * @param state - anti SCRF, return the raw value
+        * @header Accept  - help to content type
+        ## Returns
+        * @return {302} redirect to redirect_uri
+        * @return {200} json/xml
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthAuthorize + "}", method = { RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<String> authorize(@RequestParam(WarlockOauthService.ClientId) String clientId,
                                             @RequestParam(value = WarlockOauthService.RedirectUri, required = false) String redirectUri,
                                             @RequestParam(value = WarlockOauthService.Scope, required = false) String scope,
@@ -68,26 +68,26 @@ public class SimpleOauthController {
     }
 
     @Operation(summary = "Simple simulation of Oauth2 authorization-code and client-credentials", description = """
-            # Usage
-            see https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
-            see https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/
-            see https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
-            * Default standard 302 redirect
-            * return json if Accept: application/json
-            * return xml if Accept: application/xml
-            * return error, error_description if error
-            * during the validity period (defaut 1H), can refresh the code by passing access_token as the code.
-            ## Params
-            * @param client_id  - Required. The client ID
-            * @param client_secret  - Required. The client secret
-            * @param code - authorization_code if not empty, otherwise client_credentials
-            * @param redirect_uri - redirect or in json
-            * @header Accept  - help to content type
-            ## Returns
-            * @return {302} redirect to redirect_uri
-            * @return {200} json/xml
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthAccessToken + "}", method = {RequestMethod.POST})
+        # Usage
+        see https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
+        see https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/
+        see https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+        * Default standard 302 redirect
+        * return json if Accept: application/json
+        * return xml if Accept: application/xml
+        * return error, error_description if error
+        * during the validity period (defaut 1H), can refresh the code by passing access_token as the code.
+        ## Params
+        * @param client_id  - Required. The client ID
+        * @param client_secret  - Required. The client secret
+        * @param code - authorization_code if not empty, otherwise client_credentials
+        * @param redirect_uri - redirect or in json
+        * @header Accept  - help to content type
+        ## Returns
+        * @return {302} redirect to redirect_uri
+        * @return {200} json/xml
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthAccessToken + "}", method = { RequestMethod.POST })
     public ResponseEntity<?> accessToken(@RequestParam(WarlockOauthService.ClientId) String clientId,
                                          @RequestParam(WarlockOauthService.ClientSecret) String clientSecret,
                                          @RequestParam(value = WarlockOauthService.Code, required = false) String code,
@@ -99,20 +99,20 @@ public class SimpleOauthController {
     }
 
     @Operation(summary = "Revoke AuthorizationCode or AccessToken in case of Token leakage", description = """
-            # Usage
-            * Default standard 302 redirect
-            * return json if Accept: application/json
-            * return xml if Accept: application/xml
-            * return error, error_description if error
-            ## Params
-            * @param code - Required. valid AuthorizationCode or AccessToken
-            * @param redirect_uri - redirect or in json
-            * @header Accept  - help to content type
-            ## Returns
-            * @return {302} redirect to redirect_uri
-            * @return {200} json/xml
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthRevokeToken + "}", method = {RequestMethod.POST})
+        # Usage
+        * Default standard 302 redirect
+        * return json if Accept: application/json
+        * return xml if Accept: application/xml
+        * return error, error_description if error
+        ## Params
+        * @param code - Required. valid AuthorizationCode or AccessToken
+        * @param redirect_uri - redirect or in json
+        * @header Accept  - help to content type
+        ## Returns
+        * @return {302} redirect to redirect_uri
+        * @return {200} json/xml
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthRevokeToken + "}", method = { RequestMethod.POST })
     public ResponseEntity<String> revokeToken(@RequestParam(WarlockOauthService.ClientId) String clientId,
                                               @RequestParam(WarlockOauthService.Code) String code,
                                               @RequestParam(value = WarlockOauthService.RedirectUri, required = false) String redirectUri,

@@ -119,11 +119,11 @@ public class SlardarSwaggerConfiguration {
          * page from 1
          */
         @io.swagger.v3.oas.annotations.Parameter(
-                description = "1-based page number, "
-                              + "name-alias=[${" + SlardarPagequeryProp.Key$pageAlias
-                              + "}] by '" + SlardarPagequeryProp.Key$pageAlias
-                              + "', default=${" + SlardarPagequeryProp.Key$page + "}",
-                schema = @Schema(type = "integer", example = "1")
+            description = "1-based page number, "
+                          + "name-alias=[${" + SlardarPagequeryProp.Key$pageAlias
+                          + "}] by '" + SlardarPagequeryProp.Key$pageAlias
+                          + "', default=${" + SlardarPagequeryProp.Key$page + "}",
+            schema = @Schema(type = "integer", example = "1")
         )
         private int page;
 
@@ -131,11 +131,11 @@ public class SlardarSwaggerConfiguration {
          * size from 1
          */
         @io.swagger.v3.oas.annotations.Parameter(
-                description = "1-based size of page, "
-                              + "name-alias=[${" + SlardarPagequeryProp.Key$sizeAlias
-                              + "}] by '" + SlardarPagequeryProp.Key$sizeAlias
-                              + "', default=${" + SlardarPagequeryProp.Key$size + "}",
-                schema = @Schema(type = "integer", example = "20")
+            description = "1-based size of page, "
+                          + "name-alias=[${" + SlardarPagequeryProp.Key$sizeAlias
+                          + "}] by '" + SlardarPagequeryProp.Key$sizeAlias
+                          + "', default=${" + SlardarPagequeryProp.Key$size + "}",
+            schema = @Schema(type = "integer", example = "20")
         )
         private int size;
 
@@ -143,11 +143,11 @@ public class SlardarSwaggerConfiguration {
          * sort filed, comma-separated key, 'k1,-k2' means 'order byk1 asc, k2 desc', '-' means 'desc'
          */
         @io.swagger.v3.oas.annotations.Parameter(
-                description = "comma-separated string, "
-                              + "name-alias=[${" + SlardarPagequeryProp.Key$sortAlias
-                              + "}] by '" + SlardarPagequeryProp.Key$sortAlias
-                              + "' eg. 'k1,-k2' means 'order by k1 asc, k2 desc', '-' means 'desc'",
-                schema = @Schema(type = "string")
+            description = "comma-separated string, "
+                          + "name-alias=[${" + SlardarPagequeryProp.Key$sortAlias
+                          + "}] by '" + SlardarPagequeryProp.Key$sortAlias
+                          + "' eg. 'k1,-k2' means 'order by k1 asc, k2 desc', '-' means 'desc'",
+            schema = @Schema(type = "string")
         )
         private String sort;
     }

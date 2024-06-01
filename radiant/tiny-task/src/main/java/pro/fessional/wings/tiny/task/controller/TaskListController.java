@@ -24,7 +24,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 @ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcList)
 public class TaskListController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskListService tinyTaskListService;
 
     @Operation(summary = "list of running tasks.")
@@ -42,11 +42,11 @@ public class TaskListController {
     }
 
     @Operation(summary = "list of task results.", description = """
-            # Usage
-            list of task results.
-            ## Params
-            * @param id - required, task id
-            """)
+        # Usage
+        list of task results.
+        ## Params
+        * @param id - required, task id
+        """)
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskResult + "}")
     @ResponseBody
     public PageResult<WinTaskResult> taskResult(@RequestBody Q.Id ins, PageQuery pq) {

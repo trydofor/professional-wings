@@ -93,15 +93,15 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
     @Override
     public boolean initToken(@NotNull Call.Factory callFactory) {
         final FormBody.Builder builder = buildForm(new FormBody.Builder())
-                .add(keyUsername, username)
-                .add(keyPassword, password);
+            .add(keyUsername, username)
+            .add(keyPassword, password);
 
         final Request request = buildRequest(new Request.Builder())
-                .header("Accept", headerAccept)
-                .header("User-Agent", headerUserAgent)
-                .url(loginUrl)
-                .post(builder.build())
-                .build();
+            .header("Accept", headerAccept)
+            .header("User-Agent", headerUserAgent)
+            .url(loginUrl)
+            .post(builder.build())
+            .build();
 
         final Response res = OkHttpClientHelper.execute(callFactory, request, false);
 

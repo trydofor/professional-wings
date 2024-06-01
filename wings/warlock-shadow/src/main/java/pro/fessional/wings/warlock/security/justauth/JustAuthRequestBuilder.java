@@ -80,9 +80,9 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
     @Setter
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private AuthStateCache authStateCache;
-    @Setter(onMethod_ = {@Autowired, @Lazy})
+    @Setter(onMethod_ = { @Autowired, @Lazy })
     private List<SuccessHandler> successHandlers = new ArrayList<>();
 
     @Override

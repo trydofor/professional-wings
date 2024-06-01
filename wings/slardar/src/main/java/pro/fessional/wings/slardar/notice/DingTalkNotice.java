@@ -48,10 +48,10 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @NotNull
     private final SlardarDingNoticeProp configProp;
 
-    @Setter(onMethod_ = {@Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
+    @Setter(onMethod_ = { @Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
     private Executor executor;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     @Getter
     private List<DingTalkConf.Loader> configLoader = Collections.emptyList();
 
@@ -143,7 +143,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         log.debug("ding-talk post message, host={}, text={}", host, message);
 
         String dr = config.getDryrun();
-        if (dr != null && !dr.isEmpty() && subject != null &&  subject.startsWith(dr)) {
+        if (dr != null && !dr.isEmpty() && subject != null && subject.startsWith(dr)) {
             log.info("ding-talk dryrun. subject={}, message={}", subject, message);
             return true;
         }
@@ -193,9 +193,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
      */
     public String buildText(DingTalkConf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
-                .putVal("msgtype", MsgText)
-                .putObj("text", o -> o.putVal("content", buildContent(conf, content, subject)))
-                .putObj("at", o -> buildNotice(conf, o))
+            .putVal("msgtype", MsgText)
+            .putObj("text", o -> o.putVal("content", buildContent(conf, content, subject)))
+            .putObj("at", o -> buildNotice(conf, o))
         );
     }
 
@@ -213,11 +213,11 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @SuppressWarnings("JavadocLinkAsPlainText")
     public String buildMarkdown(DingTalkConf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
-                .putVal("msgtype", MsgMarkdown)
-                .putObj("markdown", o -> o
-                        .putVal("title", subject != null ? subject : "untitled")
-                        .putVal("text", buildContent(conf, content, subject)))
-                .putObj("at", o -> buildNotice(conf, o))
+            .putVal("msgtype", MsgMarkdown)
+            .putObj("markdown", o -> o
+                .putVal("title", subject != null ? subject : "untitled")
+                .putVal("text", buildContent(conf, content, subject)))
+            .putObj("at", o -> buildNotice(conf, o))
         );
     }
 

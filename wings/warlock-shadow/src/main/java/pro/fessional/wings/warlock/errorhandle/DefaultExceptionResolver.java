@@ -44,7 +44,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     protected final MessageSource messageSource;
     protected final ObjectMapper objectMapper;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     protected Handler handler = null;
 
     public DefaultExceptionResolver(SimpleResponse defaultResponse, MessageSource messageSource, ObjectMapper objectMapper) {

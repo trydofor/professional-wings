@@ -42,7 +42,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         Locale t = localeOrNull(locale);
         if (t == null) {
             throw new IllegalArgumentException("can not found Locale by locale=" + locale);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -52,7 +53,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         Locale t = localeOrNull(locale);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -77,7 +79,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         Integer t = localeOrNull(locale);
         if (t == null) {
             throw new IllegalArgumentException("can not found Locale by locale=" + locale);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -87,7 +90,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         Integer t = localeOrNull(locale);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -138,7 +142,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         T t = localeOrNull(locale, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found StandardLanguageEnum by locale=" + locale);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -149,7 +154,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         T t = localeOrNull(locale, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found StandardLanguageEnum by locale=" + locale);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -160,7 +166,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         T t = localeOrNull(locale, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -171,7 +178,8 @@ public class LanguageEnumUtil extends ConstantEnumUtil {
         T t = localeOrNull(locale, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }

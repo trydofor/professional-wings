@@ -22,7 +22,7 @@ public class MailConfigProvider {
     @NotNull
     private final TinyMailConfigProp configProp;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     @Getter
     private List<TinyMailConfig.Loader> configLoader = Collections.emptyList();
 

@@ -45,7 +45,8 @@ public class SubclassSpringLoader {
                     enums.put(clz, objs);
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -73,7 +74,8 @@ public class SubclassSpringLoader {
                     }
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
 

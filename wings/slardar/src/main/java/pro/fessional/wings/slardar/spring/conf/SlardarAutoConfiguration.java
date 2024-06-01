@@ -23,15 +23,15 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalWingsEnabled
 @ConfigurationPropertiesScan(basePackageClasses = SlardarEnabledProp.class)
 @Import({
-        SlardarDateTimeConfiguration.class,
-        SlardarDingNoticeConfiguration.class,
-        SlardarDoubleKillConfiguration.class,
-        SlardarEventConfiguration.class,
-        SlardarI18nConfiguration.class,
-        SlardarJacksonConfiguration.class,
-        SlardarMonitorConfiguration.class,
-        SlardarOkhttpConfiguration.class,
-        SlardarTweakConfiguration.class,
+    SlardarDateTimeConfiguration.class,
+    SlardarDingNoticeConfiguration.class,
+    SlardarDoubleKillConfiguration.class,
+    SlardarEventConfiguration.class,
+    SlardarI18nConfiguration.class,
+    SlardarJacksonConfiguration.class,
+    SlardarMonitorConfiguration.class,
+    SlardarOkhttpConfiguration.class,
+    SlardarTweakConfiguration.class,
 })
 public class SlardarAutoConfiguration {
 }

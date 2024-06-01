@@ -73,22 +73,22 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     protected static final ConcurrentHashMap<Long, Boolean> Cancel = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Integer> Booted = new ConcurrentHashMap<>();
 
-    @Setter(onMethod_ = {@Value("${spring.application.name}")})
+    @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskDefineDao winTaskDefineDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskResultDao winTaskResultDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecProp execProp;
 
     @Override
@@ -388,12 +388,12 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private boolean notNextLock(WinTaskDefine td, long now) {
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         final int rc = winTaskDefineDao
-                .ctx()
-                .update(t)
-                .set(t.NextLock, t.NextLock.add(1))
-                .set(t.LastExec, milliLdt(now, ThreadNow.sysZoneId()))
-                .where(t.Id.eq(td.getId()).and(t.NextLock.eq(td.getNextLock())))
-                .execute();
+            .ctx()
+            .update(t)
+            .set(t.NextLock, t.NextLock.add(1))
+            .set(t.LastExec, milliLdt(now, ThreadNow.sysZoneId()))
+            .where(t.Id.eq(td.getId()).and(t.NextLock.eq(td.getNextLock())))
+            .execute();
         return rc <= 0;
     }
 

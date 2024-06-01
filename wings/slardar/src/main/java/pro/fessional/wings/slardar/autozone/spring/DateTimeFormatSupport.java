@@ -17,7 +17,7 @@ public abstract class DateTimeFormatSupport extends EmbeddedValueResolutionSuppo
 
     protected DateTimeFormatter getFormatter(TypeDescriptor descriptor) {
         final DateTimeFormat annotation = descriptor.getAnnotation(DateTimeFormat.class);
-        if(annotation == null) return null;
+        if (annotation == null) return null;
 
         DateTimeFormatterFactory factory = new DateTimeFormatterFactory();
         String style = resolveEmbeddedValue(annotation.style());

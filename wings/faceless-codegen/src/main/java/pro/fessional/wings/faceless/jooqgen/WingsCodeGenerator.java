@@ -113,78 +113,78 @@ public class WingsCodeGenerator {
         Configuration conf = new Configuration();
         conf.withLogging(Logging.INFO);
         conf.withJdbc(new Jdbc()
-                .withDriver("com.mysql.cj.jdbc.Driver")
-                .withUrl("!!your-config-here!!")
-                .withUser("!!your-config-here!!")
-                .withPassword("!!your-config-here!!"));
+            .withDriver("com.mysql.cj.jdbc.Driver")
+            .withUrl("!!your-config-here!!")
+            .withUser("!!your-config-here!!")
+            .withPassword("!!your-config-here!!"));
         conf.withGenerator(new Generator()
-                .withName(WingsJavaGenerator.class.getName())
-                .withTarget(new Target()
-                        .withPackageName("!!your-config-here!!")
-                        .withDirectory("!!your-config-here!!"))
-                .withDatabase(new Database()
-                        .withInputSchema("!!your-config-here!!")
-                        .withOutputCatalogToDefault(true)
-                        .withOutputSchemaToDefault(true)
-                        .withIncludes(".*")
-                        .withExcludes("""
-                                spring.* # Spring table
-                                |.*__[a-z]* # journal table
-                                |.*\\$[a-z]* # journal table
-                                |sys_commit_journal # jdbc handled
-                                |sys_light_sequence # jdbc handled
-                                |sys_schema_journal # jdbc handled
-                                |sys_schema_version # jdbc handled
-                                """)
-                        .withSchemaVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
-                        .withIncludeTables(true)
-                        .withIncludeRoutines(false)
-                        .withIncludePackages(false)
-                        .withIncludePackageRoutines(false)
-                        .withIncludePackageUDTs(false)
-                        .withIncludePackageConstants(false)
-                        .withIncludeUDTs(false)
-                        .withIncludeSequences(false)
-                        .withIncludePrimaryKeys(true)
-                        .withIncludeUniqueKeys(false)
-                        .withIncludeForeignKeys(false)
-                        .withIncludeCheckConstraints(false)
-                        .withIncludeIndexes(false)
-                        .withForcedTypes(
-                                new ForcedType().withName("BOOLEAN").withIncludeTypes("TINYINT(\\(1\\))?"),
-                                new ForcedType().withName("INTEGER").withIncludeTypes("TINYINT[2-9()]*")
-                        )
+            .withName(WingsJavaGenerator.class.getName())
+            .withTarget(new Target()
+                .withPackageName("!!your-config-here!!")
+                .withDirectory("!!your-config-here!!"))
+            .withDatabase(new Database()
+                .withInputSchema("!!your-config-here!!")
+                .withOutputCatalogToDefault(true)
+                .withOutputSchemaToDefault(true)
+                .withIncludes(".*")
+                .withExcludes("""
+                    spring.* # Spring table
+                    |.*__[a-z]* # journal table
+                    |.*\\$[a-z]* # journal table
+                    |sys_commit_journal # jdbc handled
+                    |sys_light_sequence # jdbc handled
+                    |sys_schema_journal # jdbc handled
+                    |sys_schema_version # jdbc handled
+                    """)
+                .withSchemaVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+                .withIncludeTables(true)
+                .withIncludeRoutines(false)
+                .withIncludePackages(false)
+                .withIncludePackageRoutines(false)
+                .withIncludePackageUDTs(false)
+                .withIncludePackageConstants(false)
+                .withIncludeUDTs(false)
+                .withIncludeSequences(false)
+                .withIncludePrimaryKeys(true)
+                .withIncludeUniqueKeys(false)
+                .withIncludeForeignKeys(false)
+                .withIncludeCheckConstraints(false)
+                .withIncludeIndexes(false)
+                .withForcedTypes(
+                    new ForcedType().withName("BOOLEAN").withIncludeTypes("TINYINT(\\(1\\))?"),
+                    new ForcedType().withName("INTEGER").withIncludeTypes("TINYINT[2-9()]*")
                 )
-                .withGenerate(new Generate()
-                        .withComments(false)
-                        .withEmptyCatalogs(true)
-                        .withEmptySchemas(true)
-                        .withIndexes(false)
-                        // JavaEE / JakartaEE
-                        .withSpringAnnotations(true)
-                        .withJpaAnnotations(false)
+            )
+            .withGenerate(new Generate()
+                .withComments(false)
+                .withEmptyCatalogs(true)
+                .withEmptySchemas(true)
+                .withIndexes(false)
+                // JavaEE / JakartaEE
+                .withSpringAnnotations(true)
+                .withJpaAnnotations(false)
 
-                        .withValidationAnnotations(false)
-                        .withJavaTimeTypes(true)
-                        .withKeys(false)
-                        .withInterfaces(true)
-                        .withDaos(true)
-                        .withPojos(true)
-                        .withPojosEqualsAndHashCode(true)
-                        .withPojosToString(true)
-                        // Don't open it. or the JournalAware will not work well. column editing is good for setter assignment.
-                        .withFluentSetters(false)
+                .withValidationAnnotations(false)
+                .withJavaTimeTypes(true)
+                .withKeys(false)
+                .withInterfaces(true)
+                .withDaos(true)
+                .withPojos(true)
+                .withPojosEqualsAndHashCode(true)
+                .withPojosToString(true)
+                // Don't open it. or the JournalAware will not work well. column editing is good for setter assignment.
+                .withFluentSetters(false)
 
-                        .withGlobalCatalogReferences(false)
-                        .withGlobalSchemaReferences(false)
-                        .withGlobalTableReferences(true)
-                        .withGlobalSequenceReferences(false)
-                        .withGlobalUDTReferences(false)
-                        .withGlobalRoutineReferences(false)
-                        .withGlobalQueueReferences(false)
-                        .withGlobalLinkReferences(false)
-                )
-                .withStrategy(new Strategy().withName(WingsJavaStrategy.class.getName()))
+                .withGlobalCatalogReferences(false)
+                .withGlobalSchemaReferences(false)
+                .withGlobalTableReferences(true)
+                .withGlobalSequenceReferences(false)
+                .withGlobalUDTReferences(false)
+                .withGlobalRoutineReferences(false)
+                .withGlobalQueueReferences(false)
+                .withGlobalLinkReferences(false)
+            )
+            .withStrategy(new Strategy().withName(WingsJavaStrategy.class.getName()))
         );
         return conf;
     }
@@ -240,12 +240,12 @@ public class WingsCodeGenerator {
         // schema version:2019090903
         // serialVersionUID = 319604016;
         var ignoreRegex = Pattern.compile(String.join("|",
-                "(import +[^\r\n]+;[\r\n ]+)+",
-                "The\\s+table\\s+<code>[^.]+",
-                "The\\s+schema\\s+<code>[^<]+",
-                "@Generated[^)]+",
-                "serialVersionUID[^;]+",
-                "[\r\n]+"), Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            "(import +[^\r\n]+;[\r\n ]+)+",
+            "The\\s+table\\s+<code>[^.]+",
+            "The\\s+schema\\s+<code>[^<]+",
+            "@Generated[^)]+",
+            "serialVersionUID[^;]+",
+            "[\r\n]+"), Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
         for (Map.Entry<String, File> entry : from.entrySet()) {
             var k = entry.getKey();
@@ -554,9 +554,9 @@ public class WingsCodeGenerator {
         @Contract("_,_,_->this")
         public Builder forcedType(Class<?> userType, Class<? extends Converter<?, ?>> converter, String... reg) {
             ForcedType ft = new ForcedType()
-                    .withUserType(userType.getName())
-                    .withConverter(converter.getName())
-                    .withIncludeExpression(String.join("|", reg));
+                .withUserType(userType.getName())
+                .withConverter(converter.getName())
+                .withIncludeExpression(String.join("|", reg));
             return forcedType(ft);
         }
 
@@ -594,15 +594,15 @@ public class WingsCodeGenerator {
             final String zid = ZoneId.class.getName();
             final String exp = String.join("|", reg);
             ForcedType ft1 = new ForcedType()
-                    .withUserType(zid)
-                    .withConverter(JooqZoneIdConverter.class.getName())
-                    .withIncludeTypes("INT.*")
-                    .withIncludeExpression(exp);
+                .withUserType(zid)
+                .withConverter(JooqZoneIdConverter.class.getName())
+                .withIncludeTypes("INT.*")
+                .withIncludeExpression(exp);
             ForcedType ft2 = new ForcedType()
-                    .withUserType(zid)
-                    .withConverter(JooqZoneStrConverter.class.getName())
-                    .withIncludeTypes("(VAR)?CHAR.*")
-                    .withIncludeExpression(exp);
+                .withUserType(zid)
+                .withConverter(JooqZoneStrConverter.class.getName())
+                .withIncludeTypes("(VAR)?CHAR.*")
+                .withIncludeExpression(exp);
             return forcedType(ft1, ft2);
         }
 
@@ -617,10 +617,10 @@ public class WingsCodeGenerator {
         private <E extends Enum<E>> Builder forcedJooqEnum(Class<E> userType, Class<?> converter, String... reg) {
             final String cv = converter.getName();
             ForcedType ft = new ForcedType()
-                    .withUserType(userType.getName())
-                    // new JooqConsEnumConverter(StandardLanguage.class)
-                    .withConverter("new " + cv + "(" + userType.getName() + ".class)")
-                    .withIncludeExpression(String.join("|", reg));
+                .withUserType(userType.getName())
+                // new JooqConsEnumConverter(StandardLanguage.class)
+                .withConverter("new " + cv + "(" + userType.getName() + ".class)")
+                .withIncludeExpression(String.join("|", reg));
 
             return forcedType(ft, cv);
         }

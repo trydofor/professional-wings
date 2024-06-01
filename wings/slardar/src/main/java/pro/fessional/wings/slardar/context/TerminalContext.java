@@ -34,13 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TerminalContext {
 
     public static final Context Null = new Context(
-            DefaultUserId.Null,
-            Locale.getDefault(),
-            TimeZone.getDefault(),
-            Collections.emptyMap(),
-            pro.fessional.mirana.data.Null.Enm,
-            pro.fessional.mirana.data.Null.Str,
-            Collections.emptySet());
+        DefaultUserId.Null,
+        Locale.getDefault(),
+        TimeZone.getDefault(),
+        Collections.emptyMap(),
+        pro.fessional.mirana.data.Null.Enm,
+        pro.fessional.mirana.data.Null.Str,
+        Collections.emptySet());
 
     /**
      * no leak, for static and Interceptor clean
@@ -257,7 +257,7 @@ public class TerminalContext {
         private final Map<TypedKey<?>, Object> terminal;
 
         public Context(long userId, Locale locale, TimeZone timeZone, Map<TypedKey<?>,
-                Object> params, Enum<?> authType, String username, Set<String> authPerm) {
+            Object> params, Enum<?> authType, String username, Set<String> authPerm) {
             this.userId = userId;
             this.locale = locale != null ? locale : DefaultLocale;
             this.timeZone = timeZone != null ? timeZone : DefaultTimeZone;

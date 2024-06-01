@@ -17,19 +17,19 @@ public interface JournalAware {
         return EmptyValue.DATE_TIME;
     }
 
-    default void setModifyDt(LocalDateTime value) { }
+    default void setModifyDt(LocalDateTime value) {}
 
     default LocalDateTime getModifyDt() {
         return EmptyValue.DATE_TIME;
     }
 
-    default void setDeleteDt(LocalDateTime value) { }
+    default void setDeleteDt(LocalDateTime value) {}
 
     default LocalDateTime getDeleteDt() {
         return EmptyValue.DATE_TIME;
     }
 
-    default void setCommitId(Long value) { }
+    default void setCommitId(Long value) {}
 
     default Long getCommitId() {
         return EmptyValue.BIGINT;

@@ -32,7 +32,7 @@ import java.util.Set;
  * @since 2021-02-07
  */
 public class WingsBindLoginConfigurer extends
-        AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthFilter> {
+    AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthFilter> {
 
     public WingsBindLoginConfigurer() {
         super(new WingsBindAuthFilter(), null);

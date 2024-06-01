@@ -17,11 +17,11 @@ import pro.fessional.wings.warlock.spring.bean.WarlockWatching2Configuration;
 @AutoConfiguration
 @ConditionalWingsEnabled
 @Import({
-        WarlockExceptionConfiguration.class,
-        WarlockJustAuthConfiguration.class,
-        WarlockOauthTicketConfiguration.class,
-        WarlockOtherBeanConfiguration.class,
-        WarlockWatching2Configuration.class,
+    WarlockExceptionConfiguration.class,
+    WarlockJustAuthConfiguration.class,
+    WarlockOauthTicketConfiguration.class,
+    WarlockOtherBeanConfiguration.class,
+    WarlockWatching2Configuration.class,
 })
 public class WarlockShadowAutoConfiguration {
 }

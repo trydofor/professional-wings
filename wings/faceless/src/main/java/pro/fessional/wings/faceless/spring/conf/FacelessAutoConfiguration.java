@@ -17,8 +17,8 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 @ConditionalWingsEnabled
 @ConfigurationPropertiesScan(basePackageClasses = FacelessEnabledProp.class)
 @Import({
-        FacelessConfiguration.class,
-        FacelessLightIdConfiguration.class
+    FacelessConfiguration.class,
+    FacelessLightIdConfiguration.class
 })
 public class FacelessAutoConfiguration {
 }

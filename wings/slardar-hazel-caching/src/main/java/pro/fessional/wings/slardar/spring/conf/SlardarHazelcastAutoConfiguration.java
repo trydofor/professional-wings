@@ -16,9 +16,9 @@ import pro.fessional.wings.slardar.spring.bean.HazelcastServiceConfiguration;
 @AutoConfiguration(before = SlardarCacheAutoConfiguration.class)
 @ConditionalWingsEnabled
 @Import({
-        HazelcastConfigConfiguration.class,
-        HazelcastFacelessConfiguration.class,
-        HazelcastServiceConfiguration.class,
+    HazelcastConfigConfiguration.class,
+    HazelcastFacelessConfiguration.class,
+    HazelcastServiceConfiguration.class,
 })
 public class SlardarHazelcastAutoConfiguration {
 }

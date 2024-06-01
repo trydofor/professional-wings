@@ -532,7 +532,7 @@ public class FlywaveRevisionScanner {
          * Modify the RevisionSql content
          *
          * @param info info of modify
-         * @param mod BiConsumer of revision and RevisionSql
+         * @param mod  BiConsumer of revision and RevisionSql
          * @return this
          */
         @Contract("_,_->this")

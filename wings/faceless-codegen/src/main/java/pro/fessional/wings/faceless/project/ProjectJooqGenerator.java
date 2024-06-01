@@ -44,16 +44,16 @@ public class ProjectJooqGenerator {
         }
 
         final Builder builder = WingsCodeGenerator
-                .builder(conf)
-                .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                .jdbcUrl(jdbc)
-                .jdbcUser(user)
-                .jdbcPassword(pass)
-                .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
-                .targetPackage(targetPkg)
-                .targetDirectory(targetDir)
-                .forcedLocale(".*\\.locale")
-                .forcedZoneId(".*\\.zoneid");
+            .builder(conf)
+            .jdbcDriver("com.mysql.cj.jdbc.Driver")
+            .jdbcUrl(jdbc)
+            .jdbcUser(user)
+            .jdbcPassword(pass)
+            .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+            .targetPackage(targetPkg)
+            .targetDirectory(targetDir)
+            .forcedLocale(".*\\.locale")
+            .forcedZoneId(".*\\.zoneid");
 
         for (Consumer<Builder> consumer : customize) {
             consumer.accept(builder);

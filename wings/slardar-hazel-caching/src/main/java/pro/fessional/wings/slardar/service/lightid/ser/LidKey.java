@@ -20,6 +20,7 @@ public class LidKey implements DataSerializable {
 
     private String name;
     private int block;
+
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeString(name);

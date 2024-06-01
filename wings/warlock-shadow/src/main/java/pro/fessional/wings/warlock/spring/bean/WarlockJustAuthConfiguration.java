@@ -47,7 +47,7 @@ public class WarlockJustAuthConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public SuccessHandler justAuthRequestSuccessHandler(
-            AuthStateBuilder authStateBuilder, WingsRemoteResolver remoteResolver) {
+        AuthStateBuilder authStateBuilder, WingsRemoteResolver remoteResolver) {
         log.info("WarlockShadow spring-bean justAuthRequestSuccessHandler");
         return (authType, request, authUser, detail) -> {
             final Map<String, String> meta = detail.getMetaData();
@@ -82,10 +82,10 @@ public class WarlockJustAuthConfiguration {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
-                        .builder()
-                        .timeout(hc.getTimeout() * 1000)
-                        .proxy(proxy)
-                        .build());
+                    .builder()
+                    .timeout(hc.getTimeout() * 1000)
+                    .proxy(proxy)
+                    .build());
                 log.info("WarlockShadow conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
 

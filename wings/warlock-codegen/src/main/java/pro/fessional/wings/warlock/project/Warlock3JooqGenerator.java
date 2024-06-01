@@ -25,34 +25,34 @@ public class Warlock3JooqGenerator extends ProjectJooqGenerator {
     ///
     public static Consumer<Builder> includeWarlockBase(boolean append) {
         return builder -> builder
-                // support Pattern comment
-                .databaseIncludes(append, warlockBase);
+            // support Pattern comment
+            .databaseIncludes(append, warlockBase);
     }
 
     public static final String[] warlockBase = {
-            "sys_constant_enum",
-            "sys_standard_i18n",
-            "win_conf_runtime"
+        "sys_constant_enum",
+        "sys_standard_i18n",
+        "win_conf_runtime"
     };
 
     public static Consumer<Builder> includeWarlockBond(boolean append) {
         return builder -> builder
-                // support Pattern comment
-                .databaseIncludes(append, warlockBond)
-                .forcedIntConsEnum(UserGender.class, ".*\\.gender")
-                .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status")
-                .forcedIntConsEnum(GrantType.class, "win_.*_grant\\.grant_type")
-                ;
+            // support Pattern comment
+            .databaseIncludes(append, warlockBond)
+            .forcedIntConsEnum(UserGender.class, ".*\\.gender")
+            .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status")
+            .forcedIntConsEnum(GrantType.class, "win_.*_grant\\.grant_type")
+            ;
     }
 
     public static final String[] warlockBond = {
-            "win_perm_entry",
-            "win_role_entry",
-            "win_role_grant",
-            "win_user_authn",
-            "win_user_basis",
-            "win_user_grant",
-            "win_user_login"
+        "win_perm_entry",
+        "win_role_entry",
+        "win_role_grant",
+        "win_user_authn",
+        "win_user_basis",
+        "win_user_grant",
+        "win_user_login"
     };
 
 }

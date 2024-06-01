@@ -35,16 +35,16 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
     public static final int ORDER = WingsOrdered.Lv3Service + 10;
     private int order = ORDER;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockUserBasisService warlockUserBasisService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockUserAuthnService warlockUserAuthnService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockSecurityProp warlockSecurityProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
     @Override

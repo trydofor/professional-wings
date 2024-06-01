@@ -126,16 +126,16 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     protected Token fetchByRefresh(@NotNull Call.Factory callFactory, @NotNull String refresh) {
         // POST https://gitee.com/oauth/token?grant_type=refresh_token&refresh_token={refresh_token}
         final FormBody.Builder builder = buildRefresh(new FormBody.Builder())
-                .add(keyGrantType, valRefreshToken)
-                .add(keyRefreshToken, refresh);
+            .add(keyGrantType, valRefreshToken)
+            .add(keyRefreshToken, refresh);
 
         if (redirectUri != null) {
             builder.add(keyRedirectUri, redirectUri);
         }
         final Request request = buildCommonRequest(new Request.Builder())
-                .url(accessTokenUrl)
-                .post(builder.build())
-                .build();
+            .url(accessTokenUrl)
+            .post(builder.build())
+            .build();
 
         final String body = OkHttpClientHelper.executeString(callFactory, request, false);
         return parseToken(body);
@@ -179,9 +179,9 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         // &redirect_uri={redirect_uri}
         // &client_secret={client_secret}
         final FormBody.Builder builder = buildAccessToken(new FormBody.Builder())
-                .add(keyGrantType, valAccessToken)
-                .add(keyClientId, clientId)
-                .add(keyClientSecret, clientSecret);
+            .add(keyGrantType, valAccessToken)
+            .add(keyClientId, clientId)
+            .add(keyClientSecret, clientSecret);
 
         if (redirectUri != null) {
             builder.add(keyRedirectUri, redirectUri);
@@ -192,9 +192,9 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         }
 
         final Request request = buildCommonRequest(new Request.Builder())
-                .url(accessTokenUrl)
-                .post(builder.build())
-                .build();
+            .url(accessTokenUrl)
+            .post(builder.build())
+            .build();
 
         final String body = OkHttpClientHelper.executeString(callFactory, request, false);
         return parseToken(body);
@@ -218,9 +218,9 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
 
         final String state = RandCode.numlet(16);
         HttpUrl.Builder builder = buildAuthorizationCode(httpUrl.newBuilder())
-                .addQueryParameter(keyClientId, clientId)
-                .addQueryParameter(keyResponseType, valResponseTypeCode)
-                .addQueryParameter(keyState, state);
+            .addQueryParameter(keyClientId, clientId)
+            .addQueryParameter(keyResponseType, valResponseTypeCode)
+            .addQueryParameter(keyState, state);
         if (redirectUri != null) {
             builder.addQueryParameter(keyRedirectUri, redirectUri);
         }
@@ -229,9 +229,9 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         }
 
         final Request request = buildCommonRequest(new Request.Builder())
-                .url(builder.build())
-                .get()
-                .build();
+            .url(builder.build())
+            .get()
+            .build();
 
         final Response response = OkHttpClientHelper.execute(callFactory, request, false);
         return parseAuthorizationCode(response, state);

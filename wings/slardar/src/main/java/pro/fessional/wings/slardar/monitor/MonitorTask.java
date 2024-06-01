@@ -23,13 +23,13 @@ import java.util.Map;
 @Setter @Getter
 public class MonitorTask implements InitializingBean {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private List<WarnMetric> warnMetrics = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private List<WarnReport> warnReports = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     private List<WarnFilter> warnFilters = Collections.emptyList();
 
     private String applicationName = null;

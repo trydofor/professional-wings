@@ -23,7 +23,7 @@ public class WarlockDangerServiceImpl implements WarlockDangerService {
 
     public WarlockDangerServiceImpl(int size, int ttl) {
         cache = WingsCache2k.builder(this.getClass(), "WarlockDangerService",
-                size, ttl, ttl, Ck.class, Long.class).build();
+            size, ttl, ttl, Ck.class, Long.class).build();
 
     }
 

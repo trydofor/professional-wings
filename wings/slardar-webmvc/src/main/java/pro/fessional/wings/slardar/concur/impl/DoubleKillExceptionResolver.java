@@ -24,13 +24,13 @@ public class DoubleKillExceptionResolver extends SimpleExceptionResolver<DoubleK
     @Override
     protected SimpleResponse resolve(@NotNull DoubleKillException e) {
         final String body = StringTemplate
-                .dyn(defaultResponse.getResponseBody())
-                .bindStr("{key}", e.getProgressKey())
-                .bindStr("{ttl}", e.getRunningSecond())
-                .toString();
+            .dyn(defaultResponse.getResponseBody())
+            .bindStr("{key}", e.getProgressKey())
+            .bindStr("{ttl}", e.getRunningSecond())
+            .toString();
         return new SimpleResponse(
-                defaultResponse.getHttpStatus(),
-                defaultResponse.getContentType(),
-                body);
+            defaultResponse.getHttpStatus(),
+            defaultResponse.getContentType(),
+            body);
     }
 }

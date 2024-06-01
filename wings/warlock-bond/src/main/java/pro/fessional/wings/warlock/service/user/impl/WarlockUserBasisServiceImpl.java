@@ -40,13 +40,13 @@ import static pro.fessional.wings.warlock.constants.WarlockGlobalAttribute.SaltB
 @Slf4j
 public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, InitializingBean {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserBasisDao winUserBasisDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
     @Override

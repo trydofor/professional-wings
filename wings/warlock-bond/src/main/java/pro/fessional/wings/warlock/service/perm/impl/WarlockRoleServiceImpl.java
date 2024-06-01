@@ -68,19 +68,19 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     @CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
     public static class Caching {
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected WinRoleEntryDao winRoleEntryDao;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected LightIdService lightIdService;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected JournalService journalService;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected WarlockPermNormalizer permNormalizer;
 
-        @Setter(onMethod_ = {@Autowired})
+        @Setter(onMethod_ = { @Autowired })
         protected WingsTableCudHandler wingsTableCudHandler;
 
         @Cacheable
@@ -90,12 +90,12 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
             final WinRoleEntryTable t = winRoleEntryDao.getTable();
 
             final Map<Long, String> all = winRoleEntryDao
-                    .ctx()
-                    .select(t.Id, t.Name)
-                    .from(t)
-                    .where(t.getOnlyLive())
-                    .fetch()
-                    .intoMap(Record2::value1, it -> permNormalizer.role(it.value2()));
+                .ctx()
+                .select(t.Id, t.Name)
+                .from(t)
+                .where(t.getOnlyLive())
+                .fetch()
+                .intoMap(Record2::value1, it -> permNormalizer.role(it.value2()));
             log.debug("loadRoleAll size={}", all.size());
             return all;
         }
@@ -153,13 +153,13 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
             final WinRoleEntryTable t = winRoleEntryDao.getTable();
             int rct = journalService.submit(Jane.Modify, roleId, remark, commit -> {
                 final int rc = winRoleEntryDao
-                        .ctx()
-                        .update(t)
-                        .set(t.CommitId, commit.getCommitId())
-                        .set(t.ModifyDt, commit.getCommitDt())
-                        .set(t.Remark, remark)
-                        .where(t.Id.eq(roleId))
-                        .execute();
+                    .ctx()
+                    .update(t)
+                    .set(t.CommitId, commit.getCommitId())
+                    .set(t.ModifyDt, commit.getCommitDt())
+                    .set(t.Remark, remark)
+                    .where(t.Id.eq(roleId))
+                    .execute();
                 log.info("modify role remark. roleId={}, affect={}", roleId, rc);
                 return rc;
             });

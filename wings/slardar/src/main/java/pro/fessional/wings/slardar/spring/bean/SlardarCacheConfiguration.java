@@ -59,7 +59,7 @@ public class SlardarCacheConfiguration {
     // //////////////////// aop ////////////////////
 
     /**
-     *  @see ProxyCachingConfiguration
+     * @see ProxyCachingConfiguration
      */
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled

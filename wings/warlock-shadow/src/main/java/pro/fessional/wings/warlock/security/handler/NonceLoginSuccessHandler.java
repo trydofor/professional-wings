@@ -27,7 +27,7 @@ import java.io.IOException;
 @Slf4j
 public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected AuthStateBuilder authStateBuilder;
 
     @Override

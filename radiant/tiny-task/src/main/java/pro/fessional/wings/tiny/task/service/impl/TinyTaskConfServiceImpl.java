@@ -59,17 +59,17 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @Slf4j
 public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
-    @Setter(onMethod_ = {@Value("${spring.application.name}")})
+    @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected ApplicationContext applicationContext;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskDefineProp tinyTaskDefineProp;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskDefineDao winTaskDefineDao;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JournalService journalService;
 
     @Override
@@ -84,7 +84,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     public Set<Conf> config(@NotNull Object bean) {
         final Class<?> claz = AopUtils.getTargetClass(bean);
         final Map<Method, TinyTasker> map = selectMethods(claz, (MethodIntrospector.MetadataLookup<TinyTasker>)
-                method -> findMergedAnnotation(method, TinyTasker.class));
+            method -> findMergedAnnotation(method, TinyTasker.class));
         if (map.isEmpty()) return Collections.emptySet();
 
         Set<Conf> result = new HashSet<>();
@@ -129,7 +129,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         // not default
-        if(pp != null){
+        if (pp != null) {
             rp.setEnabled(pp.isEnabled());
             rp.setAutorun(pp.isAutorun());
             rp.setVersion(pp.getVersion());
@@ -177,11 +177,11 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     public TaskerProp property(long id, boolean nonnull) {
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         final Record2<String, String> r2 = winTaskDefineDao
-                .ctx()
-                .select(t.Propkey, t.TaskerBean)
-                .from(t)
-                .where(t.Id.eq(id))
-                .fetchOne();
+            .ctx()
+            .select(t.Propkey, t.TaskerBean)
+            .from(t)
+            .where(t.Id.eq(id))
+            .fetchOne();
         if (r2 == null || isEmpty(r2.value1()) || isEmpty(r2.value2())) {
             if (nonnull) {
                 throw new IllegalArgumentException("database tasker is null, id=" + id);
@@ -252,8 +252,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         final TaskerProp prop = property(key, anno);
         if (prop.notTimingPlan()) {
             throw new IllegalStateException(
-                    "need cron/idle/rate ,method=" + method.getName()
-                    + ", class=" + claz.getName() + " ,prop=" + key
+                "need cron/idle/rate ,method=" + method.getName()
+                + ", class=" + claz.getName() + " ,prop=" + key
             );
         }
 
@@ -405,17 +405,17 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     private <T> T fetchProp(Class<T> claz, Function<WinTaskDefineTable, Condition> cond) {
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         return winTaskDefineDao
-                .ctx()
-                .select(t.Id, t.Propkey,
-                        t.Enabled, t.Autorun, t.Version,
-                        t.TaskerBean, t.TaskerPara, t.TaskerName, t.TaskerFast, t.TaskerApps, t.TaskerRuns,
-                        t.NoticeBean, t.NoticeWhen, t.NoticeConf,
-                        t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingMiss, t.TimingBeat,
-                        t.DuringFrom, t.DuringStop, t.DuringExec, t.DuringFail, t.DuringDone, t.DuringBoot,
-                        t.ResultKeep)
-                .from(t)
-                .where(cond.apply(t))
-                .fetchOneInto(claz);
+            .ctx()
+            .select(t.Id, t.Propkey,
+                t.Enabled, t.Autorun, t.Version,
+                t.TaskerBean, t.TaskerPara, t.TaskerName, t.TaskerFast, t.TaskerApps, t.TaskerRuns,
+                t.NoticeBean, t.NoticeWhen, t.NoticeConf,
+                t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingMiss, t.TimingBeat,
+                t.DuringFrom, t.DuringStop, t.DuringExec, t.DuringFail, t.DuringDone, t.DuringBoot,
+                t.ResultKeep)
+            .from(t)
+            .where(cond.apply(t))
+            .fetchOneInto(claz);
     }
 
     private LinkedHashMap<String, Diff.V<?>> diff(WinTaskDefine v1, TaskerProp v2) {

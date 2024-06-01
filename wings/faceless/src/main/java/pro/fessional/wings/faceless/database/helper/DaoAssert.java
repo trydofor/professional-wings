@@ -21,6 +21,7 @@ public class DaoAssert {
     public static void assertGe1(int a, CodeEnum err) {
         if (DaoPredict.aLtB(a, 1)) throw new CodeException(true, err);
     }
+
     public static void assertEq1(int[] a, CodeEnum err) {
         if (DaoPredict.aNeB(a, 1)) throw new CodeException(true, err);
     }
@@ -32,6 +33,7 @@ public class DaoAssert {
     public static void assertGe1(int[] a, CodeEnum err) {
         if (DaoPredict.aLtB(a, 1)) throw new CodeException(true, err);
     }
+
     //
     public static void assertEqB(int a, int b, CodeEnum err) {
         if (DaoPredict.aNeB(a, b)) throw new CodeException(true, err);
@@ -97,6 +99,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new CodeException(true, err);
         return a;
     }
+
     public static int[] affectEq1(int[] a, CodeEnum err) {
         if (DaoPredict.aNeB(a, 1)) throw new CodeException(true, err);
         return a;
@@ -111,6 +114,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new CodeException(true, err);
         return a;
     }
+
     //
     public static int affectEqB(int a, int b, CodeEnum err) {
         if (DaoPredict.aNeB(a, b)) throw new CodeException(true, err);
@@ -183,6 +187,7 @@ public class DaoAssert {
     public static void assertGe1(int a, String err) {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(err);
     }
+
     public static void assertEq1(int[] a, String err) {
         if (DaoPredict.aNeB(a, 1)) throw new IllegalStateException(err);
     }
@@ -194,6 +199,7 @@ public class DaoAssert {
     public static void assertGe1(int[] a, String err) {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(err);
     }
+
     //
     public static void assertEqB(int a, int b, String err) {
         if (DaoPredict.aNeB(a, b)) throw new IllegalStateException(err);
@@ -259,6 +265,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(err);
         return a;
     }
+
     public static int[] affectEq1(int[] a, String err) {
         if (DaoPredict.aNeB(a, 1)) throw new IllegalStateException(err);
         return a;
@@ -273,6 +280,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(err);
         return a;
     }
+
     //
     public static int affectEqB(int a, int b, String err) {
         if (DaoPredict.aNeB(a, b)) throw new IllegalStateException(err);
@@ -345,6 +353,7 @@ public class DaoAssert {
     public static void assertGe1(int a, String err, Object... arg) {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
     }
+
     public static void assertEq1(int[] a, String err, Object... arg) {
         if (DaoPredict.aNeB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
     }
@@ -356,6 +365,7 @@ public class DaoAssert {
     public static void assertGe1(int[] a, String err, Object... arg) {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
     }
+
     //
     public static void assertEqB(int a, int b, String err, Object... arg) {
         if (DaoPredict.aNeB(a, b)) throw new IllegalStateException(FormatUtil.logback(err, arg));
@@ -421,6 +431,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
         return a;
     }
+
     public static int[] affectEq1(int[] a, String err, Object... arg) {
         if (DaoPredict.aNeB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
         return a;
@@ -435,6 +446,7 @@ public class DaoAssert {
         if (DaoPredict.aLtB(a, 1)) throw new IllegalStateException(FormatUtil.logback(err, arg));
         return a;
     }
+
     //
     public static int affectEqB(int a, int b, String err, Object... arg) {
         if (DaoPredict.aNeB(a, b)) throw new IllegalStateException(FormatUtil.logback(err, arg));

@@ -45,8 +45,8 @@ public class MailSenderProvider {
     public JavaMailSender singletonSender(@NotNull TinyMailConfig config) {
         final String name = config.getName();
         return name == null || name.isEmpty()
-               ? defaultSender
-               : senders.computeIfAbsent(name, ignored -> newSender(config));
+            ? defaultSender
+            : senders.computeIfAbsent(name, ignored -> newSender(config));
     }
 
     public JavaMailSender removeCaching(TinyMailConfig config) {

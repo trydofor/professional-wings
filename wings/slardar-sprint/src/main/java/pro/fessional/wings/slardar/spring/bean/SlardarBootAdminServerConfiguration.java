@@ -34,6 +34,7 @@ import java.util.Objects;
 
 /**
  * <a href="https://github.com/trydofor/professional-wings/issues/170">without short-circuit logic</a>
+ *
  * @author trydofor
  * @since 2019-12-01
  */
@@ -69,7 +70,7 @@ public class SlardarBootAdminServerConfiguration {
 
                 final String title = "status " + sts.getStatus() + " from " + getLastStatus(event.getInstance());
                 return Mono.fromRunnable(() -> reporter.report(instance.getRegistration().getName(), instance.getId().getValue(),
-                        Collections.singletonMap(title, warns)));
+                    Collections.singletonMap(title, warns)));
             }
         };
         bean.setEnabled(reporter != null);

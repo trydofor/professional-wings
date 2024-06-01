@@ -57,7 +57,7 @@ public class ConstantEnumGenerator {
     public static <T> List<ConstantEnum> copyField(Class<T> clazz, Collection<T> pojos) {
         try {
             List<ConstantEnum> list = new ArrayList<>(pojos.size());
-            String[] methodNames = {"getId", "getType", "getCode", "getHint", "getInfo"};
+            String[] methodNames = { "getId", "getType", "getCode", "getHint", "getInfo" };
             Method[] methodPojos = new Method[methodNames.length];
             for (int i = 0; i < methodNames.length; i++) {
                 methodPojos[i] = clazz.getMethod(methodNames[i]);
@@ -189,8 +189,8 @@ public class ConstantEnumGenerator {
     public static Map<String, String> mergeJava(String pkg, Collection<? extends ConstantEnum> pos, Map<String, Boolean> filter) {
 
         Map<String, List<ConstantEnum>> enums = filterEnums(filter, pos
-                .stream()
-                .collect(Collectors.groupingBy(ConstantEnum::getType)));
+            .stream()
+            .collect(Collectors.groupingBy(ConstantEnum::getType)));
 
         Map<String, String> javaFiles = new HashMap<>();
         int count = 1;
@@ -203,10 +203,10 @@ public class ConstantEnumGenerator {
             List<ConstantEnum> vals = enun.getValue();
 
             ConstantEnum root = vals
-                    .stream()
-                    .filter(ConstantEnumGenerator::isSuper)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("failed to find super enum"));
+                .stream()
+                .filter(ConstantEnumGenerator::isSuper)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("failed to find super enum"));
 
             String enumClass = CaseSwitcher.pascal(type);
 

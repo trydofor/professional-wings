@@ -55,6 +55,7 @@ public @interface DoubleKill {
      * can be accessed via {@code #root.args[0]}, {@code #p0} or {@code #a0}. Arguments
      * can also be accessed by #name if that information is available.</li>
      * </ul>
+     *
      * @return SpEL
      * @see pro.fessional.wings.slardar.concur.impl.DoubleKillAround.Root
      */

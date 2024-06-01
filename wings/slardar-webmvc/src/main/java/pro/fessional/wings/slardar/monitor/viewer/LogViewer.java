@@ -53,12 +53,12 @@ public class LogViewer implements WarnFilter {
     }
 
     @Operation(summary = "Alarm logs can be viewed in conjunction with alarm notifications when self-monitoring is enabled.", description = """
-            # Usage
-            Pass the log id to view the log.
-            ## Params
-            * @param id - log id, max 2k caches in 36H
-            ## Returns
-            * @return {200 | string} log context or empty""")
+        # Usage
+        Pass the log id to view the log.
+        ## Params
+        * @param id - log id, max 2k caches in 36H
+        ## Returns
+        * @return {200 | string} log context or empty""")
     @GetMapping(value = "${" + LogConf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;

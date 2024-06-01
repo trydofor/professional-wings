@@ -1,10 +1,10 @@
 <templateSet group="wings">
-  <template name="wgaw" value="@lombok.Setter(onMethod_ = {@org.springframework.beans.factory.annotation.Autowired})" description="lombok &amp; Setter Autowired" toReformat="true" toShortenFQNames="true">
+  <template name="wgaw" value="@lombok.Setter(onMethod_ = { @org.springframework.beans.factory.annotation.Autowired })" description="lombok &amp; Setter Autowired" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
-  <template name="wgvl" value="@lombok.Setter(onMethod_ = {@org.springframework.beans.factory.annotation.Value(&quot;${$END$}&quot;)})" description="lombok &amp; Vaule Inject" toReformat="true" toShortenFQNames="true">
+  <template name="wgvl" value="@lombok.Setter(onMethod_ = { @org.springframework.beans.factory.annotation.Value(&quot;${$END$}&quot;) })" description="lombok &amp; Vaule Inject" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JAVA_DECLARATION" value="true" />
     </context>
@@ -25,12 +25,12 @@
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
-  <template name="wgaq" value="@lombok.Setter(onMethod_ = {@org.springframework.beans.factory.annotation.Autowired, @org.springframework.beans.factory.annotation.Qualifier($END$)})" description="lombok &amp; Setter Autowired,Qualifier" toReformat="true" toShortenFQNames="true">
+  <template name="wgaq" value="@lombok.Setter(onMethod_ = { @org.springframework.beans.factory.annotation.Autowired, @org.springframework.beans.factory.annotation.Qualifier($END$) })" description="lombok &amp; Setter Autowired,Qualifier" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
-  <template name="wgaa" value="@lombok.Setter(onMethod_ = {@org.springframework.beans.factory.annotation.Autowired})&#10;protected $TYPE$ $FLD$;" description="lombok &amp; Setter Autowired" toReformat="true" toShortenFQNames="true">
+  <template name="wgaa" value="@lombok.Setter(onMethod_ = { @org.springframework.beans.factory.annotation.Autowired })&#10;protected $TYPE$ $FLD$;" description="lombok &amp; Setter Autowired" toReformat="true" toShortenFQNames="true">
     <variable name="TYPE" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
     <variable name="FLD" expression="camelCase(TYPE)" defaultValue="" alwaysStopAt="false" />
     <context>

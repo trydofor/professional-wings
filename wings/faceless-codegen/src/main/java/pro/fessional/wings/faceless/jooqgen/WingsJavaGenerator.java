@@ -72,7 +72,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         }
 
         if (proxyStrategy == null) {
-            final String[] defs = {"DefaultCatalog", "DefaultSchema"};
+            final String[] defs = { "DefaultCatalog", "DefaultSchema" };
             InvocationHandler han = (ignoredProxy, method, args) -> {
                 Object obj = method.invoke(wrapper, args);
                 final String methodName = method.getName();
@@ -91,7 +91,7 @@ public class WingsJavaGenerator extends JavaGenerator {
                 return obj;
             };
 
-            proxyStrategy = (GeneratorStrategy) Proxy.newProxyInstance(wrapper.getClass().getClassLoader(), new Class[]{GeneratorStrategy.class}, han);
+            proxyStrategy = (GeneratorStrategy) Proxy.newProxyInstance(wrapper.getClass().getClassLoader(), new Class[]{ GeneratorStrategy.class }, han);
         }
 
         return proxyStrategy;
@@ -134,7 +134,6 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("}");
         }
 
-        out.println("");
         out.javadoc("alias %s", aliasName);
         out.println("@Override");
         out.println("@NotNull");
@@ -157,7 +156,6 @@ public class WingsJavaGenerator extends JavaGenerator {
             var fldDel = reflectMethodRef(out, getStrategy().getJavaIdentifier(colDel), colRefSegments(colDel));
 
             var namDel = colDel.getOutputName();
-            out.println("");
             out.javadoc("The colDel <code>%s</code> condition", namDel);
             final String markDelete;
             if (namDel.equalsIgnoreCase(COL_DELETE_DT)) {
@@ -215,7 +213,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("map.put(%s, %s);", fldDel, markDelete);
 
             var commitCol = columns.stream().filter(it ->
-                    it.getOutputName().equalsIgnoreCase(COL_COMMIT_ID)).findFirst();
+                it.getOutputName().equalsIgnoreCase(COL_COMMIT_ID)).findFirst();
             if (commitCol.isPresent()) {
                 final ColumnDefinition colCid = commitCol.get();
                 var fldCid = reflectMethodRef(out, getStrategy().getJavaIdentifier(colCid), colRefSegments(colCid));

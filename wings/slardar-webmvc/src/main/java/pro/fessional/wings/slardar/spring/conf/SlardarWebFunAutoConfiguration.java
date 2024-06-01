@@ -27,22 +27,22 @@ import pro.fessional.wings.slardar.spring.bean.SlardarWebMvcConfiguration;
 @AutoConfiguration
 @ConditionalWingsEnabled
 @Import({
-        SlardarCookieConfiguration.class,
-        SlardarDebounceConfiguration.class,
-        SlardarDomainExtendConfiguration.class,
-        SlardarDoubleKillWebConfiguration.class,
-        SlardarFirstBloodConfiguration.class,
-        SlardarJacksonWebConfiguration.class,
-        SlardarOverloadConfiguration.class,
-        SlardarPageQueryConfiguration.class,
-        SlardarRemoteConfiguration.class,
-        SlardarReuseStreamConfiguration.class,
-        SlardarRighterConfiguration.class,
-        SlardarSessionConfiguration.class,
-        SlardarSwaggerConfiguration.class,
-        SlardarTerminalConfiguration.class,
-        SlardarUndertowConfiguration.class,
-        SlardarWebMvcConfiguration.class,
+    SlardarCookieConfiguration.class,
+    SlardarDebounceConfiguration.class,
+    SlardarDomainExtendConfiguration.class,
+    SlardarDoubleKillWebConfiguration.class,
+    SlardarFirstBloodConfiguration.class,
+    SlardarJacksonWebConfiguration.class,
+    SlardarOverloadConfiguration.class,
+    SlardarPageQueryConfiguration.class,
+    SlardarRemoteConfiguration.class,
+    SlardarReuseStreamConfiguration.class,
+    SlardarRighterConfiguration.class,
+    SlardarSessionConfiguration.class,
+    SlardarSwaggerConfiguration.class,
+    SlardarTerminalConfiguration.class,
+    SlardarUndertowConfiguration.class,
+    SlardarWebMvcConfiguration.class,
 })
 public class SlardarWebFunAutoConfiguration {
 }

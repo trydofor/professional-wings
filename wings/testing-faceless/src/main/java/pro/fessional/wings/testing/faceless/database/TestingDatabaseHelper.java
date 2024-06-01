@@ -135,7 +135,7 @@ public class TestingDatabaseHelper {
         Map<String, Set<String>> result = new LinkedHashMap<>();
         for (Map.Entry<String, DataSource> en : dataSourceContext.getBackends().entrySet()) {
             List<String> col = new JdbcTemplate(en.getValue())
-                    .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase());
+                .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase());
             result.put(en.getKey(), new LinkedHashSet<>(col));
         }
         return result;
@@ -154,11 +154,11 @@ public class TestingDatabaseHelper {
     public static void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
         String sqls = InputStreams.readText(TestingDatabaseHelper.class.getResourceAsStream("/wings-flywave/" + path));
         for (String sql : sqls.split(
-                ";+[ \\t]*[\\r\\n]+"
-                + "|"
-                + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
-                + "|"
-                + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
+            ";+[ \\t]*[\\r\\n]+"
+            + "|"
+            + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
+            + "|"
+            + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
         )) {
             String s = sql.trim();
             if (!s.isEmpty()) {

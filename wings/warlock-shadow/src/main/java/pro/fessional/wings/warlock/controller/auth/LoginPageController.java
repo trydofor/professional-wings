@@ -47,22 +47,22 @@ public class LoginPageController {
     private final WingsAuthTypeParser wingsAuthTypeParser;
     private final WingsRemoteResolver wingsRemoteResolver;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Setter(onMethod_ = { @Autowired(required = false) })
     private HttpSessionIdResolver httpSessionIdResolver;
 
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "Default integrated login page, return list of supported types", description = """
-            # Usage
-            Lists the supported logon type. The response content is determined by the MediaType
-            inferred from extName and request.ContentType. e.g. for `html` and `json` extensions,
-            the default implementation returns in json.
-            ## Params
-            * @param extName - PathVariable, extName (.html, .json)
-            ## Returns
-            * @return {401} auth failed and forward
-            * @return {200} OK or redirect
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        Lists the supported logon type. The response content is determined by the MediaType
+        inferred from extName and request.ContentType. e.g. for `html` and `json` extensions,
+        the default implementation returns in json.
+        ## Params
+        * @param extName - PathVariable, extName (.html, .json)
+        ## Returns
+        * @return {401} auth failed and forward
+        * @return {200} OK or redirect
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = { RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> loginList(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
@@ -73,26 +73,26 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "The specific login page, according to content-type and extName", description = """
-            # Usage
-            Generally used to construct the login entry, such as the 3rd path and param of the Oauth2 login;
-            Note, `state` is an array, is spring supported http param array, such as `a=1&a=2&a=3`
-            ```bash
-            curl -X POST 'http://localhost:8084/auth/login-page.json' \\
-            --data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'
-            curl -X GET  "http://localhost:8084/auth/login-page.json\\
-            ?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state="
-            ```
-            ## Params
-            * @param extName  - PathVariable extName (.html, .json)
-            * @param authType - PathVariable auth type in the config (email, github)
-            * @param authZone - help to grant perm
-            * @param {string[]} state - Oauth2 state in MessageFormat: `state[0]` is Format's key, all `state` are Format's args;
-            * @param host - Oauth2 redirect host to avoid CORS
-            ## Returns
-            * @return {401} auth failed and forward
-            * @return {200} OK or redirect
-            """)
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        # Usage
+        Generally used to construct the login entry, such as the 3rd path and param of the Oauth2 login;
+        Note, `state` is an array, is spring supported http param array, such as `a=1&a=2&a=3`
+        ```bash
+        curl -X POST 'http://localhost:8084/auth/login-page.json' \\
+        --data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'
+        curl -X GET  "http://localhost:8084/auth/login-page.json\\
+        ?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state="
+        ```
+        ## Params
+        * @param extName  - PathVariable extName (.html, .json)
+        * @param authType - PathVariable auth type in the config (email, github)
+        * @param authZone - help to grant perm
+        * @param {string[]} state - Oauth2 state in MessageFormat: `state[0]` is Format's key, all `state` are Format's args;
+        * @param host - Oauth2 redirect host to avoid CORS
+        ## Returns
+        * @return {401} auth failed and forward
+        * @return {200} OK or redirect
+        """)
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = { RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> LoginPage(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                        @PathVariable(WingsAuthHelper.AuthType) String authType,
                                        @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
@@ -108,10 +108,10 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "The specific login page, see " + WarlockUrlmapProp.Key$authLoginPage, description =
-            "# Usage \n"
-            + "change " + WingsAuthHelper.AuthType + "from PathVariable to RequestParam\n"
-            + "")
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage2 + "}", method = {RequestMethod.POST, RequestMethod.GET})
+        "# Usage \n"
+        + "change " + WingsAuthHelper.AuthType + "from PathVariable to RequestParam\n"
+        + "")
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage2 + "}", method = { RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> LoginPage2(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                         @RequestParam(value = WingsAuthHelper.AuthType, required = false) String authType,
                                         @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
@@ -127,24 +127,24 @@ public class LoginPageController {
 
     @SuppressWarnings("UastIncorrectHttpHeaderInspection")
     @Operation(summary = "Verify that the one-time token is valid", description = """
-            # Usage
-            Use Oauth2 state as the token and require the same ip, agent and other header as the original client.
-            After successful verification, the session and cookie are in the header as a normal login
-            ## Params
-            * @param token - RequestHeader Oauth2 state as token
-            ## Returns
-            * @return {401} token is not-found, expired, or failed
-            * @return {200 | Result(false, message='authing')} in authing
-            * @return {200 | Result(true, data=sessionId)} success
-            * @return {200 | Result(true, code='xxx', data=object)} other code/object
-            """)
+        # Usage
+        Use Oauth2 state as the token and require the same ip, agent and other header as the original client.
+        After successful verification, the session and cookie are in the header as a normal login
+        ## Params
+        * @param token - RequestHeader Oauth2 state as token
+        ## Returns
+        * @return {401} token is not-found, expired, or failed
+        * @return {200 | Result(false, message='authing')} in authing
+        * @return {200 | Result(true, data=sessionId)} success
+        * @return {200 | Result(true, code='xxx', data=object)} other code/object
+        """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
         final R<?> result = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
         if (result == null) {
             return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(R.NG());
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(R.NG());
         }
 
         R<?> body = result;

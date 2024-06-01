@@ -21,7 +21,7 @@ public class TinyMailConfigProp extends LinkedHashMap<String, TinyMailConfig> im
 
     public static final String KeyDefault = "default";
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private MailProperties springMail;
 
     /**

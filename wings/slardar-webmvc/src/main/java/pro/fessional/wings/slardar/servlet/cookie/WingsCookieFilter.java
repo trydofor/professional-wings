@@ -29,7 +29,7 @@ public class WingsCookieFilter extends OncePerRequestFilter implements Ordered {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
         if (interceptor.notIntercept()) {
             chain.doFilter(req, res);

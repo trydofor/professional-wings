@@ -39,10 +39,10 @@ public class SlardarDateTimeConfiguration {
     public String2LocalDateConverter stringLocalDateConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalDateConverter");
         final var fmt = prop.getDate()
-                      .getSupport()
-                      .stream()
-                      .map(DateTimeFormatter::ofPattern)
-                      .collect(Collectors.toList());
+                            .getSupport()
+                            .stream()
+                            .map(DateTimeFormatter::ofPattern)
+                            .collect(Collectors.toList());
         return new String2LocalDateConverter(fmt);
     }
 
@@ -59,10 +59,10 @@ public class SlardarDateTimeConfiguration {
     public String2LocalTimeConverter stringLocalTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalTimeConverter");
         final var fmt = prop.getTime()
-                      .getSupport()
-                      .stream()
-                      .map(DateTimeFormatter::ofPattern)
-                      .collect(Collectors.toList());
+                            .getSupport()
+                            .stream()
+                            .map(DateTimeFormatter::ofPattern)
+                            .collect(Collectors.toList());
         return new String2LocalTimeConverter(fmt);
     }
 
@@ -79,10 +79,10 @@ public class SlardarDateTimeConfiguration {
     public String2LocalDateTimeConverter stringLocalDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringLocalDateTimeConverter");
         final var fmt = prop.getDatetime()
-                      .getSupport()
-                      .stream()
-                      .map(DateTimeFormatter::ofPattern)
-                      .collect(Collectors.toList());
+                            .getSupport()
+                            .stream()
+                            .map(DateTimeFormatter::ofPattern)
+                            .collect(Collectors.toList());
         return new String2LocalDateTimeConverter(fmt, prop.getDatetime().isAuto());
     }
 
@@ -99,10 +99,10 @@ public class SlardarDateTimeConfiguration {
     public String2ZonedDateTimeConverter stringZonedDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringZonedDateTimeConverter");
         final var fmt = prop.getZoned()
-                      .getSupport()
-                      .stream()
-                      .map(DateTimeFormatter::ofPattern)
-                      .collect(Collectors.toList());
+                            .getSupport()
+                            .stream()
+                            .map(DateTimeFormatter::ofPattern)
+                            .collect(Collectors.toList());
         return new String2ZonedDateTimeConverter(fmt, prop.getZoned().isAuto());
     }
 
@@ -119,10 +119,10 @@ public class SlardarDateTimeConfiguration {
     public String2OffsetDateTimeConverter stringOffsetDateTimeConverter(SlardarDatetimeProp prop) {
         log.info("Slardar spring-bean stringOffsetDateTimeConverter");
         final var fmt = prop.getOffset()
-                      .getSupport()
-                      .stream()
-                      .map(DateTimeFormatter::ofPattern)
-                      .collect(Collectors.toList());
+                            .getSupport()
+                            .stream()
+                            .map(DateTimeFormatter::ofPattern)
+                            .collect(Collectors.toList());
         return new String2OffsetDateTimeConverter(fmt, prop.getOffset().isAuto());
     }
 

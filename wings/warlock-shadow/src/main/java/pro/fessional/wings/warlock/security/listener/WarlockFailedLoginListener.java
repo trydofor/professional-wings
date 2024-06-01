@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class WarlockFailedLoginListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WarlockAuthnService warlockAuthnService;
 
     @Override
@@ -33,14 +33,15 @@ public class WarlockFailedLoginListener implements ApplicationListener<Authentic
         }
 
         final Authentication authn = event.getAuthentication();
-        if(authn == null) return;
+        if (authn == null) return;
 
         final Object dtl = authn.getDetails();
         final String details;
         if (dtl instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
             details = JSON.toJSONString(meta, FastJsonHelper.DefaultWriter());
-        }else{
+        }
+        else {
             details = dtl.toString();
         }
 

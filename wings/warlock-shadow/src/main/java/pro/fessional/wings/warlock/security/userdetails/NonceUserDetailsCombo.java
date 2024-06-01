@@ -40,11 +40,11 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     private final @NotNull Cache cache;
     private @NotNull Set<Enum<?>> acceptNonceType = Collections.emptySet();
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected PasswordEncoder passwordEncoder;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected PasssaltEncoder passsaltEncoder;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsAuthTypeParser authTypeParser;
 
     @Override

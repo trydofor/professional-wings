@@ -34,15 +34,15 @@ public class WingsAuthenticationEventPublisher extends DefaultAuthenticationEven
         }
 
         TerminalContext.Builder builder = new TerminalContext.Builder()
-                .locale(userDetails.getLocale())
-                .timeZone(userDetails.getZoneId())
-                .user(userDetails.getUserId())
-                .authType(userDetails.getAuthType())
-                .username(userDetails.getUsername())
-                .authPerm(userDetails.getAuthorities().stream()
-                                     .map(GrantedAuthority::getAuthority)
-                                     .collect(Collectors.toSet()))
-                .terminal(TerminalSecurityAttribute.UserDetails, userDetails);
+            .locale(userDetails.getLocale())
+            .timeZone(userDetails.getZoneId())
+            .user(userDetails.getUserId())
+            .authType(userDetails.getAuthType())
+            .username(userDetails.getUsername())
+            .authPerm(userDetails.getAuthorities().stream()
+                                 .map(GrantedAuthority::getAuthority)
+                                 .collect(Collectors.toSet()))
+            .terminal(TerminalSecurityAttribute.UserDetails, userDetails);
         buildTerminal(builder, authentication);
 
         TerminalContext.login(builder.build());
@@ -64,11 +64,11 @@ public class WingsAuthenticationEventPublisher extends DefaultAuthenticationEven
         }
 
         final var builder = new TerminalContext.Builder()
-                .locale(LocaleContextHolder.getLocale())
-                .timeZone(LocaleContextHolder.getTimeZone())
-                .authType(authToken.getAuthType())
-                .username(authToken.getName())
-                .guest();
+            .locale(LocaleContextHolder.getLocale())
+            .timeZone(LocaleContextHolder.getTimeZone())
+            .authType(authToken.getAuthType())
+            .username(authToken.getName())
+            .guest();
 
         buildTerminal(builder, authentication);
         TerminalContext.login(builder.build());

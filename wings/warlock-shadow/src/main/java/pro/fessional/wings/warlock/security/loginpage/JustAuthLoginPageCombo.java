@@ -30,13 +30,13 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     public static final int ORDER = WingsOrdered.Lv4Application;
     private int order = ORDER;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected JustAuthRequestBuilder justAuthRequestBuilder;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsRemoteResolver wingsRemoteResolver;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected AuthStateBuilder authStateBuilder;
 
     @Override

@@ -34,9 +34,9 @@ public class MysqlServerLock implements Lock {
     @Override
     public void lock() {
         final Integer rc = jdbcTemplate.query(
-                "SELECT GET_LOCK(?, -1) FROM DUAL",
-                FirstIntegerOrNull,
-                lockName);
+            "SELECT GET_LOCK(?, -1) FROM DUAL",
+            FirstIntegerOrNull,
+            lockName);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
         }
@@ -52,9 +52,9 @@ public class MysqlServerLock implements Lock {
     @Override
     public boolean tryLock() {
         final Integer rc = jdbcTemplate.query(
-                "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,-1), -1) FROM DUAL",
-                FirstIntegerOrNull,
-                lockName, lockName);
+            "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,-1), -1) FROM DUAL",
+            FirstIntegerOrNull,
+            lockName, lockName);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
         }
@@ -65,9 +65,9 @@ public class MysqlServerLock implements Lock {
     public boolean tryLock(long time, @NotNull TimeUnit unit) {
         final int sec = (int) Math.max(1, unit.toSeconds(time));
         final Integer rc = jdbcTemplate.query(
-                "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,?), -1) FROM DUAL",
-                FirstIntegerOrNull,
-                lockName, lockName, sec);
+            "SELECT IF(IS_FREE_LOCK(?)=1, GET_LOCK(?,?), -1) FROM DUAL",
+            FirstIntegerOrNull,
+            lockName, lockName, sec);
         if (rc == null) {
             throw new IllegalStateException("can not get lock, name=" + lockName);
         }
@@ -82,9 +82,9 @@ public class MysqlServerLock implements Lock {
     @Override
     public void unlock() {
         final Integer rc = jdbcTemplate.query(
-                "SELECT RELEASE_LOCK(?) FROM DUAL",
-                FirstIntegerOrNull,
-                lockName);
+            "SELECT RELEASE_LOCK(?) FROM DUAL",
+            FirstIntegerOrNull,
+            lockName);
         if (rc == null) {
             log.warn("unlock not existed lock, name={}", lockName);
         }

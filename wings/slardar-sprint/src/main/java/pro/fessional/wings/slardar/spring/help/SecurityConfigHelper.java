@@ -112,22 +112,22 @@ public class SecurityConfigHelper {
 
     @NotNull
     public static String[] oauth2AntPaths() {
-        return new String[]{"/oauth/**", "/error"};
+        return new String[]{ "/oauth/**", "/error" };
     }
 
     @NotNull
     public static String[] testAntPaths() {
-        return new String[]{"/test/**"};
+        return new String[]{ "/test/**" };
     }
 
     @NotNull
     public static String[] loginAntPaths() {
-        return new String[]{"/login", "/login/**", "/logout"};
+        return new String[]{ "/login", "/login/**", "/logout" };
     }
 
     @NotNull
     public static String[] swaggerAntPaths() {
-        return new String[]{"/swagger*/**", "/webjars/**"};
+        return new String[]{ "/swagger*/**", "/webjars/**" };
     }
 
     public static void prefixMvc(String mvc, String[] path) {

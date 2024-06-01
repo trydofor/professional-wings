@@ -85,7 +85,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
     private final Map<String, Long> adjusted = new ConcurrentHashMap<>();
 
     private final ResultSetExtractor<U.Two<String, String>> headTableKey = rs ->
-            rs.next() ? U.of(rs.getString(1), rs.getString(2)) : null;
+        rs.next() ? U.of(rs.getString(1), rs.getString(2)) : null;
 
     private NameNextStep checkTableAndAdjust(NextStep step, String name) {
         if (adjustTbl == null || adjustTbl.isEmpty()) return null;

@@ -115,7 +115,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      *
      * @param type -1|0|1
      */
-    public void setTableExist(@MagicConstant(intValues = {-1, 0, 1}) int type) {
+    public void setTableExist(@MagicConstant(intValues = { -1, 0, 1 }) int type) {
         tableExist = type;
     }
 
@@ -289,7 +289,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return diff;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private int insertInto(P pojo, boolean ignoreOrReplace, JournalDiff diff) {
 
         final DSLContext dsl = ctx();
@@ -407,11 +407,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             int fldLen = fields.length;
             int updLen = updateFields.length;
             BatchBindStep batch = dsl.batch(
-                    dsl.insertInto(table)
-                       .columns(fields)
-                       .values(new Object[fldLen])
-                       .onDuplicateKeyUpdate()
-                       .set(map)
+                dsl.insertInto(table)
+                   .columns(fields)
+                   .values(new Object[fldLen])
+                   .onDuplicateKeyUpdate()
+                   .set(map)
             );
 
             for (R r : rs) {
@@ -468,7 +468,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * @param updateFields fields to update if Duplicate Key, should not use table alias
      * @return array of affected records, can use ModifyAssert to check
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public int @NotNull [] batchMerge(T table, Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
@@ -560,7 +560,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * @return array of affected records, can use ModifyAssert to check
      * @see DSLContext#mergeInto(Table)
      */
-    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
+    @SuppressWarnings({ "unchecked", "ResultOfMethodCallIgnored" })
     public int @NotNull [] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
@@ -570,10 +570,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                 // insert ignore
 
                 final InsertReturningStep<R> step = dsl
-                        .insertInto(table)
-                        .columns(fields)
-                        .values(new Object[fields.length])
-                        .onDuplicateKeyIgnore();
+                    .insertInto(table)
+                    .columns(fields)
+                    .values(new Object[fields.length])
+                    .onDuplicateKeyIgnore();
 
                 BatchBindStep batch = dsl.batch(step);
                 for (R r : rs) {
@@ -583,10 +583,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             }
             else {
                 final InsertOnDuplicateSetStep<R> step = dsl
-                        .insertInto(table)
-                        .columns(fields)
-                        .values(new Object[fields.length])
-                        .onDuplicateKeyUpdate();
+                    .insertInto(table)
+                    .columns(fields)
+                    .values(new Object[fields.length])
+                    .onDuplicateKeyUpdate();
 
                 InsertOnDuplicateSetMoreStep<R> set = null;
                 for (Field<Object> fld : fields) {
@@ -647,7 +647,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * @param updateFields fields to update
      * @return array of affected records, can use ModifyAssert to check
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public int @NotNull [] batchUpdate(T table, Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
@@ -667,9 +667,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             }
 
             BatchBindStep batch = dsl.batch(
-                    dsl.update(table)
-                       .set(map)
-                       .where(where)
+                dsl.update(table)
+                   .set(map)
+                   .where(where)
             );
 
             for (R r : rs) {

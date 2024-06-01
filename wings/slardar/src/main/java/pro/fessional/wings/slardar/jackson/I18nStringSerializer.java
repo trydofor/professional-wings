@@ -39,12 +39,13 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
 
         if (value instanceof CharSequence) {
             String text = value.toString();
-            if (enabled){
+            if (enabled) {
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
                 text = messageSource.getMessage(text, new Object[]{}, locale);
             }
             generator.writeString(text);
-        } else { // value instanceof I18nString
+        }
+        else { // value instanceof I18nString
             I18nString i18n = (I18nString) value;
             if (enabled) {
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
@@ -53,7 +54,8 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
                     text = i18n.toString(locale);
                 }
                 generator.writeString(text);
-            } else {
+            }
+            else {
                 generator.writeStartObject();
                 generator.writeStringField("code", i18n.getCode());
                 generator.writeStringField("hint", i18n.getHint());

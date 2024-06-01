@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor
  * @since 2022-12-01
  */
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TinyTasker {
 
@@ -56,7 +56,6 @@ public @interface TinyTasker {
      * timingIdle, fixed idle between (seconds),
      * priority second to timingCron,equivalent to fixedDelay.
      * end to start, 0 is invalid, Not use the `Default` config
-     *
      */
     int idle() default 0;
 
@@ -71,7 +70,7 @@ public @interface TinyTasker {
     /**
      * Adding to a SpringBean can be auto config by Wings at startup.
      */
-    @Target({ElementType.TYPE})
+    @Target({ ElementType.TYPE })
     @Retention(RetentionPolicy.RUNTIME)
     @Component
     public @interface Auto {

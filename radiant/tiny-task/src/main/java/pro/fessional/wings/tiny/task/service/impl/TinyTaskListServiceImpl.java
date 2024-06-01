@@ -35,13 +35,13 @@ import java.util.Set;
 @Slf4j
 public class TinyTaskListServiceImpl implements TinyTaskListService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecService tinyTaskExecService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskDefineDao winTaskDefineDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinTaskResultDao winTaskResultDao;
 
     @Override
@@ -50,17 +50,17 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
         final Set<Long> ids = tinyTaskExecService.running();
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         return PageJooqHelper
-                .use(winTaskDefineDao, pq)
-                .count()
-                .from(t)
-                .where(t.Id.in(ids))
-                .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
-                .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
-                        t.TaskerName, t.TaskerApps, t.TaskerRuns,
-                        t.TimingCron, t.TimingIdle, t.TimingRate,
-                        t.LastExec, t.LastFail, t.LastDone,
-                        t.SumExec, t.SumFail, t.SumDone)
-                .into(r16Item(t));
+            .use(winTaskDefineDao, pq)
+            .count()
+            .from(t)
+            .where(t.Id.in(ids))
+            .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
+            .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
+                t.TaskerName, t.TaskerApps, t.TaskerRuns,
+                t.TimingCron, t.TimingIdle, t.TimingRate,
+                t.LastExec, t.LastFail, t.LastDone,
+                t.SumExec, t.SumFail, t.SumDone)
+            .into(r16Item(t));
     }
 
     @Override
@@ -68,17 +68,17 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
     public PageResult<Item> listDefined(PageQuery pq) {
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         return PageJooqHelper
-                .use(winTaskDefineDao, pq)
-                .count()
-                .from(t)
-                .whereTrue()
-                .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
-                .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
-                        t.TaskerName, t.TaskerApps, t.TaskerRuns,
-                        t.TimingCron, t.TimingIdle, t.TimingRate,
-                        t.LastExec, t.LastFail, t.LastDone,
-                        t.SumExec, t.SumFail, t.SumDone)
-                .into(r16Item(t));
+            .use(winTaskDefineDao, pq)
+            .count()
+            .from(t)
+            .whereTrue()
+            .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
+            .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
+                t.TaskerName, t.TaskerApps, t.TaskerRuns,
+                t.TimingCron, t.TimingIdle, t.TimingRate,
+                t.LastExec, t.LastFail, t.LastDone,
+                t.SumExec, t.SumFail, t.SumDone)
+            .into(r16Item(t));
     }
 
     @NotNull
@@ -118,12 +118,12 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
     public PageResult<WinTaskResult> listResult(long id, PageQuery pq) {
         final WinTaskResultTable t = winTaskResultDao.getTable();
         return PageJooqHelper
-                .use(winTaskResultDao, pq)
-                .count()
-                .from(t)
-                .where(t.TaskId.eq(id))
-                .order(Map.of("id", t.Id), t.Id.desc())
-                .fetch()
-                .into(WinTaskResult.class);
+            .use(winTaskResultDao, pq)
+            .count()
+            .from(t)
+            .where(t.TaskId.eq(id))
+            .order(Map.of("id", t.Id), t.Id.desc())
+            .fetch()
+            .into(WinTaskResult.class);
     }
 }

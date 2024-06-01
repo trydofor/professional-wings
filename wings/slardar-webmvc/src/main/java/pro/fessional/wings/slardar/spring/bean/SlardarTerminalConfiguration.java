@@ -47,8 +47,8 @@ public class SlardarTerminalConfiguration {
     public TerminalBuilder remoteTerminalBuilder(WingsRemoteResolver resolver) {
         log.info("SlardarWebmvc spring-bean remoteTerminalBuilder");
         return (builder, request) -> builder
-                .terminal(TerminalAddr, resolver.resolveRemoteIp(request))
-                .terminal(TerminalAgent, resolver.resolveAgentInfo(request));
+            .terminal(TerminalAddr, resolver.resolveRemoteIp(request))
+            .terminal(TerminalAgent, resolver.resolveAgentInfo(request));
     }
 
     @Bean

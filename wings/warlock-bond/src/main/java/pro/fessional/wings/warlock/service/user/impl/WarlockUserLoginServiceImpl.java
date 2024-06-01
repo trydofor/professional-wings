@@ -25,13 +25,13 @@ import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 @Slf4j
 public class WarlockUserLoginServiceImpl implements WarlockUserLoginService, TerminalContextAware {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WinUserLoginDao winUserLoginDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
 
     @Override

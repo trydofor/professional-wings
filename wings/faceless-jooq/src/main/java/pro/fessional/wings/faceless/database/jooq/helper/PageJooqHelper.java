@@ -277,53 +277,53 @@ public class PageJooqHelper extends PageJdbcHelper {
         }
 
         public <T1> IntoJooq<Record1<T1>> fetch(SelectField<T1> t1) {
-            return fetch(new SelectField[]{t1});
+            return fetch(new SelectField[]{ t1 });
         }
 
         public <T1, T2> IntoJooq<Record2<T1, T2>> fetch(SelectField<T1> t1, SelectField<T2> t2) {
-            return fetch(new SelectField[]{t1, t2});
+            return fetch(new SelectField[]{ t1, t2 });
         }
 
         public <T1, T2, T3> IntoJooq<Record3<T1, T2, T3>> fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3) {
-            return fetch(new SelectField[]{t1, t2, t3});
+            return fetch(new SelectField[]{ t1, t2, t3 });
         }
 
         public <T1, T2, T3, T4> IntoJooq<Record4<T1, T2, T3, T4>> fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4) {
-            return fetch(new SelectField[]{t1, t2, t3, t4});
+            return fetch(new SelectField[]{ t1, t2, t3, t4 });
         }
 
         public <T1, T2, T3, T4, T5> IntoJooq<Record5<T1, T2, T3, T4, T5>> fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5 });
         }
 
         public <T1, T2, T3, T4, T5, T6> IntoJooq<Record6<T1, T2, T3, T4, T5, T6>>
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7> IntoJooq<Record7<T1, T2, T3, T4, T5, T6, T7>>
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8> IntoJooq<Record8<T1, T2, T3, T4, T5, T6, T7, T8>>
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9> IntoJooq<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> IntoJooq<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
@@ -331,7 +331,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
@@ -339,7 +339,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
@@ -347,7 +347,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
@@ -355,7 +355,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
@@ -363,7 +363,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         fetch(SelectField<T1> t1, SelectField<T2> t2, SelectField<T3> t3, SelectField<T4> t4, SelectField<T5> t5,
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
@@ -372,7 +372,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>
@@ -381,7 +381,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>
@@ -390,7 +390,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17, SelectField<T17> t18) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
@@ -399,7 +399,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17, SelectField<T17> t18, SelectField<T19> t19) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>
@@ -408,7 +408,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T6> t6, SelectField<T7> t7, SelectField<T8> t8, SelectField<T9> t9, SelectField<T10> t10,
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17, SelectField<T17> t18, SelectField<T19> t19, SelectField<T20> t20) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>
@@ -418,7 +418,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17, SelectField<T17> t18, SelectField<T19> t19, SelectField<T20> t20,
               SelectField<T21> t21) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21 });
         }
 
         public <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>
@@ -428,7 +428,7 @@ public class PageJooqHelper extends PageJdbcHelper {
               SelectField<T11> t11, SelectField<T12> t12, SelectField<T13> t13, SelectField<T14> t14, SelectField<T15> t15,
               SelectField<T16> t16, SelectField<T17> t17, SelectField<T17> t18, SelectField<T19> t19, SelectField<T20> t20,
               SelectField<T21> t21, SelectField<T22> t22) {
-            return fetch(new SelectField[]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22});
+            return fetch(new SelectField[]{ t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22 });
         }
 
         @SuppressWarnings("unchecked")
@@ -452,19 +452,19 @@ public class PageJooqHelper extends PageJdbcHelper {
             }
 
             if (ctx.total > 0) {
-                ctx.result = (Result<S>) (ctx.where == null ?
-                                          ctx.dsl.select(select)
-                                                 .from(ctx.from)
-                                                 .orderBy(ctx.order)
-                                                 .limit(ctx.page.toOffset(), ctx.page.getSize())
-                                                 .fetch()
-                                                            :
-                                          ctx.dsl.select(select)
-                                                 .from(ctx.from)
-                                                 .where(ctx.where)
-                                                 .orderBy(ctx.order)
-                                                 .limit(ctx.page.toOffset(), ctx.page.getSize())
-                                                 .fetch()
+                ctx.result = (Result<S>) (
+                    ctx.where == null
+                        ? ctx.dsl.select(select)
+                                 .from(ctx.from)
+                                 .orderBy(ctx.order)
+                                 .limit(ctx.page.toOffset(), ctx.page.getSize())
+                                 .fetch()
+                        : ctx.dsl.select(select)
+                                 .from(ctx.from)
+                                 .where(ctx.where)
+                                 .orderBy(ctx.order)
+                                 .limit(ctx.page.toOffset(), ctx.page.getSize())
+                                 .fetch()
                 );
             }
 
@@ -484,9 +484,9 @@ public class PageJooqHelper extends PageJdbcHelper {
 
             if (context.total > 0) {
                 context.result = context.wrap
-                        .orderBy(context.order)
-                        .limit(context.page.toOffset(), context.page.getSize())
-                        .fetch();
+                    .orderBy(context.order)
+                    .limit(context.page.toOffset(), context.page.getSize())
+                    .fetch();
             }
             return new IntoJooq<>(context);
         }

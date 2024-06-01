@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * FastJson Util, not recommended for use in complex types.
  *
- * @see pro.fessional.wings.slardar.jackson.JacksonHelper
  * @author trydofor
+ * @see pro.fessional.wings.slardar.jackson.JacksonHelper
  * @since 2022-04-22
  */
 public class FastJsonHelper {
@@ -51,11 +51,11 @@ public class FastJsonHelper {
 
     //
     private static final EnumSet<JSONReader.Feature> ReaderEnum = EnumSet.of(
-            JSONReader.Feature.SupportSmartMatch,
-            JSONReader.Feature.UseNativeObject,
-            JSONReader.Feature.IgnoreSetNullValue,
-            JSONReader.Feature.ErrorOnNotSupportAutoType,
-            JSONReader.Feature.AllowUnQuotedFieldNames
+        JSONReader.Feature.SupportSmartMatch,
+        JSONReader.Feature.UseNativeObject,
+        JSONReader.Feature.IgnoreSetNullValue,
+        JSONReader.Feature.ErrorOnNotSupportAutoType,
+        JSONReader.Feature.AllowUnQuotedFieldNames
     );
 
     /**
@@ -86,10 +86,10 @@ public class FastJsonHelper {
     }
 
     private static final EnumSet<JSONWriter.Feature> WriterEnum = EnumSet.of(
-            JSONWriter.Feature.WriteEnumsUsingName,
-            JSONWriter.Feature.WriteBigDecimalAsPlain,
-            JSONWriter.Feature.WriteNonStringValueAsString,
-            JSONWriter.Feature.BrowserCompatible
+        JSONWriter.Feature.WriteEnumsUsingName,
+        JSONWriter.Feature.WriteBigDecimalAsPlain,
+        JSONWriter.Feature.WriteNonStringValueAsString,
+        JSONWriter.Feature.BrowserCompatible
     );
 
     /**

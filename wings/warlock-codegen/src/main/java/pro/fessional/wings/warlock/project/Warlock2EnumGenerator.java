@@ -20,8 +20,8 @@ public class Warlock2EnumGenerator extends ProjectEnumGenerator {
 
     public static Consumer<Builder> excludeWarlock() {
         return builder -> builder
-                .excludeType(warlockEnums);
+            .excludeType(warlockEnums);
     }
 
-    public static final String[] warlockEnums = {"grant_type", "user_gender", "user_status"};
+    public static final String[] warlockEnums = { "grant_type", "user_gender", "user_status" };
 }

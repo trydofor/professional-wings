@@ -23,19 +23,19 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 @ConditionalWingsEnabled(abs = TinyMailEnabledProp.Key$mvcSend)
 public class MailSendController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyMailService tinyMailService;
 
     @Operation(summary = "Create mail and send it sync or async", description = """
-            # Usage
-            Create the mail, and auto send it in sync or async way.
-            ## Params
-            * @param - request body
-            ## Returns
-            * @return {200 | Result(-1)} failure
-            * @return {200 | Result(0)} sync send
-            * @return {200 | Result(mills)} async send at mills time
-            """)
+        # Usage
+        Create the mail, and auto send it in sync or async way.
+        ## Params
+        * @param - request body
+        ## Returns
+        * @return {200 | Result(-1)} failure
+        * @return {200 | Result(0)} sync send
+        * @return {200 | Result(mills)} async send at mills time
+        """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendMail + "}")
     @ResponseBody
     public R<Long> sendMail(@RequestBody TinyMailPlain mail) {
@@ -45,13 +45,13 @@ public class MailSendController {
 
 
     @Operation(summary = "Save the mail only, do not send", description = """
-            # Usage
-            Save the new mail, return the id.
-            ## Params
-            * @param - request body
-            ## Returns
-            * @return {200 | Result(id)} mail id
-            """)
+        # Usage
+        Save the new mail, return the id.
+        ## Params
+        * @param - request body
+        ## Returns
+        * @return {200 | Result(id)} mail id
+        """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendSave + "}")
     @ResponseBody
     public R<Long> sendSave(@RequestBody TinyMailPlain mail) {
@@ -61,11 +61,11 @@ public class MailSendController {
 
 
     @Operation(summary = "sync scan and resend mail async", description = """
-            # Usage
-            sync scan the mail to resend, return the count, and send them async
-            ## Returns
-            * @return {200 | Result(count)} mail cou t
-            """)
+        # Usage
+        sync scan the mail to resend, return the count, and send them async
+        ## Returns
+        * @return {200 | Result(count)} mail cou t
+        """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendScan + "}")
     @ResponseBody
     public R<Integer> sendScan() {
@@ -91,13 +91,13 @@ public class MailSendController {
 
 
     @Operation(summary = "Sync resend failed mail", description = """
-            # Usage
-            Sync resend the  failed email, return success/fail, or throw exception
-            ## Params
-            * @param - request body
-            ## Returns
-            * @return {200 | Result(bool)} success or not
-            """)
+        # Usage
+        Sync resend the  failed email, return success/fail, or throw exception
+        ## Params
+        * @param - request body
+        ## Returns
+        * @return {200 | Result(bool)} success or not
+        """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendRetry + "}")
     @ResponseBody
     public R<Boolean> sendRetry(@RequestBody Ins mail) {

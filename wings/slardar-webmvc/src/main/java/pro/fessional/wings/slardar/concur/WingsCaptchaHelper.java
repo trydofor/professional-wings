@@ -28,6 +28,7 @@ public class WingsCaptchaHelper {
 
     /**
      * Generate 6 char code from `23456789abdefghqrtABCDEFGHJKLMPQRSTUWXY`, 200x60 pix image
+     *
      * @see Config
      */
     public static Producer kaptcha() {
