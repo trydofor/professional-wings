@@ -7,6 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,6 +26,10 @@ import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.io.File;
 import java.util.Map;
+
+import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.branch;
+import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.buildDate;
+import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.commitIdShort;
 
 /**
  * @author trydofor
@@ -116,10 +121,12 @@ public class SlardarMonitorConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice, SlardarMonitorProp prop) {
+    public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice, SlardarMonitorProp prop, GitProperties git) {
         final String name = prop.getDingNotice();
         log.info("Slardar spring-bean dingTalkReport, conf=" + name);
-        return new DingTalkReport(dingTalkNotice, name);
+        DingTalkReport bean = new DingTalkReport(dingTalkNotice, name);
+        bean.setGitInfo(commitIdShort(git) + " " + buildDate(git) + " " + branch(git));
+        return bean;
     }
 
     @Bean

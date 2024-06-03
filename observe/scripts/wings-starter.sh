@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-03-05
+THIS_VERSION=2024-06-01
 ################ system env to use ################
 # JAVA_HOME      # if JDK_HOME is not valid
 # JAVA_OPTS      # prepend to java args
@@ -590,11 +590,13 @@ case "$ARGS_RUN" in
 
         if id | grep -q '(sudo)'; then
             if which jhsdb &> /dev/null; then
-                echo -e "\033[37;42;1mINFO: sudo $(which jhsdb) jmap --heap --pid $cid \033[m"
-                sudo jhsdb jmap --heap --pid "$cid"
+                _jhsdb=$(which jhsdb)
+                echo -e "\033[37;42;1mINFO: sudo $_jhsdb jmap --heap --pid $cid \033[m"
+                sudo "$_jhsdb" jmap --heap --pid "$cid"
             else
-                echo -e "\033[37;42;1mINFO: sudo $(which jmap) -heap $cid \033[m"
-                sudo jmap -heap "$cid"
+                _jmap=$(which jmap)
+                echo -e "\033[37;42;1mINFO: sudo $_jmap -heap $cid \033[m"
+                sudo "$_jmap" -heap "$cid"
             fi
         else
             if which jhsdb &> /dev/null; then

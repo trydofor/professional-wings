@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.info.GitProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
@@ -17,6 +19,7 @@ import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
+import pro.fessional.wings.silencer.spring.help.VersionInfoHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerRuntimeProp;
@@ -46,7 +49,7 @@ public class SilencerCurseConfiguration {
     @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$auditProp, value = false)
     public ApplicationInspectRunner auditPropRunner() {
         log.info("SilencerCurse spring-bean auditPropRunner");
-        return new ApplicationInspectRunner(WingsOrdered.Lv5Supervisor, ignored -> {
+        return new ApplicationInspectRunner(WingsOrdered.Lv4Application, ignored -> {
             final Map<String, List<String>> map = ApplicationContextHelper.listPropertySource();
             final Map<String, List<String>> key = new LinkedHashMap<>();
 
@@ -74,15 +77,38 @@ public class SilencerCurseConfiguration {
         });
     }
 
+    @Bean
+    @ConditionalWingsEnabled
+    public ApplicationInspectRunner infoGitJvmRunner(ApplicationContext context) {
+        log.info("Silencer spring-runs infoGitJvmRunner");
+        return new ApplicationInspectRunner(WingsOrdered.Lv1Config, args -> {
+
+
+            log.info("jvm-name=" + VersionInfoHelper.jvmName());
+            log.info("jvm-version=" + VersionInfoHelper.jvmVersion());
+            log.info("jvm-vendor=" + VersionInfoHelper.jvmVendor());
+
+            var git = context.getBean(GitProperties.class);
+            log.info("git-branch=" + VersionInfoHelper.branch(git));
+            log.info("git-id=" + VersionInfoHelper.commitId(git));
+            log.info("git-time=" + VersionInfoHelper.commitDateTime(git));
+            log.info("git-build=" + VersionInfoHelper.buildDateTime(git));
+            log.info("git-version=" + VersionInfoHelper.buildVersion(git));
+            log.info("git-message=" + VersionInfoHelper.commitMessage(git));
+        });
+    }
+
+    public static final int OrderMuteConsoleRunner = WingsOrdered.Lv5Supervisor + WingsOrdered.PrDog;
+
     /**
-     * Configuration is complete and the log is switched before the service starts
+     * Configuration is complete and the log is switched before the service starts, should run at last
      */
     @Bean
     @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$muteConsole)
     @ConditionalOnClass(ConsoleAppender.class)
     public ApplicationReadyEventRunner muteConsoleRunner(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs muteConsoleRunner");
-        return new ApplicationReadyEventRunner(WingsOrdered.Lv1Config, ignored -> {
+        return new ApplicationReadyEventRunner(OrderMuteConsoleRunner, ignored -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();

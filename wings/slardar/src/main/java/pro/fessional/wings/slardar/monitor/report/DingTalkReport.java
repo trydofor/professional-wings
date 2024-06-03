@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static pro.fessional.wings.silencer.datetime.DateTimePattern.FMT_FULL_19Z;
+
 /**
  * <a href="https://developers.dingtalk.com/document/app/custom-robot-access">Dingtalk robot</a>
  *
@@ -26,6 +28,8 @@ public class DingTalkReport implements WarnReport {
 
     private final String dingConfig;
     private final DingTalkNotice dingTalkNotice;
+
+    protected String gitInfo = null;
 
     public DingTalkReport(DingTalkNotice notice, String config) {
         this.dingTalkNotice = notice;
@@ -85,17 +89,20 @@ public class DingTalkReport implements WarnReport {
         StringBuilder sb = new StringBuilder();
         mkTitleH2(sb, app);
         mkItemText(sb, jvm, "jvm-name");
-        mkItemText(sb, Now.zonedDateTime().toString(), "rpt-time");
+        mkItemText(sb, gitInfo, "git-info");
+        mkItemText(sb, FMT_FULL_19Z.format(Now.zonedDateTime()), "rpt-time");
         builder.accept(sb);
         return sb.toString();
     }
 
     protected void mkTitleH2(StringBuilder sb, String str) {
+        if (str == null) return;
         sb.append("\n\n## ■ ")
           .append(str);
     }
 
     protected void mkItemText(StringBuilder sb, String value, String key) {
+        if (value == null) return;
         sb.append("\n- ")
           .append(value)
           .append(" | ")
