@@ -63,13 +63,12 @@ public class WingsReorderEnableTest {
         //
         // Assertions.assertEquals("2,1", toString(servicesProvider.stream().toList()));
 
-        // @Order first
+        // @Order first only in @Bean, because the sort obj is methond ,not impl Ordered
         Assertions.assertEquals("1,2", toString(getterClasses));
         Assertions.assertEquals("1,2", toString(orderedClass));
         Assertions.assertEquals("1,2", toString(plainClasses));
         Assertions.assertEquals("1,2", toString(services));
 
-        // @Order > Ordered.getOrder
         Assertions.assertEquals("1,2", toString(getterClassesProvider.orderedStream().toList()));
         Assertions.assertEquals("1,2", toString(orderedClassProvider.orderedStream().toList()));
         Assertions.assertEquals("1,2", toString(plainClassProvider.orderedStream().toList()));

@@ -18,7 +18,10 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * (&#64;Order | &#64;Priority) &gt; Ordered.getOrder
+ * <li>wings.reorder.*, always highest</li>
+ * <li>if &#64;Component, Ordered.getOrder &gt; (&#64;Order | &#64;Priority)</li>
+ * <li>if &#64;Bean, (&#64;Order | &#64;Priority) &gt; Ordered.getOrder,
+ * because the obj is method (not impl Ordered) in AnnotationAwareOrderComparator.findOrder(Object obj)</li>
  *
  * @author trydofor
  * @see org.springframework.core.annotation.AnnotationAwareOrderComparator

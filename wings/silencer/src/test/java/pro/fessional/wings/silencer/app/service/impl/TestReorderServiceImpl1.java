@@ -9,8 +9,14 @@ import pro.fessional.wings.silencer.app.service.TestReorderService;
  * @since 2024-05-11
  */
 @Service
-@Order(2)
+@Order(1)
 public class TestReorderServiceImpl1 implements TestReorderService {
+
+    @Override
+    public int getOrder() {
+        return 2;
+    }
+
     @Override
     public String toString() {
         return "1";

@@ -62,18 +62,17 @@ public class WingsReorderDefaultTest {
         // scaned order
         // Assertions.assertEquals("2,1", toString(servicesProvider.stream().toList()));
 
-        // @Order first
+        // @Order > Ordered.getOrder first only in @Bean, because the sort obj is methond ,not impl Ordered
         Assertions.assertEquals("2,1", toString(getterClasses));
         Assertions.assertEquals("2,1", toString(orderedClass));
         Assertions.assertEquals("2,1", toString(plainClasses));
+        // Ordered.getOrder first, in @Service, the sort object is impl Ordered
         Assertions.assertEquals("2,1", toString(services));
 
-        // @Order > Ordered.getOrder
         Assertions.assertEquals("2,1", toString(getterClassesProvider.orderedStream().toList()));
         Assertions.assertEquals("2,1", toString(orderedClassProvider.orderedStream().toList()));
         Assertions.assertEquals("2,1", toString(plainClassProvider.orderedStream().toList()));
         Assertions.assertEquals("2,1", toString(servicesProvider.orderedStream().toList()));
-
 
         TestReorderService impl2 = servicesProvider.getIfUnique();
         Assertions.assertNull(impl2);
