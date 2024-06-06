@@ -32,7 +32,8 @@ public class AutoZoneUtil {
     @NotNull
     public static ZonedDateTime autoZonedRequest(@NotNull TemporalAccessor dateTime, @NotNull AutoZoneType autoType, @NotNull Supplier<ZoneId> client) {
         // (1) tma is sent by the user, first adjusted to Client timezone
-        final ZonedDateTime zdt = DateParser.parseZoned(dateTime, client.get());
+        ZoneId zid = autoType == AutoZoneType.Off ? null : client.get();
+        final ZonedDateTime zdt = DateParser.parseZoned(dateTime, zid);
 
         // (2) convert to System timezone
         if (autoType == AutoZoneType.Auto || autoType == AutoZoneType.System) {
@@ -44,8 +45,16 @@ public class AutoZoneUtil {
 
     @NotNull
     public static OffsetDateTime autoOffsetRequest(@NotNull TemporalAccessor dateTime, @NotNull AutoZoneType autoType, @NotNull Supplier<ZoneId> client) {
-        final ZonedDateTime zdt = autoZonedRequest(dateTime, autoType, client);
-        return zdt.toOffsetDateTime();
+        // (1) tma is sent by the user, first adjusted to Client timezone
+        ZoneId zid = autoType == AutoZoneType.Off ? null : client.get();
+        final OffsetDateTime odt = DateParser.parseOffset(dateTime, zid);
+
+        // (2) convert to System timezone
+        if (autoType == AutoZoneType.Auto || autoType == AutoZoneType.System) {
+            return odt.atZoneSameInstant(ThreadNow.sysZoneId()).toOffsetDateTime();
+        }
+
+        return odt;
     }
 
     // response : DateTime to String, Default System to Client

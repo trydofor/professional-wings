@@ -9,32 +9,35 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.testing.silencer.data.BoxingArray;
+import pro.fessional.wings.testing.silencer.data.BoxingValue;
+import pro.fessional.wings.testing.silencer.data.CollectionValue;
+import pro.fessional.wings.testing.silencer.data.CommonValue;
+import pro.fessional.wings.testing.silencer.data.PrimitiveArray;
+import pro.fessional.wings.testing.silencer.data.PrimitiveValue;
+import pro.fessional.wings.testing.silencer.data.TransientPojo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-import static pro.fessional.wings.slardar.fastjson.FastJsonHelper.DefaultWriter;
-
 /**
  * <a href="https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn">register_custom_reader_writer_cn</a>
+ * <a href="https://github.com/alibaba/fastjson2/issues/2582">negative bigdecimal -9223372036854775808</a>
  *
  * @author trydofor
  * @since 2022-10-25
  */
 @Slf4j
-class FastJsonHelperTest {
-
-    static {
-        FastJsonHelper.initGlobal(true);
-    }
+class FastJsonTest {
 
     @Data
     public static class Dto {
+        private boolean boolVal = true;
         private int intVal = 10086;
         @JSONField(format = "#,###")
-        private long longVal = 10086;
+        private long longVal = Long.MAX_VALUE;
         private double doubleVal = 100.86;
         private float floatVal = 100.86F;
         private BigDecimal bigDecimal = new BigDecimal("100.86");
@@ -46,35 +49,35 @@ class FastJsonHelperTest {
     @Test
     @TmsLink("C13010")
     public void testDefault() {
-        Dto d0 = new Dto();
-        final String s0 = JSON.toJSONString(d0, DefaultWriter());
-        log.info("testDefault, s0={}", s0);
-        final Dto d1 = JSON.parseObject(s0, Dto.class, FastJsonHelper.DefaultReader());
-        Assertions.assertEquals(d0, d1);
+        testDefault(new Dto());
+        testDefault(new BoxingArray().defaults());
+        testDefault(new BoxingValue().defaults());
+        testDefault(new CollectionValue().defaults());
+        testDefault(new CommonValue().defaults());
+        testDefault(new PrimitiveArray().defaults());
+        testDefault(new PrimitiveValue().defaults());
+        testDefault(new TransientPojo().defaults());
+    }
+
+    private <T> void testDefault(T t1){
+        final String s0 = JSON.toJSONString(t1);
+        Class<?> clz = t1.getClass();
+        log.info("testDefault, class={}, json={}", clz.getSimpleName(), s0);
+        final Object d1 = JSON.parseObject(s0, clz);
+        Assertions.assertEquals(t1, d1);
     }
 
     @Test
     @TmsLink("C13011")
     public void testString() {
         Dto d0 = new Dto();
-        final String s0 = FastJsonHelper.string(d0);
+        final String s0 = JSON.toJSONString(d0);
         log.info("testAsString, s0={}", s0);
-        Assertions.assertTrue(s0.contains("\"longVal\":\"10086\""));
-        final Dto d1 = FastJsonHelper.object(s0, Dto.class);
+        Assertions.assertTrue(s0.contains("\"longVal\":9223372036854775807"));
+        final Dto d1 = JSON.parseObject(s0, Dto.class);
         Assertions.assertEquals(d0, d1);
     }
-
-    @Test
-    @TmsLink("C13012")
-    public void testFormatString() {
-        Dto d0 = new Dto();
-        final String s0 = JSON.toJSONString(d0, FastJsonFilters.NumberFormatString, DefaultWriter());
-        log.info("testAsString, s0={}", s0);
-        Assertions.assertTrue(s0.contains("\"longVal\":\"10,086\""));
-        final Dto d1 = FastJsonHelper.object(s0.replace("\"longVal\":\"10,086\"", "\"longVal\":\"10086\""), Dto.class);
-        Assertions.assertEquals(d0, d1);
-    }
-
+    
     /**
      * <a href="https://github.com/alibaba/fastjson2/issues/1537">WriteNonStringValueAsString format Number</a>
      */
@@ -85,13 +88,14 @@ class FastJsonHelperTest {
         Assertions.assertEquals("true", JSON.toJSONString(true));
         Assertions.assertEquals("123", JSON.toJSONString(123));
         Assertions.assertEquals("123", JSON.toJSONString(Integer.valueOf("123")));
+        Assertions.assertEquals(String.valueOf(Long.MAX_VALUE), JSON.toJSONString(Long.MAX_VALUE));
         Assertions.assertEquals("3.14", JSON.toJSONString(3.14));
         Assertions.assertEquals("3.14", JSON.toJSONString(Double.valueOf("3.14")));
         Assertions.assertEquals("3", JSON.toJSONString(new BigDecimal("3")));
         Assertions.assertEquals("3.14", JSON.toJSONString(new BigDecimal("3.14")));
 
         // as string
-        Assertions.assertEquals("true", JSON.toJSONString(true, Feature.WriteNonStringValueAsString));
+        Assertions.assertEquals("\"true\"", JSON.toJSONString(true, Feature.WriteNonStringValueAsString));
         Assertions.assertEquals("\"123\"", JSON.toJSONString(123, Feature.WriteNonStringValueAsString));
         Assertions.assertEquals("\"123\"", JSON.toJSONString(Integer.valueOf("123"), Feature.WriteNonStringValueAsString));
         Assertions.assertEquals("\"3.14\"", JSON.toJSONString(3.14, Feature.WriteNonStringValueAsString));

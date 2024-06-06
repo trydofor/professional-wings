@@ -1,12 +1,10 @@
 package pro.fessional.wings.slardar.fastjson;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONFactory;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.TypeReference;
-import com.alibaba.fastjson2.filter.Filter;
-import com.alibaba.fastjson2.reader.ObjectReaderProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,13 +12,16 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 
 import java.lang.reflect.Type;
-import java.time.OffsetDateTime;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * FastJson Util, not recommended for use in complex types.
+ * <pre>
+ * FastJson Util, not recommended for use in complex types
+ *
+ * Fastjson NOTE
+ * * LocalDateTime as "2023-04-05 06:07:08"
+ * * ZoneDateTime as "2023-04-05T06:07:08[America/New_York]"
+ * * OffsetDateTime as "2023-04-05T06:07:08-04:00"
+ * </pre>
  *
  * @author trydofor
  * @see pro.fessional.wings.slardar.jackson.JacksonHelper
@@ -28,134 +29,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FastJsonHelper {
 
-    private static final ConcurrentHashMap<Object, Boolean> Inited = new ConcurrentHashMap<>();
-
     /**
-     * init or remove the global default setting
+     * do NOT modify these
      */
-    public static void initGlobal(boolean init) {
-        final ObjectReaderProvider readerProvider = JSONFactory.getDefaultObjectReaderProvider();
-        if (init) {
-            {
-                final Object obj = readerProvider.registerIfAbsent(OffsetDateTime.class, FastJsonReaders.OffsetDateTimeReader);
-                Inited.put(FastJsonReaders.OffsetDateTimeReader, obj == null);
-            }
-        }
-        else {
-            if (Inited.getOrDefault(FastJsonReaders.OffsetDateTimeReader, Boolean.FALSE)) {
-                readerProvider.unregisterObjectReader(OffsetDateTime.class);
-                Inited.remove(FastJsonReaders.OffsetDateTimeReader);
-            }
-        }
-    }
-
-    //
-    private static final EnumSet<JSONReader.Feature> ReaderEnum = EnumSet.of(
+    public static final JSONReader.Feature[] WingsReader = {
         JSONReader.Feature.SupportSmartMatch,
         JSONReader.Feature.UseNativeObject,
         JSONReader.Feature.IgnoreSetNullValue,
         JSONReader.Feature.ErrorOnNotSupportAutoType,
         JSONReader.Feature.AllowUnQuotedFieldNames
-    );
+    };
 
     /**
-     * enable/disable the Feature
+     * do NOT modify these
      */
-    public void enableFeature(@NotNull JSONReader.Feature f, boolean enable) {
-        synchronized (ReaderEnum) {
-            if (enable) {
-                ReaderEnum.add(f);
-            }
-            else {
-                ReaderEnum.remove(f);
-            }
-        }
-        ReaderCache = null;
-    }
-
-    private static JSONReader.Feature[] ReaderCache = null;
-
-    @NotNull
-    public static JSONReader.Feature[] DefaultReader() {
-        if (ReaderCache == null) {
-            synchronized (ReaderEnum) {
-                ReaderCache = ReaderEnum.toArray(JSONReader.Feature[]::new);
-            }
-        }
-        return ReaderCache;
-    }
-
-    private static final EnumSet<JSONWriter.Feature> WriterEnum = EnumSet.of(
+    public static final JSONWriter.Feature[] WingsWriter = {
         JSONWriter.Feature.WriteEnumsUsingName,
         JSONWriter.Feature.WriteBigDecimalAsPlain,
-        JSONWriter.Feature.WriteNonStringValueAsString,
+//        JSONWriter.Feature.WriteNonStringValueAsString, // https://github.com/alibaba/fastjson2/issues/2560
         JSONWriter.Feature.BrowserCompatible
-    );
-
-    /**
-     * enable/disable the Feature
-     */
-    public void enableFeature(@NotNull JSONWriter.Feature f, boolean enable) {
-        synchronized (WriterEnum) {
-            if (enable) {
-                WriterEnum.add(f);
-            }
-            else {
-                WriterEnum.remove(f);
-            }
-        }
-        WriterCache = null;
-    }
-
-    private static JSONWriter.Feature[] WriterCache = null;
-
-    @NotNull
-    public static JSONWriter.Feature[] DefaultWriter() {
-        if (WriterCache == null) {
-            synchronized (WriterEnum) {
-                WriterCache = WriterEnum.toArray(JSONWriter.Feature[]::new);
-            }
-        }
-        return WriterCache;
-    }
-
-    private static final LinkedHashMap<String, Filter> FilterList = new LinkedHashMap<>();
-
-    static {
-        FilterList.put("NumberAsString", FastJsonFilters.NumberAsString);
-    }
-
-    private static Filter[] FilterCache = null;
-
-    /**
-     * enable/disable the Filter by name, sort by adding order
-     *
-     * @param name   filter name
-     * @param filter `null` to disable, otherwise to enable
-     */
-    public static void enableFilter(@NotNull String name, @Nullable Filter filter) {
-        synchronized (FilterList) {
-            if (filter == null) {
-                FilterList.remove(name);
-            }
-            else {
-                FilterList.put(name, filter);
-            }
-        }
-        FilterCache = null;
-    }
-
-    @NotNull
-    public static Filter[] DefaultFilter() {
-        if (FilterCache == null) {
-            synchronized (FilterList) {
-                FilterCache = FilterList.values().toArray(Filter[]::new);
-            }
-        }
-        return FilterCache;
-    }
-
-    ////
+    };
 
     /**
      * Deserialization with the wings convention
@@ -163,7 +56,7 @@ public class FastJsonHelper {
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull ResolvableType targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, targetType.getType(), DefaultReader());
+        return JSON.parseObject(json, targetType.getType(), WingsReader);
     }
 
     /**
@@ -172,7 +65,7 @@ public class FastJsonHelper {
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull TypeDescriptor targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, targetType.getResolvableType().getType(), DefaultReader());
+        return JSON.parseObject(json, targetType.getResolvableType().getType(), WingsReader);
     }
 
     /**
@@ -181,7 +74,7 @@ public class FastJsonHelper {
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull TypeReference<T> targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, targetType, DefaultReader());
+        return JSON.parseObject(json, targetType, WingsReader);
     }
 
     /**
@@ -190,7 +83,7 @@ public class FastJsonHelper {
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull Type targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, targetType, DefaultReader());
+        return JSON.parseObject(json, targetType, WingsReader);
     }
 
     /**
@@ -199,7 +92,16 @@ public class FastJsonHelper {
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull Class<T> targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, targetType, DefaultReader());
+        return JSON.parseObject(json, targetType, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null->!null")
+    public static JSONObject object(@Nullable String json) {
+        if (json == null) return null;
+        return JSON.parseObject(json, WingsReader);
     }
 
     /**
@@ -210,6 +112,40 @@ public class FastJsonHelper {
     @Contract("!null->!null")
     public static String string(@Nullable Object obj) {
         if (obj == null) return null;
-        return JSON.toJSONString(obj, DefaultFilter(), DefaultWriter());
+        return JSON.toJSONString(obj, WingsWriter);
     }
+
+    ////
+
+    @Contract("_,_,!null->!null")
+    public static String getString(JSONObject node, String field, String defaults) {
+        if (node == null) return defaults;
+        final String jn = node.getString(field);
+        return jn != null ? jn : defaults;
+    }
+
+    public static boolean getBoolean(JSONObject node, String field, boolean defaults) {
+        if (node == null) return defaults;
+        final Boolean jn = node.getBoolean(field);
+        return jn != null ? jn : defaults;
+    }
+
+    public static int getInt(JSONObject node, String field, int defaults) {
+        if (node == null) return defaults;
+        final Integer jn = node.getInteger(field);
+        return jn != null ? jn : defaults;
+    }
+
+    public static long getLong(JSONObject node, String field, long defaults) {
+        if (node == null) return defaults;
+        final Long jn = node.getLong(field);
+        return jn != null ? jn : defaults;
+    }
+
+    public static double getDouble(JSONObject node, String field, double defaults) {
+        if (node == null) return defaults;
+        final Double jn = node.getDouble(field);
+        return jn != null ? jn : defaults;
+    }
+
 }

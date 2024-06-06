@@ -12,8 +12,6 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-import static pro.fessional.wings.slardar.context.LocaleZoneIdUtil.ZoneIdNonnull;
-
 /**
  * @author trydofor
  * @since 2022-10-10
@@ -21,41 +19,41 @@ import static pro.fessional.wings.slardar.context.LocaleZoneIdUtil.ZoneIdNonnull
 public class Now extends ThreadNow {
     @NotNull
     public static Clock clientClock() {
-        return clock(ZoneIdNonnull.get());
+        return clock(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static Date clientUtilDate() {
-        return utilDate(ZoneIdNonnull.get());
+        return utilDate(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static LocalDate clientLocalDate() {
-        return localDate(ZoneIdNonnull.get());
+        return localDate(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static LocalTime clientLocalTime() {
-        return localTime(ZoneIdNonnull.get());
+        return localTime(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static LocalDateTime clientLocalDateTime() {
-        return localDateTime(ZoneIdNonnull.get());
+        return localDateTime(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static ZonedDateTime clientZonedDateTime() {
-        return zonedDateTime(ZoneIdNonnull.get());
+        return zonedDateTime(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static OffsetDateTime clientOffsetDateTime() {
-        return offsetDateTime(ZoneIdNonnull.get());
+        return offsetDateTime(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 
     @NotNull
     public static Instant clientInstant() {
-        return instant(ZoneIdNonnull.get());
+        return instant(LocaleZoneIdUtil.ZoneIdNonnull());
     }
 }

@@ -204,7 +204,6 @@ public class WingsJacksonMapperTest {
         private Integer[] integerArrEmpty = new Integer[0];
         private int[] intArrNull = null;
         private int[] intArrEmpty = new int[0];
-
     }
 
     @Test
@@ -459,7 +458,8 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(nas);
         String s2 = objectMapper.writeValueAsString(nan);
         //
-        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
+        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s1);
+//        assertEquals("{\"numLong\":\"10000\",\"numInt\":\"10000\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
     }
 

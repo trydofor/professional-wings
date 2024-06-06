@@ -76,4 +76,20 @@ public class JacksonLocalDateTimeSerializer extends LocalDateTimeSerializer impl
         }
         return ser;
     }
+
+
+    public JacksonLocalDateTimeSerializer autoOff() {
+        return new AutoOff(_formatter);
+    }
+
+    public static class AutoOff extends JacksonLocalDateTimeSerializer {
+
+        public AutoOff() {
+            super(defaultFormatter, AutoZoneType.Off);
+        }
+
+        public AutoOff(DateTimeFormatter formatter) {
+            super(formatter, AutoZoneType.Off);
+        }
+    }
 }

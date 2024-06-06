@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.core.Authentication;
-import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthToken;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
@@ -39,7 +38,7 @@ public class WarlockFailedLoginListener implements ApplicationListener<Authentic
         final String details;
         if (dtl instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
-            details = JSON.toJSONString(meta, FastJsonHelper.DefaultWriter());
+            details = JSON.toJSONString(meta);
         }
         else {
             details = dtl.toString();

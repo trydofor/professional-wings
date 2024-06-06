@@ -80,9 +80,9 @@ public class ResultSerializeTest {
                 .setCode("code")
                 .setCause("cause")
                 .setI18nMessage("i18nCode", "1");
-        final String json = JSON.toJSONString(r1, FastJsonHelper.DefaultWriter());
+        final String json = JSON.toJSONString(r1, FastJsonHelper.WingsWriter);
         log.info(json);
-        final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {}, FastJsonHelper.DefaultReader());
+        final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {}, FastJsonHelper.WingsReader);
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());
@@ -91,8 +91,8 @@ public class ResultSerializeTest {
         PageResult<String> p1 = new PageResult<String>()
                 .addData("1")
                 .setTotalInfo(30, 20);
-        log.info(JSON.toJSONString(p1, FastJsonHelper.DefaultWriter()));
-        log.info(JSON.toJSONString(p1.addMeta("left", 10), FastJsonHelper.DefaultWriter()));
+        log.info(JSON.toJSONString(p1, FastJsonHelper.WingsWriter));
+        log.info(JSON.toJSONString(p1.addMeta("left", 10), FastJsonHelper.WingsWriter));
     }
 
     @SuppressWarnings("unchecked")

@@ -203,11 +203,11 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13007 SmartFormatterTest: print date format of pattern
 * 13008 SmartFormatterTest: parse LocalDateTime of smart pattern
 * 13009 SmartFormatterTest: parse LocalDateTime by smart pattern with timezone
-* 13010 FastJsonHelperTest: json object by default
-* 13011 FastJsonHelperTest: json number as string
-* 13012 FastJsonHelperTest: json number as string with thousands
-* 13013 FastJsonHelperTest: json number as string issue 1537
-* 13014 JacksonHelperTest: json and xml mapper
+* 13010 FastJsonTest: json object by default
+* 13011 FastJsonTest: json number as string
+* 13012 FastJsonTest: json number as string with thousands
+* 13013 FastJsonTest: json number as string issue 1537
+* 13014 JacksonTest: json and xml mapper
 * 13015 JsonConversionTest: can convert to TypeDescriptor
 * 13016 JsonConversionTest: convert Dto, Map, List
 * 13017 JsonConversionTest: parse with generics
@@ -317,6 +317,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13121 BootAdminServerTest: servlet mapping order
 * 13122 AsyncHelperTest: async ttl decorator
 * 13123 DoubleKillTest: bad SpEL, check null
+* 13124 JsonHelperCompatibleTest: fastjson basic type compatible
+* 13125 JsonHelperCompatibleTest: jackson basic type compatible
 
 ## 14 Warlock
 

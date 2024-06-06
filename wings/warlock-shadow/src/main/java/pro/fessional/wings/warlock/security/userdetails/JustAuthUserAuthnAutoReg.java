@@ -50,8 +50,8 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         authn.setUsername(user.getUuid());
-        authn.setExtraPara(JSON.toJSONString(user.getToken(), FastJsonHelper.DefaultWriter()));
-        authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo(), FastJsonHelper.DefaultWriter()));
+        authn.setExtraPara(JSON.toJSONString(user.getToken(), FastJsonHelper.WingsWriter));
+        authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo(), FastJsonHelper.WingsWriter));
         log.debug("uuid={}, userId={}", user.getUuid(), userId);
         return null;
     }

@@ -111,14 +111,16 @@ public class SlardarJacksonWebConfiguration {
             final AutoZoneType autoLocal = AutoZoneType.valueOf(prop.getDatetime().isAuto());
             JacksonLocalDateTimeSerializer.defaultFormatter = full;
             JacksonLocalDateTimeSerializer.defaultAutoZone = autoLocal;
-            builder.serializerByType(LocalDateTime.class, new JacksonLocalDateTimeSerializer(full, autoLocal));
+            var jacksonLocalDateTimeSerializer = new JacksonLocalDateTimeSerializer(full, autoLocal);
+            builder.serializerByType(LocalDateTime.class, jacksonLocalDateTimeSerializer);
 
             var fullPsr = prop.getDatetime()
                               .getSupport()
                               .stream()
                               .map(DateTimeFormatter::ofPattern)
                               .collect(Collectors.toList());
-            builder.deserializerByType(LocalDateTime.class, new JacksonLocalDateTimeDeserializer(full, fullPsr, autoLocal));
+            var jacksonLocalDateTimeDeserializer = new JacksonLocalDateTimeDeserializer(full, fullPsr, autoLocal);
+            builder.deserializerByType(LocalDateTime.class, jacksonLocalDateTimeDeserializer);
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalDateTime");
 
             // auto zoned
@@ -126,7 +128,8 @@ public class SlardarJacksonWebConfiguration {
             final AutoZoneType autoZone = AutoZoneType.valueOf(prop.getZoned().isAuto());
             JacksonZonedDateTimeSerializer.defaultFormatter = zoned;
             JacksonZonedDateTimeSerializer.defaultAutoZone = autoZone;
-            builder.serializerByType(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zoned, autoZone));
+            var jacksonZonedDateTimeSerializer = new JacksonZonedDateTimeSerializer(zoned, autoZone);
+            builder.serializerByType(ZonedDateTime.class, jacksonZonedDateTimeSerializer);
 
             var zonePsr = prop.getZoned()
                               .getSupport()
@@ -134,7 +137,8 @@ public class SlardarJacksonWebConfiguration {
                               .map(DateTimeFormatter::ofPattern)
                               .collect(Collectors.toList());
 
-            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDateTimeDeserializer(zoned, zonePsr, autoZone));
+            var jacksonZonedDateTimeDeserializer = new JacksonZonedDateTimeDeserializer(zoned, zonePsr, autoZone);
+            builder.deserializerByType(ZonedDateTime.class, jacksonZonedDateTimeDeserializer);
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer ZonedDateTime");
 
             // auto offset
@@ -142,7 +146,8 @@ public class SlardarJacksonWebConfiguration {
             final AutoZoneType autoOffset = AutoZoneType.valueOf(prop.getOffset().isAuto());
             JacksonOffsetDateTimeSerializer.defaultFormatter = offset;
             JacksonOffsetDateTimeSerializer.defaultAutoZone = autoOffset;
-            builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
+            var jacksonOffsetDateTimeSerializer = new JacksonOffsetDateTimeSerializer(offset, autoOffset);
+            builder.serializerByType(OffsetDateTime.class, jacksonOffsetDateTimeSerializer);
 
             var offPsr = prop.getZoned()
                              .getSupport()
@@ -150,8 +155,18 @@ public class SlardarJacksonWebConfiguration {
                              .map(DateTimeFormatter::ofPattern)
                              .collect(Collectors.toList());
 
-            builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
+            var jacksonOffsetDateTimeDeserializer = new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset);
+            builder.deserializerByType(OffsetDateTime.class, jacksonOffsetDateTimeDeserializer);
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
+
+            new JacksonHelper() {{
+                JacksonHelper.localDateTimeSerializer = jacksonLocalDateTimeSerializer;
+                JacksonHelper.localDateTimeDeserializer = jacksonLocalDateTimeDeserializer;
+                JacksonHelper.zonedDateTimeSerializer = jacksonZonedDateTimeSerializer;
+                JacksonHelper.zonedDateTimeDeserializer = jacksonZonedDateTimeDeserializer;
+                JacksonHelper.offsetDateTimeSerializer = jacksonOffsetDateTimeSerializer;
+                JacksonHelper.offsetDateTimeDeserializer = jacksonOffsetDateTimeDeserializer;
+            }};
         };
     }
 
@@ -256,10 +271,27 @@ public class SlardarJacksonWebConfiguration {
         log.info("SlardarWebmvc spring-runs jacksonHelperRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
-            JacksonHelper.initGlobal(
-                builder.createXmlMapper(false).build(),
-                builder.createXmlMapper(true).build()
-            );
+            new JacksonHelper() {{
+                // auto off
+                if (localDateTimeSerializer != null) builder.serializerByType(LocalDateTime.class, localDateTimeSerializer.autoOff());
+                if (localDateTimeDeserializer != null) builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer.autoOff());
+                if (zonedDateTimeSerializer != null) builder.serializerByType(ZonedDateTime.class, zonedDateTimeSerializer.autoOff());
+                if (zonedDateTimeDeserializer != null) builder.deserializerByType(ZonedDateTime.class, zonedDateTimeDeserializer.autoOff());
+                if (offsetDateTimeSerializer != null) builder.serializerByType(OffsetDateTime.class, offsetDateTimeSerializer.autoOff());
+                if (offsetDateTimeDeserializer != null) builder.deserializerByType(OffsetDateTime.class, offsetDateTimeDeserializer.autoOff());
+
+                XmlWings = builder.createXmlMapper(true).build();
+                JsonWings = builder.createXmlMapper(false).build(); // restore false
+
+                // restore
+                if (localDateTimeSerializer != null) builder.serializerByType(LocalDateTime.class, localDateTimeSerializer);
+                if (localDateTimeDeserializer != null) builder.deserializerByType(LocalDateTime.class, localDateTimeDeserializer);
+                if (zonedDateTimeSerializer != null) builder.serializerByType(ZonedDateTime.class, zonedDateTimeSerializer);
+                if (zonedDateTimeDeserializer != null) builder.deserializerByType(ZonedDateTime.class, zonedDateTimeDeserializer);
+                if (offsetDateTimeSerializer != null) builder.serializerByType(OffsetDateTime.class, offsetDateTimeSerializer);
+                if (offsetDateTimeDeserializer != null) builder.deserializerByType(OffsetDateTime.class, offsetDateTimeDeserializer);
+
+            }};
         });
     }
 }

@@ -69,7 +69,7 @@ public class AuthStateBuilder {
             return uuid;
         }
         else {
-            final byte[] bytes = JSON.toJSONBytes(paraMap, FastJsonHelper.DefaultWriter());
+            final byte[] bytes = JSON.toJSONBytes(paraMap, FastJsonHelper.WingsWriter);
             final byte[] encode = aes.encode(bytes);
             final String state = Base64.encode(encode);
             log.debug("AuthStateBuilder, buildState={}", state);
@@ -95,7 +95,7 @@ public class AuthStateBuilder {
 
         final byte[] bytes = Base64.decode(state.substring(RAND_LEN));
         final byte[] decode = aes.decode(bytes);
-        final Map<String, String[]> args = JSON.parseObject(decode, ParamType, FastJsonHelper.DefaultReader());
+        final Map<String, String[]> args = JSON.parseObject(decode, ParamType, FastJsonHelper.WingsReader);
         request.setAttribute(AuthStateBuilder.class.getName(), args);
         return args;
     }

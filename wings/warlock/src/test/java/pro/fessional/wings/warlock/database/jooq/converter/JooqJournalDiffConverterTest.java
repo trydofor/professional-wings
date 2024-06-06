@@ -24,12 +24,14 @@ class JooqJournalDiffConverterTest {
         d0.setTable("test_table");
         d0.setColumn(List.of("id", "name", "money", "now"));
         d0.setCount(1);
-        d0.setValue1(List.of(10086L, "trydofor", new BigDecimal("3.14"), LocalDateTime.of(2022, 10, 24, 12, 34, 56)));
+        BigDecimal pi = new BigDecimal("3.14");
+        LocalDateTime ldt = LocalDateTime.of(2022, 10, 24, 12, 34, 56);
+        d0.setValue1(List.of(10086L, "trydofor", pi, ldt));
         JooqJournalDiffConverter c = new JooqJournalDiffConverter();
         final String s = c.to(d0);
         log.warn("JournalDiff JSON ={}", s);
-        // Type missing
-        d0.setValue1(List.of("10086", "trydofor", "3.14", "2022-10-24 12:34:56"));
+        // Type missing in list
+        d0.setValue1(List.of(10086, "trydofor", pi, "2022-10-24 12:34:56"));
         final JournalDiff d1 = c.from(s);
         Assertions.assertEquals(d0, d1);
     }

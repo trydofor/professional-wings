@@ -111,19 +111,19 @@ public class RetrofitTest {
         Bad bad = new Bad();
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");
-        final String j1 = JSON.toJSONString(bad, FastJsonHelper.DefaultWriter());
+        final String j1 = JSON.toJSONString(bad, FastJsonHelper.WingsWriter);
         log.info("fastjson:{}", j1);
 
         final String j2 = objectMapper.writeValueAsString(bad);
         log.info("jackson:{}", j2);
 
         //
-        final Bad o1 = JSON.parseObject(j1, Bad.class, FastJsonHelper.DefaultReader());
+        final Bad o1 = JSON.parseObject(j1, Bad.class, FastJsonHelper.WingsReader);
         log.info("fastjson-fastjson:{}", o1);
         final Bad o2 = objectMapper.readValue(j1, Bad.class);
         log.info("fastjson-jackson:{}", o2);
 
-        final Bad o3 = JSON.parseObject(j2, Bad.class, FastJsonHelper.DefaultReader());
+        final Bad o3 = JSON.parseObject(j2, Bad.class, FastJsonHelper.WingsReader);
         log.info("jackson-fastjson:{}", o3);
         final Bad o4 = objectMapper.readValue(j2, Bad.class);
         log.info("jackson-jackson:{}", o4);

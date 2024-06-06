@@ -18,7 +18,7 @@ public class MessageHelper {
     @NotNull
     public static String get(MessageSource ms, CodeEnum code, Object... args) {
         try {
-            Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+            Locale locale = LocaleZoneIdUtil.LocaleNonnull();
             return ms.getMessage(code.getI18nCode(), args, locale);
         }
         catch (NoSuchMessageException e) {

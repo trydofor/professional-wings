@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,29 +77,27 @@ public class FormatNumberSerializer extends NumberSerializer {
 
     @Override
     public void serialize(Number value, JsonGenerator g, SerializerProvider provider) throws IOException {
-        if (format != null || digital != Digital.False
-            || value instanceof Long || value instanceof Integer
-            || value instanceof Float || value instanceof Double
-            || value instanceof BigDecimal || value instanceof BigInteger) {
-            final String str = format == null ? String.valueOf(value) : this.format.format(value);
-            if (digital == Digital.True) {
-                g.writeRawValue(str);
-            }
-            else if (digital == Digital.Auto) {
-                final long vl = value.longValue();
-                if (vl <= MIN_SAFE_INTEGER || vl >= MAX_SAFE_INTEGER) {
-                    g.writeNumber(str);
-                }
-                else {
-                    g.writeRawValue(str);
-                }
+        final String str = format != null
+            ? this.format.format(value)
+            : (value instanceof BigDecimal
+                   ? ((BigDecimal) value).toPlainString()
+                   : String.valueOf(value));
+
+        if (digital == Digital.Auto) {
+            final long vl = value.longValue();
+            if (vl < MIN_SAFE_INTEGER || vl > MAX_SAFE_INTEGER) {
+                g.writeString(str);
             }
             else {
                 g.writeNumber(str);
             }
         }
+        else if (digital == Digital.True) {
+            g.writeRawValue(str);
+        }
         else {
-            super.serialize(value, g, provider);
+            // Digital.False
+            g.writeString(str);
         }
     }
 }

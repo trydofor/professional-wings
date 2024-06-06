@@ -63,8 +63,8 @@ class MemLoginTest {
         log.info("UsernameLogin auth4={}", au4);
 
         final TypeReference<Set<String>> setRef = new TypeReference<>() {};
-        final Set<String> st3 = JSON.parseObject(au3, setRef, FastJsonHelper.DefaultReader());
-        final Set<String> st4 = JSON.parseObject(au4, setRef, FastJsonHelper.DefaultReader());
+        final Set<String> st3 = JSON.parseObject(au3, setRef, FastJsonHelper.WingsReader);
+        final Set<String> st4 = JSON.parseObject(au4, setRef, FastJsonHelper.WingsReader);
         Assertions.assertEquals(st3, st4);
 
         List<String> exp = Arrays.asList("ROLE_SYSTEM", "ROLE_ADMIN", "user-perm");
@@ -111,8 +111,8 @@ class MemLoginTest {
         String au4 = OkHttpClientHelper.extractString(r4, false);
         log.info("EmailLogin auth4={}", au4);
 
-        final Set<?> st3 = JSON.parseObject(au3, new TypeReference<Set<String>>() {}, FastJsonHelper.DefaultReader());
-        final Set<?> st4 = JSON.parseObject(au4, new TypeReference<Set<String>>() {}, FastJsonHelper.DefaultReader());
+        final Set<?> st3 = JSON.parseObject(au3, new TypeReference<Set<String>>() {}, FastJsonHelper.WingsReader);
+        final Set<?> st4 = JSON.parseObject(au4, new TypeReference<Set<String>>() {}, FastJsonHelper.WingsReader);
         Assertions.assertEquals(st3, st4);
 
         Assertions.assertTrue(st3.contains("email-perm"));

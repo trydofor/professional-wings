@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.autozone.AutoTimeZone;
 import pro.fessional.wings.slardar.autozone.AutoZoneAware;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
@@ -22,7 +23,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class JacksonZonedDateTimeSerializer extends ZonedDateTimeSerializer implements AutoZoneAware {
 
-    public static DateTimeFormatter defaultFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    public static DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern("yyyy[-MM][-dd][ ][HH][:mm][:ss][ ][VV]");
     public static AutoZoneType defaultAutoZone = AutoZoneType.Off;
 
     private AutoZoneType autoZone;
@@ -68,5 +69,21 @@ public class JacksonZonedDateTimeSerializer extends ZonedDateTimeSerializer impl
             }
         }
         return ser;
+    }
+
+    @NotNull
+    public JacksonZonedDateTimeSerializer autoOff() {
+        return new AutoOff();
+    }
+
+    public static class AutoOff extends JacksonZonedDateTimeSerializer {
+        // _formatter is null;
+        public AutoOff() {
+            super(defaultFormatter, AutoZoneType.Off);
+        }
+
+        public AutoOff(DateTimeFormatter formatter) {
+            super(formatter, AutoZoneType.Off);
+        }
     }
 }

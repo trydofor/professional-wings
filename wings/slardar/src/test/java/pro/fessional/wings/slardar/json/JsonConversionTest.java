@@ -72,9 +72,9 @@ class JsonConversionTest {
         dto.setGrow(lst);
         dto.setNote(map);
 
-        String jsonDto = JSON.toJSONString(dto, FastJsonHelper.DefaultWriter());
-        String jsonMap = JSON.toJSONString(map, FastJsonHelper.DefaultWriter());
-        String jsonLst = JSON.toJSONString(lst, FastJsonHelper.DefaultWriter());
+        String jsonDto = JSON.toJSONString(dto, FastJsonHelper.WingsWriter);
+        String jsonMap = JSON.toJSONString(map, FastJsonHelper.WingsWriter);
+        String jsonLst = JSON.toJSONString(lst, FastJsonHelper.WingsWriter);
         log.info("jsonDto=\n" + jsonDto);
         log.info("jsonMap=\n" + jsonMap);
         log.info("jsonLst=\n" + jsonLst);
@@ -97,14 +97,14 @@ class JsonConversionTest {
     void fastjsonGenerics() {
         Dto dto = new Dto();
         R<Dto> rd = R.okData(dto);
-        String rd0 = JSON.toJSONString(rd, FastJsonHelper.DefaultWriter());
+        String rd0 = JSON.toJSONString(rd, FastJsonHelper.WingsWriter);
         //
         Type rdt = new TypeReference<R<Dto>>() {}.getType();
-        R<Dto> rd1 = JSON.parseObject(rd0, rdt, FastJsonHelper.DefaultReader());
+        R<Dto> rd1 = JSON.parseObject(rd0, rdt, FastJsonHelper.WingsReader);
         log.info("rd1={}", rd1);
         //
         final ResolvableType tat = ResolvableType.forClassWithGenerics(R.class, Dto.class);
-        R<Dto> rd2 = JSON.parseObject(rd0, tat.getType(), FastJsonHelper.DefaultReader());
+        R<Dto> rd2 = JSON.parseObject(rd0, tat.getType(), FastJsonHelper.WingsReader);
         log.info("rd2={}", rd2);
         //
         R<Dto> rd3 = FastJsonHelper.object(rd0, tat);

@@ -22,7 +22,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,21 +31,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2021-07-05
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "wings.slardar.number.decimal.separator=_",
-                "wings.slardar.number.floats.format=#.00",
-                "wings.slardar.number.decimal.format=#.00",
-        })
+    properties = {
+        "wings.slardar.number.decimal.separator=_",
+        "wings.slardar.number.floats.format=#.00",
+        "wings.slardar.number.decimal.format=#.00",
+    })
 @Slf4j
 public class DecimalFormatTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private ObjectMapper objectMapper;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private RestTemplate restTemplate;
 
-    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    @Setter(onMethod_ = { @Value("http://localhost:${local.server.port}") })
     private String domain;
 
 
@@ -148,17 +148,18 @@ public class DecimalFormatTest {
     public void testDecStr() throws JsonProcessingException {
         final String decStr = objectMapper.writeValueAsString(new DecStr());
         log.info(decStr);
-        Assertions.assertEquals("{\"intVal\":123456,"
-                                + "\"intObj\":123456,"
-                                + "\"longVal\":123456,"
-                                + "\"longObj\":123456,"
-                                + "\"floatVal\":\"123456.78\","
-                                + "\"floatObj\":\"123456.78\","
-                                + "\"doubleVal\":\"123456.78\","
-                                + "\"doubleObj\":\"123456.78\","
-                                + "\"decimalObj\":\"123456.78\","
-                                + "\"integerObj\":\"123456789.00\"}"
-                , decStr);
+        Assertions.assertEquals(
+            "{\"intVal\":123456,"
+            + "\"intObj\":123456,"
+            + "\"longVal\":123456,"
+            + "\"longObj\":123456,"
+            + "\"floatVal\":\"123456.78\","
+            + "\"floatObj\":\"123456.78\","
+            + "\"doubleVal\":\"123456.78\","
+            + "\"doubleObj\":\"123456.78\","
+            + "\"decimalObj\":\"123456.78\","
+            + "\"integerObj\":\"123456789.00\"}"
+            , decStr);
     }
 
     @Test
@@ -166,17 +167,18 @@ public class DecimalFormatTest {
     public void testDecRaw() throws JsonProcessingException {
         final String decRaw = objectMapper.writeValueAsString(new DecRaw());
         log.info(decRaw);
-        Assertions.assertEquals("{\"intVal\":123456,"
-                                + "\"intObj\":123456,"
-                                + "\"longVal\":123456,"
-                                + "\"longObj\":123456,"
-                                + "\"floatVal\":123456.79,"
-                                + "\"floatObj\":123456.79,"
-                                + "\"doubleVal\":123456.789,"
-                                + "\"doubleObj\":123456.789,"
-                                + "\"decimalObj\":123456.789,"
-                                + "\"integerObj\":123456789}"
-                , decRaw);
+        Assertions.assertEquals(
+            "{\"intVal\":123456,"
+            + "\"intObj\":123456,"
+            + "\"longVal\":123456,"
+            + "\"longObj\":123456,"
+            + "\"floatVal\":123456.79,"
+            + "\"floatObj\":123456.79,"
+            + "\"doubleVal\":123456.789,"
+            + "\"doubleObj\":123456.789,"
+            + "\"decimalObj\":123456.789,"
+            + "\"integerObj\":123456789}"
+            , decRaw);
 
     }
 
@@ -185,40 +187,44 @@ public class DecimalFormatTest {
     public void testDecFmt() throws JsonProcessingException {
         final String decFmt = objectMapper.writeValueAsString(new DecFmt());
         log.info(decFmt);
-        Assertions.assertEquals("{\"intVal\":12,34,56.0,"
-                                + "\"intObj\":12,34,56.0,"
-                                + "\"longVal\":123,456.0,"
-                                + "\"longObj\":123,456.0,"
-                                + "\"floatVal\":\"12,3456.7\","
-                                + "\"floatObj\":\"12,3456.7\","
-                                + "\"doubleVal\":\"12,3456.7\","
-                                + "\"doubleObj\":\"12,3456.7\","
-                                + "\"decimalObj\":\"￥12_3456.7\","
-                                + "\"decimalShp\":\"￥12,3456.7\","
-                                + "\"integerObj\":\"￥1_2345_6789.0\","
-                                + "\"integerShp\":\"￥1,2345,6789.0\"}"
-                , decFmt);
+        Assertions.assertEquals(
+            "{\"intVal\":12,34,56.0,"
+            + "\"intObj\":12,34,56.0,"
+            + "\"longVal\":123,456.0,"
+            + "\"longObj\":123,456.0,"
+            + "\"floatVal\":\"12,3456.7\","
+            + "\"floatObj\":\"12,3456.7\","
+            + "\"doubleVal\":\"12,3456.7\","
+            + "\"doubleObj\":\"12,3456.7\","
+            + "\"decimalObj\":\"￥12_3456.7\","
+            + "\"decimalShp\":\"￥12,3456.7\","
+            + "\"integerObj\":\"￥1_2345_6789.0\","
+            + "\"integerShp\":\"￥1,2345,6789.0\"}"
+            , decFmt);
     }
 
     @Test
     @TmsLink("C13064")
     public void testJsSafe() throws JsonProcessingException {
-        TreeMap<String, Long> js = new TreeMap<>();
-        js.put("maxSafe0", 9007199254740990L);
-        js.put("maxSafe1", 9007199254740991L);
-        js.put("maxSafe2", 9007199254740992L);
-        js.put("minSafe0", -9007199254740990L);
-        js.put("minSafe1", -9007199254740991L);
-        js.put("minSafe2", -9007199254740992L);
+        LinkedHashMap<String, Long> js = new LinkedHashMap<>();
+        js.put("maxSafeOk", 9007199254740990L);
+        js.put("maxSafe", 9007199254740991L);
+        js.put("maxSafeNg", 9007199254740992L);
+        js.put("minSafeOk", -9007199254740990L);
+        js.put("minSafe", -9007199254740991L);
+        js.put("minSafeNg", -9007199254740992L);
         final String jsFmt = objectMapper.writeValueAsString(js);
         log.info(jsFmt);
-        Assertions.assertEquals("{\"maxSafe0\":9007199254740990,"
-                                + "\"maxSafe1\":\"9007199254740991\","
-                                + "\"maxSafe2\":\"9007199254740992\","
-                                + "\"minSafe0\":-9007199254740990,"
-                                + "\"minSafe1\":\"-9007199254740991\","
-                                + "\"minSafe2\":\"-9007199254740992\"}"
-                , jsFmt);
+        Assertions.assertEquals(
+            "{"
+            + "\"maxSafeOk\":9007199254740990,"
+            + "\"maxSafe\":9007199254740991,"
+            + "\"maxSafeNg\":\"9007199254740992\","
+            + "\"minSafeOk\":-9007199254740990,"
+            + "\"minSafe\":-9007199254740991,"
+            + "\"minSafeNg\":\"-9007199254740992\""
+            + "}"
+            , jsFmt);
     }
 
     @Data

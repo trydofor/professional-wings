@@ -40,7 +40,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
         if (value instanceof CharSequence) {
             String text = value.toString();
             if (enabled) {
-                Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+                Locale locale = LocaleZoneIdUtil.LocaleNonnull();
                 text = messageSource.getMessage(text, new Object[]{}, locale);
             }
             generator.writeString(text);
@@ -48,7 +48,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
         else { // value instanceof I18nString
             I18nString i18n = (I18nString) value;
             if (enabled) {
-                Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+                Locale locale = LocaleZoneIdUtil.LocaleNonnull();
                 String text = messageSource.getMessage(i18n.getCode(), i18n.getArgs(), locale);
                 if (text.equalsIgnoreCase(i18n.getCode())) {
                     text = i18n.toString(locale);

@@ -30,11 +30,11 @@ public class FastJsonConverterFactory extends Converter.Factory {
 
     @Nullable @Override
     public Converter<ResponseBody, ?> responseBodyConverter(@NotNull Type type, Annotation @NotNull [] annotations, @NotNull Retrofit retrofit) {
-        return body -> JSON.parseObject(body.bytes(), type, FastJsonHelper.DefaultReader());
+        return body -> JSON.parseObject(body.bytes(), type, FastJsonHelper.WingsReader);
     }
 
     @Nullable @Override
     public Converter<?, RequestBody> requestBodyConverter(@NotNull Type type, Annotation @NotNull [] parameterAnnotations, Annotation @NotNull [] methodAnnotations, @NotNull Retrofit retrofit) {
-        return body -> RequestBody.create(JSON.toJSONBytes(body, FastJsonHelper.DefaultWriter()), APPLICATION_JSON_UTF8_VALUE);
+        return body -> RequestBody.create(JSON.toJSONBytes(body, FastJsonHelper.WingsWriter), APPLICATION_JSON_UTF8_VALUE);
     }
 }

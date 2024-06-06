@@ -1,10 +1,11 @@
 package pro.fessional.wings.slardar.context;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.time.ZoneId;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 /**
  * @author trydofor
@@ -15,38 +16,43 @@ public class LocaleZoneIdUtil {
     /**
      * Get the ZoneId of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
-    public static final Supplier<ZoneId> ZoneIdNullable = () -> {
+    @Nullable
+    public static ZoneId ZoneIdNullable() {
         final TerminalContext.Context ctx = TerminalContext.get(false);
         if (!ctx.isNull()) {
             return ctx.getZoneId();
         }
         return LocaleContextHolder.getTimeZone().toZoneId();
-    };
+    }
+
 
     /**
      * Get the Locale of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
-    public static final Supplier<Locale> LocaleNullable = () -> {
+    @Nullable
+    public static Locale LocaleNullable() {
         final TerminalContext.Context ctx = TerminalContext.get(false);
         if (!ctx.isNull()) {
             return ctx.getLocale();
         }
         return LocaleContextHolder.getLocale();
-    };
+    }
 
     /**
      * Get the ZoneId of the current thread with priority logined TerminalContext, LocaleContextHolder, systemDefault
      */
-    public static final Supplier<ZoneId> ZoneIdNonnull = () -> {
-        final ZoneId zid = ZoneIdNullable.get();
+    @NotNull
+    public static ZoneId ZoneIdNonnull() {
+        final ZoneId zid = ZoneIdNullable();
         return zid != null ? zid : TerminalContext.defaultZoneId();
-    };
+    }
 
     /**
      * Get the Locale of the current thread with priority logined TerminalContext, LocaleContextHolder, systemDefault
      */
-    public static final Supplier<Locale> LocaleNonnull = () -> {
-        final Locale lcl = LocaleNullable.get();
+    @NotNull
+    public static Locale LocaleNonnull() {
+        final Locale lcl = LocaleNullable();
         return lcl != null ? lcl : TerminalContext.defaultLocale();
-    };
+    }
 }

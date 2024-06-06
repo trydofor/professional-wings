@@ -161,7 +161,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     }
 
     protected String resolveMessage(String code, Object... args) {
-        Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+        Locale locale = LocaleZoneIdUtil.LocaleNonnull();
         return messageSource.getMessage(code, args, locale);
     }
 

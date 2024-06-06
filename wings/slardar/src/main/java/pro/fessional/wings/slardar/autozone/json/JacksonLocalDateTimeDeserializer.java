@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.autozone.AutoTimeZone;
 import pro.fessional.wings.slardar.autozone.AutoZoneAware;
@@ -83,5 +84,10 @@ public class JacksonLocalDateTimeDeserializer extends LocalDateTimeDeserializer 
             }
         }
         return dsr;
+    }
+
+    @NotNull
+    public JacksonLocalDateTimeDeserializer autoOff() {
+        return new JacksonLocalDateTimeDeserializer(_formatter, formats, AutoZoneType.Off);
     }
 }

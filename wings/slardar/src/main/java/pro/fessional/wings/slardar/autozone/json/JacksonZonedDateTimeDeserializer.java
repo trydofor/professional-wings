@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.autozone.AutoTimeZone;
@@ -37,7 +38,7 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
     public JacksonZonedDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, AutoZoneType auto) {
         super(ZonedDateTime.class,
             formatter,
-            temporal -> DateParser.parseZoned(temporal, ThreadNow.sysZoneId()),
+            temporal -> DateParser.parseZoned(temporal, auto == AutoZoneType.Off ? null : ThreadNow.sysZoneId()),
             a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (zonedDateTime, zoneId) -> zonedDateTime,
@@ -93,5 +94,10 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
             }
         }
         return dsr;
+    }
+
+    @NotNull
+    public JacksonZonedDateTimeDeserializer autoOff() {
+        return new JacksonZonedDateTimeDeserializer(_formatter, formats, AutoZoneType.Off);
     }
 }

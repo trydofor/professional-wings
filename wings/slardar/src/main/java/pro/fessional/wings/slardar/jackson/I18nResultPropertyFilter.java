@@ -41,7 +41,7 @@ public class I18nResultPropertyFilter implements AutoRegisterPropertyFilter {
                 final R<?> value = (R<?>) pojo;
                 String i18nCode = value.getI18nCode();
                 if (StringUtils.hasText(i18nCode)) {
-                    Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+                    Locale locale = LocaleZoneIdUtil.LocaleNonnull();
                     String i18n = messageSource.getMessage(i18nCode, value.getI18nArgs(), locale);
                     if (StringUtils.hasText(i18n) && !i18n.equalsIgnoreCase(i18nCode)) {
                         value.setMessage(i18n);
