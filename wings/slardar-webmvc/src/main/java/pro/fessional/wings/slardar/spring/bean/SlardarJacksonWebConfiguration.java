@@ -188,35 +188,32 @@ public class SlardarJacksonWebConfiguration {
         log.info("SlardarWebmvc spring-bean customizeJacksonNumber");
         return builder -> {
             // Number
-            final SlardarNumberProp.Nf ints = prop.getInteger();
-            if (ints.isEnable()) {
-                final DecimalFormat df = ints.getWellFormat();
-                final Digital digital = ints.getDigital();
-                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
-                builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df, digital));
-                builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df, digital));
-                builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df, digital));
-                builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, df, digital));
-            }
+            final SlardarNumberProp.Nf integer = prop.getInteger();
+            final DecimalFormat idf = integer.getWellFormat();
+            final Digital idt = integer.getDigital();
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer, NumberFormat=" + integer);
+            builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, idf, idt));
+            builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, idf, idt));
+            builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, idf, idt));
+            builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, idf, idt));
 
             final SlardarNumberProp.Nf floats = prop.getFloats();
-            if (floats.isEnable()) {
-                final DecimalFormat df = floats.getWellFormat();
-                final Digital digital = floats.getDigital();
-                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
-                builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df, digital));
-                builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df, digital));
-                builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df, digital));
-                builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, df, digital));
-            }
+            final DecimalFormat fdf = floats.getWellFormat();
+            final Digital fdt = floats.getDigital();
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer, NumberFormat=" + floats);
+            builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, fdf, fdt));
+            builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, fdf, fdt));
+            builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, fdf, fdt));
+            builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, fdf, fdt));
+
 
             final SlardarNumberProp.Nf decimal = prop.getDecimal();
-            if (decimal.isEnable()) {
-                final DecimalFormat df = decimal.getWellFormat();
-                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal/BigInteger serializer");
-                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.getDigital()));
-                builder.serializerByType(BigInteger.class, new FormatNumberSerializer(BigInteger.class, df, decimal.getDigital()));
-            }
+            final DecimalFormat ddf = decimal.getWellFormat();
+            Digital ddt = decimal.getDigital();
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal/BigInteger serializer, NumberFormat=" + decimal);
+            builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, ddf, ddt));
+            builder.serializerByType(BigInteger.class, new FormatNumberSerializer(BigInteger.class, ddf, ddt));
+
         };
     }
 

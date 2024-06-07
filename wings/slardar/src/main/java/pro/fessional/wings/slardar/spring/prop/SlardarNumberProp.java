@@ -48,7 +48,7 @@ public class SlardarNumberProp {
          * The thousandth separator uses `,`, which can be replaced to other
          * at runtime according to the separator setting.
          */
-        private DecimalFormat format = null;
+        private String format = null;
         /*
          * RoundingMode.FLOOR
          */
@@ -73,21 +73,20 @@ public class SlardarNumberProp {
          */
         private Digital digital = Digital.False;
 
-        public boolean isEnable() {
-            return format != null;
-        }
 
         public DecimalFormat getWellFormat() {
-            if (format == null) return null;
+            if (format == null || format.isEmpty()) return null;
+
+            DecimalFormat df = new DecimalFormat(format);
             if (StringUtils.hasText(separator) && separator.charAt(0) != ',') {
                 DecimalFormatSymbols customSymbols = new DecimalFormatSymbols();
                 customSymbols.setGroupingSeparator(separator.charAt(0));
-                format.setDecimalFormatSymbols(customSymbols);
+                df.setDecimalFormatSymbols(customSymbols);
             }
             if (round != null) {
-                format.setRoundingMode(round);
+                df.setRoundingMode(round);
             }
-            return format;
+            return df;
         }
     }
 }

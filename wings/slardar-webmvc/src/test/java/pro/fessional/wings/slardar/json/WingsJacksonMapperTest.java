@@ -458,8 +458,7 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(nas);
         String s2 = objectMapper.writeValueAsString(nan);
         //
-        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s1);
-//        assertEquals("{\"numLong\":\"10000\",\"numInt\":\"10000\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
+        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
     }
 

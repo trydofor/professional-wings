@@ -56,7 +56,9 @@ public class JacksonHelper {
         com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY,
         com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE
     };
-
+    public static final com.fasterxml.jackson.core.JsonGenerator.Feature[] EnableJsonGeneratorFeature = {
+        com.fasterxml.jackson.core.JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN
+    };
     public static final com.fasterxml.jackson.databind.MapperFeature[] EnableMapperFeature = {
         com.fasterxml.jackson.databind.MapperFeature.PROPAGATE_TRANSIENT_MARKER,
         com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION,
@@ -104,6 +106,7 @@ public class JacksonHelper {
         .builder()
         .findAndAddModules()
         .enable(EnableDeserializationFeature)
+        .enable(EnableJsonGeneratorFeature)
         .enable(EnableMapperFeature)
         .enable(EnableParserFeature)
         .enable(EnableSerializationFeature)
@@ -116,6 +119,7 @@ public class JacksonHelper {
         .builder()
         .findAndAddModules()
         .enable(EnableDeserializationFeature)
+        .enable(EnableJsonGeneratorFeature)
         .enable(EnableMapperFeature)
         .enable(EnableParserFeature)
         .enable(EnableSerializationFeature)

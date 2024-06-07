@@ -28,7 +28,13 @@ import java.time.ZonedDateTime;
  * @author trydofor
  * @since 2024-06-04
  */
-@SpringBootTest
+@SpringBootTest(
+    properties = {
+        "wings.slardar.number.integer.format=",
+        "wings.slardar.number.floats.format=",
+        "wings.slardar.number.decimal.format=",
+    }
+)
 @Slf4j
 public class JsonHelperCompatibleTest {
 
@@ -45,17 +51,6 @@ public class JsonHelperCompatibleTest {
     @Test
     @TmsLink("C13124")
     public void testFastjson() {
-        fastjson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
-        fastjson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
-        fastjson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
-        fastjson(new PrimitiveArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
-        fastjson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
-        fastjson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05T06:07:08-04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05T06:07:08[America/New_York]\"");
-        // fastjson handle @Transient method
-        TransientPojo transient2 = new TransientPojo().defaults();
-        transient2.setTranValue(null);
-        fastjson(new TransientPojo().defaults(), transient2, "\"tranBoth\":true", "\"tranGetter\":true", "\"tranSetter\":true");
-
         fastjson(true, "true");
         fastjson(false, "false");
         fastjson(Byte.MIN_VALUE, "-128");
@@ -85,6 +80,18 @@ public class JsonHelperCompatibleTest {
         fastjson(CommonValue.ZdtValueJp, "\"2023-04-05T06:07:08[Asia/Tokyo]\"");
         fastjson(CommonValue.OdtValueUs, "\"2023-04-05T06:07:08-04:00\"");
         fastjson(CommonValue.OdtValueJp, "\"2023-04-05T06:07:08+09:00\"");
+
+        //
+        fastjson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05T06:07:08-04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05T06:07:08[America/New_York]\"");
+        fastjson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
+        fastjson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
+        fastjson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
+        fastjson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
+        fastjson(new PrimitiveArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
+        // fastjson handle @Transient method
+        TransientPojo transient2 = new TransientPojo().defaults();
+        transient2.setTranValue(null);
+        fastjson(new TransientPojo().defaults(), transient2, "\"tranBoth\":true", "\"tranGetter\":true", "\"tranSetter\":true");
     }
 
     private <T> void fastjson(T t1, String... ins) {
@@ -156,15 +163,6 @@ public class JsonHelperCompatibleTest {
     @Test
     @TmsLink("C13125")
     public void testJackson() {
-        jackson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
-        jackson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
-        jackson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
-        jackson(new PrimitiveArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
-        jackson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
-        jackson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05 06:07:08 -04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05 06:07:08 America/New_York\"");
-        // jackson ignore transient field and @Transient method
-        jackson(new TransientPojo().defaults(), new TransientPojo(), "{}");
-
 
         jackson(true, "true");
         jackson(false, "false");
@@ -195,6 +193,15 @@ public class JsonHelperCompatibleTest {
         jackson(CommonValue.ZdtValueJp, "\"2023-04-05 06:07:08 Asia/Tokyo\"");
         jackson(CommonValue.OdtValueUs, "\"2023-04-05 06:07:08 -04:00\"");
         jackson(CommonValue.OdtValueJp, "\"2023-04-05 06:07:08 +09:00\"");
+
+        jackson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05 06:07:08 -04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05 06:07:08 America/New_York\"");
+        jackson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
+        jackson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
+        jackson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
+        jackson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
+        jackson(new PrimitiveArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
+        // jackson ignore transient field and @Transient method
+        jackson(new TransientPojo().defaults(), new TransientPojo(), "{}");
     }
 
 
