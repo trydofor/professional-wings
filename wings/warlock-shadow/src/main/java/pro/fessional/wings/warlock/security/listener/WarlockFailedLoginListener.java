@@ -1,12 +1,12 @@
 package pro.fessional.wings.warlock.security.listener;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.core.Authentication;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthToken;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
@@ -38,7 +38,7 @@ public class WarlockFailedLoginListener implements ApplicationListener<Authentic
         final String details;
         if (dtl instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
-            details = JSON.toJSONString(meta);
+            details = FastJsonHelper.string(meta);
         }
         else {
             details = dtl.toString();

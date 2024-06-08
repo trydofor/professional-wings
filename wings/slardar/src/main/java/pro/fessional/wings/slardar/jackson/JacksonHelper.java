@@ -4,15 +4,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.text.WhiteUtil;
 import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
@@ -34,20 +35,47 @@ import java.util.List;
  * (1) single element node, XML can not distinguish between a single value or only one value in the array, unless nested wrap.
  * (2) Xml can not recognize the data type, while Json has string, number, boolean, object, array
  *
- * Jackson NOTE
- * * byte[] as base64, [] as ""
- * * char[] as String, [] as ""
- *
- * Wings NOTE
- * * LocalDateTime as "2023-04-05 06:07:08"
- * * ZoneDateTime as "2023-04-05 06:07:08 Asia/Shanghai"
- * * OffsetDateTime as "2023-04-05 06:07:08 +08:00"
+ * Jackson Plain
+ * - `transient` output
+ * - `@Transient` No output
+ * - `byte[]` as base64, `[]` as `""`
+ * - `char[]` as String, `[]` as `""`
+ * - WRITE_DATES_AS_TIMESTAMPS = false
+ * - `ZonedDateTime` parse as `2023-04-04T21:07:08Z` lost timezone
+ * - `OffsetDateTime` parse as `2023-04-05T10:07:08Z` lost timezone
+ * Jackson Wings
+ * - `transient` No output
+ * - WRITE_DATES_AS_TIMESTAMPS = false
+ * - `LocalDateTime` as `"2023-04-05T06:07:08"`
+ * - `ZonedDateTime` as `"2023-04-05T06:07:08[America/New_York]"` keep timezone
+ * - `OffsetDateTime` as `"2023-04-05T06:07:08-04:00"` keep timezone
+ * Jackson Bean
+ * - `LocalDateTime` as `"2023-04-05 06:07:08"`
+ * - `ZonedDateTime` as `"2023-04-05 06:07:08 Asia/Shanghai"`
+ * - `OffsetDateTime` as `"2023-04-05 06:07:08 +08:00"`
+ * - `float`,`double` as `"3.14159"`
+ * - `BigDecimal`,`BigInteger` as `"299792458"`
  * </pre>
  *
  * @author trydofor
  * @since 2022-11-05
  */
 public class JacksonHelper {
+
+    public enum Style {
+        /**
+         * at web tier with ' ' datetime and auto timezone/i18n convert
+         */
+        Bean,
+        /**
+         * fastjon default with WRITE_DATES_AS_TIMESTAMPS=false and other Disable/Enable
+         */
+        Plain,
+        /**
+         * wings config with 'T' datetime format, without timezone/i18n conversion
+         */
+        Wings,
+    }
 
     // spring-jackson-79.properties
     public static final com.fasterxml.jackson.databind.DeserializationFeature[] EnableDeserializationFeature = {
@@ -87,63 +115,164 @@ public class JacksonHelper {
         com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS
     };
 
-    public static final SimpleModule DateTimeModule = new SimpleModule();
+    public static final JacksonLocalDateTimeDeserializer PlainLocalDateTimeDeserializer = new JacksonLocalDateTimeDeserializer(
+        DateTimeFormatter.ISO_LOCAL_DATE_TIME, List.of(DateFormatter.FMT_FULL_PSE), AutoZoneType.Off);
 
-    static {
-        DateTimeFormatter localFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        DateTimeModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer(localFormatter, List.of(DateFormatter.FMT_FULL_PSE), AutoZoneType.Off));
+    public static final JacksonOffsetDateTimeDeserializer PlainOffsetDateTimeDeserializer = new JacksonOffsetDateTimeDeserializer(
+        DateTimeFormatter.ISO_OFFSET_DATE_TIME, List.of(DateFormatter.FMT_ZONE_PSE), AutoZoneType.Off);
 
-        DateTimeFormatter offsetFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        DateTimeModule.addDeserializer(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offsetFormatter, List.of(DateFormatter.FMT_ZONE_PSE), AutoZoneType.Off));
+    public static final JacksonZonedDateTimeSerializer PlainZonedDateTimeSerializer = new JacksonZonedDateTimeSerializer(
+        DateTimePattern.FMT_FULL_19TV, AutoZoneType.Off);
 
-        DateTimeFormatter zonedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'['VV']'");
-        DateTimeModule.addSerializer(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zonedFormatter, AutoZoneType.Off));
-        DateTimeModule.addDeserializer(ZonedDateTime.class, new JacksonZonedDateTimeDeserializer(zonedFormatter, List.of(DateFormatter.FMT_ZONE_PSE), AutoZoneType.Off));
+    public static final JacksonZonedDateTimeDeserializer PlainZonedDateTimeDeserializer = new JacksonZonedDateTimeDeserializer(
+        DateTimePattern.FMT_FULL_19TV, List.of(DateFormatter.FMT_ZONE_PSE), AutoZoneType.Off);
+
+    public static final SimpleModule PlainDateTimeModule = new SimpleModule() {{
+        addDeserializer(LocalDateTime.class, PlainLocalDateTimeDeserializer);
+        addDeserializer(OffsetDateTime.class, PlainOffsetDateTimeDeserializer);
+        addSerializer(ZonedDateTime.class, PlainZonedDateTimeSerializer);
+        addDeserializer(ZonedDateTime.class, PlainZonedDateTimeDeserializer);
+    }};
+
+    @Contract("_->param1")
+    public static <T extends MapperBuilder<?, ?>> T buildPlain(@NotNull T builder) {
+        builder
+            .enable(EnableDeserializationFeature)
+            .enable(EnableJsonGeneratorFeature)
+            .enable(EnableMapperFeature)
+            .enable(EnableParserFeature)
+            .enable(EnableSerializationFeature)
+            .disable(DisableParserFeature)
+            .disable(DisableDeserializationFeature)
+            .disable(DisableSerializationFeature)
+            // override
+            .addModule(PlainDateTimeModule);
+        return builder;
     }
 
     // https://github.com/FasterXML/jackson-modules-java8/tree/master/datetime#usage
-    public static final ObjectMapper JsonPlain = JsonMapper
-        .builder()
-        .findAndAddModules()
-        .enable(EnableDeserializationFeature)
-        .enable(EnableJsonGeneratorFeature)
-        .enable(EnableMapperFeature)
-        .enable(EnableParserFeature)
-        .enable(EnableSerializationFeature)
-        .disable(DisableParserFeature)
-        .disable(DisableDeserializationFeature)
-        .disable(DisableSerializationFeature)
-        .addModule(DateTimeModule)
-        .build();
-    public static final XmlMapper XmlPlain = XmlMapper
-        .builder()
-        .findAndAddModules()
-        .enable(EnableDeserializationFeature)
-        .enable(EnableJsonGeneratorFeature)
-        .enable(EnableMapperFeature)
-        .enable(EnableParserFeature)
-        .enable(EnableSerializationFeature)
-        .disable(DisableParserFeature)
-        .disable(DisableDeserializationFeature)
-        .disable(DisableSerializationFeature)
-        .addModule(DateTimeModule)
-        .build();
+    public static final ObjectMapper JsonPlain = buildPlain(JsonMapper.builder().findAndAddModules()).build();
+    public static final XmlMapper XmlPlain = buildPlain(XmlMapper.builder().findAndAddModules()).build();
 
     //// wings autoZone ser/des
-    protected static JacksonLocalDateTimeSerializer localDateTimeSerializer;
-    protected static JacksonLocalDateTimeDeserializer localDateTimeDeserializer;
-    protected static JacksonZonedDateTimeSerializer zonedDateTimeSerializer;
-    protected static JacksonZonedDateTimeDeserializer zonedDateTimeDeserializer;
-    protected static JacksonOffsetDateTimeSerializer offsetDateTimeSerializer;
-    protected static JacksonOffsetDateTimeDeserializer offsetDateTimeDeserializer;
+    protected static JacksonLocalDateTimeSerializer beanLocalDateTimeSerializer;
+    protected static JacksonLocalDateTimeDeserializer beanLocalDateTimeDeserializer;
+    protected static JacksonZonedDateTimeSerializer beanZonedDateTimeSerializer;
+    protected static JacksonZonedDateTimeDeserializer beanZonedDateTimeDeserializer;
+    protected static JacksonOffsetDateTimeSerializer beanOffsetDateTimeSerializer;
+    protected static JacksonOffsetDateTimeDeserializer beanOffsetDateTimeDeserializer;
 
-    protected static ObjectMapper JsonWings = JsonPlain;
-    protected static XmlMapper XmlWings = XmlPlain;
+    @Contract("_->param1")
+    public static <T extends ObjectMapper> T buildWings(@NotNull T mapper) {
+        SimpleModule beanDateTimeModule = new SimpleModule();
+        // auto off
+        boolean hasBean = false;
+        if (beanLocalDateTimeSerializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addSerializer(LocalDateTime.class, beanLocalDateTimeSerializer.autoOff());
+        }
+        if (beanLocalDateTimeDeserializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addDeserializer(LocalDateTime.class, beanLocalDateTimeDeserializer.autoOff());
+        }
+        if (beanZonedDateTimeSerializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addSerializer(ZonedDateTime.class, beanZonedDateTimeSerializer.autoOff());
+        }
+        if (beanZonedDateTimeDeserializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addDeserializer(ZonedDateTime.class, beanZonedDateTimeDeserializer.autoOff());
+        }
+        if (beanOffsetDateTimeSerializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addSerializer(OffsetDateTime.class, beanOffsetDateTimeSerializer.autoOff());
+        }
+        if (beanOffsetDateTimeDeserializer != null) {
+            hasBean = true;
+            beanDateTimeModule.addDeserializer(OffsetDateTime.class, beanOffsetDateTimeDeserializer.autoOff());
+        }
+
+        SimpleModule dtm = hasBean ? beanDateTimeModule : PlainDateTimeModule;
+        mapper.registerModule(dtm);
+        return mapper;
+    }
+
+    private static ObjectMapper JsonWings = JsonPlain;
+    private static XmlMapper XmlWings = XmlPlain;
+
+    protected static void bindJsonWings(@NotNull ObjectMapper mapper) {
+        JsonWings = buildWings(mapper);
+    }
+
+    protected static void bindXmlWings(@NotNull XmlMapper mapper) {
+        XmlWings = buildWings(mapper);
+    }
+
+    private static ObjectMapper JsonBean = null;
+    private static XmlMapper XmlBean = null;
+
+    protected static void bindJsonBean(@NotNull ObjectMapper mapper) {
+        JsonBean = mapper;
+    }
+
+    protected static void bindXmlBean(@NotNull XmlMapper mapper) {
+        XmlBean = mapper;
+    }
 
     ////
 
     /**
-     * wings configed mapper without auto timezone convert
+     * spring bean style Mapper at web tier with ' ' datetime and auto timezone/i18n convert
+     */
+    @NotNull
+    public static ObjectMapper JsonBean() {
+        if (JsonBean == null) throw new IllegalStateException("JsonBean not init, check SlardarJacksonWebConfiguration.jacksonHelperRunner");
+        return JsonBean;
+    }
+
+    /**
+     * spring bean style Mapper at web tier with ' ' datetime and auto timezone/i18n convert
+     */
+    @NotNull
+    public static XmlMapper XmlBean() {
+        if (XmlBean == null) throw new IllegalStateException("XmlBean not init, check SlardarJacksonWebConfiguration.jacksonHelperRunner");
+        return XmlBean;
+    }
+
+    /**
+     * spring bean style Mapper at web tier with ' ' datetime and auto timezone/i18n convert
+     */
+    @NotNull
+    public static ObjectMapper MapperBean(boolean json) {
+        return json ? JsonBean() : XmlBean();
+    }
+
+    /**
+     * fastjon default with WRITE_DATES_AS_TIMESTAMPS=false and other Disable/Enable
+     */
+    @NotNull
+    public static ObjectMapper JsonPlain() {
+        return JsonPlain;
+    }
+
+    /**
+     * fastjon default with WRITE_DATES_AS_TIMESTAMPS=false and other Disable/Enable
+     */
+    @NotNull
+    public static XmlMapper XmlPlain() {
+        return XmlPlain;
+    }
+
+    /**
+     * fastjon default with WRITE_DATES_AS_TIMESTAMPS=false and other Disable/Enable
+     */
+    @NotNull
+    public static ObjectMapper MapperPlain(boolean json) {
+        return json ? JsonPlain : XmlPlain;
+    }
+
+    /**
+     * wings config with 'T' datetime format without timezone/i18n conversion
      */
     @NotNull
     public static ObjectMapper JsonWings() {
@@ -151,7 +280,7 @@ public class JacksonHelper {
     }
 
     /**
-     * wings configed mapper without auto timezone convert
+     * wings config with 'T' datetime format without timezone/i18n conversion
      */
     @NotNull
     public static XmlMapper XmlWings() {
@@ -159,66 +288,63 @@ public class JacksonHelper {
     }
 
     /**
-     * wings configed mapper without auto timezone convert
+     * wings config with 'T' datetime format without timezone/i18n conversion
      */
     @NotNull
-    public static ObjectMapper wings(boolean json) {
+    public static ObjectMapper MapperWings(boolean json) {
         return json ? JsonWings : XmlWings;
     }
 
     /**
-     * wings configed mapper without auto timezone convert
+     * wings configed Mapper without auto timezone convert
      */
     @NotNull
-    public static ObjectMapper mapper(boolean json, boolean wings) {
-        return json
-            ? (wings ? JsonWings : JsonPlain)
-            : (wings ? XmlWings : XmlPlain);
+    public static ObjectMapper Mapper(@NotNull Style style, boolean json) {
+        return switch (style) {
+            case Wings -> MapperWings(json);
+            case Plain -> MapperPlain(json);
+            case Bean -> MapperBean(json);
+        };
     }
-
 
     /**
      * whether `str` has xml characteristics, i.e. the first and last characters are angle brackets or not
      */
-    public static boolean asXml(@Nullable String str) {
+    @Contract("null->false")
+    public static boolean asXml(String str) {
         if (str == null) return false;
-        int cnt = 0;
-        final int len = str.length();
-        for (int i = 0; i < len; i++) {
-            char c = str.charAt(i);
-            if (!WhiteUtil.isWhiteSpace(c)) {
-                if (c == '<') {
-                    cnt++;
-                    break;
-                }
-                else {
-                    return false;
-                }
-            }
+
+        char c1 = WhiteUtil.firstNonWhite(str);
+        if (c1 == '<') {
+            char c2 = WhiteUtil.lastNonWhite(str);
+            return c2 == '>';
         }
-        for (int i = len - 1; i > 0; i--) {
-            char c = str.charAt(i);
-            if (!WhiteUtil.isWhiteSpace(c)) {
-                if (c == '>') {
-                    cnt++;
-                    break;
-                }
-                else {
-                    return false;
-                }
-            }
+        return false;
+    }
+
+    /**
+     * whether `str` has xml characteristics, i.e. the first and last characters are angle brackets or not
+     */
+    @Contract("null->false")
+    public static boolean asXml(byte[] str) {
+        if (str == null) return false;
+
+        byte c1 = WhiteUtil.firstNonWhite(str);
+        if (c1 == (byte) '<') {
+            byte c2 = WhiteUtil.lastNonWhite(str);
+            return c2 == (byte) '>';
         }
-
-        return cnt == 2;
+        return false;
     }
 
     /**
-     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull Class<T> targetType) {
-        return mapper(!asXml(text), true).readValue(text, targetType);
+    public static <T> T object(String text, @NotNull Class<T> targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
     }
 
 
@@ -226,103 +352,213 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("_,!null,_->!null")
-    public static <T> T object(boolean wings, @Nullable String text, @NotNull Class<T> targetType) {
-        return mapper(!asXml(text), wings).readValue(text, targetType);
+    @Contract("!null,_,_->!null")
+    public static <T> T object(String text, @NotNull Class<T> targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
     }
 
     /**
-     * Auto read text to object, if text asXml, read as xml, otherwise as json
-     */
-    @SneakyThrows
-    @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull JavaType targetType) {
-        return mapper(!asXml(text), true).readValue(text, targetType);
-    }
-
-    /**
-     * Auto read text to object, if text asXml, read as xml, otherwise as json
-     */
-    @SneakyThrows
-    @Contract("_,!null,_->!null")
-    public static <T> T object(boolean wings, @Nullable String text, @NotNull JavaType targetType) {
-        return mapper(!asXml(text), wings).readValue(text, targetType);
-    }
-
-    /**
-     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull TypeReference<T> targetType) {
-        return mapper(!asXml(text), true).readValue(text, targetType);
+    public static <T> T object(String text, @NotNull JavaType targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
     }
 
     /**
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("_,!null,_->!null")
-    public static <T> T object(boolean wings, @Nullable String text, @NotNull TypeReference<T> targetType) {
-        return mapper(!asXml(text), wings).readValue(text, targetType);
+    @Contract("!null,_,_->!null")
+    public static <T> T object(String text, @NotNull JavaType targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static <T> T object(String text, @NotNull TypeReference<T> targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
     }
 
     /**
      * Auto read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_,_->!null")
+    public static <T> T object(String text, @NotNull TypeReference<T> targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null->!null")
-    public static JsonNode object(@Nullable String text) {
-        return mapper(!asXml(text), true).readTree(text);
+    public static JsonNode object(String text) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readTree(text);
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] text, @NotNull Class<T> targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
+    }
+
+
+    /**
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_,_->!null")
+    public static <T> T object(byte[] text, @NotNull Class<T> targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] text, @NotNull JavaType targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
     }
 
     /**
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("_,!null->!null")
-    public static JsonNode object(boolean wings, @Nullable String text) {
-        return mapper(!asXml(text), wings).readTree(text);
+    @Contract("!null,_,_->!null")
+    public static <T> T object(byte[] text, @NotNull JavaType targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
     }
 
     /**
-     * Serialization (json) using the wings convention,
-     * output as string wherever possible to ensure data precision
-     */
-    @SneakyThrows
-    @Contract("!null->!null")
-    public static String string(@Nullable Object obj) {
-        return obj == null ? null : mapper(true, true).writeValueAsString(obj);
-    }
-
-    /**
-     * Serialization (json) using the wings convention,
-     * output as string wherever possible to ensure data precision
-     */
-    @SneakyThrows
-    @Contract("_,!null->!null")
-    public static String string(boolean wings, @Nullable Object obj) {
-        return obj == null ? null : mapper(true, wings).writeValueAsString(obj);
-    }
-
-    /**
-     * Serialization (json or xml) using the wings convention,
-     * output as string wherever possible to ensure data precision
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
-    public static String string(@Nullable Object obj, boolean json) {
-        return obj == null ? null : mapper(json, true).writeValueAsString(obj);
+    public static <T> T object(byte[] text, @NotNull TypeReference<T> targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, targetType);
     }
 
     /**
-     * Serialization (json or xml) using the wings convention,
-     * output as string wherever possible to ensure data precision
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("_,!null,_->!null")
-    public static String string(boolean wings, @Nullable Object obj, boolean json) {
-        return obj == null ? null : mapper(json, wings).writeValueAsString(obj);
+    @Contract("!null,_,_->!null")
+    public static <T> T object(byte[] text, @NotNull TypeReference<T> targetType, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, targetType);
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null->!null")
+    public static JsonNode object(byte[] text) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readTree(text);
+    }
+
+    /**
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static JsonNode object(byte[] text, @NotNull Style style) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readTree(text);
+    }
+
+    /**
+     * wings style serialization to json
+     */
+    @SneakyThrows
+    @Contract("!null->!null")
+    public static String string(Object obj) {
+        return obj == null ? null : MapperWings(true).writeValueAsString(obj);
+    }
+
+    /**
+     * serialization to json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static String string(Object obj, @NotNull Style style) {
+        return obj == null ? null : Mapper(style, true).writeValueAsString(obj);
+    }
+
+    /**
+     * wings style serialization to json/xml
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static String string(Object obj, boolean json) {
+        return obj == null ? null : MapperWings(json).writeValueAsString(obj);
+    }
+
+    /**
+     * serialization to json/xml
+     */
+    @SneakyThrows
+    @Contract("!null,_,_->!null")
+    public static String string(Object obj, @NotNull Style style, boolean json) {
+        return obj == null ? null : Mapper(style, json).writeValueAsString(obj);
+    }
+
+    /**
+     * wings style serialization to json
+     */
+    @SneakyThrows
+    @Contract("!null->!null")
+    public static byte[] bytes(Object obj) {
+        return obj == null ? null : MapperWings(true).writeValueAsBytes(obj);
+    }
+
+    /**
+     * serialization to json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static byte[] bytes(Object obj, @NotNull Style style) {
+        return obj == null ? null : Mapper(style, true).writeValueAsBytes(obj);
+    }
+
+    /**
+     * wings style serialization to json/xml
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static byte[] bytes(Object obj, boolean json) {
+        return obj == null ? null : MapperWings(json).writeValueAsBytes(obj);
+    }
+
+    /**
+     * serialization to json/xml
+     */
+    @SneakyThrows
+    @Contract("!null,_,_->!null")
+    public static byte[] bytes(Object obj, @NotNull Style style, boolean json) {
+        return obj == null ? null : Mapper(style, json).writeValueAsBytes(obj);
     }
 
     ////

@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.other;
 
-import com.alibaba.fastjson2.JSON;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.Output;
@@ -80,9 +79,9 @@ public class ResultSerializeTest {
                 .setCode("code")
                 .setCause("cause")
                 .setI18nMessage("i18nCode", "1");
-        final String json = JSON.toJSONString(r1, FastJsonHelper.WingsWriter);
+        final String json = FastJsonHelper.string(r1);
         log.info(json);
-        final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {}, FastJsonHelper.WingsReader);
+        final R<Object> r2 = FastJsonHelper.object(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {});
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());
@@ -91,8 +90,8 @@ public class ResultSerializeTest {
         PageResult<String> p1 = new PageResult<String>()
                 .addData("1")
                 .setTotalInfo(30, 20);
-        log.info(JSON.toJSONString(p1, FastJsonHelper.WingsWriter));
-        log.info(JSON.toJSONString(p1.addMeta("left", 10), FastJsonHelper.WingsWriter));
+        log.info(FastJsonHelper.string(p1));
+        log.info(FastJsonHelper.string(p1.addMeta("left", 10)));
     }
 
     @SuppressWarnings("unchecked")

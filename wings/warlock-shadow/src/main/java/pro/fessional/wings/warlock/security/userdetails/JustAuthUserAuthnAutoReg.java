@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.security.userdetails;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
@@ -50,8 +49,8 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         authn.setUsername(user.getUuid());
-        authn.setExtraPara(JSON.toJSONString(user.getToken(), FastJsonHelper.WingsWriter));
-        authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo(), FastJsonHelper.WingsWriter));
+        authn.setExtraPara(FastJsonHelper.string(user.getToken()));
+        authn.setExtraUser(FastJsonHelper.string(user.getRawUserInfo()));
         log.debug("uuid={}, userId={}", user.getUuid(), userId);
         return null;
     }

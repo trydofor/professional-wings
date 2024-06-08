@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.httprest.retrofit;
 
-import com.alibaba.fastjson2.JSON;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +29,11 @@ public class FastJsonConverterFactory extends Converter.Factory {
 
     @Nullable @Override
     public Converter<ResponseBody, ?> responseBodyConverter(@NotNull Type type, Annotation @NotNull [] annotations, @NotNull Retrofit retrofit) {
-        return body -> JSON.parseObject(body.bytes(), type, FastJsonHelper.WingsReader);
+        return body -> FastJsonHelper.object(body.bytes(), type);
     }
 
     @Nullable @Override
     public Converter<?, RequestBody> requestBodyConverter(@NotNull Type type, Annotation @NotNull [] parameterAnnotations, Annotation @NotNull [] methodAnnotations, @NotNull Retrofit retrofit) {
-        return body -> RequestBody.create(JSON.toJSONBytes(body, FastJsonHelper.WingsWriter), APPLICATION_JSON_UTF8_VALUE);
+        return body -> RequestBody.create(FastJsonHelper.bytes(body), APPLICATION_JSON_UTF8_VALUE);
     }
 }

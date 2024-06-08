@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.httprest;
 
-import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -111,19 +110,19 @@ public class RetrofitTest {
         Bad bad = new Bad();
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");
-        final String j1 = JSON.toJSONString(bad, FastJsonHelper.WingsWriter);
+        final String j1 = FastJsonHelper.string(bad);
         log.info("fastjson:{}", j1);
 
         final String j2 = objectMapper.writeValueAsString(bad);
         log.info("jackson:{}", j2);
 
         //
-        final Bad o1 = JSON.parseObject(j1, Bad.class, FastJsonHelper.WingsReader);
+        final Bad o1 = FastJsonHelper.object(j1, Bad.class);
         log.info("fastjson-fastjson:{}", o1);
         final Bad o2 = objectMapper.readValue(j1, Bad.class);
         log.info("fastjson-jackson:{}", o2);
 
-        final Bad o3 = JSON.parseObject(j2, Bad.class, FastJsonHelper.WingsReader);
+        final Bad o3 = FastJsonHelper.object(j2, Bad.class);
         log.info("jackson-fastjson:{}", o3);
         final Bad o4 = objectMapper.readValue(j2, Bad.class);
         log.info("jackson-jackson:{}", o4);

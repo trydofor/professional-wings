@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.controller.api;
 
-import com.alibaba.fastjson2.JSON;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +20,7 @@ import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.context.Now;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
@@ -110,7 +110,7 @@ class ApiAuthControllerTest {
                 .encodedPath(urlmapProp.getOauthAuthorize())
                 .addQueryParameter(WarlockOauthService.ClientId, client);
         final String t1 = OkHttpClientHelper.getText(okHttpClient, u1.toString());
-        final String code = JSON.parseObject(t1).getString(WarlockOauthService.Code);
+        final String code = FastJsonHelper.object(t1).getString(WarlockOauthService.Code);
 
         final HttpUrl.Builder u2 = new HttpUrl.Builder()
                 .scheme("http")
@@ -122,7 +122,7 @@ class ApiAuthControllerTest {
                 .addQueryParameter(WarlockOauthService.Code, code);
 
         final String t2 = OkHttpClientHelper.postJson(okHttpClient, u2.toString(), "");
-        accessToken = JSON.parseObject(t2).getString(WarlockOauthService.AccessToken);
+        accessToken =  FastJsonHelper.object(t2).getString(WarlockOauthService.AccessToken);
         return accessToken;
     }
 

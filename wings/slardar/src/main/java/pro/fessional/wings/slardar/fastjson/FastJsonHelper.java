@@ -7,10 +7,10 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.TypeReference;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 
+import java.io.InputStream;
 import java.lang.reflect.Type;
 
 /**
@@ -46,15 +46,15 @@ public class FastJsonHelper {
     public static final JSONWriter.Feature[] WingsWriter = {
         JSONWriter.Feature.WriteEnumsUsingName,
         JSONWriter.Feature.WriteBigDecimalAsPlain,
+        JSONWriter.Feature.BrowserCompatible,
 //        JSONWriter.Feature.WriteNonStringValueAsString, // https://github.com/alibaba/fastjson2/issues/2560
-        JSONWriter.Feature.BrowserCompatible
     };
 
     /**
      * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String json, @NotNull ResolvableType targetType) {
+    public static <T> T object(String json, @NotNull ResolvableType targetType) {
         if (json == null) return null;
         return JSON.parseObject(json, targetType.getType(), WingsReader);
     }
@@ -63,7 +63,7 @@ public class FastJsonHelper {
      * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String json, @NotNull TypeDescriptor targetType) {
+    public static <T> T object(String json, @NotNull TypeDescriptor targetType) {
         if (json == null) return null;
         return JSON.parseObject(json, targetType.getResolvableType().getType(), WingsReader);
     }
@@ -72,7 +72,7 @@ public class FastJsonHelper {
      * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String json, @NotNull TypeReference<T> targetType) {
+    public static <T> T object(String json, @NotNull TypeReference<T> targetType) {
         if (json == null) return null;
         return JSON.parseObject(json, targetType, WingsReader);
     }
@@ -81,7 +81,7 @@ public class FastJsonHelper {
      * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String json, @NotNull Type targetType) {
+    public static <T> T object(String json, @NotNull Type targetType) {
         if (json == null) return null;
         return JSON.parseObject(json, targetType, WingsReader);
     }
@@ -90,7 +90,7 @@ public class FastJsonHelper {
      * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
-    public static <T> T object(@Nullable String json, @NotNull Class<T> targetType) {
+    public static <T> T object(String json, @NotNull Class<T> targetType) {
         if (json == null) return null;
         return JSON.parseObject(json, targetType, WingsReader);
     }
@@ -99,7 +99,97 @@ public class FastJsonHelper {
      * Deserialization with the wings convention
      */
     @Contract("!null->!null")
-    public static JSONObject object(@Nullable String json) {
+    public static JSONObject object(String json) {
+        if (json == null) return null;
+        return JSON.parseObject(json, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(InputStream json, @NotNull ResolvableType targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType.getType(), WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(InputStream json, @NotNull TypeDescriptor targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType.getResolvableType().getType(), WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(InputStream json, @NotNull Type targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(InputStream json, @NotNull Class<T> targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null->!null")
+    public static JSONObject object(InputStream json) {
+        if (json == null) return null;
+        return JSON.parseObject(json, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] json, @NotNull ResolvableType targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType.getType(), WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] json, @NotNull TypeDescriptor targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType.getResolvableType().getType(), WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] json, @NotNull Type targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] json, @NotNull Class<T> targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, WingsReader);
+    }
+
+    /**
+     * Deserialization with the wings convention
+     */
+    @Contract("!null->!null")
+    public static JSONObject object(byte[] json) {
         if (json == null) return null;
         return JSON.parseObject(json, WingsReader);
     }
@@ -110,9 +200,15 @@ public class FastJsonHelper {
      * but not affecting Java type inverse parsing
      */
     @Contract("!null->!null")
-    public static String string(@Nullable Object obj) {
+    public static String string(Object obj) {
         if (obj == null) return null;
         return JSON.toJSONString(obj, WingsWriter);
+    }
+
+    @Contract("!null->!null")
+    public static byte[] bytes(Object obj) {
+        if (obj == null) return null;
+        return JSON.toJSONBytes(obj, WingsWriter);
     }
 
     ////

@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.controller.auth;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -14,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -35,10 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 class SimpleOauthControllerTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private MockMvc mvc;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WarlockUrlmapProp warlockUrlmapProp;
 
     final String clientId = "wings-trydofor";
@@ -50,16 +50,16 @@ class SimpleOauthControllerTest {
     @TmsLink("C14031")
     void authorizationCode() throws Exception {
         final MvcResult authResult = mvc.perform(get(warlockUrlmapProp.getOauthAuthorize())
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .param(WarlockOauthService.ClientId, clientId)
-                                                .param(WarlockOauthService.Scope, scopes)
-                                                .param(WarlockOauthService.State, state)
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .param(WarlockOauthService.ClientId, clientId)
+                                            .param(WarlockOauthService.Scope, scopes)
+                                            .param(WarlockOauthService.State, state)
                                         )
                                         .andDo(print())
                                         .andExpect(status().isOk())
                                         .andReturn();
         final String body0 = authResult.getResponse().getContentAsString();
-        final JSONObject json0 = JSON.parseObject(body0);
+        final JSONObject json0 = FastJsonHelper.object(body0);
 
         Assertions.assertEquals(state, json0.getString(WarlockOauthService.State));
 
@@ -71,21 +71,21 @@ class SimpleOauthControllerTest {
         Assertions.assertNotNull(code1);
         final String code2 = accessToken(clientId, clientSecret, code1, null);
 
-        accessToken(clientId+"bad", clientSecret, code2, "invalid_client");
-        accessToken(clientId, clientSecret+"bad", code2, "invalid_client");
+        accessToken(clientId + "bad", clientSecret, code2, "invalid_client");
+        accessToken(clientId, clientSecret + "bad", code2, "invalid_client");
 
         mvc.perform(post(warlockUrlmapProp.getOauthRevokeToken())
-                   .contentType(MediaType.APPLICATION_JSON)
-                   .param(WarlockOauthService.ClientId, clientId)
-                   .param(WarlockOauthService.Code, code2)
+               .contentType(MediaType.APPLICATION_JSON)
+               .param(WarlockOauthService.ClientId, clientId)
+               .param(WarlockOauthService.Code, code2)
            )
            .andDo(print())
            .andExpect(status().isOk());
         accessToken(clientId, clientSecret, code, "invalid_request");
         accessToken(clientId, clientSecret, code1, "invalid_request");
         accessToken(clientId, clientSecret, code2, "invalid_request");
-        accessToken(clientId+"bad", clientSecret, code2, "invalid_request");
-        accessToken(clientId, clientSecret+"bad", code2, "invalid_request");
+        accessToken(clientId + "bad", clientSecret, code2, "invalid_request");
+        accessToken(clientId, clientSecret + "bad", code2, "invalid_request");
     }
 
     @Test
@@ -98,18 +98,19 @@ class SimpleOauthControllerTest {
     }
 
     private String accessToken(String cid, String cct, String code, String error) throws Exception {
-        final MvcResult codeResult = mvc.perform(post(warlockUrlmapProp.getOauthAccessToken())
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .param(WarlockOauthService.ClientId, cid)
-                                                .param(WarlockOauthService.ClientSecret, cct)
-                                                .param(WarlockOauthService.Code, code)
-                                        )
-                                        .andDo(print())
-                                        .andExpect(status().isOk())
-                                        .andReturn();
+        final MvcResult codeResult =
+            mvc.perform(post(warlockUrlmapProp.getOauthAccessToken())
+                   .contentType(MediaType.APPLICATION_JSON)
+                   .param(WarlockOauthService.ClientId, cid)
+                   .param(WarlockOauthService.ClientSecret, cct)
+                   .param(WarlockOauthService.Code, code)
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andReturn();
 
         final String body1 = codeResult.getResponse().getContentAsString();
-        final JSONObject json1 = JSON.parseObject(body1);
+        final JSONObject json1 = FastJsonHelper.object(body1);
         if (error == null) {
             Set<String> s1 = new HashSet<>(Arrays.asList(scopes.split(" ")));
             Set<String> s2 = new HashSet<>(Arrays.asList(json1.getString(WarlockOauthService.Scope).split(" ")));

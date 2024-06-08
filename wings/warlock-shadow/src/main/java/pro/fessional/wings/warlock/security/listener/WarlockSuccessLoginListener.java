@@ -1,12 +1,12 @@
 package pro.fessional.wings.warlock.security.listener;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
@@ -54,6 +54,6 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
             dataMap.putAll(meta);
         }
 
-        warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dataMap));
+        warlockAuthnService.onSuccess(authType, userId, FastJsonHelper.string(dataMap));
     }
 }

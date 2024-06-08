@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.json;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import io.qameta.allure.TmsLink;
 import lombok.Data;
@@ -72,9 +71,9 @@ class JsonConversionTest {
         dto.setGrow(lst);
         dto.setNote(map);
 
-        String jsonDto = JSON.toJSONString(dto, FastJsonHelper.WingsWriter);
-        String jsonMap = JSON.toJSONString(map, FastJsonHelper.WingsWriter);
-        String jsonLst = JSON.toJSONString(lst, FastJsonHelper.WingsWriter);
+        String jsonDto = FastJsonHelper.string(dto);
+        String jsonMap = FastJsonHelper.string(map);
+        String jsonLst = FastJsonHelper.string(lst);
         log.info("jsonDto=\n" + jsonDto);
         log.info("jsonMap=\n" + jsonMap);
         log.info("jsonLst=\n" + jsonLst);
@@ -97,19 +96,22 @@ class JsonConversionTest {
     void fastjsonGenerics() {
         Dto dto = new Dto();
         R<Dto> rd = R.okData(dto);
-        String rd0 = JSON.toJSONString(rd, FastJsonHelper.WingsWriter);
+        String rd0 = FastJsonHelper.string(rd);
         //
         Type rdt = new TypeReference<R<Dto>>() {}.getType();
-        R<Dto> rd1 = JSON.parseObject(rd0, rdt, FastJsonHelper.WingsReader);
+        R<Dto> rd1 = FastJsonHelper.object(rd0, rdt);
         log.info("rd1={}", rd1);
         //
         final ResolvableType tat = ResolvableType.forClassWithGenerics(R.class, Dto.class);
-        R<Dto> rd2 = JSON.parseObject(rd0, tat.getType(), FastJsonHelper.WingsReader);
+        R<Dto> rd2 = FastJsonHelper.object(rd0, tat.getType());
         log.info("rd2={}", rd2);
         //
         R<Dto> rd3 = FastJsonHelper.object(rd0, tat);
         log.info("rd3={}", rd3);
 
+        Assertions.assertNotNull(rd1);
+        Assertions.assertNotNull(rd2);
+        Assertions.assertNotNull(rd3);
         Assertions.assertEquals(dto, rd1.getData());
         Assertions.assertEquals(dto, rd2.getData());
         Assertions.assertEquals(dto, rd3.getData());

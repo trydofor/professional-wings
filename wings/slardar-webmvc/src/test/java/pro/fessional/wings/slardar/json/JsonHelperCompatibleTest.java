@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
+import pro.fessional.wings.slardar.jackson.JacksonHelper.Style;
 import pro.fessional.wings.testing.silencer.data.BoxingArray;
 import pro.fessional.wings.testing.silencer.data.BoxingValue;
 import pro.fessional.wings.testing.silencer.data.CollectionValue;
@@ -38,6 +39,8 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class JsonHelperCompatibleTest {
 
+    private boolean asserts = true;
+
     /**
      * <pre>
      * almost hardcode, can not impl or config format
@@ -45,7 +48,8 @@ public class JsonHelperCompatibleTest {
      * * number - with/out quote
      * * zoned datetime - 2023-04-05T06:07:08[America/New_York]
      * * offset datetime - 2023-04-05T06:07:08-04:00
-     * * bytes - byte array
+     * * byte[] - [-128, 127]
+     * * char[] - [char, char]
      * </pre>
      */
     @Test
@@ -112,21 +116,21 @@ public class JsonHelperCompatibleTest {
         else {
             log.info("jsonByFastWings={}, class={}, ins-len={}", jsonByFastWings, clz.getSimpleName(), ins.length);
             for (String s : ins) {
-                Assertions.assertTrue(jsonByFastWings.equals(s) || jsonByFastWings.contains(s), s + " not found");
+                if (asserts) Assertions.assertTrue(jsonByFastWings.equals(s) || jsonByFastWings.contains(s), s + " not found");
             }
         }
         final Object objectByFastWings1 = FastJsonHelper.object(jsonByFastWings, clz);
-        Assertions.assertEquals(t2, objectByFastWings1);
+        if (asserts) Assertions.assertEquals(t2, objectByFastWings1);
         final Object objectByFastWings2 = FastJsonHelper.object(jsonByFastPlain, clz);
-        Assertions.assertEquals(t2, objectByFastWings2);
+        if (asserts) Assertions.assertEquals(t2, objectByFastWings2);
         final Object objectByFastPlain = JSON.parseObject(jsonByFastWings, clz);
-        Assertions.assertEquals(t2, objectByFastPlain);
+        if (asserts) Assertions.assertEquals(t2, objectByFastPlain);
 
         // read by jackson
         Object objectByJackWings = JacksonHelper.object(jsonByFastWings, clz);
-        Assertions.assertEquals(t2, fixFastWingsJack(objectByJackWings));
-        Object objectByJackPlain = JacksonHelper.object(false, fixFastWingsJackPlain(clz, jsonByFastWings), clz);
-        Assertions.assertEquals(t2, fixFastWingsJack(objectByJackPlain));
+        if (asserts) Assertions.assertEquals(t2, fixFastWingsJack(objectByJackWings));
+        Object objectByJackPlain = JacksonHelper.object(fixFastWingsJackPlain(clz, jsonByFastWings), clz, Style.Plain);
+        if (asserts) Assertions.assertEquals(t2, fixFastWingsJack(objectByJackPlain));
     }
 
     private String fixFastWingsJackPlain(Class<?> clz, String json) {
@@ -141,7 +145,7 @@ public class JsonHelperCompatibleTest {
 
     private Object fixFastWingsJack(Object obj) {
         if (obj instanceof TransientPojo vo) {
-            // fastjson handle but jackson ignore @Transient method
+            // fastjson output but jackson ignore @Transient method
             vo.setTranBoth(true);
             vo.setTranGetter(true);
             vo.setTranSetter(true);
@@ -153,11 +157,13 @@ public class JsonHelperCompatibleTest {
     /**
      * <pre>
      * impl or config by wings
-     * * boolea - without quote
-     * * number - with quote
+     * * boolean - without quote (jackson default)
+     * * byte[] - base64 (jackson default)
+     * * char[] - String (jackson default)
+     * * number not safe - with quote
+     * * number floating - with quote
      * * zoned datetime - 2023-04-05 06:07:08 America/New_York
      * * offset datetime - 2023-04-05 06:07:08 -04:00
-     * * bytes - base64
      * </pre>
      */
     @Test
@@ -212,7 +218,7 @@ public class JsonHelperCompatibleTest {
     private <T> void jackson(T t1, T t2, String... ins) {
         log.info("jackson, value={}", t1);
 
-        final String jsonByJackPlain = JacksonHelper.string(false, t1);
+        final String jsonByJackPlain = JacksonHelper.string(t1, Style.Plain);
         log.info("jsonByJackPlain={}", jsonByJackPlain);
         final String jsonByJackWings = JacksonHelper.string(t1);
 
@@ -223,21 +229,21 @@ public class JsonHelperCompatibleTest {
         else {
             log.info("jsonByJackWings={}, class={}, ins-len={}", jsonByJackWings, clz.getSimpleName(), ins.length);
             for (String s : ins) {
-                Assertions.assertTrue(jsonByJackWings.equals(s) || jsonByJackWings.contains(s), s + " not found");
+                if (asserts) Assertions.assertTrue(jsonByJackWings.equals(s) || jsonByJackWings.contains(s), s + " not found");
             }
         }
         final Object objectByJackWings1 = JacksonHelper.object(jsonByJackWings, clz);
-        Assertions.assertEquals(t2, objectByJackWings1);
+        if (asserts) Assertions.assertEquals(t2, objectByJackWings1);
         final Object objectByJackWings2 = JacksonHelper.object(jsonByJackPlain, clz);
-        Assertions.assertEquals(t2, objectByJackWings2);
-        final Object objectByJackPlain = JacksonHelper.object(false, jsonByJackWings, clz);
-        Assertions.assertEquals(t2, objectByJackPlain);
+        if (asserts) Assertions.assertEquals(t2, objectByJackWings2);
+        final Object objectByJackPlain = JacksonHelper.object(jsonByJackWings, clz, Style.Plain);
+        if (asserts) Assertions.assertEquals(t2, objectByJackPlain);
 
         // read by fastjson
         final Object objectByFastWings = FastJsonHelper.object(fixJackWingsFastWings(clz, jsonByJackWings), clz);
-        Assertions.assertEquals(t2, objectByFastWings);
+        if (asserts) Assertions.assertEquals(t2, objectByFastWings);
         final Object objectByFastPlain = JSON.parseObject(fixJackWingsFastWings(clz, jsonByJackWings), clz);
-        Assertions.assertEquals(t2, objectByFastPlain);
+        if (asserts) Assertions.assertEquals(t2, objectByFastPlain);
     }
 
     private String fixJackWingsFastWings(Class<?> clz, String json) {
