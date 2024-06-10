@@ -38,6 +38,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11032 WingsReorderEnableTest: configed Order/Ordered
 * 11033 ThisLazyCglibTest: thisLazy with cglib
 * 11034 ThisLazyProxyTest: thisLazy with default jdk proxy
+* 11035 TypedClassTest: ResolvableType sugar
 
 ## 12 Faceless
 

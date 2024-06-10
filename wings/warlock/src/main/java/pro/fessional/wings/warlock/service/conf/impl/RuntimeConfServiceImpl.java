@@ -16,6 +16,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 import pro.fessional.wings.silencer.enhance.ThisLazy;
+import pro.fessional.wings.silencer.enhance.TypeSugar;
 import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinConfRuntimeDao;
@@ -155,7 +156,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
 
         if (r2 != null) {
             ConversionService service = handlerMap.get(r2.value2());
-            final Object obj = service.convert(r2.value1(), TypeDescriptor.valueOf(String.class), type);
+            final Object obj = service.convert(r2.value1(), TypeSugar.StringDescriptor, type);
             return (T) obj;
         }
         return null;

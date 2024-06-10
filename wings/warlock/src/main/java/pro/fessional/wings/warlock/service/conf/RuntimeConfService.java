@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.service.conf;
 
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.cast.EnumConvertor;
+import pro.fessional.wings.silencer.enhance.TypeSugar;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
 public interface RuntimeConfService {
 
     default String getString(String key) {
-        return getObject(key, TypeDescriptor.valueOf(String.class));
+        return getObject(key, TypeSugar.StringDescriptor);
     }
 
     default String getString(Class<?> key) {
@@ -66,7 +67,7 @@ public interface RuntimeConfService {
     }
 
     default <T> T getSimple(String key, Class<T> vt) {
-        return getObject(key, TypeDescriptor.valueOf(vt));
+        return getObject(key, TypeSugar.describe(vt));
     }
 
     default <T> T getSimple(Class<?> key, Class<T> vt) {
@@ -86,7 +87,7 @@ public interface RuntimeConfService {
     }
 
     default <T> List<T> getList(String key, Class<T> vt) {
-        return getObject(key, TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(vt)));
+        return getObject(key, TypeSugar.describe(List.class, vt));
     }
 
     default <T> List<T> getList(Class<?> key, Class<T> vt) {
@@ -98,7 +99,7 @@ public interface RuntimeConfService {
     }
 
     default <K, V> Map<K, V> getMap(String key, Class<K> kt, Class<V> vt) {
-        return getObject(key, TypeDescriptor.map(Map.class, TypeDescriptor.valueOf(kt), TypeDescriptor.valueOf(vt)));
+        return getObject(key, TypeSugar.describe(Map.class, kt, vt));
     }
 
     default <K, V> Map<K, V> getMap(Class<?> key, Class<K> kt, Class<V> vt) {
