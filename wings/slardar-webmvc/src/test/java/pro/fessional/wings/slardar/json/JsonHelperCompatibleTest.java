@@ -22,6 +22,12 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Ø
@@ -85,9 +91,39 @@ public class JsonHelperCompatibleTest {
         fastjson(CommonValue.OdtValueUs, "\"2023-04-05T06:07:08-04:00\"");
         fastjson(CommonValue.OdtValueJp, "\"2023-04-05T06:07:08+09:00\"");
 
+        fastjson(BoxingArray.BoolArrEmpty);
+        fastjson(BoxingArray.BoolArrValue);
+        fastjson(BoxingArray.ByteArrEmpty);
+        fastjson(BoxingArray.ByteArrValue);
+        fastjson(BoxingArray.CharArrEmpty);
+        fastjson(BoxingArray.CharArrValue);
+        fastjson(BoxingArray.ShortArrEmpty);
+        fastjson(BoxingArray.ShortArrValue);
+        fastjson(BoxingArray.IntArrEmpty);
+        fastjson(BoxingArray.IntArrValue);
+        fastjson(BoxingArray.LongArrEmpty);
+        fastjson(BoxingArray.LongArrValue);
+        fastjson(BoxingArray.FloatArrEmpty);
+        fastjson(BoxingArray.FloatArrValue);
+        fastjson(BoxingArray.DoubleArrEmpty);
+        fastjson(BoxingArray.DoubleArrValue);
+
+        fastjson(CollectionValue.EmptyList);
+        fastjson(CollectionValue.EmptySet);
+        fastjson(CollectionValue.EmptyMap);
+        fastjson(CollectionValue.BoolList);
+        fastjson(CollectionValue.BoolSet);
+        fastjson(CollectionValue.BoolMap);
+        fastjson(CollectionValue.LongList);
+        fastjson(CollectionValue.LongSet);
+        fastjson(CollectionValue.LongMap);
+        fastjson(CollectionValue.DoubleList);
+        fastjson(CollectionValue.DoubleSet);
+        fastjson(CollectionValue.DoubleMap);
+
         //
         fastjson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05T06:07:08-04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05T06:07:08[America/New_York]\"");
-        fastjson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
+        fastjson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"k0\":true,\"k1\":false}"); // MAP NOT WORKS
         fastjson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
         fastjson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
         fastjson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
@@ -111,26 +147,100 @@ public class JsonHelperCompatibleTest {
         final String jsonByFastWings = FastJsonHelper.string(t1);
 
         if (ins == null || ins.length == 0) {
+            ins = new String[]{};
             log.info("jsonByFastWings={}, class={}", jsonByFastWings, clz.getSimpleName());
         }
         else {
             log.info("jsonByFastWings={}, class={}, ins-len={}", jsonByFastWings, clz.getSimpleName(), ins.length);
-            for (String s : ins) {
-                if (asserts) Assertions.assertTrue(jsonByFastWings.equals(s) || jsonByFastWings.contains(s), s + " not found");
-            }
         }
-        final Object objectByFastWings1 = FastJsonHelper.object(jsonByFastWings, clz);
-        if (asserts) Assertions.assertEquals(t2, objectByFastWings1);
-        final Object objectByFastWings2 = FastJsonHelper.object(jsonByFastPlain, clz);
-        if (asserts) Assertions.assertEquals(t2, objectByFastWings2);
-        final Object objectByFastPlain = JSON.parseObject(jsonByFastWings, clz);
-        if (asserts) Assertions.assertEquals(t2, objectByFastPlain);
 
+        final Object objectByFastWings1 = FastJsonHelper.object(jsonByFastWings, clz);
+        final Object objectByFastWings2 = FastJsonHelper.object(jsonByFastPlain, clz);
+        final Object objectByFastPlain = JSON.parseObject(jsonByFastWings, clz);
         // read by jackson
         Object objectByJackWings = JacksonHelper.object(jsonByFastWings, clz);
-        if (asserts) Assertions.assertEquals(t2, fixFastWingsJack(objectByJackWings));
-        Object objectByJackPlain = JacksonHelper.object(fixFastWingsJackPlain(clz, jsonByFastWings), clz, Style.Plain);
-        if (asserts) Assertions.assertEquals(t2, fixFastWingsJack(objectByJackPlain));
+        Object objectByJackPlain = JacksonHelper.object(Style.Plain, fixFastWingsJackPlain(clz, jsonByFastWings), clz);
+
+        if (!asserts) return;
+
+        for (String s : ins) {
+            Assertions.assertTrue(jsonByFastWings.equals(s) || jsonByFastWings.contains(s), s + " not found");
+        }
+
+        if (clz.isArray()) {
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByFastWings1);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByFastWings2);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByFastPlain);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) fixFastWingsJack(objectByJackWings));
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) fixFastWingsJack(objectByJackPlain));
+        }
+        else {
+
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByFastWings1));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByFastWings2));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByFastPlain));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, fixFastWingsJack(objectByJackWings)));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, fixFastWingsJack(objectByJackPlain)));
+        }
+    }
+
+    @SuppressWarnings("all")
+    private Object fixCollectionValueType(Object t2, Object obj) {
+        if (t2 instanceof List ts && !ts.isEmpty() && obj instanceof List cs) {
+            Object v0 = ts.get(0);
+            Function<String, Object> fun = null;
+            if (v0 instanceof Long) {
+                fun = Long::valueOf;
+            }
+            else if (v0 instanceof Double) {
+                fun = Double::valueOf;
+            }
+
+            if (fun != null) {
+                ArrayList<Object> tmp = new ArrayList<>(cs);
+                cs.clear();
+                for (Object o : tmp) {
+                    cs.add(fun.apply(o.toString()));
+                }
+            }
+        }
+        else if (t2 instanceof Set ts && !ts.isEmpty() && obj instanceof Set cs) {
+            Object v0 = ts.iterator().next();
+            Function<String, Object> fun = null;
+            if (v0 instanceof Long) {
+                fun = Long::valueOf;
+            }
+            else if (v0 instanceof Double) {
+                fun = Double::valueOf;
+            }
+
+            if (fun != null) {
+                ArrayList<Object> tmp = new ArrayList<>(cs);
+                cs.clear();
+                for (Object o : tmp) {
+                    cs.add(fun.apply(o.toString()));
+                }
+            }
+        }
+        else if (t2 instanceof Map ts && !ts.isEmpty() && obj instanceof Map cs) {
+            Object v0 = ts.values().iterator().next();
+            Function<String, Object> fun = null;
+            if (v0 instanceof Long) {
+                fun = Long::valueOf;
+            }
+            else if (v0 instanceof Double) {
+                fun = Double::valueOf;
+            }
+
+            if (fun != null) {
+                HashMap<Object, Object> tmp = new HashMap<>(cs);
+                cs.clear();
+                for (Map.Entry<Object, Object> en : tmp.entrySet()) {
+                    cs.put(en.getKey(), fun.apply(en.getValue().toString()));
+                }
+            }
+        }
+        return obj;
     }
 
     private String fixFastWingsJackPlain(Class<?> clz, String json) {
@@ -200,8 +310,38 @@ public class JsonHelperCompatibleTest {
         jackson(CommonValue.OdtValueUs, "\"2023-04-05 06:07:08 -04:00\"");
         jackson(CommonValue.OdtValueJp, "\"2023-04-05 06:07:08 +09:00\"");
 
+        jackson(BoxingArray.BoolArrEmpty);
+        jackson(BoxingArray.BoolArrValue);
+        jackson(BoxingArray.ByteArrEmpty);
+        jackson(BoxingArray.ByteArrValue);
+        jackson(BoxingArray.CharArrEmpty);
+        jackson(BoxingArray.CharArrValue);
+        jackson(BoxingArray.ShortArrEmpty);
+        jackson(BoxingArray.ShortArrValue);
+        jackson(BoxingArray.IntArrEmpty);
+        jackson(BoxingArray.IntArrValue);
+        jackson(BoxingArray.LongArrEmpty);
+        jackson(BoxingArray.LongArrValue);
+        jackson(BoxingArray.FloatArrEmpty);
+        jackson(BoxingArray.FloatArrValue);
+        jackson(BoxingArray.DoubleArrEmpty);
+        jackson(BoxingArray.DoubleArrValue);
+
+        jackson(CollectionValue.EmptyList);
+        jackson(CollectionValue.EmptySet);
+        jackson(CollectionValue.EmptyMap);
+        jackson(CollectionValue.BoolList);
+        jackson(CollectionValue.BoolSet);
+        jackson(CollectionValue.BoolMap);
+        jackson(CollectionValue.LongList);
+        jackson(CollectionValue.LongSet);
+        jackson(CollectionValue.LongMap);
+        jackson(CollectionValue.DoubleList);
+        jackson(CollectionValue.DoubleSet);
+        jackson(CollectionValue.DoubleMap);
+
         jackson(new CommonValue().defaults(), "\"offsetDateTimeValueUs\":\"2023-04-05 06:07:08 -04:00\"", "\"zoneDateTimeValueUs\":\"2023-04-05 06:07:08 America/New_York\"");
-        jackson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"0\":true,\"1\":false}"); // MAP NOT WORKS
+        jackson(new CollectionValue().defaults(), "\"boolList\":[true,false]", "\"boolMap\":{\"k0\":true,\"k1\":false}"); // MAP NOT WORKS
         jackson(new BoxingValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
         jackson(new PrimitiveValue().defaults(), "\"boolTrue\":true", "\"intMin\":-2147483648");
         jackson(new BoxingArray().defaults(), "\"boolArrValue\":[true,false]", "\"intArrValue\":[-2147483648,2147483647]");
@@ -218,32 +358,46 @@ public class JsonHelperCompatibleTest {
     private <T> void jackson(T t1, T t2, String... ins) {
         log.info("jackson, value={}", t1);
 
-        final String jsonByJackPlain = JacksonHelper.string(t1, Style.Plain);
+        final String jsonByJackPlain = JacksonHelper.string(Style.Plain, t1);
         log.info("jsonByJackPlain={}", jsonByJackPlain);
         final String jsonByJackWings = JacksonHelper.string(t1);
 
         Class<?> clz = t1.getClass();
         if (ins == null || ins.length == 0) {
+            ins = new String[]{};
             log.info("jsonByJackWings={}, class={}", jsonByJackWings, clz.getSimpleName());
         }
         else {
             log.info("jsonByJackWings={}, class={}, ins-len={}", jsonByJackWings, clz.getSimpleName(), ins.length);
-            for (String s : ins) {
-                if (asserts) Assertions.assertTrue(jsonByJackWings.equals(s) || jsonByJackWings.contains(s), s + " not found");
-            }
         }
-        final Object objectByJackWings1 = JacksonHelper.object(jsonByJackWings, clz);
-        if (asserts) Assertions.assertEquals(t2, objectByJackWings1);
-        final Object objectByJackWings2 = JacksonHelper.object(jsonByJackPlain, clz);
-        if (asserts) Assertions.assertEquals(t2, objectByJackWings2);
-        final Object objectByJackPlain = JacksonHelper.object(jsonByJackWings, clz, Style.Plain);
-        if (asserts) Assertions.assertEquals(t2, objectByJackPlain);
 
+        final Object objectByJackWings1 = JacksonHelper.object(jsonByJackWings, clz);
+        final Object objectByJackWings2 = JacksonHelper.object(jsonByJackPlain, clz);
+        final Object objectByJackPlain = JacksonHelper.object(Style.Plain, jsonByJackWings, clz);
         // read by fastjson
         final Object objectByFastWings = FastJsonHelper.object(fixJackWingsFastWings(clz, jsonByJackWings), clz);
-        if (asserts) Assertions.assertEquals(t2, objectByFastWings);
         final Object objectByFastPlain = JSON.parseObject(fixJackWingsFastWings(clz, jsonByJackWings), clz);
-        if (asserts) Assertions.assertEquals(t2, objectByFastPlain);
+
+        if (!asserts) return;
+
+        for (String s : ins) {
+            Assertions.assertTrue(jsonByJackWings.equals(s) || jsonByJackWings.contains(s), s + " not found");
+        }
+
+        if (clz.isArray()) {
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByJackWings1);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByJackWings2);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByJackPlain);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByFastWings);
+            Assertions.assertArrayEquals((Object[]) t2, (Object[]) objectByFastPlain);
+        }
+        else {
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByJackWings1));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByJackWings2));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByJackPlain));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByFastWings));
+            Assertions.assertEquals(t2, fixCollectionValueType(t2, objectByFastPlain));
+        }
     }
 
     private String fixJackWingsFastWings(Class<?> clz, String json) {

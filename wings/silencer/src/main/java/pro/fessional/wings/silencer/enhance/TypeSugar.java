@@ -41,16 +41,16 @@ public class TypeSugar {
 
 
     //
-    private static final ConcurrentHashMap<ArrayKey, ResolvableType> CacheResolvable = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ArrayKey, TypeDescriptor> CacheDescriptor = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Object, ResolvableType> CacheResolvable = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Object, TypeDescriptor> CacheDescriptor = new ConcurrentHashMap<>();
 
     /**
      * by cache
      */
     @NotNull
     public static TypeDescriptor describe(@NotNull Class<?> clazz, Class<?>... generics) {
-        ArrayKey key = generics == null || generics.length == 0
-            ? new ArrayKey(clazz)
+        Object key = generics == null || generics.length == 0
+            ? clazz
             : new ArrayKey(clazz, generics);
         return CacheDescriptor.computeIfAbsent(key, ignore -> describeNew(clazz, generics));
     }
@@ -60,8 +60,8 @@ public class TypeSugar {
      */
     @NotNull
     public static ResolvableType resolve(@NotNull Class<?> clazz, Class<?>... generics) {
-        ArrayKey key = generics == null || generics.length == 0
-            ? new ArrayKey(clazz)
+        Object key = generics == null || generics.length == 0
+            ? clazz
             : new ArrayKey(clazz, generics);
         return CacheResolvable.computeIfAbsent(key, ignore -> resolveNew(clazz, generics));
     }

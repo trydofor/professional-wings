@@ -38,7 +38,7 @@ public class ResultSerializeTest {
         log.info("{}", t2);
     }
 
-    @SuppressWarnings("Convert2Diamond")
+    @SuppressWarnings("all")
     @SneakyThrows
     @Test
     @TmsLink("C14003")
@@ -61,7 +61,7 @@ public class ResultSerializeTest {
         ObjectMapper om = new ObjectMapper();
         final String json = om.writeValueAsString(r1);
         log.info("testJackson={}", json);
-        final R<Object> r2 = om.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<R<Object>>() {});
+        final R<Object> r2 = om.readValue(json, R.class);
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());
@@ -81,7 +81,7 @@ public class ResultSerializeTest {
                 .setI18nMessage("i18nCode", "1");
         final String json = FastJsonHelper.string(r1);
         log.info(json);
-        final R<Object> r2 = FastJsonHelper.object(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {});
+        final R<Object> r2 = FastJsonHelper.object(json, R.class);
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());

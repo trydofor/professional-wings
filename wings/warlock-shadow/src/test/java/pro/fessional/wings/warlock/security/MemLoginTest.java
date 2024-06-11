@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.security;
 
-import com.alibaba.fastjson2.TypeReference;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +60,8 @@ class MemLoginTest {
         String au4 = OkHttpClientHelper.extractString(r4, false);
         log.info("UsernameLogin auth4={}", au4);
 
-        final TypeReference<Set<String>> setRef = new TypeReference<>() {};
-        final Set<String> st3 = FastJsonHelper.object(au3, setRef);
-        final Set<String> st4 = FastJsonHelper.object(au4, setRef);
+        final Set<String> st3 = FastJsonHelper.object(au3, Set.class, String.class);
+        final Set<String> st4 = FastJsonHelper.object(au4, Set.class, String.class);
         Assertions.assertEquals(st3, st4);
 
         List<String> exp = Arrays.asList("ROLE_SYSTEM", "ROLE_ADMIN", "user-perm");
@@ -110,8 +108,8 @@ class MemLoginTest {
         String au4 = OkHttpClientHelper.extractString(r4, false);
         log.info("EmailLogin auth4={}", au4);
 
-        final Set<?> st3 = FastJsonHelper.object(au3, new TypeReference<Set<String>>() {});
-        final Set<?> st4 = FastJsonHelper.object(au4, new TypeReference<Set<String>>() {});
+        final Set<?> st3 = FastJsonHelper.object(au3, Set.class, String.class);
+        final Set<?> st4 = FastJsonHelper.object(au4,Set.class, String.class);
         Assertions.assertEquals(st3, st4);
 
         Assertions.assertTrue(st3.contains("email-perm"));

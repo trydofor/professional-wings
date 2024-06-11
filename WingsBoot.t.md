@@ -320,6 +320,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13123 DoubleKillTest: bad SpEL, check null
 * 13124 JsonHelperCompatibleTest: fastjson basic type compatible
 * 13125 JsonHelperCompatibleTest: jackson basic type compatible
+* 13126 FastJsonTest: fastjson helper json path
+* 13127 TypeReferenceTest: TypeReference, TypeDescriptor, ResolvableType
 
 ## 14 Warlock
 

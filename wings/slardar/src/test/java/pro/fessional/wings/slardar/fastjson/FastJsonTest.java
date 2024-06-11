@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.fastjson;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONPath;
 import com.alibaba.fastjson2.JSONWriter.Feature;
 import com.alibaba.fastjson2.annotation.JSONField;
 import io.qameta.allure.TmsLink;
@@ -8,6 +10,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.testing.silencer.data.BoxingArray;
 import pro.fessional.wings.testing.silencer.data.BoxingValue;
@@ -21,6 +24,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <a href="https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn">register_custom_reader_writer_cn</a>
@@ -59,7 +64,7 @@ class FastJsonTest {
         testDefault(new TransientPojo().defaults());
     }
 
-    private <T> void testDefault(T t1){
+    private <T> void testDefault(T t1) {
         final String s0 = JSON.toJSONString(t1);
         Class<?> clz = t1.getClass();
         log.info("testDefault, class={}, json={}", clz.getSimpleName(), s0);
@@ -77,7 +82,7 @@ class FastJsonTest {
         final Dto d1 = JSON.parseObject(s0, Dto.class);
         Assertions.assertEquals(d0, d1);
     }
-    
+
     /**
      * <a href="https://github.com/alibaba/fastjson2/issues/1537">WriteNonStringValueAsString format Number</a>
      */
@@ -106,4 +111,29 @@ class FastJsonTest {
         Assertions.assertEquals("\"3.14\"", JSON.toJSONString(new BigDecimal("3.14"), Feature.WriteNonStringValueAsString));
     }
 
+    @Test
+    @TmsLink("C13126")
+    public void testJsonPath() {
+        CollectionValue data = new CollectionValue().defaults();
+        R<CollectionValue> r = R.ok("You're fired", data);
+        String json = FastJsonHelper.string(r);
+        JSONObject obj = FastJsonHelper.object(json);
+
+        JSONPath p1 = FastJsonHelper.path("$.success");
+        JSONPath p2 = FastJsonHelper.path("$.success");
+        Assertions.assertSame(p1, p2);
+        Assertions.assertEquals(true, p1.eval(obj));
+
+        JSONPath pn = FastJsonHelper.path("$.notfound");
+        Assertions.assertNull(pn.eval(obj));
+
+        JSONPath pd = FastJsonHelper.path("$.data.emptyList");
+        Assertions.assertEquals(Collections.emptyList(), pd.eval(obj));
+
+        JSONPath pl1 = FastJsonHelper.path("$.data.longList", List.class, Long.class);
+        Assertions.assertEquals(CollectionValue.LongList, pl1.extract(json));
+
+        JSONPath pl2 = FastJsonHelper.path("$.data.longList", List.class, Long.class);
+        Assertions.assertEquals(CollectionValue.LongList, pl2.extract(json));
+    }
 }

@@ -1,8 +1,10 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
@@ -10,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -264,17 +267,25 @@ public class SlardarJacksonWebConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public ApplicationStartedEventRunner jacksonHelperRunner(Jackson2ObjectMapperBuilder builder) {
+    public ApplicationStartedEventRunner jacksonHelperRunner(ApplicationContext context) {
         log.info("SlardarWebmvc spring-runs jacksonHelperRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             new JacksonHelper() {{
+                var builder = context.getBean(Jackson2ObjectMapperBuilder.class);
+
+                // wings
                 bindXmlWings(builder.createXmlMapper(true).build());
                 bindJsonWings(builder.createXmlMapper(false).build());
 
-                bindXmlBean(builder.createXmlMapper(true).build());
-                bindJsonBean(builder.createXmlMapper(false).build());
+                // bean
+                var jsonBean = context.getBeanProvider(ObjectMapper.class);
+                bindJsonBean(jsonBean.getIfAvailable(() -> context.getBean(ObjectMapper.class)));
+                var xmlBean = context.getBeanProvider(XmlMapper.class);
+                bindXmlBean(xmlBean.getIfAvailable(() -> builder.createXmlMapper(true).build()));
+
                 // at last, restore createXmlMapper to false
+                builder.createXmlMapper(false);
             }};
         });
     }

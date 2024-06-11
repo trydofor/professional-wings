@@ -1,19 +1,22 @@
 package pro.fessional.wings.slardar.jackson;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.text.WhiteUtil;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.silencer.enhance.TypeSugar;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
@@ -22,6 +25,7 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -153,6 +157,7 @@ public class JacksonHelper {
     // https://github.com/FasterXML/jackson-modules-java8/tree/master/datetime#usage
     public static final ObjectMapper JsonPlain = buildPlain(JsonMapper.builder().findAndAddModules()).build();
     public static final XmlMapper XmlPlain = buildPlain(XmlMapper.builder().findAndAddModules()).build();
+    public static final TypeFactory TypeFactoryPlain = JsonPlain.getTypeFactory();
 
     //// wings autoZone ser/des
     protected static JacksonLocalDateTimeSerializer beanLocalDateTimeSerializer;
@@ -337,14 +342,39 @@ public class JacksonHelper {
         return false;
     }
 
+    /////////////
+
+    /**
+     * construct jackson's JavaType by TypeSugar
+     */
+    public static JavaType javaType(@NotNull Class<?> targetType, Class<?>... generics) {
+        Type type = TypeSugar.type(targetType, generics);
+        return TypeFactoryPlain.constructType(type);
+    }
+
+    /**
+     * construct jackson's JavaType in spring way
+     */
+    public static JavaType javaType(@NotNull TypeDescriptor targetType) {
+        Type type = targetType.getResolvableType().getType();
+        return TypeFactoryPlain.constructType(type);
+    }
+
+    /**
+     * construct jackson's JavaType in spring way
+     */
+    public static JavaType javaType(@NotNull ResolvableType targetType) {
+        return TypeFactoryPlain.constructType(targetType.getType());
+    }
+
     /**
      * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_->!null")
-    public static <T> T object(String text, @NotNull Class<T> targetType) {
+    @Contract("!null,_,_->!null")
+    public static <T> T object(String text, @NotNull Class<?> targetType, Class<?>... generics) {
         if (text == null) return null;
-        return MapperWings(!asXml(text)).readValue(text, targetType);
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType, generics));
     }
 
 
@@ -352,10 +382,10 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(String text, @NotNull Class<T> targetType, @NotNull Style style) {
+    @Contract("_,!null,_,_ -> !null")
+    public static <T> T object(@NotNull Style style, String text, @NotNull Class<?> targetType, Class<?>... generics) {
         if (text == null) return null;
-        return Mapper(style, !asXml(text)).readValue(text, targetType);
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType, generics));
     }
 
     /**
@@ -372,31 +402,54 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(String text, @NotNull JavaType targetType, @NotNull Style style) {
+    @Contract("_,!null,_ -> !null")
+    public static <T> T object(@NotNull Style style, String text, @NotNull JavaType targetType) {
         if (text == null) return null;
         return Mapper(style, !asXml(text)).readValue(text, targetType);
     }
+
 
     /**
      * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
-    public static <T> T object(String text, @NotNull TypeReference<T> targetType) {
+    public static <T> T object(String text, @NotNull ResolvableType targetType) {
         if (text == null) return null;
-        return MapperWings(!asXml(text)).readValue(text, targetType);
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType));
     }
 
     /**
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(String text, @NotNull TypeReference<T> targetType, @NotNull Style style) {
+    @Contract("_,!null,_ -> !null")
+    public static <T> T object(@NotNull Style style, String text, @NotNull ResolvableType targetType) {
         if (text == null) return null;
-        return Mapper(style, !asXml(text)).readValue(text, targetType);
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType));
     }
+
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static <T> T object(String text, @NotNull TypeDescriptor targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType));
+    }
+
+    /**
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("_,!null,_ -> !null")
+    public static <T> T object(@NotNull Style style, String text, @NotNull TypeDescriptor targetType) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType));
+    }
+
 
     /**
      * wings style read text to object, if text asXml, read as xml, otherwise as json
@@ -412,10 +465,10 @@ public class JacksonHelper {
      * wings style read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_->!null")
-    public static <T> T object(byte[] text, @NotNull Class<T> targetType) {
+    @Contract("!null,_,_->!null")
+    public static <T> T object(byte[] text, @NotNull Class<?> targetType, Class<?>... generics) {
         if (text == null) return null;
-        return MapperWings(!asXml(text)).readValue(text, targetType);
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType, generics));
     }
 
 
@@ -423,10 +476,10 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(byte[] text, @NotNull Class<T> targetType, @NotNull Style style) {
+    @Contract("_,!null,_,_ -> !null")
+    public static <T> T object(@NotNull Style style, byte[] text, @NotNull Class<?> targetType, Class<?>... generics) {
         if (text == null) return null;
-        return Mapper(style, !asXml(text)).readValue(text, targetType);
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType, generics));
     }
 
     /**
@@ -443,8 +496,8 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(byte[] text, @NotNull JavaType targetType, @NotNull Style style) {
+    @Contract("_, !null, _ -> !null")
+    public static <T> T object(@NotNull Style style, byte[] text, @NotNull JavaType targetType) {
         if (text == null) return null;
         return Mapper(style, !asXml(text)).readValue(text, targetType);
     }
@@ -454,19 +507,39 @@ public class JacksonHelper {
      */
     @SneakyThrows
     @Contract("!null,_->!null")
-    public static <T> T object(byte[] text, @NotNull TypeReference<T> targetType) {
+    public static <T> T object(byte[] text, @NotNull ResolvableType targetType) {
         if (text == null) return null;
-        return MapperWings(!asXml(text)).readValue(text, targetType);
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType));
     }
 
     /**
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(byte[] text, @NotNull TypeReference<T> targetType, @NotNull Style style) {
+    @Contract("_, !null, _ -> !null")
+    public static <T> T object(@NotNull Style style, byte[] text, @NotNull ResolvableType targetType) {
         if (text == null) return null;
-        return Mapper(style, !asXml(text)).readValue(text, targetType);
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType));
+    }
+
+    /**
+     * wings style read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("!null,_->!null")
+    public static <T> T object(byte[] text, @NotNull TypeDescriptor targetType) {
+        if (text == null) return null;
+        return MapperWings(!asXml(text)).readValue(text, javaType(targetType));
+    }
+
+    /**
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
+     */
+    @SneakyThrows
+    @Contract("_, !null, _ -> !null")
+    public static <T> T object(@NotNull Style style, byte[] text, @NotNull TypeDescriptor targetType) {
+        if (text == null) return null;
+        return Mapper(style, !asXml(text)).readValue(text, javaType(targetType));
     }
 
     /**
@@ -483,8 +556,8 @@ public class JacksonHelper {
      * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
-    @Contract("!null,_->!null")
-    public static JsonNode object(byte[] text, @NotNull Style style) {
+    @Contract("_, !null -> !null")
+    public static JsonNode object(@NotNull Style style, byte[] text) {
         if (text == null) return null;
         return Mapper(style, !asXml(text)).readTree(text);
     }
@@ -502,8 +575,8 @@ public class JacksonHelper {
      * serialization to json
      */
     @SneakyThrows
-    @Contract("!null,_->!null")
-    public static String string(Object obj, @NotNull Style style) {
+    @Contract("_, !null -> !null")
+    public static String string(@NotNull Style style, Object obj) {
         return obj == null ? null : Mapper(style, true).writeValueAsString(obj);
     }
 
@@ -520,8 +593,8 @@ public class JacksonHelper {
      * serialization to json/xml
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static String string(Object obj, @NotNull Style style, boolean json) {
+    @Contract("_, !null, _ -> !null")
+    public static String string(@NotNull Style style, Object obj, boolean json) {
         return obj == null ? null : Mapper(style, json).writeValueAsString(obj);
     }
 
@@ -538,8 +611,8 @@ public class JacksonHelper {
      * serialization to json
      */
     @SneakyThrows
-    @Contract("!null,_->!null")
-    public static byte[] bytes(Object obj, @NotNull Style style) {
+    @Contract("_, !null -> !null")
+    public static byte[] bytes(@NotNull Style style, Object obj) {
         return obj == null ? null : Mapper(style, true).writeValueAsBytes(obj);
     }
 
@@ -556,8 +629,8 @@ public class JacksonHelper {
      * serialization to json/xml
      */
     @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static byte[] bytes(Object obj, @NotNull Style style, boolean json) {
+    @Contract("_, !null, _ -> !null")
+    public static byte[] bytes(@NotNull Style style, Object obj, boolean json) {
         return obj == null ? null : Mapper(style, json).writeValueAsBytes(obj);
     }
 

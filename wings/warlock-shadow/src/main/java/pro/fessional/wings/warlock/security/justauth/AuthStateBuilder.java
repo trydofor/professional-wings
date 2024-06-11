@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.security.justauth;
 
-import com.alibaba.fastjson2.TypeReference;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
+import pro.fessional.wings.silencer.enhance.TypeSugar;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
@@ -38,7 +38,7 @@ public class AuthStateBuilder {
     public static final String ParamState = "state";
     public static final String KeyStateArr = "s";
     public static final String KeyAuthZone = "z";
-    public static final Type ParamType = new TypeReference<Map<String, String[]>>() {}.getType();
+    public static final Type ParamType = TypeSugar.type(Map.class, String.class, String[].class);
 
     @Setter
     private Aes aes = Aes256.of(RandCode.strong(RAND_LEN));

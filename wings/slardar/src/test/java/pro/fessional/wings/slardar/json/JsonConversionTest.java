@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.json;
 
-import com.alibaba.fastjson2.TypeReference;
 import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,6 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -98,8 +96,7 @@ class JsonConversionTest {
         R<Dto> rd = R.okData(dto);
         String rd0 = FastJsonHelper.string(rd);
         //
-        Type rdt = new TypeReference<R<Dto>>() {}.getType();
-        R<Dto> rd1 = FastJsonHelper.object(rd0, rdt);
+        R<Dto> rd1 = FastJsonHelper.object(rd0, R.class, Dto.class);
         log.info("rd1={}", rd1);
         //
         final ResolvableType tat = ResolvableType.forClassWithGenerics(R.class, Dto.class);
