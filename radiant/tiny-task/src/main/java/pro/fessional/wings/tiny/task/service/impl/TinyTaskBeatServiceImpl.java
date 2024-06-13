@@ -3,14 +3,17 @@ package pro.fessional.wings.tiny.task.service.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
@@ -21,6 +24,7 @@ import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskBeatService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +48,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
     protected int beatTimes = 2;
 
     private volatile boolean warmed = false;
+    private final HashMap<Long, LocalDateTime> nonLastExec = new HashMap<>();
 
     @Override
     @TinyTasker("TinyTaskCleanResult")
@@ -97,9 +102,9 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         List<WinTaskDefine> tks = winTaskDefineDao
             .ctx()
             .select(td.Id, td.TaskerName, td.LastExec,
-                td.TimingBeat, td.TimingRate, td.TimingIdle)
+                td.TimingBeat, td.TimingRate, td.TimingIdle, td.TimingCron)
             .from(td)
-            .where(td.Enabled.eq(Boolean.TRUE))
+            .where(td.Enabled.eq(Boolean.TRUE).and(td.TimingBeat.ge(0)))
             .fetch()
             .into(WinTaskDefine.class);
 
@@ -107,14 +112,11 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         for (WinTaskDefine r : tks) {
             log.debug("check health task id={}, name={}", r.getId(), r.getTaskerName());
-            int beat = r.getTimingBeat();
-            if (beat <= 0) {
-                beat = Math.max(r.getTimingRate(), r.getTimingIdle());
-            }
+            // coordinate to system timezone
+            long beat = calcBeatMills(r, now);
             if (beat <= 0) continue;
 
-            final long last = DateLocaling.sysEpoch(r.getLastExec());
-            if (warmed && last + 1000L * beat * beatTimes < now) {
+            if (warmed && beat < now) {
                 log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
                 mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');
             }
@@ -122,5 +124,31 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         warmed = true;
         return mis.isEmpty() ? null : "misfired task id@name\n" + mis;
+    }
+
+    private long calcBeatMills(WinTaskDefine td, long now) {
+        // no previous
+        LocalDateTime lastExec = td.getLastExec();
+        if (EmptySugar.asEmptyValue(lastExec)) {
+            lastExec = nonLastExec.computeIfAbsent(td.getId(), ignore -> DateLocaling.sysLdt(now));
+        }
+
+        final long beat = td.getTimingBeat();
+        if (beat < 0) return beat;
+        if (beat > 0) return DateLocaling.sysEpoch(lastExec) + beat * 1000L;
+
+        String cron = td.getTimingCron();
+        if (StringUtils.isNotEmpty(cron)) {
+            int max = Math.max(td.getTimingRate(), td.getTimingIdle());
+            return DateLocaling.sysEpoch(lastExec) + max * 1000L * beatTimes;
+        }
+
+        CronExpression cronExpr = CronExpression.parse(cron);
+        LocalDateTime beatLdt = lastExec;
+        for (int i = 0; i < beatTimes; i++) {
+            beatLdt = cronExpr.next(beatLdt);
+        }
+
+        return DateLocaling.sysEpoch(beatLdt);
     }
 }

@@ -209,7 +209,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final long next = calcNextExec(td);
             if (next < 0) return false;
 
-            //
+            // temp save to avoid kill
             saveNextExec(next, td);
 
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
@@ -404,6 +404,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         setter.put(td.LastExec, milliLdt(exec, ThreadNow.sysZoneId()));
         setter.put(td.SumExec, td.SumExec.add(1));
+        // clean next means nomoal finish (not kill)
         setter.put(td.NextExec, EmptyValue.DATE_TIME);
 
         if (fail > 0) {
@@ -501,7 +502,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final Long id = td.getId();
 
         final long timingMiss = td.getTimingMiss() * 1000L;
-        // Planned, program waw killed before execution ends
+        // Planned, program was killed before execution ends
         final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
         if (nextMs + timingMiss >= now) {
             log.info("launch misfire task, id={}", id);
