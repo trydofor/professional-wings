@@ -11,6 +11,7 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.pain.ThrowableUtil;
@@ -21,6 +22,7 @@ import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.database.helper.TransactionHelper;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
@@ -373,18 +375,6 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         }
     }
 
-    private void saveNextExec(long next, WinTaskDefine td) {
-        journalService.commit(Jane.SaveNextExec, journal -> {
-            final WinTaskDefineTable t = winTaskDefineDao.getTable();
-            winTaskDefineDao.ctx().update(t)
-                            .set(t.CommitId, journal.getCommitId())
-                            .set(t.ModifyDt, journal.getCommitDt())
-                            .set(t.NextExec, milliLdt(next, ThreadNow.sysZoneId()))
-                            .where(t.Id.eq(td.getId()))
-                            .execute();
-        });
-    }
-
     private boolean notNextLock(WinTaskDefine td, long now) {
         final WinTaskDefineTable t = winTaskDefineDao.getTable();
         final int rc = winTaskDefineDao
@@ -395,6 +385,20 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             .where(t.Id.eq(td.getId()).and(t.NextLock.eq(td.getNextLock())))
             .execute();
         return rc <= 0;
+    }
+
+    private void saveNextExec(long next, WinTaskDefine td) {
+        TransactionHelper.template(Propagation.REQUIRES_NEW).execute(ignore ->
+            journalService.commit(Jane.SaveNextExec, journal -> {
+                final WinTaskDefineTable t = winTaskDefineDao.getTable();
+                winTaskDefineDao.ctx().update(t)
+                                .set(t.CommitId, journal.getCommitId())
+                                .set(t.ModifyDt, journal.getCommitDt())
+                                .set(t.NextExec, milliLdt(next, ThreadNow.sysZoneId()))
+                                .where(t.Id.eq(td.getId()))
+                                .execute();
+            })
+        );
     }
 
     private void saveResult(Long id, long exec, long fail, long done, String msg, int cf) {
@@ -433,19 +437,21 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         po.setTimeDone(milliLdt(done, zidSys));
         po.setTimeCost((int) (Math.max(done, fail) - exec));
 
-        journalService.commit(Jane.SaveResult, journal -> {
-            //
-            setter.put(td.CommitId, journal.getCommitId());
-            setter.put(td.ModifyDt, journal.getCommitDt());
-            winTaskDefineDao.ctx()
-                            .update(td)
-                            .set(setter)
-                            .where(td.Id.eq(id))
-                            .execute();
+        TransactionHelper.template(Propagation.REQUIRES_NEW).execute(ignore ->
+            journalService.commit(Jane.SaveResult, journal -> {
+                //
+                setter.put(td.CommitId, journal.getCommitId());
+                setter.put(td.ModifyDt, journal.getCommitDt());
+                winTaskDefineDao.ctx()
+                                .update(td)
+                                .set(setter)
+                                .where(td.Id.eq(id))
+                                .execute();
 
-            // history
-            winTaskResultDao.insert(po);
-        });
+                // history
+                winTaskResultDao.insert(po);
+            })
+        );
     }
 
     private LocalDateTime milliLdt(long m, ZoneId zid) {

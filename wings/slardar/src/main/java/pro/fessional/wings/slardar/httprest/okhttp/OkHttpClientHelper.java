@@ -14,9 +14,11 @@ import okhttp3.internal.http.HttpMethod;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,14 +47,15 @@ public class OkHttpClientHelper {
         return DefaultClientHolder.DefaultClient;
     }
 
-    protected static OkHttpClient SpringClient;
+    private static final SingletonSupplier<OkHttpClient> SpringClient = ApplicationContextHelper
+        .getSingletonSupplier(OkHttpClient.class, OkHttpClientHelper::staticClient);
 
     /**
      * inject Spring Configured client
      */
     @NotNull
     public static OkHttpClient springClient() {
-        return SpringClient != null ? SpringClient : staticClient();
+        return SpringClient.obtain();
     }
 
     //

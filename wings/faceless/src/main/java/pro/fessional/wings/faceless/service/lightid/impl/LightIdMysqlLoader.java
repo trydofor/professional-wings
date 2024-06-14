@@ -26,6 +26,7 @@ import static pro.fessional.wings.faceless.database.manual.single.select.lightse
  */
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class LightIdMysqlLoader implements Loader {
 
     private final LightSequenceSelect select;
@@ -35,7 +36,6 @@ public class LightIdMysqlLoader implements Loader {
     @NotNull
     @Override
     @WriteRouteOnly
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Segment require(@NotNull String name, int block, int count, boolean exact) {
         NextStep one = select.selectOneLock(block, name);
         if (one == null) {
@@ -81,7 +81,6 @@ public class LightIdMysqlLoader implements Loader {
     @NotNull
     @Override
     @WriteRouteOnly
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Segment> preload(int block) {
         List<NameNextStep> all = select.selectAllLock(block);
         int[] updates = modify.updateNextPlusStep(all, block);

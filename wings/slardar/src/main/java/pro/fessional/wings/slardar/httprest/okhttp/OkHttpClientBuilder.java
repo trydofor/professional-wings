@@ -2,7 +2,9 @@ package pro.fessional.wings.slardar.httprest.okhttp;
 
 import okhttp3.OkHttpClient.Builder;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.netx.SslTrustAll;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 /**
  * @author trydofor
@@ -23,14 +25,15 @@ public class OkHttpClientBuilder {
         return DefaultBuilderHolder.DefaultBuilder;
     }
 
-    protected static Builder SpringBuilder;
+    private static final SingletonSupplier<Builder> SpringBuilder = ApplicationContextHelper
+        .getSingletonSupplier(Builder.class, OkHttpClientBuilder::staticBuilder);
 
     /**
      * Spring injected Bean
      */
     @NotNull
     public static Builder springBuilder() {
-        return SpringBuilder != null ? SpringBuilder : staticBuilder();
+        return SpringBuilder.obtain();
     }
 
     public static void sslTrustAll(Builder builder) {

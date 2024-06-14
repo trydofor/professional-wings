@@ -192,6 +192,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12148 JdbcTemplateHelperTest: safe table
 * 12149 FormatSugarTest: format datetime and number
 * 12150 SetterSugarTest: one line setter sugar
+* 12151 DefaultJournalServiceTest: journal transaction test
 
 ## 13 Slardar
 

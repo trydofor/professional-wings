@@ -206,6 +206,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     }
 
     @Override
+    @Transactional
     public void dander(long userId, boolean danger, @NotNull Enum<?>... authType) {
         if (winUserBasisDao.notTableExist()) return;
 
@@ -264,5 +265,17 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             t.AuthType,
             t.ExpiredDt,
             t.FailedCnt);
+    }
+
+    @Override
+    @Transactional
+    public void disable(long userId, @NotNull Enum<?> authType) {
+        WarlockUserAuthnService.super.disable(userId, authType);
+    }
+
+    @Override
+    @Transactional
+    public void enable(long userId, @NotNull Enum<?> authType, Duration expireIn) {
+        WarlockUserAuthnService.super.enable(userId, authType, expireIn);
     }
 }

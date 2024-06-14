@@ -10,6 +10,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.best.Param;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Init on ApplicationPreparedEvent
@@ -164,6 +166,16 @@ public class ApplicationContextHelper {
     @NotNull
     public static <T> ObjectProvider<T> getBeanProvider(Class<T> type) {
         return context.getBeanProvider(type);
+    }
+
+    @NotNull
+    public static <T> SingletonSupplier<T> getSingletonSupplier(Class<T> type) {
+        return SingletonSupplier.of(() -> context.getBean(type));
+    }
+
+    @NotNull
+    public static <T> SingletonSupplier<T> getSingletonSupplier(Class<T> type, Supplier<T> elze) {
+        return SingletonSupplier.of(() -> context.getBeanProvider(type).getIfAvailable(elze));
     }
 
     public static String getMessage(String code, Locale locale, Object... arg) {

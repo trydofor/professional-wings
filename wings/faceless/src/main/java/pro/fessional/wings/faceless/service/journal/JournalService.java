@@ -79,7 +79,8 @@ public interface JournalService {
     }
 
     /**
-     * Submit the operation (event) with journal and return some result
+     * Submit the operation (event) with journal and return some result.
+     * Should with Transactional Propagation.REQUIRES_NEW
      *
      * @param eventName event name
      * @param loginInfo login info ,eg. userId, ip
@@ -100,6 +101,7 @@ public interface JournalService {
      * @param commitSet operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventName, loginInfo, targetKey, otherInfo, journal -> {
             commitSet.accept(journal);
@@ -137,6 +139,7 @@ public interface JournalService {
      * @param commitSet  operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Class<?> eventClass, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventClass, loginInfo, targetKey, otherInfo, journal -> {
             commitSet.accept(journal);
@@ -169,6 +172,7 @@ public interface JournalService {
      * @param commitSet  operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, targetKey, otherInfo, commitSet);
     }
@@ -196,6 +200,7 @@ public interface JournalService {
      * @param commitSet  operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, targetKey, null, commitSet);
     }
@@ -221,6 +226,7 @@ public interface JournalService {
      * @param commitSet  operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Class<?> eventClass, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, null, null, commitSet);
     }
@@ -255,6 +261,7 @@ public interface JournalService {
      * @param commitSet operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventEnum, loginInfo, targetKey, otherInfo, journal -> {
             commitSet.accept(journal);
@@ -287,6 +294,7 @@ public interface JournalService {
      * @param commitSet operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, targetKey, otherInfo, commitSet);
     }
@@ -314,6 +322,7 @@ public interface JournalService {
      * @param commitSet operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, targetKey, null, commitSet);
     }
@@ -339,6 +348,7 @@ public interface JournalService {
      * @param commitSet operations
      * @return the journal
      */
+    @NotNull
     default Journal commit(@NotNull Enum<?> eventEnum, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, null, null, commitSet);
     }

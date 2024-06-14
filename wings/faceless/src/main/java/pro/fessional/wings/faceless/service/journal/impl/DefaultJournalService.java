@@ -2,18 +2,20 @@ package pro.fessional.wings.faceless.service.journal.impl;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.helper.DaoAssert;
+import pro.fessional.wings.faceless.database.helper.TransactionHelper;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -31,11 +33,24 @@ public class DefaultJournalService implements JournalService {
     private final BlockIdProvider blockIdProvider;
     private final CommitJournalModify journalModify;
 
+    @Setter
+    private Propagation propagation = Propagation.REQUIRES_NEW;
+
+    /**
+     * programmatic Propagation.REQUIRES_NEW
+     */
     @NotNull
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
+        // not null
+        R result = TransactionHelper.template(propagation).execute(ignore ->
+            execute(eventName, loginInfo, targetKey, otherInfo, commitSet)
+        );
+        return Objects.requireNonNull(result);
+    }
 
+    @NotNull
+    private <R> R execute(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
         final Journal commit = context.get();
         if (commit == null) {
             long id = lightIdService.getId(SEQ_JOURNAL, blockIdProvider.getBlockId());
