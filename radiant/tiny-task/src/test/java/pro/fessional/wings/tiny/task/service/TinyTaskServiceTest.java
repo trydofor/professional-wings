@@ -59,11 +59,4 @@ class TinyTaskServiceTest {
         Assertions.assertEquals(enabled, prop.isEnabled(), "should use higher version, conf=1,db=0");
         Assertions.assertEquals(autorun, prop.isAutorun());
     }
-
-    @Test
-    @Disabled("Simulate: slow process,sleep 180s")
-    @TmsLink("C15014")
-    void onlySleep180() {
-        Sleep.ignoreInterrupt(180 * 1000L);
-    }
 }

@@ -12,7 +12,7 @@ import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 @Slf4j
 public class TestServiceAuto {
 
-    @TinyTasker(cron = "0 * * * * *")
+    @TinyTasker(cron = "0 * * * * *") // 60s
     public String strStr(String msg) {
         log.info("TestServiceAuto.strStr {}", msg);
         Sleep.ignoreInterrupt(1500);

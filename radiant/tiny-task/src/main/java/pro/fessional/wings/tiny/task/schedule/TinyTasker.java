@@ -49,6 +49,7 @@ public @interface TinyTasker {
      * timingCron, scheduling expression, highest priority, affected by timingType,
      * default spring cron format (seconds minutes hours days months weeks).
      * Not use the `Default` config
+     * @see org.springframework.scheduling.support.CronExpression#parse(String)
      */
     String cron() default "";
 
@@ -66,6 +67,15 @@ public @interface TinyTasker {
      */
     int rate() default 0;
 
+    /**
+     * <pre>
+     * execute the task before or after tune seconds, like Scheduled.initialDelay, but
+     * * rate - first time on this jvm
+     * * idle - first time on this jvm
+     * * cron - each time
+     * </pre>
+     */
+    int tune() default 0;
 
     /**
      * Adding to a SpringBean can be auto config by Wings at startup.

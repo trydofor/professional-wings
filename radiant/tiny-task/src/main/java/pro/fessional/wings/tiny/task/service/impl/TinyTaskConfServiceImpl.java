@@ -21,8 +21,6 @@ import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.silencer.modulate.RunMode;
-import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
@@ -106,26 +104,15 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingCron(anno.cron());
             rp.setTimingIdle(anno.idle());
             rp.setTimingRate(anno.rate());
+            rp.setTimingTune(anno.tune());
             log.debug("no prop, use annotation, key={}", key);
         }
         else {
-            if (pp.notTimingZone()) {
-                rp.setTimingZone(anno.zone());
-            }
-            else {
-                rp.setTimingZone(pp.getTimingZone());
-            }
-            if (pp.notTimingPlan()) {
-                log.debug("no prop timingplan, use annotation, key={}", key);
-                rp.setTimingCron(anno.cron());
-                rp.setTimingIdle(anno.idle());
-                rp.setTimingRate(anno.rate());
-            }
-            else {
-                rp.setTimingCron(pp.getTimingCron());
-                rp.setTimingIdle(pp.getTimingIdle());
-                rp.setTimingRate(pp.getTimingRate());
-            }
+            rp.setTimingZone(pp.notTimingZone() ? anno.zone() : pp.getTimingZone());
+            rp.setTimingCron(pp.notTimingCron() ? anno.cron() : pp.getTimingCron());
+            rp.setTimingIdle(pp.notTimingIdle() ? anno.idle() : pp.getTimingIdle());
+            rp.setTimingRate(pp.notTimingRate() ? anno.rate() : pp.getTimingRate());
+            rp.setTimingTune(pp.notTimingTune() ? anno.tune() : pp.getTimingTune());
         }
 
         // not default
@@ -250,7 +237,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         final TaskerProp prop = property(key, anno);
-        if (prop.notTimingPlan()) {
+        if (prop.notTimingCron() && prop.notTimingIdle() && prop.notTimingRate()) {
             throw new IllegalStateException(
                 "need cron/idle/rate ,method=" + method.getName()
                 + ", class=" + claz.getName() + " ,prop=" + key
@@ -282,22 +269,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             enabled = prop.isEnabled();
             autorun = prop.isAutorun();
             noticeBean = prop.getNoticeBean();
-            log.debug("insert prop to database, version={}, id={}", prop.getVersion(), id);
-        }
-        else if (po.getVersion() < prop.getVersion()) {
-            id = po.getId();
-            enabled = prop.isEnabled();
-            autorun = prop.isAutorun();
-            noticeBean = prop.getNoticeBean();
-            updateProp(prop, key, id);
-            log.debug("replace prop to database, version={}, id={}", prop.getVersion(), id);
+            log.info("insert prop to database, version={}, id={}", prop.getVersion(), id);
         }
         else {
             id = po.getId();
             enabled = BoxedCastUtil.orTrue(po.getEnabled());
             autorun = BoxedCastUtil.orTrue(po.getAutorun());
             noticeBean = po.getNoticeBean();
-            log.debug("use database config, version={}, id={}", prop.getVersion(), id);
+            log.debug("find database config, version={}, id={}", prop.getVersion(), id);
             // diff
             final LinkedHashMap<String, Diff.V<?>> df = diff(po, prop);
             if (!df.isEmpty()) {
@@ -309,7 +288,13 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                     sb.append(", pp=").append(en.getValue().getV2());
                     sb.append('\n');
                 }
-                log.warn("database diff from properties, diff={}", sb);
+                if (po.getVersion() <= prop.getVersion()) {
+                    updateProp(prop, key, id);
+                    log.info("update prop to database, taks={}, diff={}", key, sb);
+                }
+                else {
+                    log.warn("diff from prop and database, task={}, diff={}", key, sb);
+                }
             }
         }
 
@@ -369,15 +354,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
         final String apps = prop.getTaskerApps();
         wtd.setTaskerApps(isEmpty(apps) ? appName : apps);
-
-        final String runs = prop.getTaskerRuns();
-        if (isEmpty(runs)) {
-            final RunMode rm = RuntimeMode.getRunMode();
-            wtd.setTaskerRuns(rm == RunMode.Nothing ? "" : rm.name().toLowerCase());
-        }
-        else {
-            wtd.setTaskerRuns(runs);
-        }
+        wtd.setTaskerRuns(prop.getTaskerRuns());
 
         wtd.setNoticeBean(prop.getNoticeBean());
         wtd.setNoticeWhen(prop.getNoticeWhen());
@@ -388,6 +365,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         wtd.setTimingCron(prop.getTimingCron());
         wtd.setTimingIdle(prop.getTimingIdle());
         wtd.setTimingRate(prop.getTimingRate());
+        wtd.setTimingTune(prop.getTimingTune());
 
         wtd.setTimingMiss(prop.getTimingMiss());
         wtd.setTimingBeat(prop.getTimingBeat());
@@ -410,7 +388,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                 t.Enabled, t.Autorun, t.Version,
                 t.TaskerBean, t.TaskerPara, t.TaskerName, t.TaskerFast, t.TaskerApps, t.TaskerRuns,
                 t.NoticeBean, t.NoticeWhen, t.NoticeConf,
-                t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingMiss, t.TimingBeat,
+                t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingTune, t.TimingMiss, t.TimingBeat,
                 t.DuringFrom, t.DuringStop, t.DuringExec, t.DuringFail, t.DuringDone, t.DuringBoot,
                 t.ResultKeep)
             .from(t)
@@ -440,6 +418,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         diff(result, "timingCron", v1.getTimingCron(), v2.getTimingCron());
         diff(result, "timingIdle", v1.getTimingIdle(), v2.getTimingIdle());
         diff(result, "timingRate", v1.getTimingRate(), v2.getTimingRate());
+        diff(result, "timingTune", v1.getTimingTune(), v2.getTimingTune());
         diff(result, "timingMiss", v1.getTimingMiss(), v2.getTimingMiss());
         diff(result, "timingBeat", v1.getTimingBeat(), v2.getTimingBeat());
 

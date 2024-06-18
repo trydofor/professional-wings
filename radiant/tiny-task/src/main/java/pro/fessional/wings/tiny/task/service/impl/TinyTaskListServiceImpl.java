@@ -3,7 +3,7 @@ package pro.fessional.wings.tiny.task.service.impl;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jooq.Record16;
+import org.jooq.Record17;
 import org.jooq.RecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,10 +57,10 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
             .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                 t.TaskerName, t.TaskerApps, t.TaskerRuns,
-                t.TimingCron, t.TimingIdle, t.TimingRate,
+                t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingTune,
                 t.LastExec, t.LastFail, t.LastDone,
                 t.SumExec, t.SumFail, t.SumDone)
-            .into(r16Item(t));
+            .into(r17Item(t));
     }
 
     @Override
@@ -75,14 +75,14 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
             .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                 t.TaskerName, t.TaskerApps, t.TaskerRuns,
-                t.TimingCron, t.TimingIdle, t.TimingRate,
+                t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingTune,
                 t.LastExec, t.LastFail, t.LastDone,
                 t.SumExec, t.SumFail, t.SumDone)
-            .into(r16Item(t));
+            .into(r17Item(t));
     }
 
     @NotNull
-    private RecordMapper<Record16<Long, Boolean, Boolean, Integer, String, String, String, String, Integer, Integer, LocalDateTime, LocalDateTime, LocalDateTime, Integer, Integer, Integer>, Item> r16Item(WinTaskDefineTable t) {
+    private RecordMapper<Record17<Long, Boolean, Boolean, Integer, String, String, String, String, Integer, Integer, Integer, LocalDateTime, LocalDateTime, LocalDateTime, Integer, Integer, Integer>, Item> r17Item(WinTaskDefineTable t) {
         return it -> {
             Item tm = new Item();
             tm.setId(it.get(t.Id));
@@ -97,6 +97,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             tm.setTimingCron(it.get(t.TimingCron));
             tm.setTimingIdle(it.get(t.TimingIdle));
             tm.setTimingRate(it.get(t.TimingRate));
+            tm.setTimingTune(it.get(t.TimingTune));
 
             tm.setSumExec(it.get(t.SumExec));
             tm.setSumFail(it.get(t.SumFail));

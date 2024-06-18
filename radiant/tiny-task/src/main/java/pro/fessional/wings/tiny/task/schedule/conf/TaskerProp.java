@@ -21,7 +21,8 @@ public class TaskerProp {
      */
     protected boolean autorun = true;
     /**
-     * version number, higher version config overrides lower one, not use Default config.
+     * config version number, higher version overrides lower one,
+     * when equals, properties override database, not use Default config.
      */
     protected int version = 0;
 
@@ -132,8 +133,8 @@ public class TaskerProp {
      */
     protected String timingCron = "";
 
-    public boolean hasTimingCron() {
-        return timingCron != null && !timingCron.isEmpty();
+    public boolean notTimingCron() {
+        return timingCron == null || timingCron.isEmpty();
     }
 
     /**
@@ -145,8 +146,8 @@ public class TaskerProp {
      */
     protected int timingIdle = 0;
 
-    public boolean hasTimingIdle() {
-        return timingIdle > 0;
+    public boolean notTimingIdle() {
+        return timingIdle <= 0;
     }
 
     /**
@@ -158,15 +159,23 @@ public class TaskerProp {
      */
     protected int timingRate = 0;
 
-    public boolean hasTimingRate() {
-        return timingRate > 0;
+    public boolean notTimingRate() {
+        return timingRate <= 0;
     }
 
     /**
-     * Whether no hasTimingCron, hasTimingIdle or hasTimingRate
+     * <pre>
+     * execute the task before(negative) or after tune seconds, not use Default config.
+     * like Scheduled.initialDelay, but
+     * * rate - first time on this jvm
+     * * idle - first time on this jvm
+     * * cron - each time
+     * </pre>
      */
-    public boolean notTimingPlan() {
-        return !hasTimingCron() && !hasTimingIdle() && !hasTimingRate();
+    protected int timingTune = 0;
+
+    public boolean notTimingTune() {
+        return timingTune == 0;
     }
 
     /**
@@ -176,9 +185,13 @@ public class TaskerProp {
     protected int timingMiss = 0;
 
     /**
-     * the interval seconds of heartbeat, if the task's last_exec is more
-     * than 2 heartbeats away from now, it is considered as an exception. default auto to
-     * take rate or idle maximum, cron needs to specify it by itself, not use Default config.
+     * <pre>
+     * the interval seconds of heartbeat and health-check, not use Default config.
+     * it is considered as an exception if the last_exec is more than 2 heartbeats away from now.
+     * * `<0` - disable check
+     * * `0` - auto calculate, when cron, calc next_exec from last_exec, others, max rate and idle
+     * * `>0` - fixed positive seconds
+     * </pre>
      */
     protected int timingBeat = 0;
     /**

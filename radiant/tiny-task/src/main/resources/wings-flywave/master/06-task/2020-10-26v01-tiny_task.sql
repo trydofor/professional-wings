@@ -22,6 +22,7 @@ CREATE TABLE `win_task_define` (
     `timing_cron` VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'scheduling expression content',
     `timing_idle` INT(11)      NOT NULL DEFAULT '0' COMMENT 'fixed idle interval (seconds)',
     `timing_rate` INT(11)      NOT NULL DEFAULT '0' COMMENT 'fixed frequency interval (seconds)',
+    `timing_tune` INT(11)      NOT NULL DEFAULT '0' COMMENT 'execute before or after tune (seconds)',
     `timing_miss` INT(11)      NOT NULL DEFAULT '0' COMMENT 'within how many seconds of a misfire',
     `timing_beat` INT(11)      NOT NULL DEFAULT '0' COMMENT 'interval seconds of heartbeat',
     `during_from` VARCHAR(20)  NOT NULL DEFAULT '' COMMENT 'schedule start datetime at timingZone, yyyy-MM-dd HH:mm:ss',

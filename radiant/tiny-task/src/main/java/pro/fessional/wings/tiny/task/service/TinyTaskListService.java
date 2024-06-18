@@ -33,6 +33,7 @@ public interface TinyTaskListService {
         private String timingCron;
         private int timingIdle;
         private int timingRate;
+        private int timingTune;
         private String lastExec;
         private String lastFail;
         private String lastDone;

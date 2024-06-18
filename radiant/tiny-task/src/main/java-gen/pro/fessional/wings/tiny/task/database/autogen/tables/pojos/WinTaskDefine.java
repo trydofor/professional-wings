@@ -4,14 +4,15 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.pojos;
 
 
-import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskDefine;
-
-import javax.annotation.processing.Generated;
 import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.processing.Generated;
+
+import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskDefine;
 
 
 /**
@@ -53,6 +54,7 @@ public class WinTaskDefine implements IWinTaskDefine {
     private String timingCron;
     private Integer timingIdle;
     private Integer timingRate;
+    private Integer timingTune;
     private Integer timingMiss;
     private Integer timingBeat;
     private String duringFrom;
@@ -98,6 +100,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingCron = value.getTimingCron();
         this.timingIdle = value.getTimingIdle();
         this.timingRate = value.getTimingRate();
+        this.timingTune = value.getTimingTune();
         this.timingMiss = value.getTimingMiss();
         this.timingBeat = value.getTimingBeat();
         this.duringFrom = value.getDuringFrom();
@@ -142,6 +145,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         String timingCron,
         Integer timingIdle,
         Integer timingRate,
+        Integer timingTune,
         Integer timingMiss,
         Integer timingBeat,
         String duringFrom,
@@ -184,6 +188,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingCron = timingCron;
         this.timingIdle = timingIdle;
         this.timingRate = timingRate;
+        this.timingTune = timingTune;
         this.timingMiss = timingMiss;
         this.timingBeat = timingBeat;
         this.duringFrom = duringFrom;
@@ -2045,6 +2050,86 @@ public class WinTaskDefine implements IWinTaskDefine {
 
 
     /**
+     * Getter for <code>win_task_define.timing_tune</code>.
+     */
+    @Override
+    public Integer getTimingTune() {
+        return this.timingTune;
+    }
+
+    /**
+     * Setter for <code>win_task_define.timing_tune</code>.
+     */
+    @Override
+    public void setTimingTune(Integer timingTune) {
+        this.timingTune = timingTune;
+    }
+
+    @Transient
+    public void setTimingTuneIf(Integer timingTune, boolean bool) {
+        if (bool) {
+            this.timingTune = timingTune;
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIf(Supplier<Integer> timingTune, boolean bool) {
+        if (bool) {
+            this.timingTune = timingTune.get();
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIf(Integer timingTune, Predicate<Integer> bool) {
+        if (bool.test(timingTune)) {
+            this.timingTune = timingTune;
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIf(Integer timingTune, Predicate<Integer> bool, Supplier<Integer>... timingTunes) {
+        if (bool.test(timingTune)) {
+            this.timingTune = timingTune;
+            return;
+        }
+        for (Supplier<Integer> supplier : timingTunes) {
+            timingTune = supplier.get();
+            if (bool.test(timingTune)) {
+                this.timingTune = timingTune;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIfNot(Integer timingTune, Predicate<Integer> bool) {
+        if (!bool.test(timingTune)) {
+            this.timingTune = timingTune;
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIfNot(Integer timingTune, Predicate<Integer> bool, Supplier<Integer>... timingTunes) {
+        if (!bool.test(timingTune)) {
+            this.timingTune = timingTune;
+            return;
+        }
+        for (Supplier<Integer> supplier : timingTunes) {
+            timingTune = supplier.get();
+            if (!bool.test(timingTune)) {
+                this.timingTune = timingTune;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setTimingTuneIf(UnaryOperator<Integer> timingTune) {
+        this.timingTune = timingTune.apply(this.timingTune);
+    }
+
+
+    /**
      * Getter for <code>win_task_define.timing_miss</code>.
      */
     @Override
@@ -3631,6 +3716,12 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!this.timingRate.equals(other.timingRate))
             return false;
+        if (this.timingTune == null) {
+            if (other.timingTune != null)
+                return false;
+        }
+        else if (!this.timingTune.equals(other.timingTune))
+            return false;
         if (this.timingMiss == null) {
             if (other.timingMiss != null)
                 return false;
@@ -3769,6 +3860,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.timingCron == null) ? 0 : this.timingCron.hashCode());
         result = prime * result + ((this.timingIdle == null) ? 0 : this.timingIdle.hashCode());
         result = prime * result + ((this.timingRate == null) ? 0 : this.timingRate.hashCode());
+        result = prime * result + ((this.timingTune == null) ? 0 : this.timingTune.hashCode());
         result = prime * result + ((this.timingMiss == null) ? 0 : this.timingMiss.hashCode());
         result = prime * result + ((this.timingBeat == null) ? 0 : this.timingBeat.hashCode());
         result = prime * result + ((this.duringFrom == null) ? 0 : this.duringFrom.hashCode());
@@ -3817,6 +3909,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(timingCron);
         sb.append(", ").append(timingIdle);
         sb.append(", ").append(timingRate);
+        sb.append(", ").append(timingTune);
         sb.append(", ").append(timingMiss);
         sb.append(", ").append(timingBeat);
         sb.append(", ").append(duringFrom);
@@ -3869,6 +3962,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         setTimingCron(from.getTimingCron());
         setTimingIdle(from.getTimingIdle());
         setTimingRate(from.getTimingRate());
+        setTimingTune(from.getTimingTune());
         setTimingMiss(from.getTimingMiss());
         setTimingBeat(from.getTimingBeat());
         setDuringFrom(from.getDuringFrom());

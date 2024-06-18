@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
@@ -74,6 +75,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     protected static final ConcurrentHashMap<Long, ScheduledFuture<?>> Handle = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Boolean> Cancel = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Integer> Booted = new ConcurrentHashMap<>();
+    protected static final ConcurrentHashMap<Long, Boolean> Untune = new ConcurrentHashMap<>();
 
     @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
@@ -211,23 +213,23 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final long next = calcNextExec(td);
             if (next < 0) return false;
 
-            // temp save to avoid kill
+            // temp save before schedule to avoid kill
             saveNextExec(next, td);
 
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
             final var taskScheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
 
             if (taskScheduler.getScheduledExecutor().isShutdown()) {
-                log.error("TaskScheduler={} is shutdown, name={} id={}", fast, td.getTaskerName(), td.getId());
+                log.error("TaskScheduler={} is shutdown, id={}, name={}", fast, id, td.getTaskerName());
                 return false;
             }
 
-            log.info("prepare task name={}, id={}", td.getTaskerName(), td.getId());
+            log.info("prepare task id={}, name={}", id, td.getTaskerName());
             final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {
                     if (notNextLock(td, execTms)) {
-                        log.warn("skip task for Not nextLock, should manually check and launch it, id={}", id);
+                        log.warn("skip task for Not nextLock, should manually check and launch it, id={}, name={}", id, td.getTaskerName());
                         Handle.remove(id);
                         return;
                     }
@@ -253,17 +255,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
-                    log.info("task exec, id={}", id);
+                    log.info("task exec, id={}, name={}", id, td.getTaskerName());
 
                     final Object result;
                     if (execProp.isDryrun()) {
                         final long slp = Sleep.ignoreInterrupt(10, 2000);
                         result = "dryrun and sleep " + slp;
-                        log.info("task done, dryrun and sleep {} ms, id={}", slp, id);
+                        log.info("task done, dryrun and sleep {} ms, id={}, name={}", slp, id, td.getTaskerName());
                     }
                     else {
                         result = tasker.invoke(td.getTaskerPara(), true);
-                        log.info("task done, id={}", id);
+                        log.info("task done, id={}, name={}", id, td.getTaskerName());
                     }
                     //
                     doneTms = ThreadNow.millis();
@@ -271,7 +273,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenFeed, WhenDone);
                 }
                 catch (Exception e) {
-                    log.error("task fail, id=" + id, e);
+                    log.error("task fail, id=" + id + "name=" + td.getTaskerName(), e);
                     failTms = ThreadNow.millis();
                     taskMsg = ThrowableUtil.toString(e);
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
@@ -282,7 +284,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                         saveResult(id, execTms, failTms, doneTms, taskMsg, td.getDurFail());
                     }
                     catch (Exception e) {
-                        log.error("failed to save result, id=" + id, e);
+                        log.error("failed to save result, id=" + id + "name=" + td.getTaskerName(), e);
                     }
 
                     if (canRelaunch(id, doneTms, failTms, td)) { // canceled
@@ -345,15 +347,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         return rs;
     }
 
-
     private String stringResult(Object result) {
-        if (result == null) return null;
-        if (result instanceof CharSequence) {
-            return result.toString();
-        }
-        else {
-            return JacksonHelper.string(result);
-        }
+        return JacksonHelper.string(result);
     }
 
     private void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String tn, String msg, long ms, String... wh) {
@@ -402,7 +397,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     }
 
     private void saveResult(Long id, long exec, long fail, long done, String msg, int cf) {
-
+        log.debug("saveResult, id={}, name={}", id);
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         Map<Field<?>, Object> setter = new HashMap<>();
 
@@ -463,26 +458,26 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final int duringExec = td.getDuringExec();
         final int sumExec = td.getSumExec();
         if (duringExec > 0 && duringExec <= sumExec + 1) {
-            log.info("remove task for duringExec={}, sumExec={}, id={}", duringExec, sumExec, id);
+            log.info("remove task for duringExec={}, sumExec={}, id={}, name={}", duringExec, sumExec, id, td.getTaskerName());
             return false;
         }
 
         final int duringDone = td.getDuringDone();
         final int sumDone = td.getSumDone();
         if (duringDone > 0 && duringDone <= (doneTms < 0 ? sumDone : sumDone + 1)) {
-            log.info("remove task for duringDone={}, sumDone={}, id={}", duringDone, sumDone, id);
+            log.info("remove task for duringDone={}, sumDone={}, id={}, name={}", duringDone, sumDone, id, td.getTaskerName());
             return false;
         }
 
         final int duringFail = td.getDuringFail();
         final int durFail = td.getDurFail();
         if (duringFail > 0 && duringFail <= (failTms < 0 ? durFail : durFail + 1)) {
-            log.info("remove task for duringFail={}, durFail={}, id={}", duringFail, durFail, id);
+            log.info("remove task for duringFail={}, durFail={}, id={}, name={}", duringFail, durFail, id, td.getTaskerName());
             return false;
         }
 
         if (Cancel.containsKey(id)) { // canceled
-            log.info("remove task for canceled, id={}", id);
+            log.info("remove task for canceled, id={}, name={}", id);
             return false;
         }
 
@@ -490,7 +485,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         if (duringBoot > 0) {
             final int bct = Booted.compute(id, (ignored, v) -> v == null ? 1 : v + 1);
             if (bct >= duringBoot) {
-                log.info("remove task for duringBoot={}, id={}", bct, id);
+                log.info("remove task for duringBoot={}, id={}, name={}", bct, id, td.getTaskerName());
                 return false;
             }
         }
@@ -511,40 +506,62 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         // Planned, program was killed before execution ends
         final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
         if (nextMs + timingMiss >= now) {
-            log.info("launch misfire task, id={}", id);
+            log.info("launch misfire task, id={}, name={}", id, td.getTaskerName());
             return nextMs;
         }
 
         final Trigger trigger = makeTrigger(td, zone);
         final SimpleTriggerContext context = makeContext(td, zone, now);
 
+        long nextExec = -1;
         while (true) {
             Instant next = trigger.nextExecution(context);
             if (next == null) {
-                log.info("skip task for trigger not fire, id={}", id);
-                return -1;
+                log.info("skip task for trigger not fire, id={}, name={}", id, td.getTaskerName());
+                break;
             }
 
             final long nxt = next.toEpochMilli();
             if (nxt < now) {
                 if (timingMiss > 0 && nxt + timingMiss >= now) {
-                    log.info("launch task for misfire={}, id={}", next, id);
-                    return nxt;
+                    log.info("launch task for misfire={}, id={}, name={}", next, id, td.getTaskerName());
+                    nextExec = nxt;
+                    break;
                 }
                 else {
                     context.update(next, next, next);
                 }
             }
             else {
-                log.info("launch task for next={}, id={}", next, id);
-                return nxt;
+                log.info("launch task for next={}, id={}, name={}", next, id, td.getTaskerName());
+                nextExec = nxt;
+                break;
             }
         }
+
+        if (nextExec < 0) return -1;
+
+        // time-tune
+        final int timingTune = td.getTimingTune();
+        if (timingTune != 0) {
+            if (StringUtils.isNotEmpty(td.getTimingCron())) {
+                nextExec = nextExec + timingTune * 1000L;
+            }
+            else {
+                final var first = new AtomicInteger(0);
+                Untune.computeIfAbsent(id, k -> {
+                    first.set(timingTune);
+                    return false;
+                });
+                nextExec = nextExec + first.get() * 1000L;
+            }
+        }
+
+        return nextExec;
     }
 
     @SuppressWarnings("all")
     private SimpleTriggerContext makeContext(WinTaskDefine td, ZoneId zone, long now) {
-        // can Not replace util.Date with Instance
         Instant lastActual = null;
         final LocalDateTime lastExec = td.getLastExec();
         if (EmptySugar.nonEmptyValue(lastExec)) {
@@ -552,9 +569,11 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         }
 
         Instant lastCompletion = null;
-        final LocalDateTime lastDone = td.getLastDone();
-        if (EmptySugar.nonEmptyValue(lastDone)) {
-            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastDone));
+        if (EmptySugar.nonEmptyValue(td.getLastDone())) {
+            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastDone()));
+        }
+        else {
+            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastFail()));
         }
 
         return new SimpleTriggerContext(lastActual, lastActual, lastCompletion);
@@ -563,13 +582,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private Trigger makeTrigger(WinTaskDefine td, ZoneId zone) {
         final String cron = td.getTimingCron();
         if (StringUtils.isNotEmpty(cron)) {
-            log.info("use trigger cron={}, id={}", cron, td.getId());
+            log.info("use trigger cron={}, id={}, name={}", cron, td.getId(), td.getTaskerName());
             return new CronTrigger(cron, zone);
         }
 
         final int idle = td.getTimingIdle();
         if (idle > 0) {
-            log.info("use trigger idle={}, id={}", idle, td.getId());
+            log.info("use trigger idle={}, id={}, name={}", idle, td.getId(), td.getTaskerName());
             PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(idle));
             trg.setFixedRate(false);
             return trg;
@@ -577,7 +596,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         final int rate = td.getTimingRate();
         if (rate > 0) {
-            log.info("use trigger rate={}, id={}", rate, td.getId());
+            log.info("use trigger rate={}, id={}, name={}", rate, td.getId(), td.getTaskerName());
             PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(rate));
             trg.setFixedRate(true);
             return trg;
@@ -592,7 +611,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final LocalDateTime ldt = DateParser.parseDateTime(duringFrom);
             final long ms = DateLocaling.useEpoch(ldt, zone);
             if (ms > now) {
-                log.info("skip task for duringFrom={}, id={}", duringFrom, td.getId());
+                log.info("skip task for duringFrom={}, id={}, name={}", duringFrom, td.getId(), td.getTaskerName());
                 return true;
             }
         }
@@ -602,26 +621,26 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final LocalDateTime ldt = DateParser.parseDateTime(duringStop);
             final long ms = DateLocaling.useEpoch(ldt, zone);
             if (ms < now) {
-                log.info("skip task for duringStop={}, id={}", duringStop, td.getId());
+                log.info("skip task for duringStop={}, id={}, name={}", duringStop, td.getId(), td.getTaskerName());
                 return true;
             }
         }
 
         final int duringExec = td.getDuringExec();
         if (duringExec > 0 && duringExec <= td.getSumExec()) {
-            log.info("skip task for duringExec={}, sumExec={}", duringExec, td.getSumExec());
+            log.info("skip task for duringExec={}, sumExec={}, id={}, name={}", duringExec, td.getSumExec(), td.getId(), td.getTaskerName());
             return true;
         }
 
         final int duringDone = td.getDuringDone();
         if (duringDone > 0 && duringDone <= td.getSumDone()) {
-            log.info("skip task for duringDone={}, sumDone={}", duringDone, td.getSumDone());
+            log.info("skip task for duringDone={}, sumDone={}, id={}, name={}", duringDone, td.getSumDone(), td.getId(), td.getTaskerName());
             return true;
         }
 
         final int duringFail = td.getDuringFail();
         if (duringFail > 0 && duringFail <= td.getDurFail()) {
-            log.info("skip task for duringFail={}, durFail={}", duringFail, td.getDurFail());
+            log.info("skip task for duringFail={}, durFail={}, id={}, name={}", duringFail, td.getDurFail(), td.getId(), td.getTaskerName());
             return true;
         }
 
