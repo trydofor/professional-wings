@@ -233,14 +233,14 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     public final TableField<WinTaskDefineRecord, LocalDateTime> LastExec = createField(DSL.name("last_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>win_task_define.last_fail</code>.
+     * The column <code>win_task_define.last_exit</code>.
      */
-    public final TableField<WinTaskDefineRecord, LocalDateTime> LastFail = createField(DSL.name("last_fail"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<WinTaskDefineRecord, LocalDateTime> LastExit = createField(DSL.name("last_exit"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>win_task_define.last_done</code>.
+     * The column <code>win_task_define.last_fail</code>.
      */
-    public final TableField<WinTaskDefineRecord, LocalDateTime> LastDone = createField(DSL.name("last_done"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<WinTaskDefineRecord, Boolean> LastFail = createField(DSL.name("last_fail"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>win_task_define.next_exec</code>.

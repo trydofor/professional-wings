@@ -54,11 +54,11 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             .count()
             .from(t)
             .where(t.Id.in(ids))
-            .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
+            .order(Map.of("exec", t.LastExec, "exit", t.LastExit), t.LastExit.desc())
             .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                 t.TaskerName, t.TaskerApps, t.TaskerRuns,
                 t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingTune,
-                t.LastExec, t.LastFail, t.LastDone,
+                t.LastExec, t.LastExit, t.LastFail,
                 t.SumExec, t.SumFail, t.SumDone)
             .into(r17Item(t));
     }
@@ -72,17 +72,17 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             .count()
             .from(t)
             .whereTrue()
-            .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
+            .order(Map.of("exec", t.LastExec, "exit", t.LastExit), t.LastExit.desc())
             .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                 t.TaskerName, t.TaskerApps, t.TaskerRuns,
                 t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingTune,
-                t.LastExec, t.LastFail, t.LastDone,
+                t.LastExec, t.LastExit, t.LastFail,
                 t.SumExec, t.SumFail, t.SumDone)
             .into(r17Item(t));
     }
 
     @NotNull
-    private RecordMapper<Record17<Long, Boolean, Boolean, Integer, String, String, String, String, Integer, Integer, Integer, LocalDateTime, LocalDateTime, LocalDateTime, Integer, Integer, Integer>, Item> r17Item(WinTaskDefineTable t) {
+    private RecordMapper<Record17<Long, Boolean, Boolean, Integer, String, String, String, String, Integer, Integer, Integer, LocalDateTime, LocalDateTime, Boolean, Integer, Integer, Integer>, Item> r17Item(WinTaskDefineTable t) {
         return it -> {
             Item tm = new Item();
             tm.setId(it.get(t.Id));
@@ -106,10 +106,9 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
 
             final ZonedDateTime lastExec = it.get(t.LastExec).atZone(ThreadNow.sysZoneId());
             tm.setLastExec(DateFormatter.fullTz(lastExec));
-            final ZonedDateTime lastFail = it.get(t.LastFail).atZone(ThreadNow.sysZoneId());
-            tm.setLastFail(DateFormatter.fullTz(lastFail));
-            final ZonedDateTime lastDone = it.get(t.LastDone).atZone(ThreadNow.sysZoneId());
-            tm.setLastDone(DateFormatter.fullTz(lastDone));
+            final ZonedDateTime lastExit = it.get(t.LastExit).atZone(ThreadNow.sysZoneId());
+            tm.setLastExit(DateFormatter.fullTz(lastExit));
+            tm.setLastFail(it.get(t.LastFail));
             return tm;
         };
     }

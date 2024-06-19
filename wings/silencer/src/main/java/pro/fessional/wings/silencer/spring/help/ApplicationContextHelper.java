@@ -41,13 +41,18 @@ public class ApplicationContextHelper {
     /**
      * Get the value of spring.application.name (if not empty) or context#getApplicationName by default.
      */
+    private static String appName = null;
+
     @NotNull
     public static String getApplicationName() {
-        String app = environment.getProperty("spring.application.name");
-        if (app == null || app.isEmpty()) {
-            app = context.getApplicationName();
+        if (appName == null) {
+            String app = environment.getProperty("spring.application.name");
+            if (app == null || app.isEmpty()) {
+                app = context.getApplicationName();
+            }
+            appName = app;
         }
-        return app;
+        return appName;
     }
 
     @NotNull

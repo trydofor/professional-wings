@@ -21,6 +21,7 @@ public enum WingsRevision implements RevisionRegister {
     V07_20_1027_01_TinyMail(2020_1027_01L, "tiny mail", "master/07-mail", "radiant/tiny-mail/src/main/resources/wings-flywave"),
     V01_21_0918_01_FixAuthn(2021_0918_01L, "fix authn", "branch/somefix/01-authn-fix", "wings/warlock/src/main/resources/wings-flywave"),
     V02_21_1220_01_Fix242(2021_1220_01L, "fix v242.201", "branch/somefix/02-v242-201", "wings/faceless-flywave/src/main/resources/wings-flywave"),
+    V03_21_1026_02_Fix32130(2021_1026_02L, "fix v3.2.130", "branch/somefix/03-v32-130", "radiant/tiny-task/src/main/resources/wings-flywave"),
 
     V90_22_0601_01_TestSchema(2022_0601_01L, "test v1 schema", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
     V90_22_0601_02_TestRecord(2022_0601_02L, "test v2 record", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),

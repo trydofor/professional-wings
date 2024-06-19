@@ -65,8 +65,8 @@ public class WinTaskDefine implements IWinTaskDefine {
     private Integer duringBoot;
     private Integer resultKeep;
     private LocalDateTime lastExec;
-    private LocalDateTime lastFail;
-    private LocalDateTime lastDone;
+    private LocalDateTime lastExit;
+    private Boolean lastFail;
     private LocalDateTime nextExec;
     private Integer nextLock;
     private Integer durFail;
@@ -111,8 +111,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringBoot = value.getDuringBoot();
         this.resultKeep = value.getResultKeep();
         this.lastExec = value.getLastExec();
+        this.lastExit = value.getLastExit();
         this.lastFail = value.getLastFail();
-        this.lastDone = value.getLastDone();
         this.nextExec = value.getNextExec();
         this.nextLock = value.getNextLock();
         this.durFail = value.getDurFail();
@@ -156,8 +156,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         Integer duringBoot,
         Integer resultKeep,
         LocalDateTime lastExec,
-        LocalDateTime lastFail,
-        LocalDateTime lastDone,
+        LocalDateTime lastExit,
+        Boolean lastFail,
         LocalDateTime nextExec,
         Integer nextLock,
         Integer durFail,
@@ -199,8 +199,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.duringBoot = duringBoot;
         this.resultKeep = resultKeep;
         this.lastExec = lastExec;
+        this.lastExit = lastExit;
         this.lastFail = lastFail;
-        this.lastDone = lastDone;
         this.nextExec = nextExec;
         this.nextLock = nextLock;
         this.durFail = durFail;
@@ -2930,10 +2930,90 @@ public class WinTaskDefine implements IWinTaskDefine {
 
 
     /**
+     * Getter for <code>win_task_define.last_exit</code>.
+     */
+    @Override
+    public LocalDateTime getLastExit() {
+        return this.lastExit;
+    }
+
+    /**
+     * Setter for <code>win_task_define.last_exit</code>.
+     */
+    @Override
+    public void setLastExit(LocalDateTime lastExit) {
+        this.lastExit = lastExit;
+    }
+
+    @Transient
+    public void setLastExitIf(LocalDateTime lastExit, boolean bool) {
+        if (bool) {
+            this.lastExit = lastExit;
+        }
+    }
+
+    @Transient
+    public void setLastExitIf(Supplier<LocalDateTime> lastExit, boolean bool) {
+        if (bool) {
+            this.lastExit = lastExit.get();
+        }
+    }
+
+    @Transient
+    public void setLastExitIf(LocalDateTime lastExit, Predicate<LocalDateTime> bool) {
+        if (bool.test(lastExit)) {
+            this.lastExit = lastExit;
+        }
+    }
+
+    @Transient
+    public void setLastExitIf(LocalDateTime lastExit, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastExits) {
+        if (bool.test(lastExit)) {
+            this.lastExit = lastExit;
+            return;
+        }
+        for (Supplier<LocalDateTime> supplier : lastExits) {
+            lastExit = supplier.get();
+            if (bool.test(lastExit)) {
+                this.lastExit = lastExit;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLastExitIfNot(LocalDateTime lastExit, Predicate<LocalDateTime> bool) {
+        if (!bool.test(lastExit)) {
+            this.lastExit = lastExit;
+        }
+    }
+
+    @Transient
+    public void setLastExitIfNot(LocalDateTime lastExit, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastExits) {
+        if (!bool.test(lastExit)) {
+            this.lastExit = lastExit;
+            return;
+        }
+        for (Supplier<LocalDateTime> supplier : lastExits) {
+            lastExit = supplier.get();
+            if (!bool.test(lastExit)) {
+                this.lastExit = lastExit;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLastExitIf(UnaryOperator<LocalDateTime> lastExit) {
+        this.lastExit = lastExit.apply(this.lastExit);
+    }
+
+
+    /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public LocalDateTime getLastFail() {
+    public Boolean getLastFail() {
         return this.lastFail;
     }
 
@@ -2941,38 +3021,38 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public void setLastFail(LocalDateTime lastFail) {
+    public void setLastFail(Boolean lastFail) {
         this.lastFail = lastFail;
     }
 
     @Transient
-    public void setLastFailIf(LocalDateTime lastFail, boolean bool) {
+    public void setLastFailIf(Boolean lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail;
         }
     }
 
     @Transient
-    public void setLastFailIf(Supplier<LocalDateTime> lastFail, boolean bool) {
+    public void setLastFailIf(Supplier<Boolean> lastFail, boolean bool) {
         if (bool) {
             this.lastFail = lastFail.get();
         }
     }
 
     @Transient
-    public void setLastFailIf(LocalDateTime lastFail, Predicate<LocalDateTime> bool) {
+    public void setLastFailIf(Boolean lastFail, Predicate<Boolean> bool) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
     @Transient
-    public void setLastFailIf(LocalDateTime lastFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastFails) {
+    public void setLastFailIf(Boolean lastFail, Predicate<Boolean> bool, Supplier<Boolean>... lastFails) {
         if (bool.test(lastFail)) {
             this.lastFail = lastFail;
             return;
         }
-        for (Supplier<LocalDateTime> supplier : lastFails) {
+        for (Supplier<Boolean> supplier : lastFails) {
             lastFail = supplier.get();
             if (bool.test(lastFail)) {
                 this.lastFail = lastFail;
@@ -2982,19 +3062,19 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     @Transient
-    public void setLastFailIfNot(LocalDateTime lastFail, Predicate<LocalDateTime> bool) {
+    public void setLastFailIfNot(Boolean lastFail, Predicate<Boolean> bool) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
         }
     }
 
     @Transient
-    public void setLastFailIfNot(LocalDateTime lastFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastFails) {
+    public void setLastFailIfNot(Boolean lastFail, Predicate<Boolean> bool, Supplier<Boolean>... lastFails) {
         if (!bool.test(lastFail)) {
             this.lastFail = lastFail;
             return;
         }
-        for (Supplier<LocalDateTime> supplier : lastFails) {
+        for (Supplier<Boolean> supplier : lastFails) {
             lastFail = supplier.get();
             if (!bool.test(lastFail)) {
                 this.lastFail = lastFail;
@@ -3004,88 +3084,8 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     @Transient
-    public void setLastFailIf(UnaryOperator<LocalDateTime> lastFail) {
+    public void setLastFailIf(UnaryOperator<Boolean> lastFail) {
         this.lastFail = lastFail.apply(this.lastFail);
-    }
-
-
-    /**
-     * Getter for <code>win_task_define.last_done</code>.
-     */
-    @Override
-    public LocalDateTime getLastDone() {
-        return this.lastDone;
-    }
-
-    /**
-     * Setter for <code>win_task_define.last_done</code>.
-     */
-    @Override
-    public void setLastDone(LocalDateTime lastDone) {
-        this.lastDone = lastDone;
-    }
-
-    @Transient
-    public void setLastDoneIf(LocalDateTime lastDone, boolean bool) {
-        if (bool) {
-            this.lastDone = lastDone;
-        }
-    }
-
-    @Transient
-    public void setLastDoneIf(Supplier<LocalDateTime> lastDone, boolean bool) {
-        if (bool) {
-            this.lastDone = lastDone.get();
-        }
-    }
-
-    @Transient
-    public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
-        if (bool.test(lastDone)) {
-            this.lastDone = lastDone;
-        }
-    }
-
-    @Transient
-    public void setLastDoneIf(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
-        if (bool.test(lastDone)) {
-            this.lastDone = lastDone;
-            return;
-        }
-        for (Supplier<LocalDateTime> supplier : lastDones) {
-            lastDone = supplier.get();
-            if (bool.test(lastDone)) {
-                this.lastDone = lastDone;
-                return;
-            }
-        }
-    }
-
-    @Transient
-    public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool) {
-        if (!bool.test(lastDone)) {
-            this.lastDone = lastDone;
-        }
-    }
-
-    @Transient
-    public void setLastDoneIfNot(LocalDateTime lastDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... lastDones) {
-        if (!bool.test(lastDone)) {
-            this.lastDone = lastDone;
-            return;
-        }
-        for (Supplier<LocalDateTime> supplier : lastDones) {
-            lastDone = supplier.get();
-            if (!bool.test(lastDone)) {
-                this.lastDone = lastDone;
-                return;
-            }
-        }
-    }
-
-    @Transient
-    public void setLastDoneIf(UnaryOperator<LocalDateTime> lastDone) {
-        this.lastDone = lastDone.apply(this.lastDone);
     }
 
 
@@ -3782,17 +3782,17 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!this.lastExec.equals(other.lastExec))
             return false;
+        if (this.lastExit == null) {
+            if (other.lastExit != null)
+                return false;
+        }
+        else if (!this.lastExit.equals(other.lastExit))
+            return false;
         if (this.lastFail == null) {
             if (other.lastFail != null)
                 return false;
         }
         else if (!this.lastFail.equals(other.lastFail))
-            return false;
-        if (this.lastDone == null) {
-            if (other.lastDone != null)
-                return false;
-        }
-        else if (!this.lastDone.equals(other.lastDone))
             return false;
         if (this.nextExec == null) {
             if (other.nextExec != null)
@@ -3871,8 +3871,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.duringBoot == null) ? 0 : this.duringBoot.hashCode());
         result = prime * result + ((this.resultKeep == null) ? 0 : this.resultKeep.hashCode());
         result = prime * result + ((this.lastExec == null) ? 0 : this.lastExec.hashCode());
+        result = prime * result + ((this.lastExit == null) ? 0 : this.lastExit.hashCode());
         result = prime * result + ((this.lastFail == null) ? 0 : this.lastFail.hashCode());
-        result = prime * result + ((this.lastDone == null) ? 0 : this.lastDone.hashCode());
         result = prime * result + ((this.nextExec == null) ? 0 : this.nextExec.hashCode());
         result = prime * result + ((this.nextLock == null) ? 0 : this.nextLock.hashCode());
         result = prime * result + ((this.durFail == null) ? 0 : this.durFail.hashCode());
@@ -3920,8 +3920,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(duringBoot);
         sb.append(", ").append(resultKeep);
         sb.append(", ").append(lastExec);
+        sb.append(", ").append(lastExit);
         sb.append(", ").append(lastFail);
-        sb.append(", ").append(lastDone);
         sb.append(", ").append(nextExec);
         sb.append(", ").append(nextLock);
         sb.append(", ").append(durFail);
@@ -3973,8 +3973,8 @@ public class WinTaskDefine implements IWinTaskDefine {
         setDuringBoot(from.getDuringBoot());
         setResultKeep(from.getResultKeep());
         setLastExec(from.getLastExec());
+        setLastExit(from.getLastExit());
         setLastFail(from.getLastFail());
-        setLastDone(from.getLastDone());
         setNextExec(from.getNextExec());
         setNextLock(from.getNextLock());
         setDurFail(from.getDurFail());

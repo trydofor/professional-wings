@@ -4,14 +4,15 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.pojos;
 
 
-import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
-
-import javax.annotation.processing.Generated;
 import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.processing.Generated;
+
+import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
 
 
 /**
@@ -34,10 +35,10 @@ public class WinTaskResult implements IWinTaskResult {
     private Long taskId;
     private String taskApp;
     private Integer taskPid;
-    private String taskMsg;
+    private String exitData;
+    private Boolean exitFail;
     private LocalDateTime timeExec;
-    private LocalDateTime timeFail;
-    private LocalDateTime timeDone;
+    private LocalDateTime timeExit;
     private Integer timeCost;
 
     public WinTaskResult() {}
@@ -47,10 +48,10 @@ public class WinTaskResult implements IWinTaskResult {
         this.taskId = value.getTaskId();
         this.taskApp = value.getTaskApp();
         this.taskPid = value.getTaskPid();
-        this.taskMsg = value.getTaskMsg();
+        this.exitData = value.getExitData();
+        this.exitFail = value.getExitFail();
         this.timeExec = value.getTimeExec();
-        this.timeFail = value.getTimeFail();
-        this.timeDone = value.getTimeDone();
+        this.timeExit = value.getTimeExit();
         this.timeCost = value.getTimeCost();
     }
 
@@ -59,20 +60,20 @@ public class WinTaskResult implements IWinTaskResult {
         Long taskId,
         String taskApp,
         Integer taskPid,
-        String taskMsg,
+        String exitData,
+        Boolean exitFail,
         LocalDateTime timeExec,
-        LocalDateTime timeFail,
-        LocalDateTime timeDone,
+        LocalDateTime timeExit,
         Integer timeCost
     ) {
         this.id = id;
         this.taskId = taskId;
         this.taskApp = taskApp;
         this.taskPid = taskPid;
-        this.taskMsg = taskMsg;
+        this.exitData = exitData;
+        this.exitFail = exitFail;
         this.timeExec = timeExec;
-        this.timeFail = timeFail;
-        this.timeDone = timeDone;
+        this.timeExit = timeExit;
         this.timeCost = timeCost;
     }
 
@@ -397,82 +398,162 @@ public class WinTaskResult implements IWinTaskResult {
 
 
     /**
-     * Getter for <code>win_task_result.task_msg</code>.
+     * Getter for <code>win_task_result.exit_data</code>.
      */
     @Override
-    public String getTaskMsg() {
-        return this.taskMsg;
+    public String getExitData() {
+        return this.exitData;
     }
 
     /**
-     * Setter for <code>win_task_result.task_msg</code>.
+     * Setter for <code>win_task_result.exit_data</code>.
      */
     @Override
-    public void setTaskMsg(String taskMsg) {
-        this.taskMsg = taskMsg;
+    public void setExitData(String exitData) {
+        this.exitData = exitData;
     }
 
     @Transient
-    public void setTaskMsgIf(String taskMsg, boolean bool) {
+    public void setExitDataIf(String exitData, boolean bool) {
         if (bool) {
-            this.taskMsg = taskMsg;
+            this.exitData = exitData;
         }
     }
 
     @Transient
-    public void setTaskMsgIf(Supplier<String> taskMsg, boolean bool) {
+    public void setExitDataIf(Supplier<String> exitData, boolean bool) {
         if (bool) {
-            this.taskMsg = taskMsg.get();
+            this.exitData = exitData.get();
         }
     }
 
     @Transient
-    public void setTaskMsgIf(String taskMsg, Predicate<String> bool) {
-        if (bool.test(taskMsg)) {
-            this.taskMsg = taskMsg;
+    public void setExitDataIf(String exitData, Predicate<String> bool) {
+        if (bool.test(exitData)) {
+            this.exitData = exitData;
         }
     }
 
     @Transient
-    public void setTaskMsgIf(String taskMsg, Predicate<String> bool, Supplier<String>... taskMsgs) {
-        if (bool.test(taskMsg)) {
-            this.taskMsg = taskMsg;
+    public void setExitDataIf(String exitData, Predicate<String> bool, Supplier<String>... exitDatas) {
+        if (bool.test(exitData)) {
+            this.exitData = exitData;
             return;
         }
-        for (Supplier<String> supplier : taskMsgs) {
-            taskMsg = supplier.get();
-            if (bool.test(taskMsg)) {
-                this.taskMsg = taskMsg;
+        for (Supplier<String> supplier : exitDatas) {
+            exitData = supplier.get();
+            if (bool.test(exitData)) {
+                this.exitData = exitData;
                 return;
             }
         }
     }
 
     @Transient
-    public void setTaskMsgIfNot(String taskMsg, Predicate<String> bool) {
-        if (!bool.test(taskMsg)) {
-            this.taskMsg = taskMsg;
+    public void setExitDataIfNot(String exitData, Predicate<String> bool) {
+        if (!bool.test(exitData)) {
+            this.exitData = exitData;
         }
     }
 
     @Transient
-    public void setTaskMsgIfNot(String taskMsg, Predicate<String> bool, Supplier<String>... taskMsgs) {
-        if (!bool.test(taskMsg)) {
-            this.taskMsg = taskMsg;
+    public void setExitDataIfNot(String exitData, Predicate<String> bool, Supplier<String>... exitDatas) {
+        if (!bool.test(exitData)) {
+            this.exitData = exitData;
             return;
         }
-        for (Supplier<String> supplier : taskMsgs) {
-            taskMsg = supplier.get();
-            if (!bool.test(taskMsg)) {
-                this.taskMsg = taskMsg;
+        for (Supplier<String> supplier : exitDatas) {
+            exitData = supplier.get();
+            if (!bool.test(exitData)) {
+                this.exitData = exitData;
                 return;
             }
         }
     }
 
     @Transient
-    public void setTaskMsgIf(UnaryOperator<String> taskMsg) {
-        this.taskMsg = taskMsg.apply(this.taskMsg);
+    public void setExitDataIf(UnaryOperator<String> exitData) {
+        this.exitData = exitData.apply(this.exitData);
+    }
+
+
+    /**
+     * Getter for <code>win_task_result.exit_fail</code>.
+     */
+    @Override
+    public Boolean getExitFail() {
+        return this.exitFail;
+    }
+
+    /**
+     * Setter for <code>win_task_result.exit_fail</code>.
+     */
+    @Override
+    public void setExitFail(Boolean exitFail) {
+        this.exitFail = exitFail;
+    }
+
+    @Transient
+    public void setExitFailIf(Boolean exitFail, boolean bool) {
+        if (bool) {
+            this.exitFail = exitFail;
+        }
+    }
+
+    @Transient
+    public void setExitFailIf(Supplier<Boolean> exitFail, boolean bool) {
+        if (bool) {
+            this.exitFail = exitFail.get();
+        }
+    }
+
+    @Transient
+    public void setExitFailIf(Boolean exitFail, Predicate<Boolean> bool) {
+        if (bool.test(exitFail)) {
+            this.exitFail = exitFail;
+        }
+    }
+
+    @Transient
+    public void setExitFailIf(Boolean exitFail, Predicate<Boolean> bool, Supplier<Boolean>... exitFails) {
+        if (bool.test(exitFail)) {
+            this.exitFail = exitFail;
+            return;
+        }
+        for (Supplier<Boolean> supplier : exitFails) {
+            exitFail = supplier.get();
+            if (bool.test(exitFail)) {
+                this.exitFail = exitFail;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setExitFailIfNot(Boolean exitFail, Predicate<Boolean> bool) {
+        if (!bool.test(exitFail)) {
+            this.exitFail = exitFail;
+        }
+    }
+
+    @Transient
+    public void setExitFailIfNot(Boolean exitFail, Predicate<Boolean> bool, Supplier<Boolean>... exitFails) {
+        if (!bool.test(exitFail)) {
+            this.exitFail = exitFail;
+            return;
+        }
+        for (Supplier<Boolean> supplier : exitFails) {
+            exitFail = supplier.get();
+            if (!bool.test(exitFail)) {
+                this.exitFail = exitFail;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setExitFailIf(UnaryOperator<Boolean> exitFail) {
+        this.exitFail = exitFail.apply(this.exitFail);
     }
 
 
@@ -557,162 +638,82 @@ public class WinTaskResult implements IWinTaskResult {
 
 
     /**
-     * Getter for <code>win_task_result.time_fail</code>.
+     * Getter for <code>win_task_result.time_exit</code>.
      */
     @Override
-    public LocalDateTime getTimeFail() {
-        return this.timeFail;
+    public LocalDateTime getTimeExit() {
+        return this.timeExit;
     }
 
     /**
-     * Setter for <code>win_task_result.time_fail</code>.
+     * Setter for <code>win_task_result.time_exit</code>.
      */
     @Override
-    public void setTimeFail(LocalDateTime timeFail) {
-        this.timeFail = timeFail;
+    public void setTimeExit(LocalDateTime timeExit) {
+        this.timeExit = timeExit;
     }
 
     @Transient
-    public void setTimeFailIf(LocalDateTime timeFail, boolean bool) {
+    public void setTimeExitIf(LocalDateTime timeExit, boolean bool) {
         if (bool) {
-            this.timeFail = timeFail;
+            this.timeExit = timeExit;
         }
     }
 
     @Transient
-    public void setTimeFailIf(Supplier<LocalDateTime> timeFail, boolean bool) {
+    public void setTimeExitIf(Supplier<LocalDateTime> timeExit, boolean bool) {
         if (bool) {
-            this.timeFail = timeFail.get();
+            this.timeExit = timeExit.get();
         }
     }
 
     @Transient
-    public void setTimeFailIf(LocalDateTime timeFail, Predicate<LocalDateTime> bool) {
-        if (bool.test(timeFail)) {
-            this.timeFail = timeFail;
+    public void setTimeExitIf(LocalDateTime timeExit, Predicate<LocalDateTime> bool) {
+        if (bool.test(timeExit)) {
+            this.timeExit = timeExit;
         }
     }
 
     @Transient
-    public void setTimeFailIf(LocalDateTime timeFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeFails) {
-        if (bool.test(timeFail)) {
-            this.timeFail = timeFail;
+    public void setTimeExitIf(LocalDateTime timeExit, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeExits) {
+        if (bool.test(timeExit)) {
+            this.timeExit = timeExit;
             return;
         }
-        for (Supplier<LocalDateTime> supplier : timeFails) {
-            timeFail = supplier.get();
-            if (bool.test(timeFail)) {
-                this.timeFail = timeFail;
+        for (Supplier<LocalDateTime> supplier : timeExits) {
+            timeExit = supplier.get();
+            if (bool.test(timeExit)) {
+                this.timeExit = timeExit;
                 return;
             }
         }
     }
 
     @Transient
-    public void setTimeFailIfNot(LocalDateTime timeFail, Predicate<LocalDateTime> bool) {
-        if (!bool.test(timeFail)) {
-            this.timeFail = timeFail;
+    public void setTimeExitIfNot(LocalDateTime timeExit, Predicate<LocalDateTime> bool) {
+        if (!bool.test(timeExit)) {
+            this.timeExit = timeExit;
         }
     }
 
     @Transient
-    public void setTimeFailIfNot(LocalDateTime timeFail, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeFails) {
-        if (!bool.test(timeFail)) {
-            this.timeFail = timeFail;
+    public void setTimeExitIfNot(LocalDateTime timeExit, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeExits) {
+        if (!bool.test(timeExit)) {
+            this.timeExit = timeExit;
             return;
         }
-        for (Supplier<LocalDateTime> supplier : timeFails) {
-            timeFail = supplier.get();
-            if (!bool.test(timeFail)) {
-                this.timeFail = timeFail;
+        for (Supplier<LocalDateTime> supplier : timeExits) {
+            timeExit = supplier.get();
+            if (!bool.test(timeExit)) {
+                this.timeExit = timeExit;
                 return;
             }
         }
     }
 
     @Transient
-    public void setTimeFailIf(UnaryOperator<LocalDateTime> timeFail) {
-        this.timeFail = timeFail.apply(this.timeFail);
-    }
-
-
-    /**
-     * Getter for <code>win_task_result.time_done</code>.
-     */
-    @Override
-    public LocalDateTime getTimeDone() {
-        return this.timeDone;
-    }
-
-    /**
-     * Setter for <code>win_task_result.time_done</code>.
-     */
-    @Override
-    public void setTimeDone(LocalDateTime timeDone) {
-        this.timeDone = timeDone;
-    }
-
-    @Transient
-    public void setTimeDoneIf(LocalDateTime timeDone, boolean bool) {
-        if (bool) {
-            this.timeDone = timeDone;
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIf(Supplier<LocalDateTime> timeDone, boolean bool) {
-        if (bool) {
-            this.timeDone = timeDone.get();
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIf(LocalDateTime timeDone, Predicate<LocalDateTime> bool) {
-        if (bool.test(timeDone)) {
-            this.timeDone = timeDone;
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIf(LocalDateTime timeDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeDones) {
-        if (bool.test(timeDone)) {
-            this.timeDone = timeDone;
-            return;
-        }
-        for (Supplier<LocalDateTime> supplier : timeDones) {
-            timeDone = supplier.get();
-            if (bool.test(timeDone)) {
-                this.timeDone = timeDone;
-                return;
-            }
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIfNot(LocalDateTime timeDone, Predicate<LocalDateTime> bool) {
-        if (!bool.test(timeDone)) {
-            this.timeDone = timeDone;
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIfNot(LocalDateTime timeDone, Predicate<LocalDateTime> bool, Supplier<LocalDateTime>... timeDones) {
-        if (!bool.test(timeDone)) {
-            this.timeDone = timeDone;
-            return;
-        }
-        for (Supplier<LocalDateTime> supplier : timeDones) {
-            timeDone = supplier.get();
-            if (!bool.test(timeDone)) {
-                this.timeDone = timeDone;
-                return;
-            }
-        }
-    }
-
-    @Transient
-    public void setTimeDoneIf(UnaryOperator<LocalDateTime> timeDone) {
-        this.timeDone = timeDone.apply(this.timeDone);
+    public void setTimeExitIf(UnaryOperator<LocalDateTime> timeExit) {
+        this.timeExit = timeExit.apply(this.timeExit);
     }
 
 
@@ -829,11 +830,17 @@ public class WinTaskResult implements IWinTaskResult {
         }
         else if (!this.taskPid.equals(other.taskPid))
             return false;
-        if (this.taskMsg == null) {
-            if (other.taskMsg != null)
+        if (this.exitData == null) {
+            if (other.exitData != null)
                 return false;
         }
-        else if (!this.taskMsg.equals(other.taskMsg))
+        else if (!this.exitData.equals(other.exitData))
+            return false;
+        if (this.exitFail == null) {
+            if (other.exitFail != null)
+                return false;
+        }
+        else if (!this.exitFail.equals(other.exitFail))
             return false;
         if (this.timeExec == null) {
             if (other.timeExec != null)
@@ -841,17 +848,11 @@ public class WinTaskResult implements IWinTaskResult {
         }
         else if (!this.timeExec.equals(other.timeExec))
             return false;
-        if (this.timeFail == null) {
-            if (other.timeFail != null)
+        if (this.timeExit == null) {
+            if (other.timeExit != null)
                 return false;
         }
-        else if (!this.timeFail.equals(other.timeFail))
-            return false;
-        if (this.timeDone == null) {
-            if (other.timeDone != null)
-                return false;
-        }
-        else if (!this.timeDone.equals(other.timeDone))
+        else if (!this.timeExit.equals(other.timeExit))
             return false;
         if (this.timeCost == null) {
             if (other.timeCost != null)
@@ -870,10 +871,10 @@ public class WinTaskResult implements IWinTaskResult {
         result = prime * result + ((this.taskId == null) ? 0 : this.taskId.hashCode());
         result = prime * result + ((this.taskApp == null) ? 0 : this.taskApp.hashCode());
         result = prime * result + ((this.taskPid == null) ? 0 : this.taskPid.hashCode());
-        result = prime * result + ((this.taskMsg == null) ? 0 : this.taskMsg.hashCode());
+        result = prime * result + ((this.exitData == null) ? 0 : this.exitData.hashCode());
+        result = prime * result + ((this.exitFail == null) ? 0 : this.exitFail.hashCode());
         result = prime * result + ((this.timeExec == null) ? 0 : this.timeExec.hashCode());
-        result = prime * result + ((this.timeFail == null) ? 0 : this.timeFail.hashCode());
-        result = prime * result + ((this.timeDone == null) ? 0 : this.timeDone.hashCode());
+        result = prime * result + ((this.timeExit == null) ? 0 : this.timeExit.hashCode());
         result = prime * result + ((this.timeCost == null) ? 0 : this.timeCost.hashCode());
         return result;
     }
@@ -886,10 +887,10 @@ public class WinTaskResult implements IWinTaskResult {
         sb.append(", ").append(taskId);
         sb.append(", ").append(taskApp);
         sb.append(", ").append(taskPid);
-        sb.append(", ").append(taskMsg);
+        sb.append(", ").append(exitData);
+        sb.append(", ").append(exitFail);
         sb.append(", ").append(timeExec);
-        sb.append(", ").append(timeFail);
-        sb.append(", ").append(timeDone);
+        sb.append(", ").append(timeExit);
         sb.append(", ").append(timeCost);
 
         sb.append(")");
@@ -906,10 +907,10 @@ public class WinTaskResult implements IWinTaskResult {
         setTaskId(from.getTaskId());
         setTaskApp(from.getTaskApp());
         setTaskPid(from.getTaskPid());
-        setTaskMsg(from.getTaskMsg());
+        setExitData(from.getExitData());
+        setExitFail(from.getExitFail());
         setTimeExec(from.getTimeExec());
-        setTimeFail(from.getTimeFail());
-        setTimeDone(from.getTimeDone());
+        setTimeExit(from.getTimeExit());
         setTimeCost(from.getTimeCost());
     }
 

@@ -367,24 +367,24 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public LocalDateTime getLastExec();
 
     /**
+     * Setter for <code>win_task_define.last_exit</code>.
+     */
+    public void setLastExit(LocalDateTime value);
+
+    /**
+     * Getter for <code>win_task_define.last_exit</code>.
+     */
+    public LocalDateTime getLastExit();
+
+    /**
      * Setter for <code>win_task_define.last_fail</code>.
      */
-    public void setLastFail(LocalDateTime value);
+    public void setLastFail(Boolean value);
 
     /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
-    public LocalDateTime getLastFail();
-
-    /**
-     * Setter for <code>win_task_define.last_done</code>.
-     */
-    public void setLastDone(LocalDateTime value);
-
-    /**
-     * Getter for <code>win_task_define.last_done</code>.
-     */
-    public LocalDateTime getLastDone();
+    public Boolean getLastFail();
 
     /**
      * Setter for <code>win_task_define.next_exec</code>.

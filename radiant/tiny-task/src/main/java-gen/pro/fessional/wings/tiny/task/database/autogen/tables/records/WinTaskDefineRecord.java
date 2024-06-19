@@ -577,35 +577,35 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     }
 
     /**
+     * Setter for <code>win_task_define.last_exit</code>.
+     */
+    @Override
+    public void setLastExit(LocalDateTime value) {
+        set(34, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.last_exit</code>.
+     */
+    @Override
+    public LocalDateTime getLastExit() {
+        return (LocalDateTime) get(34);
+    }
+
+    /**
      * Setter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public void setLastFail(LocalDateTime value) {
-        set(34, value);
+    public void setLastFail(Boolean value) {
+        set(35, value);
     }
 
     /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public LocalDateTime getLastFail() {
-        return (LocalDateTime) get(34);
-    }
-
-    /**
-     * Setter for <code>win_task_define.last_done</code>.
-     */
-    @Override
-    public void setLastDone(LocalDateTime value) {
-        set(35, value);
-    }
-
-    /**
-     * Getter for <code>win_task_define.last_done</code>.
-     */
-    @Override
-    public LocalDateTime getLastDone() {
-        return (LocalDateTime) get(35);
+    public Boolean getLastFail() {
+        return (Boolean) get(35);
     }
 
     /**
@@ -753,8 +753,8 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setDuringBoot(from.getDuringBoot());
         setResultKeep(from.getResultKeep());
         setLastExec(from.getLastExec());
+        setLastExit(from.getLastExit());
         setLastFail(from.getLastFail());
-        setLastDone(from.getLastDone());
         setNextExec(from.getNextExec());
         setNextLock(from.getNextLock());
         setDurFail(from.getDurFail());
@@ -784,7 +784,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingTune, Integer timingMiss, Integer timingBeat, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer duringBoot, Integer resultKeep, LocalDateTime lastExec, LocalDateTime lastFail, LocalDateTime lastDone, LocalDateTime nextExec, Integer nextLock, Integer durFail, Integer sumExec, Integer sumFail, Integer sumDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingTune, Integer timingMiss, Integer timingBeat, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer duringBoot, Integer resultKeep, LocalDateTime lastExec, LocalDateTime lastExit, Boolean lastFail, LocalDateTime nextExec, Integer nextLock, Integer durFail, Integer sumExec, Integer sumFail, Integer sumDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);
@@ -821,8 +821,8 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setDuringBoot(duringBoot);
         setResultKeep(resultKeep);
         setLastExec(lastExec);
+        setLastExit(lastExit);
         setLastFail(lastFail);
-        setLastDone(lastDone);
         setNextExec(nextExec);
         setNextLock(nextLock);
         setDurFail(durFail);
@@ -873,8 +873,8 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
             setDuringBoot(value.getDuringBoot());
             setResultKeep(value.getResultKeep());
             setLastExec(value.getLastExec());
+            setLastExit(value.getLastExit());
             setLastFail(value.getLastFail());
-            setLastDone(value.getLastDone());
             setNextExec(value.getNextExec());
             setNextLock(value.getNextLock());
             setDurFail(value.getDurFail());

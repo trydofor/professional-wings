@@ -1205,69 +1205,69 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>last_exit BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfLastExit(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.LastExit, lowerInclusive, upperInclusive);
+    }
+
+
+    public List<WinTaskDefine> fetchRangeOfLastExitLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastExit, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>last_exit IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByLastExit(LocalDateTime... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.LastExit, values);
+    }
+
+    public List<WinTaskDefine> fetchByLastExit(Collection<? extends LocalDateTime> values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.LastExit, values);
+    }
+
+
+    public List<WinTaskDefine> fetchByLastExitLive(LocalDateTime... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.LastExit, values);
+    }
+
+    public List<WinTaskDefine> fetchByLastExitLive(Collection<? extends LocalDateTime> values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.LastExit, values);
+    }
+
+    /**
      * Fetch records that have <code>last_fail BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastFail(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastFail(Boolean lowerInclusive, Boolean upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.LastFail, lowerInclusive, upperInclusive);
     }
 
 
-    public List<WinTaskDefine> fetchRangeOfLastFailLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastFailLive(Boolean lowerInclusive, Boolean upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastFail(LocalDateTime... values) {
+    public List<WinTaskDefine> fetchByLastFail(Boolean... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.LastFail, values);
     }
 
-    public List<WinTaskDefine> fetchByLastFail(Collection<? extends LocalDateTime> values) {
+    public List<WinTaskDefine> fetchByLastFail(Collection<? extends Boolean> values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.LastFail, values);
     }
 
 
-    public List<WinTaskDefine> fetchByLastFailLive(LocalDateTime... values) {
+    public List<WinTaskDefine> fetchByLastFailLive(Boolean... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.LastFail, values);
     }
 
-    public List<WinTaskDefine> fetchByLastFailLive(Collection<? extends LocalDateTime> values) {
+    public List<WinTaskDefine> fetchByLastFailLive(Collection<? extends Boolean> values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.LastFail, values);
-    }
-
-    /**
-     * Fetch records that have <code>last_done BETWEEN lowerInclusive AND
-     * upperInclusive</code>
-     */
-    public List<WinTaskDefine> fetchRangeOfLastDone(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
-        return fetchRange(WinTaskDefineTable.WinTaskDefine.LastDone, lowerInclusive, upperInclusive);
-    }
-
-
-    public List<WinTaskDefine> fetchRangeOfLastDoneLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
-        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastDone, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>last_done IN (values)</code>
-     */
-    public List<WinTaskDefine> fetchByLastDone(LocalDateTime... values) {
-        return fetch(WinTaskDefineTable.WinTaskDefine.LastDone, values);
-    }
-
-    public List<WinTaskDefine> fetchByLastDone(Collection<? extends LocalDateTime> values) {
-        return fetch(WinTaskDefineTable.WinTaskDefine.LastDone, values);
-    }
-
-
-    public List<WinTaskDefine> fetchByLastDoneLive(LocalDateTime... values) {
-        return fetchLive(WinTaskDefineTable.WinTaskDefine.LastDone, values);
-    }
-
-    public List<WinTaskDefine> fetchByLastDoneLive(Collection<? extends LocalDateTime> values) {
-        return fetchLive(WinTaskDefineTable.WinTaskDefine.LastDone, values);
     }
 
     /**

@@ -397,40 +397,45 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     }
 
     private void saveResult(Long id, long exec, long fail, long done, String msg, int cf) {
-        log.debug("saveResult, id={}, name={}", id);
+        log.debug("saveResult, id={}", id);
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         Map<Field<?>, Object> setter = new HashMap<>();
 
-        setter.put(td.LastExec, milliLdt(exec, ThreadNow.sysZoneId()));
+        final long exitTms = Math.max(done, fail);
+        final ZoneId zidSys = ThreadNow.sysZoneId();
+        LocalDateTime execLdt = milliLdt(exec, zidSys);
+        LocalDateTime exitLdt = milliLdt(exitTms, zidSys);
+
+        // define
+        setter.put(td.LastExec, execLdt);
+        setter.put(td.LastExit, exitLdt);
         setter.put(td.SumExec, td.SumExec.add(1));
         // clean next means nomoal finish (not kill)
         setter.put(td.NextExec, EmptyValue.DATE_TIME);
 
         if (fail > 0) {
-            setter.put(td.LastFail, milliLdt(fail, ThreadNow.sysZoneId()));
-            setter.put(td.LastDone, EmptyValue.DATE_TIME);
+            setter.put(td.LastFail, true);
             setter.put(td.SumFail, td.SumFail.add(1));
             setter.put(td.DurFail, cf > 0 ? td.DurFail.add(1) : 1);
         }
         else { // done
-            setter.put(td.LastFail, EmptyValue.DATE_TIME);
-            setter.put(td.LastDone, milliLdt(done, ThreadNow.sysZoneId()));
+            setter.put(td.LastFail, false);
             setter.put(td.SumDone, td.SumDone.add(1));
             setter.put(td.DurFail, 0);
         }
 
+        // result
         final WinTaskResult po = new WinTaskResult();
         po.setId(lightIdService.getId(winTaskResultDao.getTable()));
         po.setTaskId(id);
         po.setTaskApp(appName);
         po.setTaskPid(JvmStat.jvmPid());
-        po.setTaskMsg(msg);
+        po.setExitData(msg);
+        po.setExitFail(fail > 0);
 
-        final ZoneId zidSys = ThreadNow.sysZoneId();
-        po.setTimeExec(milliLdt(exec, zidSys));
-        po.setTimeFail(milliLdt(fail, zidSys));
-        po.setTimeDone(milliLdt(done, zidSys));
-        po.setTimeCost((int) (Math.max(done, fail) - exec));
+        po.setTimeExec(execLdt);
+        po.setTimeExit(exitLdt);
+        po.setTimeCost((int) (exitTms - exec));
 
         TransactionHelper.template(Propagation.REQUIRES_NEW).execute(ignore ->
             journalService.commit(Jane.SaveResult, journal -> {
@@ -563,17 +568,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @SuppressWarnings("all")
     private SimpleTriggerContext makeContext(WinTaskDefine td, ZoneId zone, long now) {
         Instant lastActual = null;
-        final LocalDateTime lastExec = td.getLastExec();
-        if (EmptySugar.nonEmptyValue(lastExec)) {
-            lastActual = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastExec));
+        if (EmptySugar.nonEmptyValue(td.getLastExec())) {
+            lastActual = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastExec()));
         }
 
         Instant lastCompletion = null;
-        if (EmptySugar.nonEmptyValue(td.getLastDone())) {
-            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastDone()));
-        }
-        else {
-            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastFail()));
+        if (EmptySugar.nonEmptyValue(td.getLastExit())) {
+            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(td.getLastExit()));
         }
 
         return new SimpleTriggerContext(lastActual, lastActual, lastCompletion);

@@ -83,9 +83,14 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     public final TableField<WinTaskResultRecord, Integer> TaskPid = createField(DSL.name("task_pid"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>win_task_result.task_msg</code>.
+     * The column <code>win_task_result.exit_data</code>.
      */
-    public final TableField<WinTaskResultRecord, String> TaskMsg = createField(DSL.name("task_msg"), SQLDataType.CLOB, this, "");
+    public final TableField<WinTaskResultRecord, String> ExitData = createField(DSL.name("exit_data"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>win_task_result.exit_fail</code>.
+     */
+    public final TableField<WinTaskResultRecord, Boolean> ExitFail = createField(DSL.name("exit_fail"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>win_task_result.time_exec</code>.
@@ -93,14 +98,9 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     public final TableField<WinTaskResultRecord, LocalDateTime> TimeExec = createField(DSL.name("time_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>win_task_result.time_fail</code>.
+     * The column <code>win_task_result.time_exit</code>.
      */
-    public final TableField<WinTaskResultRecord, LocalDateTime> TimeFail = createField(DSL.name("time_fail"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
-
-    /**
-     * The column <code>win_task_result.time_done</code>.
-     */
-    public final TableField<WinTaskResultRecord, LocalDateTime> TimeDone = createField(DSL.name("time_done"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<WinTaskResultRecord, LocalDateTime> TimeExit = createField(DSL.name("time_exit"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_result.time_cost</code>.
@@ -190,14 +190,14 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Long, Long, String, Integer, String, LocalDateTime, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
+    public Row9<Long, Long, String, Integer, String, Boolean, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
         return (Row9) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -205,7 +205,7 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 
