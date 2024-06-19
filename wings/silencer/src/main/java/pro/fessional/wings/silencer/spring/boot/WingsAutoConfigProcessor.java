@@ -402,38 +402,44 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     // Scan by path priority
     private LinkedHashSet<ConfResource> scanWingsResource(MutablePropertySources sources, PathMatchingResourcePatternResolver resolver, AutoConf autoConf) {
-        LinkedHashSet<String> sortedPath = new LinkedHashSet<>();
-        for (PropertySource<?> next : sources) {
-            // 1. Command line arguments. `--spring.config.location`
-            // 2. Java System properties `spring.config.location`
-            Object property = next.getProperty("spring.config.location");
-            if (property == null) {
-                // 3. OS environment variables. `SPRING_CONFIG_LOCATION`
-                property = next.getProperty("SPRING_CONFIG_LOCATION");
-            }
-            if (property != null) {
-                String[] parts = property.toString().split(",");
-                for (String s : parts) {
-                    putPathIfValid(sortedPath, s.trim());
+        final LinkedHashSet<String> sortedPath = new LinkedHashSet<>();
+
+        // 1. command line arguments, `--spring.config.location`, `--spring.config.additional-location`
+        // 2. Java System properties, `spring.config.location`, `spring.config.additional-location`
+        // 3. OS environment variables, `SPRING_CONFIG_LOCATION`, `SPRING_CONFIG_ADDITIONALLOCATION`
+        final String[] configPath = {
+            "spring.config.location", "SPRING_CONFIG_LOCATION",
+            "spring.config.additional-location", "SPRING_CONFIG_ADDITIONALLOCATION"
+        };
+
+        for (PropertySource<?> ps : sources) {
+            for (int i = 0; i < configPath.length; i += 2) {
+                Object property = ps.getProperty(configPath[i]);
+                if (property == null) property = ps.getProperty(configPath[i + 1]);
+                if (property == null) continue;
+
+                for (String s : property.toString().split(",")) {
+                    putPathIfValid(sortedPath, s);
                 }
             }
         }
 
         // 4. default `classpath:/,classpath:/config/,file:./,file:./config/`
         for (String s : "classpath:/,classpath:/config/,file:./,file:./config/".split(",")) {
-            putPathIfValid(sortedPath, s.trim());
+            putPathIfValid(sortedPath, s);
         }
 
         final LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
         for (String path : sortedPath) {
             if (path.startsWith("optional:")) {
-                path = path.substring(9); // optional:
+                path = path.substring(9); // remove "optional:"
             }
 
             // 5. `classpath:/` is scanned as `classpath*:/`
             if (path.startsWith("classpath:")) {
                 path = path.replace("classpath:", "classpath*:");
             }
+
             // 6. any non-protocol will be scanned as `file:`
             else if (!path.contains(":")) {
                 path = "file:" + path;
@@ -524,9 +530,9 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private void putPathIfValid(LinkedHashSet<String> path, String conf) {
-        if (conf.isEmpty() || isYml(conf) || isProperty(conf)) {
-            return;
-        }
+        conf = conf.trim();
+        if (conf.isEmpty() || isYml(conf) || isProperty(conf)) return;
+
         if (!conf.endsWith("/")) {
             conf = conf + "/";
         }

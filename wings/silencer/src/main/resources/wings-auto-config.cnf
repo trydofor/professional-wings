@@ -1,4 +1,5 @@
 ## Silencer's entry configuration, which defines the path and mode of Silencer's autoload.
+## load `classpath*:/wings-auto-config*.cnf`, sort by name and take the last one
 
 ## Scan path under multi-protocol, so no protocol header, same name can be loaded multiple times, override by priority.
 wings.boot.more=application*.*, wings-conf/**/*.*
