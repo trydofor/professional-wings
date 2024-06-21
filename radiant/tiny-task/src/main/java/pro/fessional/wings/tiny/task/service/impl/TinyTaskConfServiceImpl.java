@@ -178,7 +178,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             }
         }
 
-        final TinyTasker anno = referAnno(r2.value2());
+        final TinyTasker anno = referAnno(r2.value1(), r2.value2());
         AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         return property(r2.value1(), anno);
@@ -190,16 +190,16 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
         AssertArgs.notNull(po, "database tasker is null, id={}", id);
 
-        final TinyTasker anno = referAnno(po.getTaskerBean());
+        final TinyTasker anno = referAnno(po.getPropkey(), po.getTaskerBean());
         AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);
     }
 
-    private TinyTasker referAnno(String token) {
-        final TaskerExec tk = ExecHolder.getTasker(token, false);
-        final Method md = tk != null ? tk.getBeanMethod() : TaskerHelper.referMethod(token);
+    private TinyTasker referAnno(String key, String entry) {
+        final TaskerExec tk = ExecHolder.getTasker(key, false);
+        final Method md = tk != null ? tk.getBeanMethod() : TaskerHelper.referMethod(entry);
         return md.getAnnotation(TinyTasker.class);
     }
 
@@ -231,39 +231,39 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         if (anno == null) {
             throw new IllegalStateException("need @TinyTasker, tasker method=" + method.getName() + ", class=" + claz.getName());
         }
-        String key = anno.value();
-        if (isEmpty(key)) {
-            key = TaskerHelper.tokenize(claz, method.getName());
-        }
+
+        final String entry = TaskerHelper.tokenize(claz, method.getName());
+        final String key = isEmpty(anno.value()) ? entry : anno.value();
 
         final TaskerProp prop = property(key, anno);
         if (prop.notTimingCron() && prop.notTimingIdle() && prop.notTimingRate()) {
             throw new IllegalStateException(
                 "need cron/idle/rate ,method=" + method.getName()
-                + ", class=" + claz.getName() + " ,prop=" + key
+                + ", class=" + claz.getName() + ", prop=" + key
             );
         }
 
-        String tkn = TaskerHelper.tokenize(claz, method.getName());
-        log.debug("find tiny task, prop={}, ref={}", key, tkn);
+        log.info("find tiny task, prop={}, entry={}", key, entry);
 
         if (isEmpty(prop.getTaskerName())) {
             prop.setTaskerName(claz.getSimpleName() + TaskerHelper.MethodPrefix + method.getName());
         }
 
-        final TaskerExec tasker = ExecHolder.getTasker(tkn, k -> new TaskerExec(claz, bean, method));
+        final TaskerExec tasker = ExecHolder.getTasker(key, k -> new TaskerExec(claz, bean, method));
         if (!method.equals(tasker.getBeanMethod())) {
-            throw new IllegalStateException("diff method with same token=" + tkn);
+            throw new IllegalStateException("diff method with same prop=" + key +
+                                            ", entry1=" + claz.getName() + "#" + method.getName() +
+                                            ", entry2=" + tasker.getBeanClass().getName() + "#" + tasker.getBeanMethod().getName());
         }
 
-        prop.setTaskerBean(tkn);
+        prop.setTaskerBean(entry);
         prop.setTaskerPara(tasker.encodePara(para));
 
         final long id;
         final boolean enabled;
         final boolean autorun;
         final String noticeBean;
-        final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.TaskerBean.eq(tkn));
+        final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.TaskerBean.eq(entry));
         if (po == null) {
             id = insertProp(prop, key);
             enabled = prop.isEnabled();
@@ -290,12 +290,20 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                 }
                 if (po.getVersion() <= prop.getVersion()) {
                     updateProp(prop, key, id);
-                    log.info("update prop to database, taks={}, diff={}", key, sb);
+                    log.info("update prop to database, prop={}, diff={}", key, sb);
                 }
                 else {
-                    log.warn("diff from prop and database, task={}, diff={}", key, sb);
+                    log.warn("diff from prop and database, prop={}, diff={}", key, sb);
                 }
             }
+        }
+
+        // check dulpli key
+        final WinTaskDefine poKey = fetchProp(WinTaskDefine.class, t -> t.Propkey.eq(key));
+        if (poKey != null && !entry.equals(poKey.getTaskerBean())) {
+            throw new IllegalStateException("diff TaskerBean with same prop=" + key +
+                                            ", entry1=" + entry +
+                                            ", entry2=" + poKey.getTaskerBean());
         }
 
         if (noticeBean != null && !noticeBean.isEmpty()) {
@@ -312,7 +320,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             });
         }
 
-        return new Conf(id, enabled, autorun);
+        return new Conf(id, key, enabled, autorun);
     }
 
     private long insertProp(TaskerProp prop, String key) {

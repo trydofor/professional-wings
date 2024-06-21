@@ -115,19 +115,19 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             long execTms = ThreadNow.millis();
             long doneTms = -1;
             long failTms = -1;
-            final String taskerName = td.getTaskerName() + " force";
+            final String taskerInfo = td.getPropkey() + " force";
             final String noticeConf = td.getNoticeConf();
 
             String taskMsg = "force task id=" + id;
             NoticeExec<?> notice = null;
             Set<String> ntcWhen = Collections.emptySet();
             try {
-                final TaskerExec tasker = ExecHolder.getTasker(td.getTaskerBean(), true);
+                final TaskerExec tasker = ExecHolder.getTasker(td.getPropkey(), true);
 
                 notice = ExecHolder.getNotice(td.getNoticeBean(), false);
                 if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
-                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
+                postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, execTms, WhenExec);
                 log.debug("task force exec, id={}", id);
 
                 final Object result;
@@ -143,17 +143,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 //
                 doneTms = ThreadNow.millis();
                 taskMsg = stringResult(result);
-                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenFeed, WhenDone);
+                postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, doneTms, WhenFeed, WhenDone);
             }
             catch (Exception e) {
                 log.error("task force fail, id=" + id, e);
                 failTms = ThreadNow.millis();
                 taskMsg = ThrowableUtil.toString(e);
-                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
+                postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, failTms, WhenFail);
             }
             finally {
                 try {
-                    saveResult(id, execTms, failTms, doneTms, taskMsg, td.getDurFail());
+                    saveResult(id, td.getPropkey(), execTms, failTms, doneTms, taskMsg, td.getDurFail());
                 }
                 catch (Exception e) {
                     log.error("failed to save result, id=" + id, e);
@@ -216,20 +216,21 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             // temp save before schedule to avoid kill
             saveNextExec(next, td);
 
+            final String key = td.getPropkey();
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
             final var taskScheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
 
             if (taskScheduler.getScheduledExecutor().isShutdown()) {
-                log.error("TaskScheduler={} is shutdown, id={}, name={}", fast, id, td.getTaskerName());
+                log.error("TaskScheduler={} is shutdown, id={}, prop={}", fast, id, key);
                 return false;
             }
 
-            log.info("prepare task id={}, name={}", id, td.getTaskerName());
+            log.info("prepare task id={}, prop={}", id, key);
             final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {
                     if (notNextLock(td, execTms)) {
-                        log.warn("skip task for Not nextLock, should manually check and launch it, id={}, name={}", id, td.getTaskerName());
+                        log.warn("skip task for Not nextLock, should manually check and launch it, id={}, prop={}", id, key);
                         Handle.remove(id);
                         return;
                     }
@@ -242,49 +243,50 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
                 long doneTms = -1;
                 long failTms = -1;
-                final String taskerName = td.getTaskerName();
+                final String taskerInfo = key + " launch";
                 final String noticeConf = td.getNoticeConf();
 
-                String taskMsg = "relaunch task id=" + id;
+                String exitMsg = "relaunch task id=" + id;
                 NoticeExec<?> notice = null;
                 Set<String> ntcWhen = Collections.emptySet();
                 try {
-                    final TaskerExec tasker = ExecHolder.getTasker(td.getTaskerBean(), true);
+                    final TaskerExec tasker = ExecHolder.getTasker(key, true);
 
                     notice = ExecHolder.getNotice(td.getNoticeBean(), false);
                     if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
-                    postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
-                    log.info("task exec, id={}, name={}", id, td.getTaskerName());
+                    postNotice(notice, noticeConf, ntcWhen, taskerInfo, exitMsg, execTms, WhenExec);
+                    log.info("task exec, id={}, prop={}", id, key);
 
                     final Object result;
                     if (execProp.isDryrun()) {
                         final long slp = Sleep.ignoreInterrupt(10, 2000);
                         result = "dryrun and sleep " + slp;
-                        log.info("task done, dryrun and sleep {} ms, id={}, name={}", slp, id, td.getTaskerName());
+                        log.info("task done, dryrun and sleep {} ms, id={}, prop={}", slp, id, key);
                     }
                     else {
                         result = tasker.invoke(td.getTaskerPara(), true);
-                        log.info("task done, id={}, name={}", id, td.getTaskerName());
+                        log.info("task done, id={}, prop={}", id, key);
                     }
                     //
                     doneTms = ThreadNow.millis();
-                    taskMsg = stringResult(result);
-                    postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenFeed, WhenDone);
+                    exitMsg = stringResult(result);
+                    postNotice(notice, noticeConf, ntcWhen, taskerInfo, exitMsg, doneTms, WhenFeed, WhenDone);
                 }
                 catch (Exception e) {
-                    log.error("task fail, id=" + id + "name=" + td.getTaskerName(), e);
+                    Throwable c = ThrowableUtil.cause(e, 1);
+                    log.error("task fail, id=" + id + ", prop=" + key, c);
                     failTms = ThreadNow.millis();
-                    taskMsg = ThrowableUtil.toString(e);
-                    postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
+                    exitMsg = ThrowableUtil.toString(c);
+                    postNotice(notice, noticeConf, ntcWhen, taskerInfo, exitMsg, failTms, WhenFail);
                 }
                 finally {
                     try {
                         Handle.remove(id);
-                        saveResult(id, execTms, failTms, doneTms, taskMsg, td.getDurFail());
+                        saveResult(id, key, execTms, failTms, doneTms, exitMsg, td.getDurFail());
                     }
                     catch (Exception e) {
-                        log.error("failed to save result, id=" + id + "name=" + td.getTaskerName(), e);
+                        log.error("failed to save result, id=" + id + ", prop=" + key, e);
                     }
 
                     if (canRelaunch(id, doneTms, failTms, td)) { // canceled
@@ -351,19 +353,19 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         return JacksonHelper.string(result);
     }
 
-    private void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String tn, String msg, long ms, String... wh) {
+    private void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String sub, String msg, long ms, String... wh) {
         if (ntc == null) return;
         final String zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ms), ThreadNow.sysZoneId()).toString();
         for (String w : wh) {
             if (whs.contains(w)) {
                 if (w.equals(WhenFeed)) {
                     if (!execProp.isDryrun() && StringUtils.isNotEmpty(msg)) {
-                        ntc.postNotice(cnf, tn + " " + w.toUpperCase(), zdt + "\n\n" + msg);
+                        ntc.postNotice(cnf, sub + " " + w.toUpperCase(), zdt + "\n\n" + msg);
                         return;
                     }
                 }
                 else {
-                    ntc.postNotice(cnf, tn + " " + w.toUpperCase(), msg == null ? zdt : zdt + "\n\n" + msg);
+                    ntc.postNotice(cnf, sub + " " + w.toUpperCase(), msg == null ? zdt : zdt + "\n\n" + msg);
                     return;
                 }
             }
@@ -396,7 +398,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         );
     }
 
-    private void saveResult(Long id, long exec, long fail, long done, String msg, int cf) {
+    private void saveResult(long id, String key, long exec, long fail, long done, String msg, int cf) {
         log.debug("saveResult, id={}", id);
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         Map<Field<?>, Object> setter = new HashMap<>();
@@ -428,6 +430,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final WinTaskResult po = new WinTaskResult();
         po.setId(lightIdService.getId(winTaskResultDao.getTable()));
         po.setTaskId(id);
+        po.setTaskKey(key);
         po.setTaskApp(appName);
         po.setTaskPid(JvmStat.jvmPid());
         po.setExitData(msg);

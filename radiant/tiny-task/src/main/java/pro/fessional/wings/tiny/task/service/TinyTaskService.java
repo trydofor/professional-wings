@@ -112,6 +112,7 @@ public interface TinyTaskService {
     @Data
     class Task {
         private final long id;
+        private final String key;
         private final boolean scheduled;
     }
 }

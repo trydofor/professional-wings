@@ -4,17 +4,12 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.function.Function;
-
-import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
-import org.jooq.Function9;
+import org.jooq.Function10;
 import org.jooq.Name;
 import org.jooq.Records;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -25,11 +20,14 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.tiny.task.database.autogen.DefaultSchemaTinyTask;
 import pro.fessional.wings.tiny.task.database.autogen.tables.records.WinTaskResultRecord;
+
+import javax.annotation.processing.Generated;
+import java.time.LocalDateTime;
+import java.util.function.Function;
 
 
 /**
@@ -71,6 +69,11 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
      * The column <code>win_task_result.task_id</code>.
      */
     public final TableField<WinTaskResultRecord, Long> TaskId = createField(DSL.name("task_id"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>win_task_result.task_key</code>.
+     */
+    public final TableField<WinTaskResultRecord, String> TaskKey = createField(DSL.name("task_key"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_task_result.task_app</code>.
@@ -186,18 +189,18 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Long, Long, String, Integer, String, Boolean, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row10<Long, Long, String, String, Integer, String, Boolean, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function10<? super Long, ? super Long, ? super String, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -205,7 +208,7 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super Long, ? super Long, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super Long, ? super Long, ? super String, ? super String, ? super Integer, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 

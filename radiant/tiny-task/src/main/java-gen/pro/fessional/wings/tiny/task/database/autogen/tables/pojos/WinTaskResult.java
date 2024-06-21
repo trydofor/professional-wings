@@ -4,15 +4,14 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.pojos;
 
 
+import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
+
+import javax.annotation.processing.Generated;
 import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-
-import javax.annotation.processing.Generated;
-
-import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
 
 
 /**
@@ -33,6 +32,7 @@ public class WinTaskResult implements IWinTaskResult {
 
     private Long id;
     private Long taskId;
+    private String taskKey;
     private String taskApp;
     private Integer taskPid;
     private String exitData;
@@ -46,6 +46,7 @@ public class WinTaskResult implements IWinTaskResult {
     public WinTaskResult(IWinTaskResult value) {
         this.id = value.getId();
         this.taskId = value.getTaskId();
+        this.taskKey = value.getTaskKey();
         this.taskApp = value.getTaskApp();
         this.taskPid = value.getTaskPid();
         this.exitData = value.getExitData();
@@ -58,6 +59,7 @@ public class WinTaskResult implements IWinTaskResult {
     public WinTaskResult(
         Long id,
         Long taskId,
+        String taskKey,
         String taskApp,
         Integer taskPid,
         String exitData,
@@ -68,6 +70,7 @@ public class WinTaskResult implements IWinTaskResult {
     ) {
         this.id = id;
         this.taskId = taskId;
+        this.taskKey = taskKey;
         this.taskApp = taskApp;
         this.taskPid = taskPid;
         this.exitData = exitData;
@@ -234,6 +237,86 @@ public class WinTaskResult implements IWinTaskResult {
     @Transient
     public void setTaskIdIf(UnaryOperator<Long> taskId) {
         this.taskId = taskId.apply(this.taskId);
+    }
+
+
+    /**
+     * Getter for <code>win_task_result.task_key</code>.
+     */
+    @Override
+    public String getTaskKey() {
+        return this.taskKey;
+    }
+
+    /**
+     * Setter for <code>win_task_result.task_key</code>.
+     */
+    @Override
+    public void setTaskKey(String taskKey) {
+        this.taskKey = taskKey;
+    }
+
+    @Transient
+    public void setTaskKeyIf(String taskKey, boolean bool) {
+        if (bool) {
+            this.taskKey = taskKey;
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIf(Supplier<String> taskKey, boolean bool) {
+        if (bool) {
+            this.taskKey = taskKey.get();
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIf(String taskKey, Predicate<String> bool) {
+        if (bool.test(taskKey)) {
+            this.taskKey = taskKey;
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIf(String taskKey, Predicate<String> bool, Supplier<String>... taskKeys) {
+        if (bool.test(taskKey)) {
+            this.taskKey = taskKey;
+            return;
+        }
+        for (Supplier<String> supplier : taskKeys) {
+            taskKey = supplier.get();
+            if (bool.test(taskKey)) {
+                this.taskKey = taskKey;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIfNot(String taskKey, Predicate<String> bool) {
+        if (!bool.test(taskKey)) {
+            this.taskKey = taskKey;
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIfNot(String taskKey, Predicate<String> bool, Supplier<String>... taskKeys) {
+        if (!bool.test(taskKey)) {
+            this.taskKey = taskKey;
+            return;
+        }
+        for (Supplier<String> supplier : taskKeys) {
+            taskKey = supplier.get();
+            if (!bool.test(taskKey)) {
+                this.taskKey = taskKey;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setTaskKeyIf(UnaryOperator<String> taskKey) {
+        this.taskKey = taskKey.apply(this.taskKey);
     }
 
 
@@ -818,6 +901,12 @@ public class WinTaskResult implements IWinTaskResult {
         }
         else if (!this.taskId.equals(other.taskId))
             return false;
+        if (this.taskKey == null) {
+            if (other.taskKey != null)
+                return false;
+        }
+        else if (!this.taskKey.equals(other.taskKey))
+            return false;
         if (this.taskApp == null) {
             if (other.taskApp != null)
                 return false;
@@ -869,6 +958,7 @@ public class WinTaskResult implements IWinTaskResult {
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.taskId == null) ? 0 : this.taskId.hashCode());
+        result = prime * result + ((this.taskKey == null) ? 0 : this.taskKey.hashCode());
         result = prime * result + ((this.taskApp == null) ? 0 : this.taskApp.hashCode());
         result = prime * result + ((this.taskPid == null) ? 0 : this.taskPid.hashCode());
         result = prime * result + ((this.exitData == null) ? 0 : this.exitData.hashCode());
@@ -885,6 +975,7 @@ public class WinTaskResult implements IWinTaskResult {
 
         sb.append(id);
         sb.append(", ").append(taskId);
+        sb.append(", ").append(taskKey);
         sb.append(", ").append(taskApp);
         sb.append(", ").append(taskPid);
         sb.append(", ").append(exitData);
@@ -905,6 +996,7 @@ public class WinTaskResult implements IWinTaskResult {
     public void from(IWinTaskResult from) {
         setId(from.getId());
         setTaskId(from.getTaskId());
+        setTaskKey(from.getTaskKey());
         setTaskApp(from.getTaskApp());
         setTaskPid(from.getTaskPid());
         setExitData(from.getExitData());

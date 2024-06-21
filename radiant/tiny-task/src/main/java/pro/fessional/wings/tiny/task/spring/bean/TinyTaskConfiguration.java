@@ -17,9 +17,12 @@ import pro.fessional.wings.tiny.task.controller.TaskConfController;
 import pro.fessional.wings.tiny.task.database.TinyTaskDatabase;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskService;
+import pro.fessional.wings.tiny.task.service.TinyTaskService.Task;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -66,8 +69,9 @@ public class TinyTaskConfiguration {
 
             final Map<String, Object> beans = context.getBeansWithAnnotation(TinyTasker.Auto.class);
             for (Map.Entry<String, Object> en : beans.entrySet()) {
-                log.info("TinyTask spring-conf TinyTaskerAuto, name=" + en.getKey());
-                service.schedule(en.getValue());
+                Set<Task> tasks = service.schedule(en.getValue());
+                log.info("TinyTask spring-conf TinyTaskerAuto, bean=" + en.getKey() + ", props="
+                         + tasks.stream().map(Task::getKey).collect(Collectors.joining(",")));
             }
         });
     }

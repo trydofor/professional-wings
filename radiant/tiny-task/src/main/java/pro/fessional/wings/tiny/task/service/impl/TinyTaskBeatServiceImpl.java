@@ -10,7 +10,6 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronExpression;
-import org.springframework.stereotype.Service;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2022-12-26
  */
-@Service
 @ConditionalWingsEnabled
 @TinyTasker.Auto
 @Slf4j

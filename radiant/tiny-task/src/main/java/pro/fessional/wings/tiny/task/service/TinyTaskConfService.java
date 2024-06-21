@@ -69,6 +69,7 @@ public interface TinyTaskConfService {
     @Data
     class Conf {
         private final long id;
+        private final String key;
         private final boolean enabled;
         private final boolean autorun;
     }

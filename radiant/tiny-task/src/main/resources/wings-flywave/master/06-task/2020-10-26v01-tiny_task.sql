@@ -49,6 +49,7 @@ CREATE TABLE `win_task_define` (
 CREATE TABLE `win_task_result` (
     `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
     `task_id`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT 'task id, win_task_define.id',
+    `task_key`  VARCHAR(200) NOT NULL DEFAULT '' COMMENT 'conf file key, auto-generated',
     `task_app`  VARCHAR(300) NOT NULL DEFAULT '' COMMENT 'belong to applications, comma-separated',
     `task_pid`  INT(11)      NOT NULL DEFAULT '0' COMMENT 'belong to jvm pid',
     `exit_data` TEXT         NULL     DEFAULT NULL COMMENT 'return (json) or exception (stacktrace)',

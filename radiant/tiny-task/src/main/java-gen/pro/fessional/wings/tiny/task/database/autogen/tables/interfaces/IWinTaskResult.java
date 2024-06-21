@@ -4,10 +4,9 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.interfaces;
 
 
+import javax.annotation.processing.Generated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import javax.annotation.processing.Generated;
 
 
 /**
@@ -43,6 +42,16 @@ public interface IWinTaskResult extends Serializable {
      * Getter for <code>win_task_result.task_id</code>.
      */
     public Long getTaskId();
+
+    /**
+     * Setter for <code>win_task_result.task_key</code>.
+     */
+    public void setTaskKey(String value);
+
+    /**
+     * Getter for <code>win_task_result.task_key</code>.
+     */
+    public String getTaskKey();
 
     /**
      * Setter for <code>win_task_result.task_app</code>.

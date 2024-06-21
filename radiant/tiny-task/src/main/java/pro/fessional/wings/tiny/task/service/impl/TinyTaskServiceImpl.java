@@ -48,7 +48,7 @@ public class TinyTaskServiceImpl implements TinyTaskService {
             if (cnf.isEnabled() && cnf.isAutorun()) {
                 final boolean cd = tinyTaskExecService.launch(cnf.getId());
                 log.info("schedule task {}, scheduled={}", cnf, cd);
-                rst.add(new Task(cnf.getId(), cd));
+                rst.add(new Task(cnf.getId(), cnf.getKey(), cd));
             }
             else {
                 log.info("skip task {}", cnf);
@@ -70,6 +70,6 @@ public class TinyTaskServiceImpl implements TinyTaskService {
             log.info("skip task {}", cnf);
         }
 
-        return new Task(cnf.getId(), cd);
+        return new Task(cnf.getId(), cnf.getKey(), cd);
     }
 }

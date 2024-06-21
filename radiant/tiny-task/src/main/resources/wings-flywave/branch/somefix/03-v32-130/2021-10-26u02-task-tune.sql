@@ -17,6 +17,7 @@ ALTER TABLE `win_task_define`
 
 -- win_task_result
 ALTER TABLE `win_task_result`
+    DROP COLUMN `task_key`,
     CHANGE COLUMN `exit_data` `task_msg` TEXT NULL DEFAULT NULL COMMENT 'Normal or abnormal messages',
     ADD COLUMN `time_fail` DATETIME(3) NOT NULL DEFAULT '1000-01-01' COMMENT 'datetime of fail (sys)' AFTER `time_exec`,
     CHANGE COLUMN `time_exit` `time_done` DATETIME(3) NOT NULL DEFAULT '1000-01-01' COMMENT 'datetime of done (sys)';
