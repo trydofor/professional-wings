@@ -4,6 +4,8 @@
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
   ],
   "properties": [
+    {"name": "java.awt.headless", "type": "java.lang.Boolean"},
+
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration", "type": "java.lang.Boolean"},
 
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration", "type": "java.lang.Boolean"},

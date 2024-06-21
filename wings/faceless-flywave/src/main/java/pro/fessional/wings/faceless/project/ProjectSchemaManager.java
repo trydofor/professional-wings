@@ -66,6 +66,34 @@ public class ProjectSchemaManager {
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 
+    /**
+     * For linear upgrade or downgrade revision without executing scripts. (1) checkAndInitSql merge (insert or update) script; (2) bumpingRevision to the specified version.
+     *
+     * @param revision  revision to publish to
+     * @param customize path helper
+     * @see #mergePublish(SortedMap, long, long)
+     */
+    @SafeVarargs
+    public final void mergeBumping(long revision, Consumer<Helper>... customize) {
+        final Helper helper = FlywaveRevisionScanner.helper();
+        for (Consumer<Helper> consumer : customize) {
+            consumer.accept(helper);
+        }
+        mergeBumping(helper.scan(), -ThreadNow.millis(), revision);
+    }
+
+    /**
+     * For linear upgrade or downgrade revision without executing scripts. (1) checkAndInitSql merge (insert or update) script; (2) bumpingRevision to the specified version.
+     *
+     * @param sqls     revision script
+     * @param commitId commit id
+     * @param revision revision to publish to
+     */
+    public void mergeBumping(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
+        schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
+        schemaRevisionManager.bumpingRevision(revision, commitId);
+    }
+
     @SafeVarargs
     public final void mergeForceApply(boolean isUpto, Consumer<Helper>... customize) {
         final Helper helper = FlywaveRevisionScanner.helper();

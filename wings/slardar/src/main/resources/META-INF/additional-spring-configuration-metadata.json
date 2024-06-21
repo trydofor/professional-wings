@@ -63,7 +63,6 @@
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpClient", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpClientBuilder", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpConnectionPool", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpHelperRunner", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpHostCookieJar", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration.okhttpRedirectNopInterceptor", "type": "java.lang.Boolean"},
 

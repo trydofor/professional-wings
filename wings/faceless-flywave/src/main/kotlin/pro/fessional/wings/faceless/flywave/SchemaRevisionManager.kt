@@ -57,6 +57,11 @@ interface SchemaRevisionManager : InteractiveManager<SchemaRevisionManager.AskTy
     fun publishRevision(revision: Long, commitId: Long)
 
     /**
+     * Only bump the revision number without executing scripts, used for handling manual execution cases.
+     */
+    fun bumpingRevision(revision: Long, commitId: Long)
+
+    /**
      * Force to run a breakpoint script (script only, no cascading upgrades or downgrades),
      * usually to fix an abnormal operation.
      *

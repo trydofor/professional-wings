@@ -230,6 +230,91 @@ class DefaultRevisionManager(
         }
     }
 
+    override fun bumpingRevision(revision: Long, commitId: Long) {
+        val here = "bumpingRevision"
+        if (revision < revi1st) {
+            interactive.log(WARN, here, "skip the revision less than $revi1st")
+            return
+        }
+        val selectUpto = """
+                SELECT
+                    revision
+                FROM $schemaVersionTable
+                WHERE revision > ?
+                    AND revision <= ?
+                ORDER BY revision ASC
+                """
+        val selectUndo = """
+                SELECT
+                    revision
+                FROM $schemaVersionTable
+                WHERE revision <= ?
+                    AND revision >= ?
+                ORDER BY revision DESC
+                """
+
+        val shardTmpl = shardDataSource?.let { SimpleJdbcTemplate(it, "sharding") }
+        for ((plainName, plainDs) in plainDataSources) {
+            val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
+            val plainRevi = getRevision(plainTmpl)
+
+            if (plainRevi < 0) {
+                interactive.log(WARN, here, "skip a bad version,    db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                continue
+            }
+            if (plainRevi == revision) {
+                interactive.log(WARN, here, "skip the same version, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                continue
+            }
+
+            val isUptoSql = revision > plainRevi
+            val reviQuery = if (isUptoSql) {
+                interactive.log(INFO, here, "upgrade,   db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                selectUpto
+            } else {
+                interactive.log(INFO, here, "downgrade, db-revi=$plainRevi, to-revi=$revision")
+                selectUndo
+            }
+
+            val reviText = LinkedList<Long>()
+
+            plainTmpl.query(reviQuery, plainRevi, revision) {
+                reviText.add(it.getLong(1))
+            }
+
+            if (reviText.isEmpty()) {
+                interactive.log(WARN, here, "skip the empty revision-sqls, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                continue
+            }
+
+            // check and handle boundary
+            if (!isUptoSql) {
+                // Remove the endpoint script, which does not need to be executed
+                reviText.removeLast()
+            }
+
+            val plainTbls = schemaDefinitionLoader.showTables(plainDs)
+            for (revi in reviText) {
+                interactive.log(INFO, here, "ready for revi=$revi, db=$plainName ")
+                try {
+                    applyRevisionSql(revi, "", isUptoSql, commitId, plainTmpl, shardTmpl, plainTbls, false)
+                } catch (e: Exception) {
+                    interactive.log(ERROR, here, "failed to exec sql revision, revi=$revi, db=$plainName", e)
+                    throw e
+                }
+                interactive.log(INFO, here, "done for revi=$revi, db=$plainName")
+            }
+
+            // post check
+            interactive.log(INFO, here, "post check revi=$revision, db=$plainName")
+            val newRevi = getRevision(plainTmpl)
+            if (revision != newRevi) {
+                val msg = "failed to post check schema revision, need $revision, but $newRevi, db=$plainName"
+                interactive.log(ERROR, here, msg)
+                throw IllegalStateException(msg)
+            }
+        }
+    }
 
     override fun forceApplyBreak(revision: Long, commitId: Long, isUpto: Boolean, dataSource: String?) {
         val shardTmpl = shardDataSource?.let { SimpleJdbcTemplate(it, "sharding") }
@@ -545,30 +630,34 @@ class DefaultRevisionManager(
     ) {
         val here = "applyRevisionSql"
         val plainName = plainTmpl.name
+        val segs = sqlSegmentProcessor.parse(sqlStatementParser, text)
 
-        if (!isUpto && interactive.needAsk(AskType.Undo)) {
-            askSegment(revi, "apply undo sqls")
-        }
-
-        // Record partial execute
-        if (check) {
-            interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
-            plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
-        } else {
-            interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto in abnormal mode")
-        }
-
-        for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {
-            if (seg.sqlText.isBlank()) {
-                continue
+        if (segs.isNotEmpty()) {
+            if (!isUpto && interactive.needAsk(AskType.Undo)) {
+                askSegment(revi, "apply undo sqls")
             }
-            // No transaction, should rollback data based on logs when something wrong
-            if (seg.isPlain() || shardTmpl == null) {
-                interactive.log(INFO, here, "use plain to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
-                runSegment(plainTmpl, plainTbls, seg, revi)
+
+            // Record partial execute
+            if (check) {
+                interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
+                plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
             } else {
-                interactive.log(INFO, here, "use shard to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
-                runSegment(shardTmpl, emptyList(), seg, revi)
+                interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto in uncheck mode")
+            }
+
+
+            for (seg in segs) {
+                if (seg.sqlText.isBlank()) {
+                    continue
+                }
+                // No transaction, should rollback data based on logs when something wrong
+                if (seg.isPlain() || shardTmpl == null) {
+                    interactive.log(INFO, here, "use plain to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
+                    runSegment(plainTmpl, plainTbls, seg, revi)
+                } else {
+                    interactive.log(INFO, here, "use shard to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
+                    runSegment(shardTmpl, emptyList(), seg, revi)
+                }
             }
         }
 

@@ -21,7 +21,8 @@ import pro.fessional.wings.testing.faceless.database.TestingDatabaseHelper.break
  */
 @SpringBootTest(
     properties = [
-        "debug = true",
+        "debug=true",
+        "java.awt.headless=false",
         "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
     ]
 )
@@ -31,7 +32,7 @@ class SchemaRevisionMangerTest {
 
     val log: Logger = LoggerFactory.getLogger(SqlSegmentParserTest::class.java)
 
-    private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision()
+    private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision() + 1
     private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision()
 
     @Autowired
@@ -48,8 +49,8 @@ class SchemaRevisionMangerTest {
         testingDatabaseHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
             .master()
-            .replace(revi1Schema, revi1Schema + 1, true)
-            .modify(revi1Schema + 1, "sys_schema_version", schemaVersion)
+            .replace(WingsRevision.V00_19_0512_01_Schema.revision(), revi1Schema, true)
+            .modify(revi1Schema, "sys_schema_version", schemaVersion)
 //                .modify("rename win_schema_version") { _, sql ->
 //                    if (sql.revision == REVISION_1ST_SCHEMA) {
 //                        sql.undoText = sql.undoText.replace("sys_schema_version", schemaVersion)
@@ -58,6 +59,15 @@ class SchemaRevisionMangerTest {
 //                }
             .scan()
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "win_schema_version")
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "sys_light_sequence")
+    }
+
+    private fun assertRevision(revi: Long) {
+        val databaseVersion = schemaRevisionManager.currentRevision()
+        for ((_, u) in databaseVersion) {
+            assertEquals(revi, u)
+        }
     }
 
     @Test
@@ -71,10 +81,7 @@ class SchemaRevisionMangerTest {
     @TmsLink("C12049")
     fun test2CurrentRevi() {
         breakpointDebug("Check current revision💰")
-        val databaseVersion = schemaRevisionManager.currentRevision()
-        for ((_, u) in databaseVersion) {
-            assertEquals(revi2IdLog, u)
-        }
+        assertRevision(revi2IdLog)
     }
 
     @Test
@@ -99,10 +106,25 @@ class SchemaRevisionMangerTest {
     fun test3DownThenUp() {
         breakpointDebug("Downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
+        assertRevision(revi1Schema)
+
+        breakpointDebug("Bumping to 2nd💰")
+        schemaRevisionManager.bumpingRevision(revi2IdLog, -1)
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "sys_light_sequence")
+        assertRevision(revi2IdLog)
+        breakpointDebug("Bumping to 1st💰")
+        schemaRevisionManager.bumpingRevision(revi1Schema, -1)
+        assertRevision(revi1Schema)
+
         breakpointDebug("Upgrade to 2nd💰")
         schemaRevisionManager.publishRevision(revi2IdLog, -1)
+        testingDatabaseHelper.assertHas(TestingDatabaseHelper.Type.Table, "sys_light_sequence")
+        assertRevision(revi2IdLog)
+
         breakpointDebug("Again downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
+        testingDatabaseHelper.assertNot(TestingDatabaseHelper.Type.Table, "sys_light_sequence")
+        assertRevision(revi1Schema)
     }
 
     private val test3rdRevision = 20190615_01L
@@ -182,7 +204,9 @@ class SchemaRevisionMangerTest {
         val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
         breakpointDebug("publish branch feature/01-enum-i18n💰")
-        schemaRevisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), 0)
+        val revi = WingsRevision.V01_19_0521_01_EnumI18n.revision()
+        schemaRevisionManager.publishRevision(revi, 0)
+        assertRevision(revi)
     }
 
     @Test
