@@ -204,9 +204,10 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 return false;
             }
 
-            if (notEnable(td.getEnabled(), id)
-                || notApps(td.getTaskerApps(), id)
-                || notRuns(td.getTaskerRuns(), id)) {
+            final String key = td.getPropkey();
+            if (notEnable(td.getEnabled(), id, key)
+                || notApps(td.getTaskerApps(), id, key)
+                || notRuns(td.getTaskerRuns(), id, key)) {
                 return false;
             }
 
@@ -216,7 +217,6 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             // temp save before schedule to avoid kill
             saveNextExec(next, td);
 
-            final String key = td.getPropkey();
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
             final var taskScheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
 
@@ -246,7 +246,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 final String taskerInfo = key + " launch";
                 final String noticeConf = td.getNoticeConf();
 
-                String exitMsg = "relaunch task id=" + id;
+                String exitMsg = "relaunch task key=" + key;
                 NoticeExec<?> notice = null;
                 Set<String> ntcWhen = Collections.emptySet();
                 try {
@@ -305,35 +305,35 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     }
 
     //
-    private boolean notEnable(Boolean b, long id) {
+    private boolean notEnable(Boolean b, long id, String key) {
         if (BoxedCastUtil.orTrue(b)) {
             return false;
         }
-        log.info("skip task for not enabled, id={}", id);
+        log.info("skip task for not enabled, id={}, prop={}", id, key);
         return true;
     }
 
-    private boolean notApps(String apps, long id) {
+    private boolean notApps(String apps, long id, String key) {
         if (StringUtils.isEmpty(apps)) return false;
 
         for (String s : arrayOrNull(apps, true)) {
             if (s.trim().equals(appName)) return false;
         }
-        log.info("skip task for not apps={}, cur={}, id={}", apps, appName, id);
+        log.info("skip task for not apps={}, cur={}, id={}, prop={}", apps, appName, id, key);
         return true;
     }
 
-    private boolean notRuns(String runs, long id) {
+    private boolean notRuns(String runs, long id, String key) {
         if (StringUtils.isEmpty(runs)) return false;
 
         final RunMode rmd = RuntimeMode.getRunMode();
         if (rmd == RunMode.Nothing) {
-            log.info("skip task for not runs={}, cur is null, id={}", runs, id);
+            log.info("skip task for not runs={}, cur is Nothing, id={}, prop={}", runs, id, key);
             return true;
         }
 
-        if (!RuntimeMode.hasRunMode(arrayOrNull(runs, true))) {
-            log.info("skip task for not runs={}, cur={}, id={}", runs, rmd, id);
+        if (!RuntimeMode.voteRunMode(runs)) {
+            log.info("skip task for not runs={}, cur={}, id={}, prop={}", runs, rmd, id, key);
             return true;
         }
 

@@ -60,7 +60,7 @@ public class TaskerProp {
     }
 
     /**
-     * RunMode(product|test|develop|local), Comma separated, ignore case, default all,
+     * RunMode(product|test|develop|local), `!test`,`-test` means not test, Comma separated, ignore case, default all,
      * use Default config if null or empty.
      *
      * @see pro.fessional.wings.silencer.modulate.RunMode

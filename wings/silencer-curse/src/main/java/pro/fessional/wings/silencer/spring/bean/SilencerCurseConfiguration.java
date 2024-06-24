@@ -155,8 +155,7 @@ public class SilencerCurseConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public RuntimeMode runtimeMode(SilencerRuntimeProp prop) {
-
-        log.info("Silencer spring-auto runtimeMode");
+        log.info("Silencer spring-auto RuntimeMode, runMode=" + prop.getRunMode() + ", apiMode=" + prop.getApiMode());
         return new RuntimeMode(prop.getRunMode(), prop.getApiMode()) {};
     }
 }
