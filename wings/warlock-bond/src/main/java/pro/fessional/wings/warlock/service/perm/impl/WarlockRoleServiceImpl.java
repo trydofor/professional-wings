@@ -27,7 +27,6 @@ import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,11 +139,9 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                 return id;
             });
 
-            wingsTableCudHandler.handle(this.getClass(), Cud.Create, t, () -> {
-                Map<String, List<?>> field = new HashMap<>();
-                field.put(t.Id.getName(), List.of(rid));
-                return field;
-            });
+            wingsTableCudHandler.handle(this.getClass(), Cud.Create, t, field ->
+                field.put(t.Id.getName(), List.of(rid))
+            );
 
             return rid;
         }
@@ -165,7 +162,9 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
             });
 
             if (rct > 0) {
-                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, field -> field.put(t.Id.getName(), List.of(roleId)));
+                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, field ->
+                    field.put(t.Id.getName(), List.of(roleId))
+                );
             }
         }
     }

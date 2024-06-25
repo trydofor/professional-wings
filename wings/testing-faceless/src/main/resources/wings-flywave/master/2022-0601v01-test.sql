@@ -5,8 +5,8 @@ CREATE TABLE `tst_sharding` (
     `modify_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime',
     `delete_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
     `commit_id`  BIGINT(20)  NOT NULL COMMENT 'commit id',
-    `login_info` TEXT COMMENT 'login info: agent, terminal',
-    `other_info` TEXT COMMENT 'other info: biz index data',
+    `login_info` TEXT        NULL COMMENT 'login info: agent, terminal',
+    `other_info` TEXT        NULL COMMENT 'other info: biz index data',
     `language`   INT(11)     NOT NULL DEFAULT 1020111 COMMENT 'StandardLanguage',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -18,8 +18,8 @@ CREATE TABLE `tst_sharding_postfix` (
     `modify_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime',
     `delete_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
     `commit_id`  BIGINT(20)  NOT NULL COMMENT 'commit id',
-    `login_info` TEXT COMMENT 'login info: agent, terminal',
-    `other_info` TEXT COMMENT 'other info: biz index data',
+    `login_info` TEXT        NULL COMMENT 'login info: agent, terminal',
+    `other_info` TEXT        NULL COMMENT 'other info: biz index data',
     `language`   INT(11)     NOT NULL DEFAULT 1020111 COMMENT 'StandardLanguage',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB

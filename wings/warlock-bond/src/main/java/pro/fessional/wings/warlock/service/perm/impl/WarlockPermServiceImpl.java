@@ -25,7 +25,6 @@ import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -130,11 +129,9 @@ public class WarlockPermServiceImpl implements WarlockPermService {
                 winPermEntryDao.insert(pos);
             });
 
-            wingsTableCudHandler.handle(this.getClass(), Cud.Create, t, () -> {
-                Map<String, List<?>> field = new HashMap<>();
-                field.put(t.Id.getName(), pos.stream().map(WinPermEntry::getId).toList());
-                return field;
-            });
+            wingsTableCudHandler.handle(this.getClass(), Cud.Create, t, field ->
+                field.put(t.Id.getName(), pos.stream().map(WinPermEntry::getId).toList())
+            );
         }
 
         public void modify(long permId, @NotNull String remark) {
@@ -153,7 +150,9 @@ public class WarlockPermServiceImpl implements WarlockPermService {
             });
 
             if (rct > 0) {
-                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, field -> field.put(t.Id.getName(), List.of(permId)));
+                wingsTableCudHandler.handle(this.getClass(), Cud.Update, t, field ->
+                    field.put(t.Id.getName(), List.of(permId))
+                );
             }
         }
     }

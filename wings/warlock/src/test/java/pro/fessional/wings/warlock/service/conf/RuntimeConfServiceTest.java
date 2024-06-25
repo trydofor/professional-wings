@@ -33,13 +33,13 @@ import java.util.Set;
  * @since 2022-03-09
  */
 @SpringBootTest(properties = {
-        "logging.level.root=DEBUG", // AssertionLogger
-        "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
+    "logging.level.root=DEBUG", // AssertionLogger
+    "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
 })
 @DependsOnDatabaseInitialization
 class RuntimeConfServiceTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private RuntimeConfService runtimeConfService;
 
     @Test
@@ -53,6 +53,8 @@ class RuntimeConfServiceTest {
         assertSimple(ZonedDateTime.class, ZonedDateTime.of(ldt, ZoneId.of("Asia/Shanghai")));
         assertSimple(Long.class, 1023L);
         assertSimple(Integer.class, 10);
+
+        assertEnable(Integer.class);
         //
         final Map<CacheManager, Set<String>> mgr = WingsCacheHelper.getManager(RuntimeConfServiceImpl.class);
         Assertions.assertEquals(1, mgr.size());
@@ -71,6 +73,17 @@ class RuntimeConfServiceTest {
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
+    }
+
+    private <T> void assertEnable(Class<T> clz) {
+        runtimeConfService.enable(clz, false);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final T obj1 = runtimeConfService.getSimple(clz, clz);
+        Assertions.assertNull(obj1);
+        runtimeConfService.enable(clz, true);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final T obj2 = runtimeConfService.getSimple(clz, clz);
+        Assertions.assertNotNull(obj2);
     }
 
     @Test

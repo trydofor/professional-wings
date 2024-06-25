@@ -13,8 +13,8 @@ CREATE TABLE `sys_commit_journal` (
     `create_dt`  DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime',
     `event_name` VARCHAR(200) NOT NULL COMMENT 'event name',
     `target_key` VARCHAR(200) NOT NULL DEFAULT '' COMMENT 'target data',
-    `login_info` TEXT COMMENT 'login info: agent, terminal',
-    `other_info` TEXT COMMENT 'other info: biz index data',
+    `login_info` TEXT         NULL COMMENT 'login info: agent, terminal',
+    `other_info` TEXT         NULL COMMENT 'other info: biz index data',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='104/Data Changeset';

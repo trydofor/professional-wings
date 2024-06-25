@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.conf;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.silencer.enhance.TypeSugar;
@@ -15,41 +16,41 @@ import java.util.Map;
  */
 public interface RuntimeConfService {
 
-    default String getString(String key) {
+    default String getString(@NotNull String key) {
         return getObject(key, TypeSugar.StringDescriptor);
     }
 
-    default String getString(Class<?> key) {
+    default String getString(@NotNull Class<?> key) {
         return getString(key.getName());
     }
 
-    default String getString(Enum<?> key) {
+    default String getString(@NotNull Enum<?> key) {
         return getString(EnumConvertor.enum2Str(key));
     }
 
-    default int getInt(String key, int els) {
+    default int getInt(@NotNull String key, int els) {
         final Integer obj = getSimple(key, Integer.class);
         return obj == null ? els : obj;
     }
 
-    default int getInt(Class<?> key, int els) {
+    default int getInt(@NotNull Class<?> key, int els) {
         return getInt(key.getName(), els);
     }
 
-    default int getInt(Enum<?> key, int els) {
+    default int getInt(@NotNull Enum<?> key, int els) {
         return getInt(EnumConvertor.enum2Str(key), els);
     }
 
-    default boolean getBoolean(String key, boolean els) {
+    default boolean getBoolean(@NotNull String key, boolean els) {
         final Boolean obj = getSimple(key, Boolean.class);
         return obj == null ? els : obj;
     }
 
-    default boolean getBoolean(Class<?> key, boolean els) {
+    default boolean getBoolean(@NotNull Class<?> key, boolean els) {
         return getBoolean(key.getName(), els);
     }
 
-    default boolean getBoolean(Enum<?> key, boolean els) {
+    default boolean getBoolean(@NotNull Enum<?> key, boolean els) {
         return getBoolean(EnumConvertor.enum2Str(key), els);
     }
 
@@ -58,63 +59,69 @@ public interface RuntimeConfService {
         return obj == null ? els : obj;
     }
 
-    default long getLong(Class<?> key, long els) {
+    default long getLong(@NotNull Class<?> key, long els) {
         return getLong(key.getName(), els);
     }
 
-    default long getLong(Enum<?> key, long els) {
+    default long getLong(@NotNull Enum<?> key, long els) {
         return getLong(EnumConvertor.enum2Str(key), els);
     }
 
-    default <T> T getSimple(String key, Class<T> vt) {
-        return getObject(key, TypeSugar.describe(vt));
+    default <T> T getSimple(@NotNull String key, @NotNull Class<T> type) {
+        return getObject(key, TypeSugar.describe(type));
     }
 
-    default <T> T getSimple(Class<?> key, Class<T> vt) {
-        return getSimple(key.getName(), vt);
+    default <T> T getSimple(@NotNull Class<?> key, @NotNull Class<T> type) {
+        return getSimple(key.getName(), type);
     }
 
-    default <T> T getSimple(Enum<?> key, Class<T> vt) {
-        return getSimple(EnumConvertor.enum2Str(key), vt);
+    default <T> T getSimple(@NotNull Enum<?> key, @NotNull Class<T> type) {
+        return getSimple(EnumConvertor.enum2Str(key), type);
     }
 
-    default <T extends Enum<T>> T getEnum(Class<T> key) {
+    default <T extends Enum<T>> T getEnum(@NotNull Class<T> key) {
         return getSimple(key.getName(), key);
     }
 
-    default <T extends Enum<T>> List<T> getEnums(Class<T> key) {
+    default <T extends Enum<T>> List<T> getEnums(@NotNull Class<T> key) {
         return getList(key.getName(), key);
     }
 
-    default <T> List<T> getList(String key, Class<T> vt) {
-        return getObject(key, TypeSugar.describe(List.class, vt));
+    @NotNull
+    default <T> List<T> getList(@NotNull String key, @NotNull Class<T> type) {
+        return getObject(key, TypeSugar.describe(List.class, type));
     }
 
-    default <T> List<T> getList(Class<?> key, Class<T> vt) {
-        return getList(key.getName(), vt);
+    @NotNull
+    default <T> List<T> getList(@NotNull Class<?> key, @NotNull Class<T> type) {
+        return getList(key.getName(), type);
     }
 
-    default <T> List<T> getList(Enum<?> key, Class<T> vt) {
-        return getList(EnumConvertor.enum2Str(key), vt);
+    @NotNull
+    default <T> List<T> getList(@NotNull Enum<?> key, @NotNull Class<T> type) {
+        return getList(EnumConvertor.enum2Str(key), type);
     }
 
-    default <K, V> Map<K, V> getMap(String key, Class<K> kt, Class<V> vt) {
-        return getObject(key, TypeSugar.describe(Map.class, kt, vt));
+    @NotNull
+    default <K, V> Map<K, V> getMap(@NotNull String key, @NotNull Class<K> keyType, @NotNull Class<V> valueType) {
+        return getObject(key, TypeSugar.describe(Map.class, keyType, valueType));
     }
 
-    default <K, V> Map<K, V> getMap(Class<?> key, Class<K> kt, Class<V> vt) {
-        return getMap(key.getName(), kt, vt);
+    @NotNull
+    default <K, V> Map<K, V> getMap(@NotNull Class<?> key, @NotNull Class<K> keyType, @NotNull Class<V> valueType) {
+        return getMap(key.getName(), keyType, valueType);
     }
 
-    default <K, V> Map<K, V> getMap(Enum<?> key, Class<K> kt, Class<V> vt) {
-        return getMap(EnumConvertor.enum2Str(key), kt, vt);
+    @NotNull
+    default <K, V> Map<K, V> getMap(@NotNull Enum<?> key, @NotNull Class<K> keyType, @NotNull Class<V> valueType) {
+        return getMap(EnumConvertor.enum2Str(key), keyType, valueType);
     }
 
-    default <T> T getObject(Class<?> key, TypeDescriptor type) {
+    default <T> T getObject(@NotNull Class<?> key, @NotNull TypeDescriptor type) {
         return getObject(key.getName(), type);
     }
 
-    default <T> T getObject(Enum<?> key, TypeDescriptor type) {
+    default <T> T getObject(@NotNull Enum<?> key, @NotNull TypeDescriptor type) {
         return getObject(EnumConvertor.enum2Str(key), type);
     }
 
@@ -126,7 +133,7 @@ public interface RuntimeConfService {
      * @param <T>  Type of value
      * @return value
      */
-    <T> T getObject(String key, TypeDescriptor type);
+    <T> T getObject(@NotNull String key, @NotNull TypeDescriptor type);
 
 
     /**
@@ -135,13 +142,13 @@ public interface RuntimeConfService {
      * @param key   key
      * @param value config
      */
-    void setObject(String key, Object value);
+    void setObject(@NotNull String key, @NotNull Object value);
 
-    default void setObject(Class<?> key, Object value) {
+    default void setObject(@NotNull Class<?> key, @NotNull Object value) {
         setObject(key.getName(), value);
     }
 
-    default void setObject(Enum<?> key, Object value) {
+    default void setObject(@NotNull Enum<?> key, @NotNull Object value) {
         setObject(EnumConvertor.enum2Str(key), value);
     }
 
@@ -154,13 +161,13 @@ public interface RuntimeConfService {
      * @param handler type handler name
      * @return whether handled
      */
-    boolean newObject(String key, Object value, String comment, String handler);
+    boolean newObject(@NotNull String key, @NotNull Object value, String comment, @NotNull String handler);
 
-    default boolean newObject(Class<?> key, Object value, String comment, String handler) {
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, @NotNull String handler) {
         return newObject(key.getName(), value, comment, handler);
     }
 
-    default boolean newObject(Enum<?> key, Object value, String comment, String handler) {
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, @NotNull String handler) {
         return newObject(EnumConvertor.enum2Str(key), value, comment, handler);
     }
 
@@ -171,14 +178,26 @@ public interface RuntimeConfService {
      * @param value   config value
      * @param comment config comment
      */
-    boolean newObject(String key, Object value, String comment);
+    boolean newObject(@NotNull String key, @NotNull Object value, String comment);
 
-    default boolean newObject(Class<?> key, Object value, String comment) {
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment) {
         return newObject(key.getName(), value, comment);
     }
 
-    default boolean newObject(Enum<?> key, Object value, String comment) {
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment) {
         return newObject(EnumConvertor.enum2Str(key), value, comment);
     }
 
+    /**
+     * enable/disable the config, success or throw an error.
+     */
+    boolean enable(@NotNull String key, boolean enable);
+
+    default boolean enable(@NotNull Class<?> key, boolean enable) {
+        return enable(key.getName(), enable);
+    }
+
+    default boolean enable(@NotNull Enum<?> key, boolean enable) {
+        return enable(EnumConvertor.enum2Str(key), enable);
+    }
 }

@@ -8,6 +8,8 @@ import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.DAOImpl;
 import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.ColumnDefinition;
+import org.jooq.meta.DataTypeDefinition;
+import org.jooq.meta.Database;
 import org.jooq.meta.Definition;
 import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.TableDefinition;
@@ -63,6 +65,13 @@ import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL
 public class WingsJavaGenerator extends JavaGenerator {
 
     private GeneratorStrategy proxyStrategy = null;
+
+    @Override
+    protected String getJavaTypeReference(Database db, DataTypeDefinition type, JavaWriter out) {
+        return super.getJavaTypeReference(db, type, out);
+        // https://github.com/jOOQ/jOOQ/issues/16853
+        // columnTypeRef = columnTypeRef.replace("_utf8mb4\\'\\'","('')");
+    }
 
     @Override
     public GeneratorStrategy getStrategy() {
@@ -248,6 +257,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         // 🦁<<<
     }
+
 
     @Override // Confirm the replacement code and diff it
     public void generateDao(TableDefinition table, JavaWriter out) {

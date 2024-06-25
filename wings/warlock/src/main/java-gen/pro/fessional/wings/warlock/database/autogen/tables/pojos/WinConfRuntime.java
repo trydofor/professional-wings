@@ -30,6 +30,7 @@ public class WinConfRuntime implements IWinConfRuntime {
     private static final long serialVersionUID = 1L;
 
     private String key;
+    private Boolean enabled;
     private String current;
     private String previous;
     private String initial;
@@ -40,6 +41,7 @@ public class WinConfRuntime implements IWinConfRuntime {
 
     public WinConfRuntime(IWinConfRuntime value) {
         this.key = value.getKey();
+        this.enabled = value.getEnabled();
         this.current = value.getCurrent();
         this.previous = value.getPrevious();
         this.initial = value.getInitial();
@@ -49,6 +51,7 @@ public class WinConfRuntime implements IWinConfRuntime {
 
     public WinConfRuntime(
         String key,
+        Boolean enabled,
         String current,
         String previous,
         String initial,
@@ -56,6 +59,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         String handler
     ) {
         this.key = key;
+        this.enabled = enabled;
         this.current = current;
         this.previous = previous;
         this.initial = initial;
@@ -140,6 +144,86 @@ public class WinConfRuntime implements IWinConfRuntime {
     @Transient
     public void setKeyIf(UnaryOperator<String> key) {
         this.key = key.apply(this.key);
+    }
+
+
+    /**
+     * Getter for <code>win_conf_runtime.enabled</code>.
+     */
+    @Override
+    public Boolean getEnabled() {
+        return this.enabled;
+    }
+
+    /**
+     * Setter for <code>win_conf_runtime.enabled</code>.
+     */
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Transient
+    public void setEnabledIf(Boolean enabled, boolean bool) {
+        if (bool) {
+            this.enabled = enabled;
+        }
+    }
+
+    @Transient
+    public void setEnabledIf(Supplier<Boolean> enabled, boolean bool) {
+        if (bool) {
+            this.enabled = enabled.get();
+        }
+    }
+
+    @Transient
+    public void setEnabledIf(Boolean enabled, Predicate<Boolean> bool) {
+        if (bool.test(enabled)) {
+            this.enabled = enabled;
+        }
+    }
+
+    @Transient
+    public void setEnabledIf(Boolean enabled, Predicate<Boolean> bool, Supplier<Boolean>... enableds) {
+        if (bool.test(enabled)) {
+            this.enabled = enabled;
+            return;
+        }
+        for (Supplier<Boolean> supplier : enableds) {
+            enabled = supplier.get();
+            if (bool.test(enabled)) {
+                this.enabled = enabled;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setEnabledIfNot(Boolean enabled, Predicate<Boolean> bool) {
+        if (!bool.test(enabled)) {
+            this.enabled = enabled;
+        }
+    }
+
+    @Transient
+    public void setEnabledIfNot(Boolean enabled, Predicate<Boolean> bool, Supplier<Boolean>... enableds) {
+        if (!bool.test(enabled)) {
+            this.enabled = enabled;
+            return;
+        }
+        for (Supplier<Boolean> supplier : enableds) {
+            enabled = supplier.get();
+            if (!bool.test(enabled)) {
+                this.enabled = enabled;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setEnabledIf(UnaryOperator<Boolean> enabled) {
+        this.enabled = enabled.apply(this.enabled);
     }
 
 
@@ -558,6 +642,12 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
         else if (!this.key.equals(other.key))
             return false;
+        if (this.enabled == null) {
+            if (other.enabled != null)
+                return false;
+        }
+        else if (!this.enabled.equals(other.enabled))
+            return false;
         if (this.current == null) {
             if (other.current != null)
                 return false;
@@ -596,6 +686,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
+        result = prime * result + ((this.enabled == null) ? 0 : this.enabled.hashCode());
         result = prime * result + ((this.current == null) ? 0 : this.current.hashCode());
         result = prime * result + ((this.previous == null) ? 0 : this.previous.hashCode());
         result = prime * result + ((this.initial == null) ? 0 : this.initial.hashCode());
@@ -609,6 +700,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         StringBuilder sb = new StringBuilder("WinConfRuntime (");
 
         sb.append(key);
+        sb.append(", ").append(enabled);
         sb.append(", ").append(current);
         sb.append(", ").append(previous);
         sb.append(", ").append(initial);
@@ -626,6 +718,7 @@ public class WinConfRuntime implements IWinConfRuntime {
     @Override
     public void from(IWinConfRuntime from) {
         setKey(from.getKey());
+        setEnabled(from.getEnabled());
         setCurrent(from.getCurrent());
         setPrevious(from.getPrevious());
         setInitial(from.getInitial());
