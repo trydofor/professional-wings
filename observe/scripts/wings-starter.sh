@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-06-01
+THIS_VERSION=2024-06-26
 ################ system env to use ################
 # JAVA_HOME      # if JDK_HOME is not valid
 # JAVA_OPTS      # prepend to java args
@@ -569,13 +569,15 @@ case "$ARGS_RUN" in
             echo -e "\033[31mWARN: pid not match, proc-pid=$cid, file-pid=$pid \033[0m"
         fi
 
-        # shellcheck disable=SC2009
-        mrs=$(ps -o rss "$cid" | grep -v RSS | numfmt --grouping)
-        # shellcheck disable=SC2009
-        mvs=$(ps -o vsz "$cid" | grep -v VSZ | numfmt --grouping)
-        echo -e "\033[37;42;1mINFO: ps -o rss -o vsz $cid \033[0m"
-        echo -e "Resident (RSS) = $(printf '%*s' 12 $mrs) Kb"
-        echo -e "Virtual  (VSZ) = $(printf '%*s' 12 $mvs) Kb"
+        stm=$(ps -o lstart= "$cid")
+        etm=$(ps -o etime= "$cid" | tr -d ' ')
+        mrs=$(ps -o rss= "$cid" | numfmt --grouping)
+        mvs=$(ps -o vsz= "$cid" | numfmt --grouping)
+        echo -e "\033[37;42;1mINFO: ps -o rss,vsz,etime,lstart $cid \033[0m"
+        echo -e "Started Time   = $stm"
+        echo -e "Elapsed Time   = $etm"
+        echo -e "Resident (RSS) = $(printf '%12s' "$mrs") Kb"
+        echo -e "Virtual  (VSZ) = $(printf '%12s' "$mvs") Kb"
 
         if [[ "$USER_RUN" == "$USER" ]]; then
             echo -e "\033[37;42;1mINFO: $(which jstat) -gcutil $cid 1000 3 \033[0m"
