@@ -14,8 +14,10 @@ import pro.fessional.wings.slardar.cache.spring.CacheEvictKey;
  */
 @Service
 @Slf4j
-@CacheConfig(cacheNames = WingsCache.Level.Service + "TestCachingService", cacheManager = WingsCache.Manager.Memory)
+@CacheConfig(cacheNames = TestCachingService.CacheName, cacheManager = WingsCache.Manager.Memory)
 public class TestCachingService {
+
+    public static final String CacheName = WingsCache.Level.Service + "TestCachingService";
 
     @Cacheable
     public Key cache(Key key) {

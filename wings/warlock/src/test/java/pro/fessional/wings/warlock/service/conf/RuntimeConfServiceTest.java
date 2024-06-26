@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
 import pro.fessional.mirana.time.Sleep;
+import pro.fessional.wings.silencer.enhance.TypeSugar;
 import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.slardar.cache.SimpleCacheTemplate;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 import pro.fessional.wings.warlock.caching.CacheConst;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * Need init database via BootDatabaseTest
@@ -39,8 +43,17 @@ import java.util.Set;
 @DependsOnDatabaseInitialization
 class RuntimeConfServiceTest {
 
+    private final SimpleCacheTemplate<Object> cacheTemplate = new SimpleCacheTemplate<>(
+        CacheConst.RuntimeConfService.CacheManager,
+        CacheConst.RuntimeConfService.CacheName);
+
     @Setter(onMethod_ = { @Autowired })
-    private RuntimeConfService runtimeConfService;
+    protected RuntimeConfService runtimeConfService;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.cacheTemplate.setBeanFactory(applicationContext);
+    }
 
     @Test
     @TmsLink("C14008")
@@ -73,6 +86,9 @@ class RuntimeConfServiceTest {
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
+
+        final Object obj2 = cacheTemplate.getArgKey(clz.getName(), TypeSugar.describe(clz));
+        Assertions.assertEquals(obj, obj2);
     }
 
     private <T> void assertEnable(Class<T> clz) {
