@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.best.AssertArgs;
@@ -25,7 +26,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinConfRuntime;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +70,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
     }
 
     @Override
-    public void setObject(@NotNull String key, @NotNull Object value) {
+    public boolean setObject(@NotNull String key, @NotNull Object value) {
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
 
         final String handler = winConfRuntimeDao.fetchOne(String.class, t, t.Key.eq(key), t.Handler);
@@ -92,17 +92,38 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
                 field.put(t.Current.getName(), List.of(str));
             });
         }
+
+        return rc >= 1;
     }
 
     @Override
-    public boolean newObject(@NotNull String key, @NotNull Object value, String comment, @NotNull String handler) {
+    public boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler, ResolvableType structs) {
         AssertArgs.notEmpty(key, "empty key");
+        final Class<?> valClaz = value.getClass();
 
-        ConversionService service = handlerMap.get(handler);
-        if (service == null || !service.canConvert(value.getClass(), String.class)) return false;
+        ConversionService service = null;
+        if (handler == null) { // auto select
+            for (var en : handlerMap.entrySet()) {
+                if (en.getValue().canConvert(valClaz, String.class)) {
+                    service = en.getValue();
+                    handler = en.getKey();
+                    break;
+                }
+            }
+        }
+        else { // specified
+            ConversionService cs = handlerMap.get(handler);
+            if (cs.canConvert(valClaz, String.class)) {
+                service = cs;
+            }
+        }
+
+        if (service == null) return false;
 
         final String str = service.convert(value, String.class);
         AssertArgs.notNull(str, "can not covert value to string, key={}", key);
+
+        if (structs == null) structs = ResolvableType.forClass(valClaz);
 
         final WinConfRuntime pojo = new WinConfRuntime();
         pojo.setKey(key);
@@ -110,6 +131,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
         pojo.setCurrent(str);
         pojo.setPrevious(Null.Str);
         pojo.setInitial(str);
+        pojo.setOutline(TypeSugar.outline(structs));
         pojo.setComment(StringUtils.trimToEmpty(comment));
         pojo.setHandler(handler);
 
@@ -126,16 +148,6 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
         }
 
         return rc >= 1;
-    }
-
-    @Override
-    public boolean newObject(@NotNull String key, @NotNull Object value, String comment) {
-        for (String handler : new ArrayList<>(handlerMap.keySet())) {
-            if (newObject(key, value, comment, handler)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

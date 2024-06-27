@@ -1,12 +1,14 @@
 package pro.fessional.wings.warlock.service.conf;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.silencer.enhance.TypeSugar;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Support for ConversionService and Json parsing configuration
@@ -102,6 +104,22 @@ public interface RuntimeConfService {
         return getList(EnumConvertor.enum2Str(key), type);
     }
 
+
+    @NotNull
+    default <T> Set<T> getSet(@NotNull String key, @NotNull Class<T> type) {
+        return getObject(key, TypeSugar.describe(Set.class, type));
+    }
+
+    @NotNull
+    default <T> Set<T> getSet(@NotNull Class<?> key, @NotNull Class<T> type) {
+        return getSet(key.getName(), type);
+    }
+
+    @NotNull
+    default <T> Set<T> getSet(@NotNull Enum<?> key, @NotNull Class<T> type) {
+        return getSet(EnumConvertor.enum2Str(key), type);
+    }
+
     @NotNull
     default <K, V> Map<K, V> getMap(@NotNull String key, @NotNull Class<K> keyType, @NotNull Class<V> valueType) {
         return getObject(key, TypeSugar.describe(Map.class, keyType, valueType));
@@ -137,55 +155,87 @@ public interface RuntimeConfService {
 
 
     /**
-     * set value of config
+     * set value of config, return false if not found
      *
      * @param key   key
      * @param value config
      */
-    void setObject(@NotNull String key, @NotNull Object value);
+    boolean setObject(@NotNull String key, @NotNull Object value);
 
-    default void setObject(@NotNull Class<?> key, @NotNull Object value) {
-        setObject(key.getName(), value);
+    default boolean setObject(@NotNull Class<?> key, @NotNull Object value) {
+        return setObject(key.getName(), value);
     }
 
-    default void setObject(@NotNull Enum<?> key, @NotNull Object value) {
-        setObject(EnumConvertor.enum2Str(key), value);
+    default boolean setObject(@NotNull Enum<?> key, @NotNull Object value) {
+        return setObject(EnumConvertor.enum2Str(key), value);
     }
 
     /**
-     * create new config
+     * create new config, return true if handled
      *
      * @param key     config key
      * @param value   config value
-     * @param comment config comment
-     * @param handler type handler name
+     * @param comment config comment, empty if null
+     * @param handler type handler name, auto select if null
+     * @param outline type outline, resolved from value if null
      * @return whether handled
      */
-    boolean newObject(@NotNull String key, @NotNull Object value, String comment, @NotNull String handler);
+    boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler, ResolvableType outline);
 
-    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, @NotNull String handler) {
-        return newObject(key.getName(), value, comment, handler);
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, String handler, ResolvableType outline) {
+        return newObject(key.getName(), value, comment, handler, outline);
     }
 
-    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, @NotNull String handler) {
-        return newObject(EnumConvertor.enum2Str(key), value, comment, handler);
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, String handler, ResolvableType outline) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment, handler, outline);
     }
 
-    /**
-     * create new config with auto selected handler, success or throw an error.
-     *
-     * @param key     config key
-     * @param value   config value
-     * @param comment config comment
-     */
-    boolean newObject(@NotNull String key, @NotNull Object value, String comment);
+    default boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler, TypeDescriptor outline) {
+        return newObject(key, value, comment, handler, outline == null ? (ResolvableType) null : outline.getResolvableType());
+    }
+
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, String handler, TypeDescriptor outline) {
+        return newObject(key.getName(), value, comment, handler, outline == null ? (ResolvableType) null : outline.getResolvableType());
+    }
+
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, String handler, TypeDescriptor outline) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment, handler, outline == null ? (ResolvableType) null : outline.getResolvableType());
+    }
+
+    default boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler, Class<?> outline, Class<?>... gernics) {
+        return newObject(key, value, comment, handler, outline == null ? (ResolvableType) null : TypeSugar.resolve(outline, gernics));
+    }
+
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, String handler, Class<?> outline, Class<?>... gernics) {
+        return newObject(key.getName(), value, comment, handler, outline == null ? (ResolvableType) null : TypeSugar.resolve(outline, gernics));
+    }
+
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, String handler, Class<?> outline, Class<?>... gernics) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment, handler, outline == null ? (ResolvableType) null : TypeSugar.resolve(outline, gernics));
+    }
+
+    default boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler) {
+        return newObject(key, value, comment, handler, (ResolvableType) null);
+    }
+
+    default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment, String handler) {
+        return newObject(key.getName(), value, comment, handler, (ResolvableType) null);
+    }
+
+    default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment, String handler) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment, handler, (ResolvableType) null);
+    }
+
+    default boolean newObject(@NotNull String key, @NotNull Object value, String comment) {
+        return newObject(key, value, comment, null, (ResolvableType) null);
+    }
 
     default boolean newObject(@NotNull Class<?> key, @NotNull Object value, String comment) {
-        return newObject(key.getName(), value, comment);
+        return newObject(key.getName(), value, comment, null, (ResolvableType) null);
     }
 
     default boolean newObject(@NotNull Enum<?> key, @NotNull Object value, String comment) {
-        return newObject(EnumConvertor.enum2Str(key), value, comment);
+        return newObject(EnumConvertor.enum2Str(key), value, comment, null, (ResolvableType) null);
     }
 
     /**

@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.project.ProjectEnumGenerator;
 import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
 import pro.fessional.wings.warlock.project.Warlock2EnumGenerator;
@@ -44,7 +43,7 @@ public class AutogenMainCodeTest {
     @Test
     void autogen01AllMainCode() {
         // use wings database
-        autogen10FacelessAutogen(); // faceless/enums
+        autogen10FacelessAutogenEnum(); // faceless/enums
         autogen20WarlockAutogenEnum(); // warlock/enums
         autogen20WarlockAutogenAuth(); // warlock/security
 
@@ -55,7 +54,7 @@ public class AutogenMainCodeTest {
 
     // ////////////////// individual test  //////////////////
 
-    void autogen10FacelessAutogen() {
+    void autogen10FacelessAutogenEnum() {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(dataSource);
         final List<ConstantEnumGenerator.ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
         ConstantEnumGenerator.builder()

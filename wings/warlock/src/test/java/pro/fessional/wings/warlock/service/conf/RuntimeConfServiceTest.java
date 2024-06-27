@@ -20,6 +20,7 @@ import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -82,7 +83,7 @@ class RuntimeConfServiceTest {
     }
 
     private <T> void assertSimple(Class<T> clz, T obj) {
-        runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName());
+        runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName(), null);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
@@ -106,15 +107,21 @@ class RuntimeConfServiceTest {
     @TmsLink("C14009")
     void testCollection() {
         List<String> ls = List.of("Jan", "Fer");
-        runtimeConfService.newObject(List.class, ls, "test list");
+        runtimeConfService.newObject(List.class, ls, "test list", null, List.class, String.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<String> ls1 = runtimeConfService.getList(List.class, String.class);
         Assertions.assertEquals(ls, ls1);
 
+        Set<LocalDate> ss = Set.of(LocalDate.now(), LocalDate.now().plusDays(1));
+        runtimeConfService.newObject(Set.class, ss, "test set LocalDate", null, Set.class, LocalDate.class);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final Set<LocalDate> ss1 = runtimeConfService.getSet(Set.class, LocalDate.class);
+        Assertions.assertEquals(ss, ss1);
+
         Map<String, Boolean> map = new HashMap<>();
         map.put("Jan", true);
         map.put("Fer", false);
-        runtimeConfService.newObject(Map.class, map, "test map");
+        runtimeConfService.newObject(Map.class, map, "test map", null, Map.class, String.class, Boolean.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final Map<String, Boolean> map1 = runtimeConfService.getMap(Map.class, String.class, Boolean.class);
         Assertions.assertEquals(map, map1);
@@ -131,7 +138,7 @@ class RuntimeConfServiceTest {
     @TmsLink("C14010")
     void testJson() {
         Dto dto = new Dto();
-        runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest");
+        runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest", null);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
@@ -153,7 +160,7 @@ class RuntimeConfServiceTest {
     void testMode() {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfServiceTest.testMode";
-        runtimeConfService.newObject(key, arm, "test RunMode");
+        runtimeConfService.newObject(key, arm, "test RunMode", null, List.class, RunMode.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         Assertions.assertEquals(arm, arm1);
@@ -176,7 +183,7 @@ class RuntimeConfServiceTest {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfCacheTest.testCache";
         // insert on duplicated key
-        runtimeConfService.newObject(key, arm, "test RunMode");
+        runtimeConfService.newObject(key, arm, "test RunMode", null, List.class, RunMode.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);

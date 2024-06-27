@@ -34,6 +34,7 @@ public class WinConfRuntime implements IWinConfRuntime {
     private String current;
     private String previous;
     private String initial;
+    private String outline;
     private String comment;
     private String handler;
 
@@ -45,6 +46,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.current = value.getCurrent();
         this.previous = value.getPrevious();
         this.initial = value.getInitial();
+        this.outline = value.getOutline();
         this.comment = value.getComment();
         this.handler = value.getHandler();
     }
@@ -55,6 +57,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         String current,
         String previous,
         String initial,
+        String outline,
         String comment,
         String handler
     ) {
@@ -63,6 +66,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         this.current = current;
         this.previous = previous;
         this.initial = initial;
+        this.outline = outline;
         this.comment = comment;
         this.handler = handler;
     }
@@ -468,6 +472,86 @@ public class WinConfRuntime implements IWinConfRuntime {
 
 
     /**
+     * Getter for <code>win_conf_runtime.outline</code>.
+     */
+    @Override
+    public String getOutline() {
+        return this.outline;
+    }
+
+    /**
+     * Setter for <code>win_conf_runtime.outline</code>.
+     */
+    @Override
+    public void setOutline(String outline) {
+        this.outline = outline;
+    }
+
+    @Transient
+    public void setOutlineIf(String outline, boolean bool) {
+        if (bool) {
+            this.outline = outline;
+        }
+    }
+
+    @Transient
+    public void setOutlineIf(Supplier<String> outline, boolean bool) {
+        if (bool) {
+            this.outline = outline.get();
+        }
+    }
+
+    @Transient
+    public void setOutlineIf(String outline, Predicate<String> bool) {
+        if (bool.test(outline)) {
+            this.outline = outline;
+        }
+    }
+
+    @Transient
+    public void setOutlineIf(String outline, Predicate<String> bool, Supplier<String>... outlines) {
+        if (bool.test(outline)) {
+            this.outline = outline;
+            return;
+        }
+        for (Supplier<String> supplier : outlines) {
+            outline = supplier.get();
+            if (bool.test(outline)) {
+                this.outline = outline;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setOutlineIfNot(String outline, Predicate<String> bool) {
+        if (!bool.test(outline)) {
+            this.outline = outline;
+        }
+    }
+
+    @Transient
+    public void setOutlineIfNot(String outline, Predicate<String> bool, Supplier<String>... outlines) {
+        if (!bool.test(outline)) {
+            this.outline = outline;
+            return;
+        }
+        for (Supplier<String> supplier : outlines) {
+            outline = supplier.get();
+            if (!bool.test(outline)) {
+                this.outline = outline;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setOutlineIf(UnaryOperator<String> outline) {
+        this.outline = outline.apply(this.outline);
+    }
+
+
+    /**
      * Getter for <code>win_conf_runtime.comment</code>.
      */
     @Override
@@ -666,6 +750,12 @@ public class WinConfRuntime implements IWinConfRuntime {
         }
         else if (!this.initial.equals(other.initial))
             return false;
+        if (this.outline == null) {
+            if (other.outline != null)
+                return false;
+        }
+        else if (!this.outline.equals(other.outline))
+            return false;
         if (this.comment == null) {
             if (other.comment != null)
                 return false;
@@ -690,6 +780,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         result = prime * result + ((this.current == null) ? 0 : this.current.hashCode());
         result = prime * result + ((this.previous == null) ? 0 : this.previous.hashCode());
         result = prime * result + ((this.initial == null) ? 0 : this.initial.hashCode());
+        result = prime * result + ((this.outline == null) ? 0 : this.outline.hashCode());
         result = prime * result + ((this.comment == null) ? 0 : this.comment.hashCode());
         result = prime * result + ((this.handler == null) ? 0 : this.handler.hashCode());
         return result;
@@ -704,6 +795,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         sb.append(", ").append(current);
         sb.append(", ").append(previous);
         sb.append(", ").append(initial);
+        sb.append(", ").append(outline);
         sb.append(", ").append(comment);
         sb.append(", ").append(handler);
 
@@ -722,6 +814,7 @@ public class WinConfRuntime implements IWinConfRuntime {
         setCurrent(from.getCurrent());
         setPrevious(from.getPrevious());
         setInitial(from.getInitial());
+        setOutline(from.getOutline());
         setComment(from.getComment());
         setHandler(from.getHandler());
     }

@@ -73,6 +73,16 @@ public interface IWinConfRuntime extends Serializable {
     public String getInitial();
 
     /**
+     * Setter for <code>win_conf_runtime.outline</code>.
+     */
+    public void setOutline(String value);
+
+    /**
+     * Getter for <code>win_conf_runtime.outline</code>.
+     */
+    public String getOutline();
+
+    /**
      * Setter for <code>win_conf_runtime.comment</code>.
      */
     public void setComment(String value);

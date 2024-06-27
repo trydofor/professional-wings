@@ -165,6 +165,25 @@ public class WinConfRuntimeDao extends WingsJooqDaoAliasImpl<WinConfRuntimeTable
     }
 
     /**
+     * Fetch records that have <code>outline BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<WinConfRuntime> fetchRangeOfOutline(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinConfRuntimeTable.WinConfRuntime.Outline, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>outline IN (values)</code>
+     */
+    public List<WinConfRuntime> fetchByOutline(String... values) {
+        return fetch(WinConfRuntimeTable.WinConfRuntime.Outline, values);
+    }
+
+    public List<WinConfRuntime> fetchByOutline(Collection<? extends String> values) {
+        return fetch(WinConfRuntimeTable.WinConfRuntime.Outline, values);
+    }
+
+    /**
      * Fetch records that have <code>comment BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */

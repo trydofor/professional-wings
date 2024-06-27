@@ -6,10 +6,10 @@ package pro.fessional.wings.warlock.database.autogen.tables;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
-import org.jooq.Function7;
+import org.jooq.Function8;
 import org.jooq.Name;
 import org.jooq.Records;
-import org.jooq.Row7;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -84,9 +84,14 @@ public class WinConfRuntimeTable extends TableImpl<WinConfRuntimeRecord> impleme
     public final TableField<WinConfRuntimeRecord, String> Initial = createField(DSL.name("initial"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
+     * The column <code>win_conf_runtime.outline</code>.
+     */
+    public final TableField<WinConfRuntimeRecord, String> Outline = createField(DSL.name("outline"), SQLDataType.VARCHAR(5000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
      * The column <code>win_conf_runtime.comment</code>.
      */
-    public final TableField<WinConfRuntimeRecord, String> Comment = createField(DSL.name("comment"), SQLDataType.VARCHAR(500).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinConfRuntimeRecord, String> Comment = createField(DSL.name("comment"), SQLDataType.VARCHAR(5000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_conf_runtime.handler</code>.
@@ -172,18 +177,18 @@ public class WinConfRuntimeTable extends TableImpl<WinConfRuntimeRecord> impleme
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<String, Boolean, String, String, String, String, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<String, Boolean, String, String, String, String, String, String> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function7<? super String, ? super Boolean, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super String, ? super Boolean, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -191,7 +196,7 @@ public class WinConfRuntimeTable extends TableImpl<WinConfRuntimeRecord> impleme
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super String, ? super Boolean, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super String, ? super Boolean, ? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 
