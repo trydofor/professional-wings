@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
@@ -62,7 +62,7 @@ public class SlardarSwaggerConfiguration {
             }
 
             final Map<String, Parameter> params = slardarSwaggerProp.toComPara();
-            final Map<String, String> accepts = CommonPropHelper.onlyValue(slardarSwaggerProp.getAccept());
+            final Map<String, String> accepts = PropHelper.onlyValue(slardarSwaggerProp.getAccept());
             if (params.isEmpty() && accepts.isEmpty()) return;
 
             openApi.getPaths().values()

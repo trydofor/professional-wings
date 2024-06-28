@@ -9,8 +9,8 @@ import pro.fessional.wings.slardar.jackson.AesString;
 import java.util.HashMap;
 import java.util.Map;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.mergeNotValue;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
+import static pro.fessional.wings.silencer.support.PropHelper.mergeIfNon;
+import static pro.fessional.wings.silencer.support.PropHelper.nonValue;
 
 /**
  * @author trydofor
@@ -95,12 +95,12 @@ public class DingTalkConf {
         if (that == null) return;
 
         if (dryrun == null) dryrun = that.dryrun;
-        if (notValue(webhookUrl)) webhookUrl = that.webhookUrl;
-        if (notValue(digestSecret)) digestSecret = that.digestSecret;
-        if (notValue(accessToken)) accessToken = that.accessToken;
-        if (notValue(noticeKeyword)) noticeKeyword = that.noticeKeyword;
-        if (notValue(msgType)) msgType = that.msgType;
-        mergeNotValue(noticeMobiles, that.noticeMobiles);
+        if (nonValue(webhookUrl)) webhookUrl = that.webhookUrl;
+        if (nonValue(digestSecret)) digestSecret = that.digestSecret;
+        if (nonValue(accessToken)) accessToken = that.accessToken;
+        if (nonValue(noticeKeyword)) noticeKeyword = that.noticeKeyword;
+        if (nonValue(msgType)) msgType = that.msgType;
+        mergeIfNon(noticeMobiles, that.noticeMobiles);
     }
 
     public interface Loader {

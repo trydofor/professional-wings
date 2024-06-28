@@ -57,7 +57,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
+import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenDone;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenExec;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenFail;
@@ -316,7 +316,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private boolean notApps(String apps, long id, String key) {
         if (StringUtils.isEmpty(apps)) return false;
 
-        for (String s : arrayOrNull(apps, true)) {
+        for (String s : commaArray(apps)) {
             if (s.trim().equals(appName)) return false;
         }
         log.info("skip tiny-task for not apps={}, cur={}, id={}, prop={}", apps, appName, id, key);
@@ -343,7 +343,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private Set<String> noticeWhen(String nw) {
         if (nw == null || nw.isEmpty()) return Collections.emptySet();
         Set<String> rs = new HashSet<>();
-        for (String s : arrayOrNull(nw, true)) {
+        for (String s : commaArray(nw)) {
             rs.add(s.trim().toLowerCase());
         }
         return rs;

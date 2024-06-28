@@ -18,7 +18,7 @@ import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.bits.Aes;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
@@ -393,7 +393,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalWingsEnabled
     public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop, ObjectProvider<Aes> aesProvider) {
         log.info("WarlockShadow spring-bean authStateBuilder");
-        final AuthStateBuilder bean = new AuthStateBuilder(CommonPropHelper.onlyValue(prop.getSafeState()));
+        final AuthStateBuilder bean = new AuthStateBuilder(PropHelper.onlyValue(prop.getSafeState()));
         final Aes aes = aesProvider.getIfAvailable();
         if (aes != null) {
             bean.setAes(aes);

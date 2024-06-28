@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.lock.ArrayKey;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;

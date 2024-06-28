@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.DisabledValue;
+import static pro.fessional.wings.silencer.support.PropHelper.DisabledValue;
 
 /**
  * CUD listener settings for jooq.
@@ -56,7 +56,7 @@ public class FacelessJooqCudProp {
      * Listening tables and their fields. `empty` means no fields are recorded, `-` means this table is ignored.
      * CUD listens to tables and fields, both tables and fields are case-sensitive.
      *
-     * @see pro.fessional.wings.silencer.spring.help.CommonPropHelper#DisabledValue
+     * @see pro.fessional.wings.silencer.support.PropHelper#DisabledValue
      * @see #Key$table
      */
     private Map<String, Set<String>> table = Collections.emptyMap();

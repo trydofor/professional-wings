@@ -18,7 +18,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 import pro.fessional.wings.silencer.enhance.ThisLazy;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinConfRuntimeDao;

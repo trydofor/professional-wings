@@ -16,7 +16,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.text.WhiteUtil;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;

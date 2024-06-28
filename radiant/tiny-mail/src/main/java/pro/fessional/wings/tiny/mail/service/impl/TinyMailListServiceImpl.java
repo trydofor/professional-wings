@@ -198,10 +198,11 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
     @Override
     public void afterPropertiesSet() {
         final WinMailSenderTable t = winMailSenderDao.getTable();
+        // skip large field
         plainFields = new SelectField[]{
             t.Id, t.MailApps, t.MailRuns, t.MailConf,
             t.MailFrom, t.MailTo, t.MailCc, t.MailBcc,
-            t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
+            t.MailReply, t.MailSubj, /*t.MailText, t.MailFile,*/
             t.MailHtml, t.MailMark, t.MailDate,
             t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
             t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
@@ -209,6 +210,6 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
 
         sortsFields.put("id", t.Id);
         sortsFields.put("done", t.LastDone);
-        sortsFields.put("fail", t.LastFail);
+        sortsFields.put("send", t.LastSend);
     }
 }

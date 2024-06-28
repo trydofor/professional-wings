@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
 import pro.fessional.mirana.data.CodeEnum;
-import pro.fessional.wings.silencer.spring.help.SubclassSpringLoader;
+import pro.fessional.wings.silencer.support.SubclassGather;
 
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class Devops7EnumsDumperTest {
 
     @Test
     public void dumpCodeEnum() {
-        SubclassSpringLoader loader = new SubclassSpringLoader(resourceLoader);
+        SubclassGather loader = new SubclassGather(resourceLoader);
         Class<CodeEnum> superEnum = CodeEnum.class;
 
         Map<Class<?>, Enum<?>[]> enums = loader.loadSubEnums("pro.fessional", superEnum);

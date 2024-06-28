@@ -11,7 +11,7 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;

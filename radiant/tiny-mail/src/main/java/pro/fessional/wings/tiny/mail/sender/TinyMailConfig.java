@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.mail.MailProperties;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.mergeNotValue;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
+import static pro.fessional.wings.silencer.support.PropHelper.mergeIfNon;
+import static pro.fessional.wings.silencer.support.PropHelper.nonValue;
 
 /**
  * hashCode and equals with
@@ -138,27 +138,27 @@ public class TinyMailConfig extends MailProperties {
     public void merge(MailProperties that) {
         if (that == null) return;
 
-        if (notValue(getHost())) {
+        if (nonValue(getHost())) {
             setHost(that.getHost());
         }
         if (getPort() == null) {
             setPort(that.getPort());
         }
-        if (notValue(getUsername())) {
+        if (nonValue(getUsername())) {
             setUsername(that.getUsername());
         }
         final String password = getPassword();
-        if (notValue(password)) {
+        if (nonValue(password)) {
             setPassword(that.getPassword());
         }
-        if (notValue(getProtocol())) {
+        if (nonValue(getProtocol())) {
             setProtocol(that.getProtocol());
         }
         if (getDefaultEncoding() == null) {
             setDefaultEncoding(that.getDefaultEncoding());
         }
 
-        mergeNotValue(getProperties(), that.getProperties());
+        mergeIfNon(getProperties(), that.getProperties());
     }
 
     /**
@@ -169,12 +169,12 @@ public class TinyMailConfig extends MailProperties {
         merge((MailProperties) that);
 
         if (dryrun == null) dryrun = that.dryrun;
-        if (notValue(name)) name = that.name;
-        if (notValue(from)) from = that.from;
+        if (nonValue(name)) name = that.name;
+        if (nonValue(from)) from = that.from;
         if (to == null) to = that.to;
         if (cc == null) cc = that.cc;
         if (bcc == null) bcc = that.bcc;
-        if (notValue(reply)) reply = that.reply;
+        if (nonValue(reply)) reply = that.reply;
         if (html == null) html = that.html;
     }
 

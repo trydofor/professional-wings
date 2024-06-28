@@ -58,7 +58,7 @@ import java.util.TimeZone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingValue;
+import static pro.fessional.wings.silencer.support.PropHelper.MaskingValue;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 

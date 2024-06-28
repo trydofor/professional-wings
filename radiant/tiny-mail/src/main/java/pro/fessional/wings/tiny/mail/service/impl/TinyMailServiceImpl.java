@@ -1,10 +1,8 @@
 package pro.fessional.wings.tiny.mail.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.mail.MessagingException;
 import lombok.Data;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +23,15 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
-import pro.fessional.wings.slardar.jackson.JacksonHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
@@ -52,7 +51,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +58,8 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
+import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
+import static pro.fessional.wings.silencer.support.PropHelper.nonValue;
 
 /**
  * @author trydofor
@@ -209,7 +207,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
         po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
-        po.setMailFile(toStringMap(msg.getAttachment()));
+        po.setMailFile(toString(msg.getAttachment()));
         po.setMailMark(msg.getMark());
         po.setMailDate(md);
 
@@ -282,18 +280,18 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         if (msg == null) {
             message.setFrom(po.getMailFrom());
-            message.setTo(arrayOrNull(po.getMailTo(), true));
-            message.setCc(arrayOrNull(po.getMailCc(), true));
-            message.setBcc(arrayOrNull(po.getMailBcc(), true));
-            message.setReply(toStrOrNull(po.getMailReply()));
+            message.setTo(commaArray(po.getMailTo()));
+            message.setCc(commaArray(po.getMailCc()));
+            message.setBcc(commaArray(po.getMailBcc()));
+            message.setReply(EmptySugar.emptyToNull(po.getMailReply()));
             message.setHtml(po.getMailHtml());
             message.setSubject(po.getMailSubj());
             message.setContent(po.getMailText());
-            final Map<String, Resource> files = toResource(po.getMailFile());
+            final Map<String, Resource> files = resourceString(po.getMailFile());
             if (!files.isEmpty()) {
                 message.setAttachment(files);
             }
-            message.setBizMark(toStrOrNull(po.getMailMark()));
+            message.setBizMark(EmptySugar.emptyToNull(po.getMailMark()));
         }
         else {
             if (msg.getFrom() != null) message.setFrom(msg.getFrom());
@@ -328,7 +326,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
         po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
-        po.setMailFile(toString(msg.getAttachment()));
+        po.setMailFile(stringResource(msg.getAttachment()));
         po.setMailMark(msg.getMark());
 
         final LocalDateTime md = msg.getDate();
@@ -694,7 +692,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String[] elz) {
-        return notValue(str)
+        return nonValue(str)
             ? (elz == null || elz.length == 0
                    ? null
                    : String.join(",", elz))
@@ -703,40 +701,34 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String elz) {
-        return notValue(str) ? elz : str;
-    }
-
-    @SneakyThrows
-    @NotNull
-    private String toString(Map<String, Resource> file) {
-        if (file == null || file.isEmpty()) return Null.Str;
-        Map<String, String> nameUrl = new LinkedHashMap<>(file.size());
-        for (Map.Entry<String, Resource> en : file.entrySet()) {
-            nameUrl.put(en.getKey(), CommonPropHelper.toString(en.getValue()));
-        }
-        return JacksonHelper.string(nameUrl, true);
-    }
-
-    @SneakyThrows
-    @NotNull
-    private String toStringMap(Map<String, String> file) {
-        if (file == null || file.isEmpty()) return Null.Str;
-        return JacksonHelper.string(file, true);
+        return nonValue(str) ? elz : str;
     }
 
     @Nullable
-    private String toStrOrNull(String str) {
-        return (str == null || str.isEmpty()) ? null : str;
+    private String toString(Map<String, String> file) {
+        if (file == null || file.isEmpty()) return null;
+        return FastJsonHelper.string(file);
+    }
+
+    @Nullable
+    private String stringResource(Map<String, Resource> file) {
+        if (file == null || file.isEmpty()) return null;
+
+        Map<String, String> nameUrl = new LinkedHashMap<>();
+        for (Map.Entry<String, Resource> en : file.entrySet()) {
+            nameUrl.put(en.getKey(), PropHelper.stringResource(en.getValue()));
+        }
+        return toString(nameUrl);
     }
 
     @NotNull
-    private Map<String, Resource> toResource(String map) {
-        if (map == null || map.isEmpty()) return Collections.emptyMap();
+    private Map<String, Resource> resourceString(String jsonMap) {
+        if (EmptySugar.asEmptyValue(jsonMap)) return Collections.emptyMap();
+
         final Map<String, Resource> rst = new LinkedHashMap<>();
-        final Iterator<Map.Entry<String, JsonNode>> node = JacksonHelper.object(map).fields();
-        while (node.hasNext()) {
-            final Map.Entry<String, JsonNode> en = node.next();
-            rst.put(en.getKey(), resourceLoader.getResource(en.getValue().asText()));
+        Map<String, String> map = FastJsonHelper.object(jsonMap, Map.class, String.class, String.class);
+        for (Map.Entry<String, String> en : map.entrySet()) {
+            rst.put(en.getKey(), PropHelper.resourceString(en.getValue(), resourceLoader));
         }
         return rst;
     }

@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarRemoteProp;
 
@@ -24,9 +24,9 @@ public class SlardarRemoteConfiguration {
     public WingsRemoteResolver wingsRemoteResolver(SlardarRemoteProp conf) {
         log.info("SlardarWebmvc spring-bean wingsRemoteResolver");
         final WingsRemoteResolver resolver = new WingsRemoteResolver();
-        resolver.addInnerIp(CommonPropHelper.onlyValue(conf.getInnerIp().values()));
-        resolver.addAgentHeader(CommonPropHelper.onlyValue(conf.getAgentHeader().values()));
-        resolver.addIpHeader(CommonPropHelper.onlyValue(conf.getIpHeader().values()));
+        resolver.addInnerIp(PropHelper.onlyValue(conf.getInnerIp().values()));
+        resolver.addAgentHeader(PropHelper.onlyValue(conf.getAgentHeader().values()));
+        resolver.addIpHeader(PropHelper.onlyValue(conf.getIpHeader().values()));
         return resolver;
     }
 }

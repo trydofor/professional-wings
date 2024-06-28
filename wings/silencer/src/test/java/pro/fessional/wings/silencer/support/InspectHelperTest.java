@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.silencer.support;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @Slf4j
-class VersionInfoHelperTest {
+class InspectHelperTest {
 
     @Setter(onMethod_ = { @Autowired })
     private BuildProperties buildProperties;
@@ -34,7 +34,7 @@ class VersionInfoHelperTest {
         log.info("git={}", gitProperties);
 
         Assertions.assertEquals("pro.fessional.wings",buildProperties.getGroup());
-        Assertions.assertEquals("silencer-curse",buildProperties.getArtifact());
+        Assertions.assertEquals("silencer",buildProperties.getArtifact());
         Assertions.assertNotNull(gitProperties.getBranch());
         // spring use git.commit.id, need commitIdGenerationMode=flat, but wings use full
         Assertions.assertNull(gitProperties.getCommitId());
@@ -42,17 +42,17 @@ class VersionInfoHelperTest {
         Assertions.assertNotNull(gitProperties.getCommitTime());
 
         // safe and format
-        Assertions.assertNotNull(VersionInfoHelper.jvmName());
-        Assertions.assertNotNull(VersionInfoHelper.jvmVersion());
-        Assertions.assertNotNull(VersionInfoHelper.jvmVendor());
-        Assertions.assertNotNull(VersionInfoHelper.commitIdShort(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.commitId(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.commitDate(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.commitDateTime(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.commitMessage(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.branch(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.buildDate(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.buildDateTime(gitProperties));
-        Assertions.assertNotNull(VersionInfoHelper.buildVersion(gitProperties));
+        Assertions.assertNotNull(InspectHelper.jvmName());
+        Assertions.assertNotNull(InspectHelper.jvmVersion());
+        Assertions.assertNotNull(InspectHelper.jvmVendor());
+        Assertions.assertNotNull(InspectHelper.commitIdShort(gitProperties));
+        Assertions.assertNotNull(InspectHelper.commitId(gitProperties));
+        Assertions.assertNotNull(InspectHelper.commitDate(gitProperties));
+        Assertions.assertNotNull(InspectHelper.commitDateTime(gitProperties));
+        Assertions.assertNotNull(InspectHelper.commitMessage(gitProperties));
+        Assertions.assertNotNull(InspectHelper.branch(gitProperties));
+        Assertions.assertNotNull(InspectHelper.buildDate(gitProperties));
+        Assertions.assertNotNull(InspectHelper.buildDateTime(gitProperties));
+        Assertions.assertNotNull(InspectHelper.buildVersion(gitProperties));
     }
 }

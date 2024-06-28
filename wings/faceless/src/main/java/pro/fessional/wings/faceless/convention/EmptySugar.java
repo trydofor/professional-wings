@@ -147,7 +147,7 @@ public class EmptySugar {
     // /////////////////////
 
     public static boolean asEmptyValue(String v) {
-        return v == null || v.trim().isEmpty();
+        return v == null || v.isBlank();
     }
 
     public static boolean asEmptyValue(Integer v) {

@@ -2,7 +2,7 @@ package pro.fessional.wings.warlock.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
@@ -386,7 +386,7 @@ public class WarlockSecurityProp {
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()
-                       .filter(it -> CommonPropHelper.hasValue(it.getValue()))
+                       .filter(it -> PropHelper.hasValue(it.getValue()))
                        .collect(toMap(Map.Entry::getKey, en -> str2Enum(en.getValue())));
     }
 

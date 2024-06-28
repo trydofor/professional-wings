@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.enhance;
+package pro.fessional.wings.silencer.support;
 
 import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.data.R;
-import pro.fessional.wings.silencer.app.conf.TestMergingProp;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,21 +20,25 @@ import java.util.Set;
 @Slf4j
 public class TypeSugarTest {
 
+    public static class Inner {
+
+    }
+
     @Test
     @TmsLink("C11035")
     void test() throws ClassNotFoundException {
 
         // Map<String, List<Long[]>
         var a0 = ResolvableType.forClassWithGenerics(Map.class,
-            ResolvableType.forClass(String.class),
-            ResolvableType.forClassWithGenerics(List.class, Long[].class)
+                ResolvableType.forClass(String.class),
+                ResolvableType.forClassWithGenerics(List.class, Long[].class)
         );
         var a1 = TypeSugar.resolve(Map.class, String.class, List.class, Long[].class);
         log.info("type a1={}", a1);
 
         var a2 = TypeDescriptor.map(Map.class,
-            TypeDescriptor.valueOf(String.class),
-            TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class))
+                TypeDescriptor.valueOf(String.class),
+                TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class))
         );
         var a3 = TypeSugar.describe(Map.class, String.class, List.class, Long[].class);
 
@@ -45,15 +48,15 @@ public class TypeSugarTest {
 
         // Map<List<Long[]>,String>
         var b0 = ResolvableType.forClassWithGenerics(Map.class,
-            ResolvableType.forClassWithGenerics(List.class, Long[].class),
-            ResolvableType.forClass(String.class)
+                ResolvableType.forClassWithGenerics(List.class, Long[].class),
+                ResolvableType.forClass(String.class)
         );
         var b1 = TypeSugar.resolve(Map.class, List.class, Long[].class, String.class);
         log.info("type b1={}", b1);
 
         var b2 = TypeDescriptor.map(Map.class,
-            TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class)),
-            TypeDescriptor.valueOf(String.class)
+                TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class)),
+                TypeDescriptor.valueOf(String.class)
         );
         var b3 = TypeSugar.describe(Map.class, List.class, Long[].class, String.class);
 
@@ -63,19 +66,19 @@ public class TypeSugarTest {
 
         // Map<List<List<Long[]>>,String>
         var c0 = ResolvableType.forClassWithGenerics(Map.class,
-            ResolvableType.forClassWithGenerics(List.class,
-                ResolvableType.forClassWithGenerics(List.class, Long[].class)
-            ),
-            ResolvableType.forClass(String.class)
+                ResolvableType.forClassWithGenerics(List.class,
+                        ResolvableType.forClassWithGenerics(List.class, Long[].class)
+                ),
+                ResolvableType.forClass(String.class)
         );
         var c1 = TypeSugar.resolve(Map.class, List.class, List.class, Long[].class, String.class);
         log.info("type c1={}", c1);
 
         var c2 = TypeDescriptor.map(Map.class,
-            TypeDescriptor.collection(List.class,
-                TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class))
-            ),
-            TypeDescriptor.valueOf(String.class)
+                TypeDescriptor.collection(List.class,
+                        TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Long[].class))
+                ),
+                TypeDescriptor.valueOf(String.class)
         );
         var c3 = TypeSugar.describe(Map.class, List.class, List.class, Long[].class, String.class);
 
@@ -117,7 +120,7 @@ public class TypeSugarTest {
         testStructs(b0);
         testStructs(c0);
         testStructs(d0);
-        testStructs(TypeSugar.resolve(R.class, TestMergingProp.Pojo.class));
+        testStructs(TypeSugar.resolve(R.class, Inner.class));
         testStructs(TypeSugar.resolve(R.class));
         testStructs(TypeSugar.resolve(List.class));
         testStructs(TypeSugar.resolve(Map.class));

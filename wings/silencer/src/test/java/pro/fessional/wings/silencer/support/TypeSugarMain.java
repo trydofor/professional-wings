@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.enhance;
+package pro.fessional.wings.silencer.support;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -11,6 +11,7 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
+import pro.fessional.wings.silencer.support.TypeSugar;
 
 import java.io.IOException;
 import java.util.List;

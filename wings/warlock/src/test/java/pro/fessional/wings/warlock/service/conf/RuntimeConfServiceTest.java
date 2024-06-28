@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import pro.fessional.mirana.time.Sleep;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.slardar.cache.SimpleCacheTemplate;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;

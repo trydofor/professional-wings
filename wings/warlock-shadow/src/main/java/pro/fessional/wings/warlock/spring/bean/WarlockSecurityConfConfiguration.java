@@ -29,7 +29,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -72,7 +72,7 @@ public class WarlockSecurityConfConfiguration {
             // https://github.com/spring-projects/spring-security/issues/10938
             final Map<String, String> webIgnore = securityProp.getWebIgnore();
             if (!webIgnore.isEmpty()) {
-                final Set<String> ignores = CommonPropHelper.onlyValue(webIgnore.values());
+                final Set<String> ignores = PropHelper.onlyValue(webIgnore.values());
                 log.info("WarlockShadow conf WebSecurity, ignoring=" + String.join("\n,", ignores));
                 web.ignoring().requestMatchers(ignores.toArray(String[]::new));
             }
@@ -168,14 +168,14 @@ public class WarlockSecurityConfConfiguration {
 
         return http -> http.authorizeHttpRequests(conf -> {
             // 1 PermitAll
-            final Set<String> permed = CommonPropHelper.onlyValue(securityProp.getPermitAll().values());
+            final Set<String> permed = PropHelper.onlyValue(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
                 conf.requestMatchers(permed.toArray(String[]::new)).permitAll();
             }
 
             // 2 Authenticated
-            final Set<String> authed = CommonPropHelper.onlyValue(securityProp.getAuthenticated().values());
+            final Set<String> authed = PropHelper.onlyValue(securityProp.getAuthenticated().values());
             if (!authed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
                 conf.requestMatchers(authed.toArray(String[]::new)).authenticated();
@@ -188,7 +188,7 @@ public class WarlockSecurityConfConfiguration {
                 for (Map.Entry<String, Set<String>> en : securityProp.getAuthority().entrySet()) {
                     final String perm = en.getKey();
                     for (String url : en.getValue()) {
-                        if (CommonPropHelper.hasValue(url)) {
+                        if (PropHelper.hasValue(url)) {
                             final Set<String> st = urlPerm.computeIfAbsent(url, k -> new HashSet<>());
                             st.add(perm);
                         }
@@ -197,7 +197,7 @@ public class WarlockSecurityConfConfiguration {
                 // desc
                 for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
                     final String url = en.getKey();
-                    final Set<String> pms = CommonPropHelper.onlyValue(en.getValue());
+                    final Set<String> pms = PropHelper.onlyValue(en.getValue());
                     log.info("WarlockShadow conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
                     conf.requestMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }

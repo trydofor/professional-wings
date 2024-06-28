@@ -27,9 +27,9 @@ import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 import java.io.File;
 import java.util.Map;
 
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.branch;
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.buildDate;
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.commitIdShort;
+import static pro.fessional.wings.silencer.support.InspectHelper.branch;
+import static pro.fessional.wings.silencer.support.InspectHelper.buildDate;
+import static pro.fessional.wings.silencer.support.InspectHelper.commitIdShort;
 
 /**
  * @author trydofor

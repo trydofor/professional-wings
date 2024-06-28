@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.enhance;
+package pro.fessional.wings.silencer.support;
 
 import jakarta.annotation.Nullable;
 import lombok.SneakyThrows;

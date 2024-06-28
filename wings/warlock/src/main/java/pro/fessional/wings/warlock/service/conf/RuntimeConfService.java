@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.cast.EnumConvertor;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 
 import java.util.List;
 import java.util.Map;

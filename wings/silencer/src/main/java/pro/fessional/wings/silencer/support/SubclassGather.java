@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.silencer.support;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -24,12 +24,12 @@ import static org.springframework.util.ClassUtils.convertClassNameToResourcePath
  * @author trydofor
  * @since 2020-07-04
  */
-public class SubclassSpringLoader {
+public class SubclassGather {
 
     private final ResourcePatternResolver resourcePatternResolver;
     private final MetadataReaderFactory metadataReaderFactory;
 
-    public SubclassSpringLoader(ResourceLoader resourceLoader) {
+    public SubclassGather(ResourceLoader resourceLoader) {
         resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
         metadataReaderFactory = new CachingMetadataReaderFactory(resourceLoader);
     }

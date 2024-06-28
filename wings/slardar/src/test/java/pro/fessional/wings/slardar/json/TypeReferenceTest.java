@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 
 import java.lang.reflect.Type;
 import java.util.List;

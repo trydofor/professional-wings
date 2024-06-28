@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.silencer.support;
 
 import org.springframework.boot.info.GitProperties;
 
@@ -6,14 +6,11 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static pro.fessional.wings.silencer.datetime.DateTimePattern.FMT_DATE_10;
-import static pro.fessional.wings.silencer.datetime.DateTimePattern.FMT_FULL_19Z;
-
 /**
  * @author trydofor
  * @since 2024-06-03
  */
-public class VersionInfoHelper {
+public class InspectHelper {
 
     public static String jvmName() {
         return System.getProperty("java.vm.name");
@@ -67,12 +64,12 @@ public class VersionInfoHelper {
     private static String toDatetime(Instant time) {
         if (time == null) return null;
         ZonedDateTime zdt = ZonedDateTime.ofInstant(time, ZoneId.systemDefault());
-        return FMT_FULL_19Z.format(zdt);
+        return zdt.toString();
     }
 
     private static String toDate(Instant time) {
         if (time == null) return null;
         ZonedDateTime zdt = ZonedDateTime.ofInstant(time, ZoneId.systemDefault());
-        return FMT_DATE_10.format(zdt);
+        return zdt.toLocalDate().toString();
     }
 }
