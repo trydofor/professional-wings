@@ -137,6 +137,22 @@ function print_args() {
     echo "BOOT_ARG=$BOOT_ARG"
     echo -e "\033[37;42;1mINFO: ==== java arguments ==== \033[0m"
     echo "$JAVA_OPT"
+
+    git_jar="${BOOT_JAR}_${BOOT_MD5}"
+    if [[ ! -f "$git_jar" ]]; then
+        git_jar="${BOOT_JAR}"
+    fi
+    if [[ -f "$git_jar" ]]; then
+        giti=$(jar tf "$git_jar" 2>/dev/null | grep git.properties )
+        if [[ "$giti" != "" ]]; then
+            tmp="./tmp-$BOOT_MD5"
+            mkdir -p "$tmp"
+            (cd "$tmp" && jar xf "$git_jar" "$giti")
+            echo -e "\033[37;42;1mINFO: ==== git build info ==== \033[0m"
+            grep -vE '=$' "$tmp/$giti"
+            rm -rf "$tmp"
+        fi
+    fi
 }
 
 function check_cmd() {
@@ -202,7 +218,7 @@ function check_boot() {
 function safe_start() {
     # safe backup
     md5sum "$BOOT_JAR" >"$file_md5"
-    BOOT_MD5=$(awk '{print $1}' <"$file_md5")
+    BOOT_MD5=$(awk '{print $1}' "$file_md5")
     # `_` as delimiter
     safe_jar="${BOOT_JAR}_${BOOT_MD5}"
     if [[ ! -f "$safe_jar" ]]; then
@@ -229,7 +245,7 @@ if [[ -L "$this_file" ]]; then
     link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
-        echo -e "\033[37;42;1mINFO: load link-envs form $link_envs ==== \033[0m"
+        echo -e "\033[37;42;1mINFO: link-envs=$link_envs \033[0m"
         # shellcheck disable=SC1090
         source "$link_envs"
     fi
@@ -237,7 +253,7 @@ fi
 
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
-    echo -e "\033[37;42;1mINFO: load this-envs form $this_envs ==== \033[0m"
+    echo -e "\033[37;42;1mINFO: this-envs=$this_envs \033[0m"
     # shellcheck disable=SC1090
     source "$this_envs"
 else
@@ -245,7 +261,7 @@ else
 fi
 
 if [[ -f "$BOOT_ENVF" ]]; then
-    echo -e "\033[37;42;1mINFO: load boot-envs form $BOOT_ENVF ==== \033[0m"
+    echo -e "\033[37;42;1mINFO: boot-envs=$BOOT_ENVF \033[0m"
     # shellcheck disable=SC1090
     source "$BOOT_ENVF"
 fi
@@ -366,14 +382,14 @@ fi
 # boot md5
 file_md5="${JAR_NAME}.md5"
 if [[ -f "$file_md5" ]]; then
-    BOOT_MD5=$(awk '{print $1}' <"$file_md5")
+    BOOT_MD5=$(awk '{print $1}' "$file_md5")
 fi
 
 # java home & path
 if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
     PATH=$JDK_HOME/bin:$PATH
     JAVA_HOME=$JDK_HOME
-    echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
+    echo -e "\033[37;42;1mINFO: JAVA_HOME=$JAVA_HOME \033[0m"
 fi
 
 # lazy env eval
@@ -442,9 +458,9 @@ case "$ARGS_RUN" in
         if [[ "$ARGS_RUN" != "start" ]]; then
             echo -e "\033[37;42;1mINFO: tail -f $BOOT_OUT \033[0m"
             timeout -s 9 10 tail -f "$BOOT_OUT"
-            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
-            echo -e "\033[37;43;1m====== $BOOT_JAR ======\033[0m"
-            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            echo -e "\033[37;42;1m =====${BOOT_JAR//?/=}===== \033[0m"
+            echo -e "\033[37;42;1m ==== $BOOT_JAR ==== \033[0m"
+            echo -e "\033[37;42;1m =====${BOOT_JAR//?/=}===== \033[0m"
             exit
         fi
 
@@ -550,15 +566,6 @@ case "$ARGS_RUN" in
         check_java
         print_args
 
-        tail_num=20
-        if [[ -f "$BOOT_OUT" ]]; then
-            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_OUT \033[0m"
-            tail -n $tail_num "$BOOT_OUT"
-        fi
-        if [[ -f "$BOOT_LOG" ]]; then
-            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_LOG \033[0m"
-            tail -n $tail_num "$BOOT_LOG"
-        fi
         pid=$(awk '{print $1}' "$BOOT_PID")
         cid=$(pgrep -f "$grep_key")
         echo -e "\033[37;42;1mINFO: boot.pid=$pid \033[0m"
@@ -582,13 +589,10 @@ case "$ARGS_RUN" in
         if [[ "$USER_RUN" == "$USER" ]]; then
             echo -e "\033[37;42;1mINFO: $(which jstat) -gcutil $cid 1000 3 \033[0m"
             jstat -gcutil "$cid" 1000 3
-            echo -e "\033[37;42;1mINFO: $(which jstat) -gc $cid 1000 3 \033[0m"
-            jstat -gc "$cid" 1000 3
         else
             echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gcutil $cid 1000 3 \033[0m"
             echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gc $cid 1000 3 \033[0m"
         fi
-
 
         if id | grep -q '(sudo)'; then
             if which jhsdb &> /dev/null; then
@@ -608,7 +612,17 @@ case "$ARGS_RUN" in
             fi
         fi
 
-        echo -e "\033[37;43;1mNOTE: ==== useful tool ==== \033[0m"
+        tail_num=20
+        if [[ -f "$BOOT_OUT" ]]; then
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_OUT \033[0m"
+            tail -n $tail_num "$BOOT_OUT"
+        fi
+        if [[ -f "$BOOT_LOG" ]]; then
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_LOG \033[0m"
+            tail -n $tail_num "$BOOT_LOG"
+        fi
+
+        echo -e "\033[37;42;1mINFO: ==== useful tool ==== \033[0m"
         echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cid \033[m https://github.com/jvm-profiling-tools/async-profiler"
         echo -e "\033[32m $(which java) -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
         ;;
