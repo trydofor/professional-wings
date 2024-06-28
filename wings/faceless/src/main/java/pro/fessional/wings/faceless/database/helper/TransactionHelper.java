@@ -97,7 +97,7 @@ public class TransactionHelper {
     /**
      * Propagation(REQUIRED), Isolation(DEFAULT) and timeout(-1)
      */
-    @Contract("_->param1")
+    @Contract("_,_,_,_->param1")
     public static <T extends DefaultTransactionDefinition> T definition(@NotNull T tpl, @Nullable Propagation propagation, @Nullable Isolation isolation, int timeoutSeconds) {
         tpl.setPropagationBehavior(propagation == null ? Propagation.REQUIRED.value() : propagation.value());
         tpl.setIsolationLevel(isolation == null ? Isolation.DEFAULT.value() : isolation.value());

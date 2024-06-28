@@ -105,7 +105,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     public boolean force(long id) {
         final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
         if (td == null) {
-            log.info("skip task for not found, id={}", id);
+            log.info("skip tiny-task for not found, id={}", id);
             return false;
         }
 
@@ -118,7 +118,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final String taskerInfo = td.getPropkey() + " force";
             final String noticeConf = td.getNoticeConf();
 
-            String taskMsg = "force task id=" + id;
+            String taskMsg = "force tiny-task id=" + id;
             NoticeExec<?> notice = null;
             Set<String> ntcWhen = Collections.emptySet();
             try {
@@ -128,17 +128,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
                 postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, execTms, WhenExec);
-                log.debug("task force exec, id={}", id);
+                log.debug("tiny-task force exec, id={}", id);
 
                 final Object result;
                 if (execProp.isDryrun()) {
                     final long slp = Sleep.ignoreInterrupt(10, 2000);
                     result = "dryrun and sleep " + slp;
-                    log.info("task force done, dryrun and sleep {} ms, id={}", slp, id);
+                    log.info("tiny-task force done, dryrun and sleep {} ms, id={}", slp, id);
                 }
                 else {
                     result = tasker.invoke(td.getTaskerPara(), true);
-                    log.info("task force done, id={}", id);
+                    log.info("tiny-task force done, id={}", id);
                 }
                 //
                 doneTms = ThreadNow.millis();
@@ -146,7 +146,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, doneTms, WhenFeed, WhenDone);
             }
             catch (Exception e) {
-                log.error("task force fail, id=" + id, e);
+                log.error("tiny-task force fail, id=" + id, e);
                 failTms = ThreadNow.millis();
                 taskMsg = ThrowableUtil.toString(e);
                 postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, failTms, WhenFail);
@@ -156,7 +156,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     saveResult(id, td.getPropkey(), execTms, failTms, doneTms, taskMsg, td.getDurFail());
                 }
                 catch (Exception e) {
-                    log.error("failed to save result, id=" + id, e);
+                    log.error("failed to save tiny-task result, id=" + id, e);
                 }
             }
         }, Instant.ofEpochMilli(ThreadNow.millis()));
@@ -194,13 +194,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         try {
             lock.lock();
             if (Handle.containsKey(id)) {
-                log.info("skip task for launching, id={}", id);
+                log.info("skip tiny-task for launching, id={}", id);
                 return false;
             }
 
             final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
             if (td == null) {
-                log.info("skip task for not found, id={}", id);
+                log.info("skip tiny-task for not found, id={}", id);
                 return false;
             }
 
@@ -225,12 +225,12 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 return false;
             }
 
-            log.info("prepare task id={}, prop={}", id, key);
+            log.info("prepare tiny-task id={}, prop={}", id, key);
             final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {
                     if (notNextLock(td, execTms)) {
-                        log.warn("skip task for Not nextLock, should manually check and launch it, id={}, prop={}", id, key);
+                        log.warn("skip tiny-task for Not nextLock, should manually check and launch it, id={}, prop={}", id, key);
                         Handle.remove(id);
                         return;
                     }
@@ -246,7 +246,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 final String taskerInfo = key + " launch";
                 final String noticeConf = td.getNoticeConf();
 
-                String exitMsg = "relaunch task key=" + key;
+                String exitMsg = "relaunch tiny-task key=" + key;
                 NoticeExec<?> notice = null;
                 Set<String> ntcWhen = Collections.emptySet();
                 try {
@@ -256,17 +256,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
                     postNotice(notice, noticeConf, ntcWhen, taskerInfo, exitMsg, execTms, WhenExec);
-                    log.info("task exec, id={}, prop={}", id, key);
+                    log.info("tiny-task exec, id={}, prop={}", id, key);
 
                     final Object result;
                     if (execProp.isDryrun()) {
                         final long slp = Sleep.ignoreInterrupt(10, 2000);
                         result = "dryrun and sleep " + slp;
-                        log.info("task done, dryrun and sleep {} ms, id={}, prop={}", slp, id, key);
+                        log.info("tiny-task done, dryrun and sleep {} ms, id={}, prop={}", slp, id, key);
                     }
                     else {
                         result = tasker.invoke(td.getTaskerPara(), true);
-                        log.info("task done, id={}, prop={}", id, key);
+                        log.info("tiny-task done, id={}, prop={}", id, key);
                     }
                     //
                     doneTms = ThreadNow.millis();
@@ -275,7 +275,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 }
                 catch (Exception e) {
                     Throwable c = ThrowableUtil.cause(e, 1);
-                    log.error("task fail, id=" + id + ", prop=" + key, c);
+                    log.error("tiny-task fail, id=" + id + ", prop=" + key, c);
                     failTms = ThreadNow.millis();
                     exitMsg = ThrowableUtil.toString(c);
                     postNotice(notice, noticeConf, ntcWhen, taskerInfo, exitMsg, failTms, WhenFail);
@@ -286,7 +286,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                         saveResult(id, key, execTms, failTms, doneTms, exitMsg, td.getDurFail());
                     }
                     catch (Exception e) {
-                        log.error("failed to save result, id=" + id + ", prop=" + key, e);
+                        log.error("failed to save tiny-task result, id=" + id + ", prop=" + key, e);
                     }
 
                     if (canRelaunch(id, doneTms, failTms, td)) { // canceled
@@ -309,7 +309,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         if (BoxedCastUtil.orTrue(b)) {
             return false;
         }
-        log.info("skip task for not enabled, id={}, prop={}", id, key);
+        log.info("skip tiny-task for not enabled, id={}, prop={}", id, key);
         return true;
     }
 
@@ -319,7 +319,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         for (String s : arrayOrNull(apps, true)) {
             if (s.trim().equals(appName)) return false;
         }
-        log.info("skip task for not apps={}, cur={}, id={}, prop={}", apps, appName, id, key);
+        log.info("skip tiny-task for not apps={}, cur={}, id={}, prop={}", apps, appName, id, key);
         return true;
     }
 
@@ -328,12 +328,12 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         final RunMode rmd = RuntimeMode.getRunMode();
         if (rmd == RunMode.Nothing) {
-            log.info("skip task for not runs={}, cur is Nothing, id={}, prop={}", runs, id, key);
+            log.info("skip tiny-task for not runs={}, cur is Nothing, id={}, prop={}", runs, id, key);
             return true;
         }
 
         if (!RuntimeMode.voteRunMode(runs)) {
-            log.info("skip task for not runs={}, cur={}, id={}, prop={}", runs, rmd, id, key);
+            log.info("skip tiny-task for not runs={}, cur={}, id={}, prop={}", runs, rmd, id, key);
             return true;
         }
 
@@ -466,26 +466,26 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final int duringExec = td.getDuringExec();
         final int sumExec = td.getSumExec();
         if (duringExec > 0 && duringExec <= sumExec + 1) {
-            log.info("remove task for duringExec={}, sumExec={}, id={}, name={}", duringExec, sumExec, id, td.getTaskerName());
+            log.info("remove tiny-task for duringExec={}, sumExec={}, id={}, prop={}", duringExec, sumExec, id, td.getPropkey());
             return false;
         }
 
         final int duringDone = td.getDuringDone();
         final int sumDone = td.getSumDone();
         if (duringDone > 0 && duringDone <= (doneTms < 0 ? sumDone : sumDone + 1)) {
-            log.info("remove task for duringDone={}, sumDone={}, id={}, name={}", duringDone, sumDone, id, td.getTaskerName());
+            log.info("remove tiny-task for duringDone={}, sumDone={}, id={}, prop={}", duringDone, sumDone, id, td.getPropkey());
             return false;
         }
 
         final int duringFail = td.getDuringFail();
         final int durFail = td.getDurFail();
         if (duringFail > 0 && duringFail <= (failTms < 0 ? durFail : durFail + 1)) {
-            log.info("remove task for duringFail={}, durFail={}, id={}, name={}", duringFail, durFail, id, td.getTaskerName());
+            log.info("remove tiny-task for duringFail={}, durFail={}, id={}, prop={}", duringFail, durFail, id, td.getPropkey());
             return false;
         }
 
         if (Cancel.containsKey(id)) { // canceled
-            log.info("remove task for canceled, id={}, name={}", id);
+            log.info("remove tiny-task for canceled, id={}, prop={}", id, td.getPropkey());
             return false;
         }
 
@@ -493,7 +493,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         if (duringBoot > 0) {
             final int bct = Booted.compute(id, (ignored, v) -> v == null ? 1 : v + 1);
             if (bct >= duringBoot) {
-                log.info("remove task for duringBoot={}, id={}, name={}", bct, id, td.getTaskerName());
+                log.info("remove tiny-task for duringBoot={}, id={}, prop={}", bct, id, td.getPropkey());
                 return false;
             }
         }
@@ -514,7 +514,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         // Planned, program was killed before execution ends
         final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
         if (nextMs + timingMiss >= now) {
-            log.info("launch misfire task, id={}, name={}", id, td.getTaskerName());
+            log.info("launch misfire tiny-task, id={}, prop={}", id, td.getPropkey());
             return nextMs;
         }
 
@@ -525,14 +525,14 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         while (true) {
             Instant next = trigger.nextExecution(context);
             if (next == null) {
-                log.info("skip task for trigger not fire, id={}, name={}", id, td.getTaskerName());
+                log.info("skip tiny-task for trigger not fire, id={}, prop={}", id, td.getPropkey());
                 break;
             }
 
             final long nxt = next.toEpochMilli();
             if (nxt < now) {
                 if (timingMiss > 0 && nxt + timingMiss >= now) {
-                    log.info("launch task for misfire={}, id={}, name={}", next, id, td.getTaskerName());
+                    log.info("launch tiny-task for misfire={}, id={}, prop={}", next, id, td.getPropkey());
                     nextExec = nxt;
                     break;
                 }
@@ -541,7 +541,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 }
             }
             else {
-                log.info("launch task for next={}, id={}, name={}", next, id, td.getTaskerName());
+                log.info("launch tiny-task for next={}, id={}, prop={}", next, id, td.getPropkey());
                 nextExec = nxt;
                 break;
             }
@@ -586,13 +586,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private Trigger makeTrigger(WinTaskDefine td, ZoneId zone) {
         final String cron = td.getTimingCron();
         if (StringUtils.isNotEmpty(cron)) {
-            log.info("use trigger cron={}, id={}, name={}", cron, td.getId(), td.getTaskerName());
+            log.info("use trigger cron={}, id={}, prop={}", cron, td.getId(), td.getPropkey());
             return new CronTrigger(cron, zone);
         }
 
         final int idle = td.getTimingIdle();
         if (idle > 0) {
-            log.info("use trigger idle={}, id={}, name={}", idle, td.getId(), td.getTaskerName());
+            log.info("use trigger idle={}, id={}, prop={}", idle, td.getId(), td.getPropkey());
             PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(idle));
             trg.setFixedRate(false);
             return trg;
@@ -600,7 +600,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         final int rate = td.getTimingRate();
         if (rate > 0) {
-            log.info("use trigger rate={}, id={}, name={}", rate, td.getId(), td.getTaskerName());
+            log.info("use trigger rate={}, id={}, prop={}", rate, td.getId(), td.getPropkey());
             PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(rate));
             trg.setFixedRate(true);
             return trg;
@@ -615,7 +615,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final LocalDateTime ldt = DateParser.parseDateTime(duringFrom);
             final long ms = DateLocaling.useEpoch(ldt, zone);
             if (ms > now) {
-                log.info("skip task for duringFrom={}, id={}, name={}", duringFrom, td.getId(), td.getTaskerName());
+                log.info("skip tiny-task for duringFrom={}, id={}, prop={}", duringFrom, td.getId(), td.getPropkey());
                 return true;
             }
         }
@@ -625,26 +625,26 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final LocalDateTime ldt = DateParser.parseDateTime(duringStop);
             final long ms = DateLocaling.useEpoch(ldt, zone);
             if (ms < now) {
-                log.info("skip task for duringStop={}, id={}, name={}", duringStop, td.getId(), td.getTaskerName());
+                log.info("skip tiny-task for duringStop={}, id={}, prop={}", duringStop, td.getId(), td.getPropkey());
                 return true;
             }
         }
 
         final int duringExec = td.getDuringExec();
         if (duringExec > 0 && duringExec <= td.getSumExec()) {
-            log.info("skip task for duringExec={}, sumExec={}, id={}, name={}", duringExec, td.getSumExec(), td.getId(), td.getTaskerName());
+            log.info("skip tiny-task for duringExec={}, sumExec={}, id={}, prop={}", duringExec, td.getSumExec(), td.getId(), td.getPropkey());
             return true;
         }
 
         final int duringDone = td.getDuringDone();
         if (duringDone > 0 && duringDone <= td.getSumDone()) {
-            log.info("skip task for duringDone={}, sumDone={}, id={}, name={}", duringDone, td.getSumDone(), td.getId(), td.getTaskerName());
+            log.info("skip tiny-task for duringDone={}, sumDone={}, id={}, prop={}", duringDone, td.getSumDone(), td.getId(), td.getPropkey());
             return true;
         }
 
         final int duringFail = td.getDuringFail();
         if (duringFail > 0 && duringFail <= td.getDurFail()) {
-            log.info("skip task for duringFail={}, durFail={}, id={}, name={}", duringFail, td.getDurFail(), td.getId(), td.getTaskerName());
+            log.info("skip tiny-task for duringFail={}, durFail={}, id={}, prop={}", duringFail, td.getDurFail(), td.getId(), td.getPropkey());
             return true;
         }
 

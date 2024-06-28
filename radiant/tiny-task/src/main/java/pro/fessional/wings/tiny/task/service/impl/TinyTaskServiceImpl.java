@@ -47,11 +47,11 @@ public class TinyTaskServiceImpl implements TinyTaskService {
         for (Conf cnf : conf) {
             if (cnf.isEnabled() && cnf.isAutorun()) {
                 final boolean cd = tinyTaskExecService.launch(cnf.getId());
-                log.info("schedule task {}, scheduled={}", cnf, cd);
+                log.info("schedule tiny-task {}, scheduled={}", cnf, cd);
                 rst.add(new Task(cnf.getId(), cnf.getKey(), cd));
             }
             else {
-                log.info("skip task {}", cnf);
+                log.info("skip tiny-task {}", cnf);
             }
         }
         return rst;
@@ -63,11 +63,11 @@ public class TinyTaskServiceImpl implements TinyTaskService {
         final boolean cd;
         if (cnf.isEnabled()) {
             cd = tinyTaskExecService.launch(cnf.getId());
-            log.info("schedule task {}, scheduled={}", cnf, cd);
+            log.info("schedule tiny-task {}, scheduled={}", cnf, cd);
         }
         else {
             cd = false;
-            log.info("skip task {}", cnf);
+            log.info("skip tiny-task {}", cnf);
         }
 
         return new Task(cnf.getId(), cnf.getKey(), cd);

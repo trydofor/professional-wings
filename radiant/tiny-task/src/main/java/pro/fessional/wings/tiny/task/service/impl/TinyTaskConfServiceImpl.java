@@ -154,7 +154,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     public TaskerProp database(long id, boolean nonnull) {
         final TaskerProp conf = fetchProp(TaskerProp.class, t -> t.Id.eq(id));
         if (conf == null && nonnull) {
-            throw new IllegalArgumentException("database tasker is null, id=" + id);
+            throw new IllegalArgumentException("database tiny-task is null, id=" + id);
         }
         return conf;
     }
@@ -171,7 +171,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             .fetchOne();
         if (r2 == null || isEmpty(r2.value1()) || isEmpty(r2.value2())) {
             if (nonnull) {
-                throw new IllegalArgumentException("database tasker is null, id=" + id);
+                throw new IllegalArgumentException("database tiny-task is null, id=" + id);
             }
             else {
                 return null;
@@ -188,10 +188,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     @NotNull
     public LinkedHashMap<String, Diff.V<?>> diffProp(long id) {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
-        AssertArgs.notNull(po, "database tasker is null, id={}", id);
+        AssertArgs.notNull(po, "database tiny-task is null, id={}", id);
 
         final TinyTasker anno = referAnno(po.getPropkey(), po.getTaskerBean());
-        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without tiny-task, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);
@@ -229,7 +229,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     private Conf config(@NotNull Class<?> claz, @NotNull Object bean, @NotNull Method method, @Nullable Object para) {
         final TinyTasker anno = method.getAnnotation(TinyTasker.class);
         if (anno == null) {
-            throw new IllegalStateException("need @TinyTasker, tasker method=" + method.getName() + ", class=" + claz.getName());
+            throw new IllegalStateException("need @TinyTasker, tiny-task method=" + method.getName() + ", class=" + claz.getName());
         }
 
         final String entry = TaskerHelper.tokenize(claz, method.getName());
@@ -243,7 +243,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             );
         }
 
-        log.info("find tiny task, prop={}, entry={}", key, entry);
+        log.info("find tiny-task, prop={}, entry={}", key, entry);
 
         if (isEmpty(prop.getTaskerName())) {
             prop.setTaskerName(claz.getSimpleName() + TaskerHelper.MethodPrefix + method.getName());

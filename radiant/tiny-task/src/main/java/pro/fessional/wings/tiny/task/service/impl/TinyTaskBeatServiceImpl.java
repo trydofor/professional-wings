@@ -62,7 +62,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             .from(tr)
             .fetchInto(Long.class);
         if (tid.isEmpty()) {
-            log.debug("no task result to clean");
+            log.debug("no tiny-task result to clean");
             return 0;
         }
 
@@ -81,7 +81,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             .collect(Collectors.toList());
 
         if (cond.isEmpty()) {
-            log.debug("no task condition to clean");
+            log.debug("no tiny-task condition to clean");
             return 0;
         }
 
@@ -90,7 +90,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             .delete(tr)
             .where(DSL.or(cond))
             .execute();
-        log.info("clean task result, count={}", rc);
+        log.info("clean tiny-task result, count={}", rc);
 
         return rc;
     }
@@ -111,13 +111,13 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         final StringBuilder mis = warmed ? new StringBuilder() : null;
         for (WinTaskDefine r : tks) {
-            log.debug("check health task id={}, name={}", r.getId(), r.getTaskerName());
+            log.debug("check health tiny-task id={}, name={}", r.getId(), r.getTaskerName());
             // coordinate to system timezone
             long beat = calcBeatMills(r, now);
             if (beat <= 0) continue;
 
             if (beat < now) {
-                log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
+                log.info("misfired tiny-task id={}, name={}", r.getId(), r.getTaskerName());
                 if (mis != null) {
                     mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');
                 }
@@ -125,7 +125,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         }
 
         warmed = true;
-        return mis == null || mis.isEmpty() ? null : "misfired task id@name\n" + mis;
+        return mis == null || mis.isEmpty() ? null : "misfired tiny-task id@name\n" + mis;
     }
 
     private long calcBeatMills(WinTaskDefine td, long now) {
@@ -154,7 +154,10 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         final CronExpression cronExpr = CronExpression.parse(cron);
         for (int i = 0; i < beatTimes; i++) {
-            beatZdt = cronExpr.next(beatZdt);
+            ZonedDateTime nxt = cronExpr.next(beatZdt);
+            if (nxt == null) break;
+            
+            beatZdt = nxt;
         }
 
         // then convert to instance
