@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.time.ZoneId;
 import java.util.Locale;
@@ -19,10 +18,7 @@ public class LocaleZoneIdUtil {
     @Nullable
     public static ZoneId ZoneIdNullable() {
         final TerminalContext.Context ctx = TerminalContext.get(false);
-        if (!ctx.isNull()) {
-            return ctx.getZoneId();
-        }
-        return LocaleContextHolder.getTimeZone().toZoneId();
+        return ctx.isNull() ? null: ctx.getZoneId();
     }
 
 
@@ -32,10 +28,7 @@ public class LocaleZoneIdUtil {
     @Nullable
     public static Locale LocaleNullable() {
         final TerminalContext.Context ctx = TerminalContext.get(false);
-        if (!ctx.isNull()) {
-            return ctx.getLocale();
-        }
-        return LocaleContextHolder.getLocale();
+        return ctx.isNull() ? null: ctx.getLocale();
     }
 
     /**
