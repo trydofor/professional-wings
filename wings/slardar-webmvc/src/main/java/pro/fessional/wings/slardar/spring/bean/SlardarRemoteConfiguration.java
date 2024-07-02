@@ -24,9 +24,9 @@ public class SlardarRemoteConfiguration {
     public WingsRemoteResolver wingsRemoteResolver(SlardarRemoteProp conf) {
         log.info("SlardarWebmvc spring-bean wingsRemoteResolver");
         final WingsRemoteResolver resolver = new WingsRemoteResolver();
-        resolver.addInnerIp(PropHelper.onlyValue(conf.getInnerIp().values()));
-        resolver.addAgentHeader(PropHelper.onlyValue(conf.getAgentHeader().values()));
-        resolver.addIpHeader(PropHelper.onlyValue(conf.getIpHeader().values()));
+        resolver.addInnerIp(PropHelper.onlyValid(conf.getInnerIp().values()));
+        resolver.addAgentHeader(PropHelper.onlyValid(conf.getAgentHeader().values()));
+        resolver.addIpHeader(PropHelper.onlyValid(conf.getIpHeader().values()));
         return resolver;
     }
 }

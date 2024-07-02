@@ -5,12 +5,13 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import pro.fessional.mirana.cond.IfSetter;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-import static pro.fessional.wings.silencer.support.PropHelper.mergeIfNon;
-import static pro.fessional.wings.silencer.support.PropHelper.nonValue;
+import static pro.fessional.wings.silencer.support.PropHelper.invalid;
+import static pro.fessional.wings.silencer.support.PropHelper.mergeToInvalid;
 
 /**
  * hashCode and equals with
@@ -101,82 +102,59 @@ public class TinyMailConfig extends MailProperties {
         return result;
     }
 
-    /**
-     * use all properties from that
-     */
-    public void adopt(MailProperties that) {
-        if (that == null) return;
-        setHost(that.getHost());
-        setPort(that.getPort());
-        setUsername(that.getUsername());
-        setPassword(that.getPassword());
-        setProtocol(that.getProtocol());
-        setDefaultEncoding(that.getDefaultEncoding());
-        getProperties().putAll(that.getProperties());
-    }
+    public static final IfSetter<TinyMailConfig, MailProperties> PropSetter = (thiz, that, absent, present) -> {
+        if (that == null) return thiz;
 
-    /**
-     * use all properties from that
-     */
-    public void adopt(TinyMailConfig that) {
-        if (that == null) return;
-        adopt((MailProperties) that);
-        dryrun = that.dryrun;
-        name = that.name;
-        from = that.from;
-        to = that.to;
-        cc = that.cc;
-        bcc = that.bcc;
-        reply = that.reply;
-        html = that.html;
-    }
-
-    /**
-     * if this.property is invalid, then use that.property.
-     * except for 'properties' which merge value only if key matches.
-     */
-    public void merge(MailProperties that) {
-        if (that == null) return;
-
-        if (nonValue(getHost())) {
-            setHost(that.getHost());
+        if (absent == IfSetter.Absent.Invalid) {
+            if (invalid(thiz.getHost())) thiz.setHost(that.getHost());
+            if (thiz.getPort() == null) thiz.setPort(that.getPort());
+            if (invalid(thiz.getUsername())) thiz.setUsername(that.getUsername());
+            if (invalid(thiz.getPassword())) thiz.setPassword(that.getPassword());
+            if (invalid(thiz.getProtocol())) thiz.setProtocol(that.getProtocol());
+            if (thiz.getDefaultEncoding() == null) thiz.setDefaultEncoding(that.getDefaultEncoding());
+            mergeToInvalid(thiz.getProperties(), that.getProperties());
         }
-        if (getPort() == null) {
-            setPort(that.getPort());
-        }
-        if (nonValue(getUsername())) {
-            setUsername(that.getUsername());
-        }
-        final String password = getPassword();
-        if (nonValue(password)) {
-            setPassword(that.getPassword());
-        }
-        if (nonValue(getProtocol())) {
-            setProtocol(that.getProtocol());
-        }
-        if (getDefaultEncoding() == null) {
-            setDefaultEncoding(that.getDefaultEncoding());
+        else {
+            thiz.setHost(that.getHost());
+            thiz.setPort(that.getPort());
+            thiz.setUsername(that.getUsername());
+            thiz.setPassword(that.getPassword());
+            thiz.setProtocol(that.getProtocol());
+            thiz.setDefaultEncoding(that.getDefaultEncoding());
+            thiz.getProperties().putAll(that.getProperties());
         }
 
-        mergeIfNon(getProperties(), that.getProperties());
-    }
+        return thiz;
+    };
 
-    /**
-     * if this.property is invalid, then use that.property.
-     */
-    public void merge(TinyMailConfig that) {
-        if (that == null) return;
-        merge((MailProperties) that);
+    public static final IfSetter<TinyMailConfig, TinyMailConfig> ConfSetter = (thiz, that, absent, present) -> {
+        if (that == null) return thiz;
 
-        if (dryrun == null) dryrun = that.dryrun;
-        if (nonValue(name)) name = that.name;
-        if (nonValue(from)) from = that.from;
-        if (to == null) to = that.to;
-        if (cc == null) cc = that.cc;
-        if (bcc == null) bcc = that.bcc;
-        if (nonValue(reply)) reply = that.reply;
-        if (html == null) html = that.html;
-    }
+        PropSetter.set(thiz, that, absent, present);
+
+        if (absent == IfSetter.Absent.Invalid) {
+            if (thiz.dryrun == null) thiz.dryrun = that.dryrun;
+            if (invalid(thiz.name)) thiz.name = that.name;
+            if (invalid(thiz.from)) thiz.from = that.from;
+            if (thiz.to == null) thiz.to = that.to;
+            if (thiz.cc == null) thiz.cc = that.cc;
+            if (thiz.bcc == null) thiz.bcc = that.bcc;
+            if (invalid(thiz.reply)) thiz.reply = that.reply;
+            if (thiz.html == null) thiz.html = that.html;
+        }
+        else {
+            thiz.dryrun = that.dryrun;
+            thiz.name = that.name;
+            thiz.from = that.from;
+            thiz.to = that.to;
+            thiz.cc = that.cc;
+            thiz.bcc = that.bcc;
+            thiz.reply = that.reply;
+            thiz.html = that.html;
+        }
+
+        return thiz;
+    };
 
     public interface Loader {
         /**

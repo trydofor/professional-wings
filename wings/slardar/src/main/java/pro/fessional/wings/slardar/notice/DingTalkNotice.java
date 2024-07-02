@@ -64,8 +64,8 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @Override
     public DingTalkConf combineConfig(@Nullable DingTalkConf that) {
         final DingTalkConf newConf = new DingTalkConf();
-        newConf.adopt(that);
-        newConf.merge(configProp.getDefault());
+        DingTalkConf.ConfSetter.toAny(newConf, that);
+        DingTalkConf.ConfSetter.toInvalid(newConf, configProp.getDefault());
         return newConf;
     }
 

@@ -19,7 +19,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.cast.BoxedCastUtil;
-import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
@@ -59,7 +59,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
-import static pro.fessional.wings.silencer.support.PropHelper.nonValue;
+import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 
 /**
  * @author trydofor
@@ -192,7 +192,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
         else {
             id = msg.getId();
-            Null.notNull(msg.getNextSend(), po::setNextSend);
+            IfSetter.nonnull(po::setNextSend, msg.getNextSend());
         }
 
         po.setId(id);
@@ -211,12 +211,12 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailMark(msg.getMark());
         po.setMailDate(md);
 
-        Null.notNull(msg.getMaxFail(), po::setMaxFail);
-        Null.notNull(msg.getMaxDone(), po::setMaxDone);
+        IfSetter.nonnull(po::setMaxFail, msg.getMaxFail());
+        IfSetter.nonnull(po::setMaxDone, msg.getMaxDone());
 
-        Null.notNull(msg.getRefType(), po::setRefType);
-        Null.notNull(msg.getRefKey1(), po::setRefKey1);
-        Null.notNull(msg.getRefKey2(), po::setRefKey2);
+        IfSetter.nonnull(po::setRefType, msg.getRefType());
+        IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());
+        IfSetter.nonnull(po::setRefKey2, msg.getRefKey2());
 
         // try to check message format
         final TinyMailMessage tms = makeMailMessage(config, po, null);
@@ -247,7 +247,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         final List<AsyncMail> pos = winMailSenderDao
             .ctx()
             .selectFrom(t)
-            .where(t.NextSend.gt(min).and(t.NextSend.lt(max)))
+            .where(t.NextSend.ge(min).and(t.NextSend.lt(max)))
             .fetch()
             .into(WinMailSender.class)
             .stream()
@@ -275,7 +275,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     private TinyMailMessage makeMailMessage(@NotNull TinyMailConfig config, @NotNull WinMailSender po, @Nullable TinyMail msg) {
         final TinyMailMessage message = new TinyMailMessage();
-        message.adopt(config);
+        TinyMailConfig.ConfSetter.toAny(message, config);
         message.setBizId(po.getId());
 
         if (msg == null) {
@@ -294,12 +294,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             message.setBizMark(EmptySugar.emptyToNull(po.getMailMark()));
         }
         else {
-            if (msg.getFrom() != null) message.setFrom(msg.getFrom());
-            if (msg.getTo() != null) message.setTo(msg.getTo());
-            if (msg.getCc() != null) message.setCc(msg.getCc());
-            if (msg.getBcc() != null) message.setBcc(msg.getBcc());
-            if (msg.getReply() != null) message.setReply(msg.getReply());
-            if (msg.getHtml() != null) message.setHtml(msg.getHtml());
+            IfSetter.nonnull(message::setFrom, msg.getFrom());
+            IfSetter.nonnull(message::setTo, msg.getTo());
+            IfSetter.nonnull(message::setCc, msg.getCc());
+            IfSetter.nonnull(message::setReply, msg.getReply());
+            IfSetter.nonnull(message::setHtml, msg.getHtml());
             message.setSubject(msg.getSubject());
             message.setContent(msg.getContent());
             message.setAttachment(msg.getAttachment());
@@ -335,9 +334,9 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMaxFail(BoxedCastUtil.orElse(msg.getMaxFail(), tinyMailServiceProp.getMaxFail()));
         po.setMaxDone(BoxedCastUtil.orElse(msg.getMaxDone(), tinyMailServiceProp.getMaxDone()));
 
-        Null.notNull(msg.getRefType(), po::setRefType);
-        Null.notNull(msg.getRefKey1(), po::setRefKey1);
-        Null.notNull(msg.getRefKey2(), po::setRefKey2);
+        IfSetter.nonnull(po::setRefType, msg.getRefType());
+        IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());
+        IfSetter.nonnull(po::setRefKey2, msg.getRefKey2());
 
         // Optimist lock
         po.setNextLock(0);
@@ -692,7 +691,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String[] elz) {
-        return nonValue(str)
+        return invalid(str)
             ? (elz == null || elz.length == 0
                    ? null
                    : String.join(",", elz))
@@ -701,7 +700,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String elz) {
-        return nonValue(str) ? elz : str;
+        return invalid(str) ? elz : str;
     }
 
     @Nullable

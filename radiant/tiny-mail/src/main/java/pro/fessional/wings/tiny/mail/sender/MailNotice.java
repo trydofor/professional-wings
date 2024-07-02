@@ -64,7 +64,7 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
     @Override
     public boolean send(TinyMailConfig config, String subject, String content) {
         TinyMailMessage message = new TinyMailMessage();
-        message.adopt(config);
+        TinyMailConfig.ConfSetter.toAny(message, config);
         message.setSubject(subject);
         message.setContent(content);
         senderManager.singleSend(message);

@@ -62,7 +62,7 @@ public class SlardarSwaggerConfiguration {
             }
 
             final Map<String, Parameter> params = slardarSwaggerProp.toComPara();
-            final Map<String, String> accepts = PropHelper.onlyValue(slardarSwaggerProp.getAccept());
+            final Map<String, String> accepts = PropHelper.onlyValid(slardarSwaggerProp.getAccept());
             if (params.isEmpty() && accepts.isEmpty()) return;
 
             openApi.getPaths().values()

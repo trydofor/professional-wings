@@ -51,11 +51,7 @@ public class TinyMail {
      * Mail reply, use default if empty
      */
     protected String reply;
-    /**
-     * Whether to send html mail (text/html), otherwise text mail(text/plain).
-     * use default if null
-     */
-    protected Boolean html;
+
     /**
      * Mail subject, use default if empty
      */
@@ -68,6 +64,11 @@ public class TinyMail {
      * Mail attachment, use default if null
      */
     protected Map<String, Resource> attachment = null;
+    /**
+     * Whether to send html mail (text/html), otherwise text mail(text/plain).
+     * use default if null
+     */
+    protected Boolean html;
     /**
      * Business keyword ot mark, space seperated, use default if null
      */

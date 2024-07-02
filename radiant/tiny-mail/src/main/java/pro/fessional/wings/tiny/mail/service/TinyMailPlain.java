@@ -86,7 +86,7 @@ public class TinyMailPlain {
     private String mark;
 
     /**
-     * Mail timed delivery time, system time zone
+     * Schedule to send mail, system time zone
      */
     private LocalDateTime date;
 

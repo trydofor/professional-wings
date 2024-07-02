@@ -18,17 +18,17 @@ import java.util.List;
  * @since 2023-01-06
  */
 @SpringBootTest(properties = {
-        "wings.tiny.mail.service.boot-scan=0",
-        "logging.level.root=INFO",
+    "wings.tiny.mail.service.boot-scan=0",
+    "logging.level.root=INFO",
 })
 @Slf4j
 public class MailSenderManagerTest {
 
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MailSenderManager mailSenderManager;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MailConfigProvider mailConfigProvider;
 
     /**
@@ -61,7 +61,7 @@ public class MailSenderManagerTest {
         try (final StopWatch.Watch ignored = stopWatch.start("single")) {
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();
-                message.adopt(config);
+                TinyMailConfig.ConfSetter.toAny(message, config);
                 String text = "test single tiny mail " + i;
                 message.setSubject(TestingMailUtil.dryrun(text, dryrun));
                 message.setContent(text);
@@ -76,7 +76,7 @@ public class MailSenderManagerTest {
             List<TinyMailMessage> messages = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();
-                message.adopt(config);
+                TinyMailConfig.ConfSetter.toAny(message, config);
                 String text = "test batch tiny mail " + i;
                 message.setSubject(TestingMailUtil.dryrun(text, dryrun));
                 message.setContent(text);
@@ -109,7 +109,7 @@ public class MailSenderManagerTest {
         List<TinyMailMessage> messages = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             TinyMailMessage message = new TinyMailMessage();
-            message.adopt(config);
+            TinyMailConfig.ConfSetter.toAny(message, config);
             message.setSubject(TestingMailUtil.dryrun("test batch tiny mail " + i));
             message.setContent("test batch tiny mail " + i);
             messages.add(message);

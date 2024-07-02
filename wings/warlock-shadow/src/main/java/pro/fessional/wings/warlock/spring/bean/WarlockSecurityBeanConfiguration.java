@@ -393,7 +393,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalWingsEnabled
     public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop, ObjectProvider<Aes> aesProvider) {
         log.info("WarlockShadow spring-bean authStateBuilder");
-        final AuthStateBuilder bean = new AuthStateBuilder(PropHelper.onlyValue(prop.getSafeState()));
+        final AuthStateBuilder bean = new AuthStateBuilder(PropHelper.onlyValid(prop.getSafeState()));
         final Aes aes = aesProvider.getIfAvailable();
         if (aes != null) {
             bean.setAes(aes);

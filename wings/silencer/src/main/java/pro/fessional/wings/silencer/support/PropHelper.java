@@ -31,46 +31,72 @@ public class PropHelper {
     public static final String MaskingValue = "*****";
 
     /**
-     * true if empty or DisabledValue or MaskingValue
+     * invalid if null/blank/DisabledValue/MaskingValue
      */
-    public static boolean nonValue(String str) {
+    public static boolean invalid(String str) {
         return str == null || str.isBlank() || DisabledValue.equals(str) || MaskingValue.equals(str);
     }
 
     /**
-     * true if not non-value
+     * true if not invalid
      */
-    public static boolean hasValue(String value) {
-        return !nonValue(value);
+    public static boolean valid(String value) {
+        return !invalid(value);
     }
 
     /**
-     * uniq and remove non-value
+     * uniq and remove invalid
      */
     @NotNull
-    public static LinkedHashSet<String> onlyValue(Collection<String> values) {
+    public static LinkedHashSet<String> onlyValid(Collection<String> values) {
         if (values == null) return new LinkedHashSet<>();
 
-        final LinkedHashSet<String> set = new LinkedHashSet<>(values);
-        set.removeIf(PropHelper::nonValue);
+        final LinkedHashSet<String> set = new LinkedHashSet<>(values.size());
+        for (String value : values) {
+            if (valid(value)) set.add(value);
+        }
+
         return set;
     }
 
     /**
-     * remove item that has non-value
+     * remain the entry if its value is valid
      */
     @NotNull
-    public static LinkedHashMap<String, String> onlyValue(Map<String, String> values) {
+    public static LinkedHashMap<String, String> onlyValid(Map<String, String> values) {
         if (values == null) return new LinkedHashMap<>();
 
-        final LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        final LinkedHashMap<String, String> map = new LinkedHashMap<>(values.size());
         for (Map.Entry<String, String> en : values.entrySet()) {
             final String value = en.getValue();
-            if (!nonValue(value)) {
+            if (valid(value)) {
                 map.put(en.getKey(), value);
             }
         }
         return map;
+    }
+
+    /**
+     * if this.value is invalid, then use that.value by key
+     *
+     * @param thiz this map
+     * @param that that map
+     */
+    public static void mergeToInvalid(@NotNull Map<String, String> thiz, @Nullable Map<String, String> that) {
+        if (that == null || that.isEmpty()) return;
+
+        if (thiz.isEmpty()) {
+            thiz.putAll(that);
+        }
+        else {
+            for (Map.Entry<String, String> en : thiz.entrySet()) {
+                final String thisVal = en.getValue();
+                if (invalid(thisVal)) {
+                    final String thatVal = that.get(en.getKey());
+                    en.setValue(thatVal);
+                }
+            }
+        }
     }
 
     /**
@@ -93,29 +119,6 @@ public class PropHelper {
     public static Resource resourceString(String url, @NotNull ResourceLoader resourceLoader) {
         if (url == null || url.isBlank()) return null;
         return resourceLoader.getResource(url);
-    }
-
-    /**
-     * if this.value is non-value, then use that.value by key
-     *
-     * @param thiz this map
-     * @param that that map
-     */
-    public static void mergeIfNon(@NotNull Map<String, String> thiz, @Nullable Map<String, String> that) {
-        if (that == null || that.isEmpty()) return;
-
-        if (thiz.isEmpty()) {
-            thiz.putAll(that);
-        }
-        else {
-            for (Map.Entry<String, String> en : thiz.entrySet()) {
-                final String v = en.getValue();
-                if (nonValue(v)) {
-                    final String tv = that.get(en.getKey());
-                    en.setValue(tv);
-                }
-            }
-        }
     }
 
     /**
@@ -168,7 +171,7 @@ public class PropHelper {
             String str = obj.toString();
             if (strip) str = str.strip();
 
-            if (!(drop && nonValue(str))) {
+            if (!(drop && invalid(str))) {
                 empty = false;
                 sb.append(delimiter).append(str);
             }
@@ -177,7 +180,7 @@ public class PropHelper {
     }
 
     /**
-     * parse comma-delimited-list string, strip item, drop non-value
+     * parse comma-delimited-list string, strip item, drop invalid
      */
     @NotNull
     public static String[] commaArray(String commaString) {
@@ -185,7 +188,7 @@ public class PropHelper {
     }
 
     /**
-     * parse comma-delimited-list string, whether to strip item, whether to drop non-value
+     * parse comma-delimited-list string, whether to strip item, whether to drop invalid
      */
     @NotNull
     public static String[] commaArray(String commaString, boolean strip, boolean drop) {
@@ -194,7 +197,7 @@ public class PropHelper {
     }
 
     /**
-     * parse comma-delimited-list string, strip item, drop non-value
+     * parse comma-delimited-list string, strip item, drop invalid
      */
     @NotNull
     public static List<String> commaList(String commaString) {
@@ -202,7 +205,7 @@ public class PropHelper {
     }
 
     /**
-     * parse comma-delimited-list string, whether to strip item, whether to drop non-value
+     * parse comma-delimited-list string, whether to strip item, whether to drop invalid
      */
     @NotNull
     public static List<String> commaList(String commaString, boolean strip, boolean drop) {
@@ -210,7 +213,7 @@ public class PropHelper {
     }
 
     /**
-     * parse delimiter(comma if empty) delimited-list string, whether to strip item, whether to drop non-value
+     * parse delimiter(comma if empty) delimited-list string, whether to strip item, whether to drop invalid
      */
     @NotNull
     public static List<String> delimitedList(String delimitedString, String delimiter, boolean strip, boolean drop) {
@@ -236,7 +239,7 @@ public class PropHelper {
 
     private static void addValue(List<String> result, String str, boolean strip, boolean drop) {
         if (strip) str = str.strip();
-        if (drop && nonValue(str)) return;
+        if (drop && invalid(str)) return;
         result.add(str);
     }
 }

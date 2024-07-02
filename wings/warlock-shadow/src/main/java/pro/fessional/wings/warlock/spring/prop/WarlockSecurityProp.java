@@ -386,7 +386,7 @@ public class WarlockSecurityProp {
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()
-                       .filter(it -> PropHelper.hasValue(it.getValue()))
+                       .filter(it -> PropHelper.valid(it.getValue()))
                        .collect(toMap(Map.Entry::getKey, en -> str2Enum(en.getValue())));
     }
 

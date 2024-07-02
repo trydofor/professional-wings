@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.sender;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.core.io.Resource;
+import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.mirana.text.WhiteUtil;
 
 import java.util.Collections;
@@ -60,33 +61,6 @@ public class TinyMailMessage extends TinyMailConfig {
         return sb.toString();
     }
 
-    /**
-     * Use all `that` values
-     */
-    public void adopt(TinyMailMessage that) {
-        if (that == null) return;
-        super.adopt(that);
-        bizId = that.bizId;
-        bizMark = that.bizMark;
-        subject = that.subject;
-        content = that.content;
-        attachment = that.attachment;
-    }
-
-    /**
-     * Use `that` value if `this` is invalid
-     */
-    public void merge(TinyMailMessage that) {
-        if (that == null) return;
-        super.merge(that);
-
-        if (bizId == null) bizId = that.bizId;
-        if (bizMark == null) bizMark = that.bizMark;
-        if (isEmpty(subject)) subject = that.subject;
-        if (isEmpty(content)) content = that.content;
-        if (attachment == null) attachment = that.attachment;
-    }
-
     public boolean asHtml() {
         if (html != null) return html;
         return asHtml(content, true);
@@ -104,4 +78,28 @@ public class TinyMailMessage extends TinyMailConfig {
 
         return elze;
     }
+
+    public static final IfSetter<TinyMailMessage, TinyMailMessage> MessageSetter = (thiz, that, absent, present) -> {
+        if (that == null) return thiz;
+
+        TinyMailConfig.ConfSetter.set(thiz,that,absent, present);
+
+        if (absent == IfSetter.Absent.Invalid) {
+            if (thiz.bizId == null) thiz.bizId = that.bizId;
+            if (thiz.bizMark == null) thiz.bizMark = that.bizMark;
+            if (isEmpty(thiz.subject)) thiz.subject = that.subject;
+            if (isEmpty(thiz.content)) thiz.content = that.content;
+            if (thiz.attachment == null) thiz.attachment = that.attachment;
+        }
+        else {
+            thiz.bizId = that.bizId;
+            thiz.bizMark = that.bizMark;
+            thiz.subject = that.subject;
+            thiz.content = that.content;
+            thiz.attachment = that.attachment;
+        }
+
+        return thiz;
+    };
+
 }
