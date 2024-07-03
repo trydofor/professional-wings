@@ -33,13 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AsyncControllerTest {
 
-    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    @Setter(onMethod_ = { @Value("http://localhost:${local.server.port}") })
     private String host;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private RestTemplate restTemplate;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private MockMvc mockMvc;
 
     @Test
@@ -85,10 +85,10 @@ public class AsyncControllerTest {
 
         log.info("mock rul={}, type={}, err={}", url, type, err);
         MvcResult mvcResult = mockMvc
-                .perform(get(url).param("err", type))
-                .andExpect(request().asyncStarted())
-                .andDo(MockMvcResultHandlers.log())
-                .andReturn();
+            .perform(get(url).param("err", type))
+            .andExpect(request().asyncStarted())
+            .andDo(MockMvcResultHandlers.log())
+            .andReturn();
 
         try {
             mockMvc.perform(asyncDispatch(mvcResult))

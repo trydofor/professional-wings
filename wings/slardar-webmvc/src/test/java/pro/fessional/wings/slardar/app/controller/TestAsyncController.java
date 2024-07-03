@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 public class TestAsyncController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TestAsyncService testAsyncService;
 
     @RequestMapping(value = "/test/asyn-type.json")

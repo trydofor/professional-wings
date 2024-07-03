@@ -17,6 +17,7 @@ import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.wini18n.impl.StandardI18nServiceJdbc;
 import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
+import pro.fessional.wings.faceless.spring.prop.JournalProp;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import javax.sql.DataSource;
@@ -81,8 +82,11 @@ public class FacelessConfiguration {
 
     @Bean
     @ConditionalWingsEnabled(abs = FacelessEnabledProp.Key$simpleJournal)
-    public DefaultJournalService journalService(LightIdService lightIdService, BlockIdProvider blockIdProvider, CommitJournalModify journalModify) {
-        log.info("Faceless spring-bean journalService");
-        return new DefaultJournalService(lightIdService, blockIdProvider, journalModify);
+    public DefaultJournalService journalService(JournalProp journalProp, LightIdService lightIdService, BlockIdProvider blockIdProvider, CommitJournalModify journalModify) {
+        DefaultJournalService bean = new DefaultJournalService(lightIdService, blockIdProvider, journalModify);
+        bean.setPropagation(journalProp.getPropagation());
+        bean.setAliveSecond(journalProp.getAlive());
+        log.info("Faceless spring-bean journalService, propagation=" + journalProp.getPropagation() + ", alive=" + journalProp.getAlive());
+        return bean;
     }
 }

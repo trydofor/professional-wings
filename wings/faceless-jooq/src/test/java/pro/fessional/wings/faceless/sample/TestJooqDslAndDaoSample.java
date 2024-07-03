@@ -50,9 +50,9 @@ import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelpe
 
 
 @SpringBootTest(properties = {
-        "logging.level.root=DEBUG", // AssertionLogger
-        "wings.faceless.jooq.conf.auto-qualify=true",
-        "wings.faceless.jooq.conf.render-table=ALWAYS",
+    "logging.level.root=DEBUG", // AssertionLogger
+    "wings.faceless.jooq.conf.auto-qualify=true",
+    "wings.faceless.jooq.conf.render-table=ALWAYS",
 //        "wings.faceless.jooq.conf.auto-qualify=false",
 //        "wings.faceless.jooq.conf.render-table=WHEN_MULTIPLE_TABLES",
 })
@@ -61,16 +61,16 @@ import static pro.fessional.wings.testing.faceless.database.TestingDatabaseHelpe
 @Slf4j
 public class TestJooqDslAndDaoSample {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private TestingDatabaseHelper testingDatabaseHelper;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private TstShardingDao tstShardingDao;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private FacelessJooqConfProp prop;
 
     @Test
@@ -87,8 +87,8 @@ public class TestJooqDslAndDaoSample {
     public void test1Dao() {
         final TestingLoggerAssert al = TestingLoggerAssert.install();
         final Pattern alias = prop.isAutoQualify()
-                              ? Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`\\1`.`id` > \\? and `\\1`.`commit_id` < \\?\\)")
-                              : Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`id` > \\? and `commit_id` < \\?\\)");
+            ? Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`\\1`.`id` > \\? and `\\1`.`commit_id` < \\?\\)")
+            : Pattern.compile("from `tst_sharding` as `(\\w+)` where \\(`id` > \\? and `commit_id` < \\?\\)");
         al.rule("alias-count", event -> alias.matcher(event.getFormattedMessage()).find());
         al.rule("table-select", event -> event.getFormattedMessage().contains("from `tst_sharding` where (`id` > ? and `commit_id` < ?)"));
         al.rule("table-update1", event -> event.getFormattedMessage().contains("update `tst_sharding` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?"));
@@ -106,10 +106,10 @@ public class TestJooqDslAndDaoSample {
         log.info("============count {}, ft2'size={}", i, ft1.size());
 //        testcaseNotice("select `id`, `commit_id` from `tst_sharding` where (`id` > ? and `commit_id` < ?) order by `id` desc limit ? offset ?");
         final var ft2 = tstShardingDao.fetch((t, w) -> w
-                .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
-                .select(t.Id, t.CommitId)
-                .order(t.Id.desc())
-                .limit(2)
+            .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
+            .select(t.Id, t.CommitId)
+            .order(t.Id.desc())
+            .limit(2)
         );
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
@@ -163,24 +163,24 @@ public class TestJooqDslAndDaoSample {
         final var t1 = TstShardingTable.TstSharding.as("t1");
         final var t2 = TstShardingTable.TstSharding.as("t2");
         String j1 = dsl
-                .select(t1.Id, t2.CommitId)
-                .from(t1, t2)
-                .where(t1.Id.eq(t2.CommitId))
-                .getSQL();
+            .select(t1.Id, t2.CommitId)
+            .from(t1, t2)
+            .where(t1.Id.eq(t2.CommitId))
+            .getSQL();
 
         String j2 = dsl
-                .select(t1.Id)
-                .from(t1)
-                .where(t1.CommitId.in(dsl.select(t2.CommitId).from(t2).where(t2.Id.eq(t1.Id))))
-                .getSQL();
+            .select(t1.Id)
+            .from(t1)
+            .where(t1.CommitId.in(dsl.select(t2.CommitId).from(t2).where(t2.Id.eq(t1.Id))))
+            .getSQL();
 
         String j3 = dsl
-                .select(t1.Id, t2.Id)
-                .from(t1)
-                .join(t2)
-                .on(t1.Id.eq(t2.Id).and(t1.CommitId.eq(t2.CommitId)))
-                .where(t1.Id.eq(1L))
-                .getSQL();
+            .select(t1.Id, t2.Id)
+            .from(t1)
+            .join(t2)
+            .on(t1.Id.eq(t2.Id).and(t1.CommitId.eq(t2.CommitId)))
+            .where(t1.Id.eq(1L))
+            .getSQL();
 
         log.info(j1);
         log.info(j2);
@@ -193,7 +193,7 @@ public class TestJooqDslAndDaoSample {
         testcaseNotice("Journal Feature");
 
         final var now = LocalDateTime.now();
-        final var journal = new Journal(1L, now, "", "", "", "");
+        final var journal = new Journal(1L, now, 0, System.currentTimeMillis(), "", "", "", "");
 
         final var s1 = new HashMap<>();
         final var t = TstShardingTable.TstSharding;
@@ -296,8 +296,8 @@ public class TestJooqDslAndDaoSample {
         Assertions.assertEquals(t.getName(), d3.getTable());
         Assertions.assertEquals(Arrays.asList(t.Id.getName(), t.LoginInfo.getName(), t.OtherInfo.getName()), d3.getColumn());
         Assertions.assertEquals(Arrays.asList(
-                id, "login by diff update", "other by diff insert",
-                id + 1, "login by diff update", "other by diff insert"
+            id, "login by diff update", "other by diff insert",
+            id + 1, "login by diff update", "other by diff insert"
         ), d3.getValue1());
         Assertions.assertTrue(d3.getValue2().isEmpty());
     }
@@ -333,12 +333,12 @@ public class TestJooqDslAndDaoSample {
         Assertions.assertEquals(Arrays.asList(id, now, DATE_TIME, DATE_TIME, id, "login by diff insert", "other by diff insert", ZH_CN), d0.getValue2());
 
         final JournalDiff d2 = JournalDiffHelper.diffUpdate(t, query, () ->
-                dsl.update(t)
-                   .set(t.CommitId, t.CommitId.add(1))
-                   .set(t.LoginInfo, "login by diff update")
-                   .set(t.ModifyDt, now)
-                   .where(t.Id.eq(id))
-                   .execute());
+            dsl.update(t)
+               .set(t.CommitId, t.CommitId.add(1))
+               .set(t.LoginInfo, "login by diff update")
+               .set(t.ModifyDt, now)
+               .where(t.Id.eq(id))
+               .execute());
         log.warn("diffUpdate2={}", d2);
         Assertions.assertNotNull(d2);
         Assertions.assertEquals(1, d2.getCount());

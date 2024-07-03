@@ -20,14 +20,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2020-06-03
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"wings.silencer.i18n.zoneid=" + DateTimeConverterTest.SYS_TZ, "wings.slardar.datetime.zoned.auto=true"})
+    properties = { "wings.silencer.i18n.zoneid=" + DateTimeConverterTest.SYS_TZ, "wings.slardar.datetime.zoned.auto=true" })
 @AutoConfigureMockMvc
 public class DateTimeConverterTest {
 
     public static final String SYS_TZ = "Asia/Shanghai";
     public static final String SYS_OZ = "+08:00";
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private MockMvc mockMvc;
 
     /**
@@ -137,14 +137,14 @@ public class DateTimeConverterTest {
      */
     private void testLdtZdt(String udt, String cdt, String zdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + udt)
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"zdt\":\"" + zdt + " " + utz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
-                       true));
+                   "{\"zdt\":\"" + zdt + " " + utz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                   true));
     }
 
     /**
@@ -170,16 +170,16 @@ public class DateTimeConverterTest {
      */
     private void testLdtZdtBody(String udt, String cdt, String zdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt-body.json")
-                .header("Zone-Id", utz)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"ldt\":\"" + udt + "\"}");
+            .header("Zone-Id", utz)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"ldt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"zdt\":\"" + zdt + " " + utz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
-                       true));
+                   "{\"zdt\":\"" + zdt + " " + utz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                   true));
     }
 
     /**
@@ -204,14 +204,14 @@ public class DateTimeConverterTest {
      */
     private void testZdtLdt(String udt, String zdt, String cdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + udt)
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"zdt\":\"" + zdt + " " + utz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
-                       true));
+                   "{\"zdt\":\"" + zdt + " " + utz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                   true));
     }
 
     /**
@@ -236,16 +236,16 @@ public class DateTimeConverterTest {
      */
     private void testZdtLdtBody(String udt, String zdt, String cdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt-body.json")
-                .header("Zone-Id", utz)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"zdt\":\"" + udt + "\"}");
+            .header("Zone-Id", utz)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"zdt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"zdt\":\"" + zdt + " " + utz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}"
-                       , true));
+                   "{\"zdt\":\"" + zdt + " " + utz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}"
+                   , true));
     }
 
     /**
@@ -272,14 +272,14 @@ public class DateTimeConverterTest {
      */
     private void testLdtOdt(String udt, String ldt, String odt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-odt.json?d=" + udt)
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"odt\":\"" + odt + " " + otz
-                       + "\",\"ldt\":\"" + ldt
-                       + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}",
-                       true));
+                   "{\"odt\":\"" + odt + " " + otz
+                   + "\",\"ldt\":\"" + ldt
+                   + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}",
+                   true));
     }
 
     /**
@@ -307,16 +307,16 @@ public class DateTimeConverterTest {
      */
     private void testLdtOdtBody(String udt, String ldt, String odt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-odt-body.json")
-                .header("Zone-Id", utz)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"ldt\":\"" + udt + "\"}");
+            .header("Zone-Id", utz)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"ldt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"odt\":\"" + odt + " " + otz
-                       + "\",\"ldt\":\"" + ldt
-                       + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}"
-                       , true));
+                   "{\"odt\":\"" + odt + " " + otz
+                   + "\",\"ldt\":\"" + ldt
+                   + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}"
+                   , true));
     }
 
     /**
@@ -342,14 +342,14 @@ public class DateTimeConverterTest {
      */
     private void testOdtLdt(String udt, String odt, String cdt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/odt-ldt.json?d=" + udt)
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"odt\":\"" + odt + " " + otz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}",
-                       true));
+                   "{\"odt\":\"" + odt + " " + otz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}",
+                   true));
     }
 
     /**
@@ -375,16 +375,16 @@ public class DateTimeConverterTest {
      */
     private void testOdtLdtBody(String udt, String odt, String cdt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/odt-ldt-body.json")
-                .header("Zone-Id", utz)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"odt\":\"" + udt + "\"}");
+            .header("Zone-Id", utz)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"odt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json(
-                       "{\"odt\":\"" + odt + " " + otz
-                       + "\",\"ldt\":\"" + cdt
-                       + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}"
-                       , true));
+                   "{\"odt\":\"" + odt + " " + otz
+                   + "\",\"ldt\":\"" + cdt
+                   + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}"
+                   , true));
     }
 
     @Test
@@ -398,8 +398,8 @@ public class DateTimeConverterTest {
 
     private void testLdLdBody(String d, String v) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ld-ld-body.json")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"ld\":\"" + d + "\"}");
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"ld\":\"" + d + "\"}");
 
         mockMvc.perform(builder)
                .andDo(print())
@@ -417,8 +417,8 @@ public class DateTimeConverterTest {
 
     private void testLtLtBody(String d, String v) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/lt-lt-body.json")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"lt\":\"" + d + "\"}");
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"lt\":\"" + d + "\"}");
 
         mockMvc.perform(builder)
                .andDo(print())
@@ -431,16 +431,16 @@ public class DateTimeConverterTest {
         final String utz = "Asia/Tokyo";
         // User +9 zone, 12 o'clock, convert to system +8 zone, 11 o'clock
         final MockHttpServletRequestBuilder b1q = post("/test/ldx-body-req.json")
-                .header("Zone-Id", utz)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"ldt\":\"2022-10-03T12:34:56\"}");
+            .header("Zone-Id", utz)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"ldt\":\"2022-10-03T12:34:56\"}");
         mockMvc.perform(b1q)
                .andDo(print())
                .andExpect(content().string("2022-10-03T11:34:56"));
 
         // system +8 zone, 12 o'clock, convert to user +9 zone, 13 o'clock
         final MockHttpServletRequestBuilder b1s = post("/test/ldx-body-res.json?d=2022-10-03T12:34:56")
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(b1s)
                .andDo(print())
                .andExpect(content().json("{\"ldt\":\"2022-10-03 13:34:56\"}", true));
@@ -453,7 +453,7 @@ public class DateTimeConverterTest {
 
         // Use +9 zone, 12 o'clock, convert to system +8 zone, 11 o'clock
         final MockHttpServletRequestBuilder b2q = post("/test/ldt-para-req.json?d=2022-10-03T12:34:56")
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(b2q)
                .andDo(print())
                .andExpect(content().string("2022-10-03T11:34:56"));
@@ -462,7 +462,7 @@ public class DateTimeConverterTest {
         // need to use BodyAdvice, which is heavy.
         // This usage is not common, so this scenario is not supported.
         final MockHttpServletRequestBuilder b2s = post("/test/ldt-para-res.json?d=2022-10-03T12:34:56")
-                .header("Zone-Id", utz);
+            .header("Zone-Id", utz);
         mockMvc.perform(b2s)
                .andDo(print())
                .andExpect(content().string("\"2022-10-03 12:34:56\""));
