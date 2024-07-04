@@ -40,14 +40,17 @@ public class TinyMailConfig extends MailProperties {
     /**
      * default mail to
      */
+    @NotNull
     protected String[] to;
     /**
      * default mail cc
      */
+    @Nullable
     protected String[] cc;
     /**
      * default mail bcc
      */
+    @Nullable
     protected String[] bcc;
     /**
      * default mail reply

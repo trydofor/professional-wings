@@ -2,6 +2,7 @@ package pro.fessional.wings.tiny.mail.sender;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.Resource;
 import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.mirana.text.WhiteUtil;
@@ -39,10 +40,11 @@ public class TinyMailMessage extends TinyMailConfig {
     protected String content;
 
     /**
-     * Mail attachments and its names
+     * Mail attachments and its names (can prefix `optional:`)
      */
     protected Map<String, Resource> attachment = null;
 
+    @NotNull
     public Map<String, Resource> getAttachment() {
         return attachment != null ? attachment : Collections.emptyMap();
     }

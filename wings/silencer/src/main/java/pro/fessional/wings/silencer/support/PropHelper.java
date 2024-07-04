@@ -5,10 +5,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ResourceUtils;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.boot.context.config.ConfigDataLocation.OPTIONAL_PREFIX;
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 
 /**
@@ -116,9 +119,59 @@ public class PropHelper {
         return resource.getURL().toExternalForm();
     }
 
+    /**
+     * make sure prefix `optional:`
+     */
+    @NotNull
+    public static String prefixOptional(@NotNull String url) {
+        return url.startsWith(OPTIONAL_PREFIX)
+            ? url
+            : OPTIONAL_PREFIX + url;
+    }
+
+    /**
+     * remove prefix `optional:`, return elz if no prefix
+     */
+    @Contract("_,!null->!null")
+    public static String removeOptional(@NotNull String url, String elz) {
+        boolean ok = false;
+        while (url.startsWith(OPTIONAL_PREFIX)) {
+            url = url.substring(9);
+            ok = true;
+        }
+        return ok ? url : elz;
+    }
+
+    /**
+     * `optional:` prefix will return null if exception.
+     * use ApplicationContext(if prepared) or DefaultResourceLoader as loader by default.
+     */
+    @Nullable
+    public static Resource resourceString(String url) {
+        ResourceLoader resourceLoader = ApplicationContextHelper.isPrepared() ?
+            ApplicationContextHelper.getContext() : new DefaultResourceLoader();
+        return resourceString(url, resourceLoader);
+    }
+
+    /**
+     * `optional:` prefix will return null if exception
+     */
+    @Nullable
     public static Resource resourceString(String url, @NotNull ResourceLoader resourceLoader) {
         if (url == null || url.isBlank()) return null;
-        return resourceLoader.getResource(url);
+
+        String u1 = removeOptional(url, null);
+        if (u1 != null) {
+            try {
+                return resourceLoader.getResource(u1);
+            }
+            catch (Exception e) {
+                return null;
+            }
+        }
+        else {
+            return resourceLoader.getResource(url);
+        }
     }
 
     /**

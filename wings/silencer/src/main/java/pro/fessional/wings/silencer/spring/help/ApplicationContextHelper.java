@@ -39,6 +39,13 @@ public class ApplicationContextHelper {
     }
 
     /**
+     * whether the ApplicationContext is prepared
+     */
+    public static boolean isPrepared() {
+        return context != null;
+    }
+
+    /**
      * Get the value of spring.application.name (if not empty) or context#getApplicationName by default.
      */
     private static String appName = null;

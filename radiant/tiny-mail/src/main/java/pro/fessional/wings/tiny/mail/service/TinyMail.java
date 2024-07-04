@@ -1,9 +1,13 @@
 package pro.fessional.wings.tiny.mail.service;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.Resource;
+import pro.fessional.wings.silencer.support.PropHelper;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -23,6 +27,7 @@ public class TinyMail {
     /**
      * Mail to, use default if null
      */
+    @Nullable
     protected String[] to;
 
     public void setTo(String... to) {
@@ -32,6 +37,7 @@ public class TinyMail {
     /**
      * Mail cc, use default if null
      */
+    @Nullable
     protected String[] cc;
 
     public void setCc(String... cc) {
@@ -41,6 +47,7 @@ public class TinyMail {
     /**
      * Mail bcc, use default if null
      */
+    @Nullable
     protected String[] bcc;
 
     public void setBcc(String... bcc) {
@@ -61,8 +68,9 @@ public class TinyMail {
      */
     protected String content;
     /**
-     * Mail attachment, use default if null
+     * Mail attachment and its name (can prefix `optional:`), use default if null
      */
+    @Nullable
     protected Map<String, Resource> attachment = null;
     /**
      * Whether to send html mail (text/html), otherwise text mail(text/plain).
@@ -118,5 +126,12 @@ public class TinyMail {
     public void setContentHtml(String content, Boolean html) {
         this.content = content;
         this.html = html;
+    }
+
+    public void putAttachment(@NotNull String name, @NotNull Resource resource, boolean optional) {
+        if (attachment == null) attachment = new LinkedHashMap<>();
+        if (optional) name = PropHelper.prefixOptional(name);
+
+        attachment.put(name, resource);
     }
 }

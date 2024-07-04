@@ -17,6 +17,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
 import java.math.BigDecimal;
@@ -368,9 +369,19 @@ public class MailSenderManager {
         }
 
         final Map<String, Resource> files = message.getAttachment();
-        if (files != null) {
-            for (Map.Entry<String, Resource> en : files.entrySet()) {
-                helper.addAttachment(en.getKey(), en.getValue());
+        for (Map.Entry<String, Resource> en : files.entrySet()) {
+            final String name = en.getKey();
+            final String n1 = PropHelper.removeOptional(name, null);
+            if (n1 != null) {
+                try {
+                    helper.addAttachment(n1, en.getValue());
+                }
+                catch (Exception e) {
+                    log.warn("ignore error of optional resource, name=" + name);
+                }
+            }
+            else {
+                helper.addAttachment(name, en.getValue());
             }
         }
 

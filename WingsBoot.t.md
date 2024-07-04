@@ -40,6 +40,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11034 ThisLazyProxyTest: thisLazy with default jdk proxy
 * 11035 TypedClassTest: ResolvableType sugar
 * 11036 CommonPropHelperTest: comma delimited string
+* 11037 CommonPropHelperTest: resource string
 
 ## 12 Faceless
 

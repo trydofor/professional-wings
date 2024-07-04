@@ -3,6 +3,9 @@ package pro.fessional.wings.silencer.support;
 import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.util.List;
 
@@ -10,6 +13,7 @@ import java.util.List;
  * @author trydofor
  * @since 2024-06-28
  */
+@SpringBootTest
 class PropHelperTest {
 
     @Test
@@ -40,5 +44,26 @@ class PropHelperTest {
         Assertions.assertEquals("1", PropHelper.commaString(List.of("", "", "1 "), true, true));
         Assertions.assertEquals("1", PropHelper.commaString(List.of("", "", "1 ", "- "), true, true));
         Assertions.assertEquals("1 ,- ", PropHelper.commaString(List.of("", "", "1 ", "- "), false, true));
+    }
+
+    @Test
+    @TmsLink("C11037")
+    void testResourceString() {
+        ClassPathResource app = new ClassPathResource("application.properties");
+        Assertions.assertTrue(app.exists());
+        String res1 = PropHelper.stringResource(app);
+        Assertions.assertEquals("classpath:application.properties", res1);
+
+        Resource res2 = PropHelper.resourceString("classpath:application.properties");
+        Assertions.assertTrue(res2.exists());
+
+        Resource res3 = PropHelper.resourceString("optional:classpath:application.properties");
+        Assertions.assertTrue(res3.exists());
+
+        Resource res4 = PropHelper.resourceString("optional:classpath:application.properties-404");
+        Assertions.assertFalse(res4.exists());
+
+        Resource res5 = PropHelper.resourceString("optional:file:./application.properties-404");
+        Assertions.assertFalse(res5.exists());
     }
 }
