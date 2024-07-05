@@ -64,9 +64,9 @@ public class SlardarEventConfiguration {
         @Qualifier(slardarEventExecutor) Executor executor) {
         log.info("Slardar spring-runs eventPublishHelperRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv4Application, ignored -> {
-            EventPublishHelper.setExecutor(executor);
+            EventPublishHelper.prepareAsyncExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
-            EventPublishHelper.setSpringPublisher(publisher);
+            EventPublishHelper.prepareSpringPublisher(publisher);
             log.info("Slardar conf eventPublishHelper ApplicationEventMulticaster=" + multicaster.getClass());
             if (multicaster instanceof SimpleApplicationEventMulticaster mc) {
                 try {

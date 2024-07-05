@@ -32,17 +32,19 @@ public class ApplicationContextHelper {
 
     private static ConfigurableApplicationContext context;
     private static ConfigurableEnvironment environment;
+    private static boolean helperPrepared = false;
 
-    protected ApplicationContextHelper(ConfigurableApplicationContext ctx) {
+    protected ApplicationContextHelper(@NotNull ConfigurableApplicationContext ctx) {
         context = Objects.requireNonNull(ctx);
         environment = Objects.requireNonNull(ctx.getEnvironment());
+        helperPrepared = true;
     }
 
     /**
-     * whether the ApplicationContext is prepared
+     * whether this helper is prepared
      */
     public static boolean isPrepared() {
-        return context != null;
+        return helperPrepared;
     }
 
     /**

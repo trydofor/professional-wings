@@ -29,8 +29,34 @@ public class WingsCacheHelper {
 
     private static final Map<String, CacheManager> NameManager = new ConcurrentHashMap<>();
     private static final Map<CacheManager, Set<String>> ManagerName = new ConcurrentHashMap<>();
-    private static CacheManager MemoryManager;
-    private static CacheManager ServerManager;
+    private static CacheManager MemoryManager = null;
+    private static CacheManager ServerManager = null;
+    private static boolean helperPrepared = false;
+
+
+    /**
+     * Set CacheManager name and its Resolver
+     */
+    protected WingsCacheHelper(Map<String, CacheManager> mngs) {
+        NameManager.putAll(mngs);
+
+        MemoryManager = NameManager.get(WingsCache.Manager.Memory);
+        ServerManager = NameManager.get(WingsCache.Manager.Server);
+
+        ManagerName.clear();
+        for (Map.Entry<String, CacheManager> en : NameManager.entrySet()) {
+            ManagerName.computeIfAbsent(en.getValue(), k -> new HashSet<>())
+                       .add(en.getKey());
+        }
+        helperPrepared = true;
+    }
+
+    /**
+     * whether this helper is prepared
+     */
+    public static boolean isPrepared() {
+        return helperPrepared;
+    }
 
     @Nullable
     public static CacheManager getCacheManager(String name) {
@@ -66,22 +92,6 @@ public class WingsCacheHelper {
         final Cache cache = ServerManager.getCache(name);
         AssertState.notNull(cache, "server cache is null, name={}", name);
         return cache;
-    }
-
-    /**
-     * Set CacheManager name and its Resolver
-     */
-    public static void putManagers(Map<String, CacheManager> mngs) {
-        NameManager.putAll(mngs);
-
-        MemoryManager = NameManager.get(WingsCache.Manager.Memory);
-        ServerManager = NameManager.get(WingsCache.Manager.Server);
-
-        ManagerName.clear();
-        for (Map.Entry<String, CacheManager> en : NameManager.entrySet()) {
-            ManagerName.computeIfAbsent(en.getValue(), k -> new HashSet<>())
-                       .add(en.getKey());
-        }
     }
 
     @NotNull
@@ -212,8 +222,9 @@ public class WingsCacheHelper {
         return mt == null ? emptyMap() : mt.getCaches();
     }
 
-    public static void setOperation(Method method, Collection<CacheOperation> opr) {
+    public static void prepareOperation(Method method, Collection<CacheOperation> opr) {
         if (opr == null || opr.isEmpty()) return;
+
         final Map<String, Meta> entry = ClassCacheMeta.computeIfAbsent(method.getDeclaringClass(), k -> new ConcurrentHashMap<>());
         final Meta top = entry.computeIfAbsent(Null.Str, k -> new Meta());
         final Meta mod = entry.computeIfAbsent(method.getName(), k -> new Meta());

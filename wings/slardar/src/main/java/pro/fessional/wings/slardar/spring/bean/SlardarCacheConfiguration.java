@@ -125,7 +125,7 @@ public class SlardarCacheConfiguration {
             }
 
             // name or resolver name
-            WingsCacheHelper.putManagers(managerMap);
+            new WingsCacheHelper(managerMap){};
 
             CacheManager pre = null;
             String cnm = null;

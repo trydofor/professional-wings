@@ -204,26 +204,32 @@ public class JacksonHelper {
 
     private static ObjectMapper JsonWings = JsonPlain;
     private static XmlMapper XmlWings = XmlPlain;
+    private static boolean wingsPrepared = false;
 
-    protected static void bindJsonWings(@NotNull ObjectMapper mapper) {
-        JsonWings = buildWings(mapper);
+    protected static void prepareWings(@NotNull ObjectMapper json, @NotNull XmlMapper xml) {
+        JsonWings = buildWings(json);
+        XmlWings = buildWings(xml);
+        wingsPrepared = true;
     }
 
-    protected static void bindXmlWings(@NotNull XmlMapper mapper) {
-        XmlWings = buildWings(mapper);
-    }
 
     private static ObjectMapper JsonBean = null;
     private static XmlMapper XmlBean = null;
+    private static boolean beanPrepared = false;
 
-    protected static void bindJsonBean(@NotNull ObjectMapper mapper) {
-        JsonBean = mapper;
+    protected static void prepareBean(@NotNull ObjectMapper json, @NotNull XmlMapper xml) {
+        JsonBean = json;
+        XmlBean = xml;
+        beanPrepared = true;
     }
 
-    protected static void bindXmlBean(@NotNull XmlMapper mapper) {
-        XmlBean = mapper;
+    public static boolean isPrepared(@NotNull Style style) {
+        return switch (style) {
+            case Plain -> true;
+            case Wings -> wingsPrepared;
+            case Bean -> beanPrepared;
+        };
     }
-
     ////
 
     /**

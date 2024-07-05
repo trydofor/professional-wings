@@ -7,6 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -15,12 +16,28 @@ import java.util.concurrent.ScheduledFuture;
  */
 public class TaskSchedulerHelper {
 
-    protected static ThreadPoolTaskScheduler FastScheduler;
-    protected static ThreadPoolTaskScheduler ScheduledScheduler;
+    private static ThreadPoolTaskScheduler FastScheduler;
+    private static ThreadPoolTaskScheduler ScheduledScheduler;
+    private static ThreadPoolTaskSchedulerBuilder FastBuilder;
+    private static ThreadPoolTaskSchedulerBuilder ScheduledBuilder;
+    private static boolean helperPrepared = false;
 
-    protected TaskSchedulerHelper(ThreadPoolTaskScheduler fast, ThreadPoolTaskScheduler scheduled) {
-        FastScheduler = fast;
-        ScheduledScheduler = scheduled;
+
+    protected TaskSchedulerHelper(@NotNull ThreadPoolTaskScheduler fast, @NotNull ThreadPoolTaskScheduler scheduled,
+                                  @NotNull ThreadPoolTaskSchedulerBuilder fastBuilder, @NotNull ThreadPoolTaskSchedulerBuilder scheduledBuilder) {
+        FastScheduler = Objects.requireNonNull(fast);
+        ScheduledScheduler = Objects.requireNonNull(scheduled);
+        FastBuilder = Objects.requireNonNull(fastBuilder);
+        ScheduledBuilder = Objects.requireNonNull(scheduledBuilder);
+        helperPrepared = true;
+    }
+
+
+    /**
+     * whether this helper is prepared
+     */
+    public static boolean isPrepared() {
+        return helperPrepared;
     }
 
     /**
@@ -88,9 +105,6 @@ public class TaskSchedulerHelper {
     public static ScheduledFuture<?> Scheduled(Trigger trigger, @NotNull Runnable task) {
         return Scheduled().schedule(task, trigger);
     }
-
-    protected static ThreadPoolTaskSchedulerBuilder FastBuilder;
-    protected static ThreadPoolTaskSchedulerBuilder ScheduledBuilder;
 
     /**
      * Get Light ThreadPoolTaskSchedulerBuilder, IllegalStateException if nonull but null.

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.core.task.AsyncTaskExecutor;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
@@ -18,12 +19,26 @@ import java.util.function.Supplier;
  */
 public class AsyncHelper {
 
-    protected static Executor AsyncExecutor;
-    protected static AsyncTaskExecutor AppTaskExecutor;
+    private static Executor AsyncExecutor = null;
+    private static AsyncTaskExecutor AppTaskExecutor = null;
+    private static ThreadPoolTaskExecutorBuilder ExecutorBuilder;
+    private static AsyncTaskExecutor LiteExecutor;
+    private static boolean helperPrepared = false;
 
-    protected AsyncHelper(Executor asy, AsyncTaskExecutor app) {
-        AsyncExecutor = asy;
-        AppTaskExecutor = app;
+    protected AsyncHelper(@NotNull Executor async, @NotNull AsyncTaskExecutor appTask,
+                          @NotNull ThreadPoolTaskExecutorBuilder builder, @NotNull AsyncTaskExecutor lite) {
+        AsyncExecutor = Objects.requireNonNull(async);
+        AppTaskExecutor = Objects.requireNonNull(appTask);
+        ExecutorBuilder = Objects.requireNonNull(builder);
+        LiteExecutor = Objects.requireNonNull(lite);
+        helperPrepared = true;
+    }
+
+    /**
+     * whether this helper is prepared
+     */
+    public static boolean isPrepared() {
+        return helperPrepared;
     }
 
     /**
@@ -62,11 +77,6 @@ public class AsyncHelper {
 
         return AppTaskExecutor;
     }
-
-
-    protected static ThreadPoolTaskExecutorBuilder ExecutorBuilder;
-    protected static AsyncTaskExecutor LiteExecutor;
-
 
     /**
      * @see org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor#DEFAULT_TASK_EXECUTOR_BEAN_NAME
