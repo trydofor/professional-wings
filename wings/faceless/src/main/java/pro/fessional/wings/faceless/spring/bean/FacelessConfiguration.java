@@ -49,10 +49,10 @@ public class FacelessConfiguration {
             if (md) break;
         }
 
-        log.info("Faceless🦄 database-current-url=" + ctx.cacheJdbcUrl(ctx.getCurrent()));
+        log.info("Faceless🦄 database Current-jdbcurl=" + ctx.cacheJdbcUrl(ctx.getCurrent()));
         Map<String, DataSource> backends = ctx.getBackends();
         for (Map.Entry<String, DataSource> e : backends.entrySet()) {
-            log.info("Faceless🦄 initSafeTable database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
+            log.info("Faceless🦄 initSafeTable database " + e.getKey() + "-jdbcurl=" + ctx.cacheJdbcUrl(e.getValue()));
             JdbcTemplateHelper.initSafeTable(new JdbcTemplate(e.getValue()));
         }
 

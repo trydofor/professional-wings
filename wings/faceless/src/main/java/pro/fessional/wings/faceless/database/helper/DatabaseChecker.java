@@ -2,13 +2,16 @@ package pro.fessional.wings.faceless.database.helper;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.JdbcUtils;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -113,7 +116,9 @@ public class DatabaseChecker {
             sb.append("\njvm-zone-offset=").append(ZoneOffset.ofTotalSeconds(jvOff));
 
             if (Math.abs(jvOff) <= Math.abs(off) && Math.abs(dbOff) <= Math.abs(off)) {
-                log.info(sb.substring(1).replace("\n", ", "));
+                for (String s : sb.substring(1).split("\n")) {
+                    log.info(s);
+                }
                 return;
             }
 
@@ -137,18 +142,29 @@ public class DatabaseChecker {
     }
 
     /**
-     * output the database version in the log
+     * output the database version in the log, return flywave revision if found
      */
-
     public static long version(DataSource ds) {
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
 
+        log.info("jdbcurl={}", DataSourceContext.extractUrl(ds));
         final String ver = isH2(ds) ? "H2VERSION()" : "VERSION()";
         tmpl.query("SELECT " + ver + " FROM dual", rs -> {
-            log.info("{}={}, primary={}", ver, rs.getString(1), DataSourceContext.extractUrl(ds));
+            log.info("database {}={}", ver, rs.getString(1));
         });
 
-        String sql = "SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
+        String reviTable = null;
+        try {
+            reviTable = ApplicationContextHelper.getProperties("wings.faceless.flywave.ver.schema-version-table");
+        }
+        catch (Exception e) {
+            DummyBlock.ignore(e);
+        }
+        if (StringUtils.isBlank(reviTable)) {
+            reviTable = "sys_schema_version";
+        }
+
+        String sql = "SELECT MAX(revision) FROM " + JdbcTemplateHelper.safeName(reviTable) + " WHERE apply_dt > '1111-11-11'";
         Long rev = null;
         try {
             rev = tmpl.query(sql, JdbcTemplateHelper.FirstLongOrNull);

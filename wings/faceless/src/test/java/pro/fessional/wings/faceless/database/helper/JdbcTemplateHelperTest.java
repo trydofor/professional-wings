@@ -25,6 +25,10 @@ class JdbcTemplateHelperTest {
     @Test
     @TmsLink("12148")
     void safeTable() {
+        assertEquals("`sys_light_sequence`",JdbcTemplateHelper.safeName("sys_light_sequence"));
+        assertEquals("`sys_light_sequence`",JdbcTemplateHelper.safeName("`sys_light_sequence`"));
+        assertEquals("`sys_light_sequence`",JdbcTemplateHelper.safeName("`sys_light``_sequence`"));
+
         // init the context
         assertNotNull(sourceContext);
 
