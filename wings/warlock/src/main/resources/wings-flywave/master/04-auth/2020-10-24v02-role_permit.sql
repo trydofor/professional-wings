@@ -88,3 +88,5 @@ VALUES (1, 1330101, 1, NOW(3), 0),
 -- Grant super perm to root user
 REPLACE INTO `win_user_grant`(`refer_user`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330102, 1, NOW(3), 0);
+
+-- CALL FLYWAVE('2020-10-24v02-role_permit.sql');

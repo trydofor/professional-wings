@@ -35,3 +35,5 @@ WHERE time_fail > '2000-01-01';
 
 ALTER TABLE `win_task_result`
     DROP COLUMN `time_fail`;
+
+-- CALL FLYWAVE('2021-10-26v02-task-tune.sql');

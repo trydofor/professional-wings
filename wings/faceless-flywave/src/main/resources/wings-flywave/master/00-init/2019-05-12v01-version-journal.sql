@@ -32,11 +32,11 @@ CREATE TABLE `sys_schema_journal` (
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='102/Table Trigger';
 
--- sys_schema_version@plain
-INSERT IGNORE INTO `sys_schema_version` (`revision`, `commit_id`, `upto_sql`, `undo_sql`, `apply_dt`)
-VALUES (2019051201, 0, '', '', NOW(3));
-
 -- sys_schema_journal@plain
 REPLACE INTO `sys_schema_journal` (`table_name`, `commit_id`, `ddl_instbl`, `ddl_instrg`, `ddl_updtbl`, `ddl_updtrg`, `ddl_deltbl`, `ddl_deltrg`)
 VALUES ('sys_schema_journal', 0, '', '', '', '', '', ''),
        ('sys_schema_version', 0, '', '', '', '', '', '');
+
+-- sys_schema_version@plain
+INSERT IGNORE INTO `sys_schema_version` (`revision`, `apply_dt`, `commit_id`,`comments`, `upto_sql`, `undo_sql`)
+VALUES (2019051201, NOW(3), 0, 'master/00-init/2019-05-12v01-version-journal.sql', '', '');

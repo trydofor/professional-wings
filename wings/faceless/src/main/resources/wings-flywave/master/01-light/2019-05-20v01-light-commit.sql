@@ -29,3 +29,5 @@ VALUES ('singleton_lightid_blockid', 0, 10000000, 100, 'default block_id'),
 -- sys_commit_journal@plain
 REPLACE INTO `sys_commit_journal` (`id`, `event_name`)
 VALUES (0, 'system_manual_init');
+
+-- CALL FLYWAVE('2019-05-20v01-light-commit.sql');

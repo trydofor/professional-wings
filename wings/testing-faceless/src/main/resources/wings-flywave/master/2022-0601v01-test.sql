@@ -45,3 +45,5 @@ CREATE TABLE `tst_normal_table` (
 
 REPLACE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
 VALUES ('tst_normal_table', 0, 1000, 1, 'for test step 1');
+
+-- CALL FLYWAVE('2022-0601v01-test.sql');

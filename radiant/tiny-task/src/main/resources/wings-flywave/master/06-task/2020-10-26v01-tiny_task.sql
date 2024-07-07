@@ -61,3 +61,5 @@ CREATE TABLE `win_task_result` (
     INDEX ix_task_id (`task_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='122/Task Result';
+
+-- CALL FLYWAVE('2020-10-26v01-tiny_task.sql');

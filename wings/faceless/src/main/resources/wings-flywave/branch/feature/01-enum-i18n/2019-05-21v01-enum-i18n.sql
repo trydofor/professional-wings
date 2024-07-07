@@ -179,3 +179,5 @@ VALUES ('sys_constant_enum', 'hint', 'standard_language.zh_CN', 'zh_CN', '简体
 
        ('sys_constant_enum', 'hint', 'standard_language.en_US', 'en_US', 'English(US)'),
        ('sys_constant_enum', 'hint', 'standard_language.en_US', 'zh_CN', '美国英语');
+
+-- CALL FLYWAVE('2019-05-21v01-enum-i18n.sql');

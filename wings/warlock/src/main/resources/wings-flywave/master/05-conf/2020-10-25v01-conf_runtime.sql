@@ -15,3 +15,5 @@ CREATE TABLE `win_conf_runtime` (
 INSERT IGNORE INTO `win_conf_runtime` (`key`, `current`, `previous`, `initial`, `outline`, `comment`, `handler`)
 VALUES ('pro.fessional.wings.warlock.service.conf.mode.RunMode', 'Local', 'pro.fessional.wings.warlock.service.conf.mode.RunMode', '', 'Local', 'RunMode', 'prop')
      , ('pro.fessional.wings.warlock.service.conf.mode.ApiMode', 'Nothing', 'pro.fessional.wings.warlock.service.conf.mode.ApiMode', '', 'Nothing', 'ApiMode', 'prop');
+
+-- CALL FLYWAVE('2020-10-25v01-conf_runtime.sql');

@@ -15,3 +15,5 @@ UPDATE `win_conf_runtime`
 SET outline   = `key`,
     `initial` = 'Nothing'
 WHERE `key` = 'pro.fessional.wings.warlock.service.conf.mode.ApiMode';
+
+-- CALL FLYWAVE('2021-10-26v03-conf-size.sql');

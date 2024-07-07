@@ -72,3 +72,5 @@ VALUES (0, NOW(3), 0, 'nobody', UUID(), 1200103, '', 'zh_CN', 1010201, 'system u
 
 INSERT IGNORE INTO `win_user_authn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
 VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', UUID()), '2999-09-09');
+
+-- CALL FLYWAVE('2020-10-24v01-user_login.sql');

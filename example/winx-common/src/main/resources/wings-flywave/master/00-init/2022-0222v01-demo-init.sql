@@ -26,3 +26,5 @@ VALUES (2100100, 'user_type', 'user_type', 'User Type', 'classpath:/wings-tmpl/C
        (2100101, 'user_type', 'customer', 'customer', 'customer'),
        (2100102, 'user_type', 'operator', 'operator', 'operator'),
        (2100103, 'user_type', 'helpdesk', 'helpdesk', 'helpdesk');
+
+-- CALL FLYWAVE('2022-0222v01-demo-init.sql');

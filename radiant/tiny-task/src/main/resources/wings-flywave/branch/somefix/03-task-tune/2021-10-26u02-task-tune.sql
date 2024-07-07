@@ -29,3 +29,5 @@ WHERE exit_fail = 1;
 
 ALTER TABLE `win_task_result`
     DROP COLUMN `exit_fail`;
+
+-- CALL FLYWAVE('2021-10-26u02-task-tune.sql');
