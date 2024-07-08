@@ -21,6 +21,12 @@ import static pro.fessional.wings.warlock.project.Warlock1SchemaManager.includeW
         "spring.datasource.url=" + Devops0ProjectConstant.JDBC_URL,
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
+//        "wings.silencer.i18n.zoneid=UTC",
+        "wings.enabled.faceless.flywave=true",
+        "wings.faceless.flywave.auto-init=true",
+        "wings.faceless.flywave.checker=true",
+        "java.awt.headless=false",
+        "debug=true"
 })
 class Devops1SchemaManagerTest {
 
@@ -34,6 +40,15 @@ class Devops1SchemaManagerTest {
         manager.mergePublish(2022_0222_01L,
                 includeWarlockPath(),
                 Helper::master
+        );
+    }
+
+    @Test
+    void bumpSchema() {
+        final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
+        manager.mergeBumping(2022_0222_01L,
+            includeWarlockPath(),
+            Helper::master
         );
     }
 

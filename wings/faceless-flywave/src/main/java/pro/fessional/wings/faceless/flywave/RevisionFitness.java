@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * @author trydofor
@@ -33,7 +34,7 @@ public class RevisionFitness {
         if (fit == null) return;
         final Act act = fit.getLost();
         if (act == null || act == Act.SKIP) {
-            log.info("skip fit {}", msg);
+            log.info("skip fit-revi {}", msg);
             return;
         }
 
@@ -45,11 +46,11 @@ public class RevisionFitness {
         final Set<String> revi = fit.getRevi();
         for (String str : revi) {
             Long r = AnyIntegerUtil.obj64(str);
-            reviAct.computeIfAbsent(r, ignored -> new HashSet<>()).add(act);
-            reviMsg.computeIfAbsent(r, ignored -> new HashSet<>()).add(msg);
+            reviAct.computeIfAbsent(r, ignored -> new TreeSet<>()).add(act);
+            reviMsg.computeIfAbsent(r, ignored -> new TreeSet<>()).add(msg);
         }
 
-        log.info("found fit {}. `wings.faceless.flywave.fit[{}].lost=SKIP` to skip", revi, msg);
+        log.info("found fit-revi {}. `wings.faceless.flywave.fit[{}].lost=SKIP` to skip", revi, msg);
     }
 
     public void addFits(Map<String, Fit> fits) {
@@ -72,7 +73,6 @@ public class RevisionFitness {
             for (Set<Act> at : revi.values()) {
                 if (!autoInit && at.contains(Act.EXEC)) {
                     throw new IllegalStateException("""
-
                         Wings `flywave revision` do NOT exist, and Auto Init is dangerous, you can,
                         1.stop checker: `wings.faceless.flywave.checker=false`
                         2.revision fitness do NOT contain `EXEC`
@@ -89,10 +89,10 @@ public class RevisionFitness {
             final Set<Act> ts = en.getValue();
             final Set<String> ms = reviMsg.get(rv);
             if (ts.contains(Act.WARN)) {
-                log.warn("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
+                log.warn("Wings Revision Lost fit-revi={}. Manual={}", rv, manual(ms));
             }
             if (ts.contains(Act.FAIL)) {
-                log.error("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
+                log.error("Wings Revision Lost fit-revi={}. Manual={}", rv, manual(ms));
                 failed = true;
             }
             if (ts.contains(Act.EXEC)) {
@@ -101,7 +101,7 @@ public class RevisionFitness {
         }
 
         if (failed) {
-            throw new IllegalStateException("Wings Revision Lost revi need FAIL");
+            throw new IllegalStateException("Wings Revision Lost fit-revi need FAIL");
         }
         if (exec.isEmpty()) {
             return;
@@ -116,7 +116,7 @@ public class RevisionFitness {
             final Set<String> ms = en.getValue();
             final RevisionSql sql = scan.get(rv);
             if (sql == null) {
-                log.error("Wings Revision Lost And Failed to Scan. revi={} by={}", rv, ms);
+                log.error("Wings Revision Lost And Failed to Scan. fit-revi={} by={}", rv, ms);
                 errors = true;
             }
         }
@@ -134,12 +134,12 @@ public class RevisionFitness {
             if (rv == WingsRevision.V00_19_0512_01_Schema.revision()) {
                 TreeMap<Long, RevisionSql> init = new TreeMap<>();
                 init.put(rv, sql);
-                log.info("Wings Revision force to init revi={}, cid={}, by={}", rv, cid, ms);
+                log.info("Wings Revision force to init fit-revi={}, cid={}, by={}", rv, cid, ms);
                 manager.checkAndInitSql(init, cid, true);
             }
             else {
                 manager.forceUpdateSql(sql, cid);
-                log.info("Wings Revision force to apply revi={}, cid={}, by={}", rv, cid, ms);
+                log.info("Wings Revision force to apply fit-revi={}, cid={}, by={}", rv, cid, ms);
                 manager.forceApplyBreak(rv, cid, true, null);
             }
         }
@@ -198,13 +198,13 @@ public class RevisionFitness {
 
         if (reviStatus == null || reviStatus.isEmpty()) {
             if (unInit) {
-                log.warn("Wings Revision UnInit all-revi");
+                log.warn("Wings Revision UnInit all fit-revi");
                 final TreeMap<Long, Set<Act>> map = new TreeMap<>(reviAct);
                 map.put(UnInit, Set.of(Act.WARN));
                 return map;
             }
             else {
-                log.info("Wings Revision Unapply all-revi");
+                log.info("Wings Revision Unapply all fit-revi");
                 return reviAct;
             }
         }
@@ -236,13 +236,17 @@ public class RevisionFitness {
         for (Map.Entry<Long, Set<Act>> revi : reviAct.entrySet()) {
             final Long rv = revi.getKey();
             final Status st = reviStatus.get(rv);
-            if (st != Status.Applied) {
+            if (st == Status.Applied) {
+                log.info("found fit-revi={} had applied", rv);
+            }
+            else {
                 map.put(rv, revi.getValue());
-                log.info("Wings Revision Unapply revi={}, status={}", rv, st);
+                Set<String> keys = reviMsg.get(rv);
+                log.info("found fit-revi={} not applied, status={}", rv, st);
             }
         }
         if (unInit) {
-            log.warn("Wings Revision UnInit all-revi");
+            log.warn("Wings Revision UnInit all fit-revi");
             map.put(UnInit, Set.of(Act.WARN));
             return map;
         }

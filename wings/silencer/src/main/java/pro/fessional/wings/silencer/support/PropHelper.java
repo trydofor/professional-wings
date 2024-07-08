@@ -143,6 +143,14 @@ public class PropHelper {
     }
 
     /**
+     * remove prefix `optional:`, return the input url if no prefix
+     */
+    @NotNull
+    public static String removeOptional(@NotNull String url) {
+        return removeOptional(url, url);
+    }
+
+    /**
      * `optional:` prefix will return null if exception.
      * use ApplicationContext(if prepared) or DefaultResourceLoader as loader by default.
      */
