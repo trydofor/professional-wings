@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailParseException;
@@ -31,6 +32,7 @@ import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.support.PropHelper;
+import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
@@ -57,7 +59,6 @@ import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
 import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 
@@ -89,8 +90,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     @Setter(onMethod_ = { @Autowired(required = false) })
     protected List<StatusHook> statusHooks;
 
-    @Setter(onMethod_ = { @Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
-    private ThreadPoolTaskScheduler taskScheduler;
+    // init afterPropertiesSet
+    protected ThreadPoolTaskScheduler mailScheduler;
 
     @SuppressWarnings("all")
     private final PriorityBlockingQueue<AsyncMail> asyncMails = new PriorityBlockingQueue<>();
@@ -211,6 +212,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailMark(msg.getMark());
         po.setMailDate(md);
 
+        // PropertyMapper
         IfSetter.nonnull(po::setMaxFail, msg.getMaxFail());
         IfSetter.nonnull(po::setMaxDone, msg.getMaxDone());
 
@@ -260,16 +262,29 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         log.info("plan misfire tiny-mail, size={}", size);
         if (size > 0) {
             asyncMails.addAll(pos);
-            taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(now));
+            mailScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(now));
         }
         return size;
     }
 
     @Override
     public void afterPropertiesSet() {
+        ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder();
+        TaskSchedulingProperties scheduler = tinyMailServiceProp.getScheduler();
+        builder = builder.poolSize(scheduler.getPool().getSize());
+        builder = builder.threadNamePrefix(scheduler.getThreadNamePrefix());
+        TaskSchedulingProperties.Shutdown shutdown = scheduler.getShutdown();
+        builder = builder.awaitTermination(shutdown.isAwaitTermination());
+        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
+
+        mailScheduler = TaskSchedulerHelper.Ttl(builder);
+        mailScheduler.initialize();
+
+        log.info("tiny-mail mailScheduler, prefix=" + mailScheduler.getThreadNamePrefix());
+
         final long bms = tinyMailServiceProp.getBootScan().toMillis();
         if (bms > 0) {
-            taskScheduler.schedule(this::scan, Instant.ofEpochMilli(ThreadNow.millis() + bms));
+            mailScheduler.schedule(this::scan, Instant.ofEpochMilli(ThreadNow.millis() + bms));
         }
     }
 
@@ -513,14 +528,14 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         if (exception == null) {
             if (notHookStop && nextSend > 0) {
                 asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
+                mailScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.debug("schedule done-tiny-mail send, id={}, subject={}", po.getId(), po.getMailSubj());
             }
         }
         else {
             if (notHookStop && retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
                 asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
+                mailScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.debug("schedule fail-tiny-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj());
             }
             else {
@@ -591,7 +606,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         mailSenderManager.checkMessage(message);
 
         asyncMails.add(new AsyncMail(id, nxt, retry, check, po, message));
-        taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nxt));
+        mailScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nxt));
         return nxt;
     }
 
@@ -672,7 +687,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             final int size = asyncMails.size();
             if (size > 0) {
                 final long next = start + tinyMailServiceProp.getTryNext().toMillis();
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(next));
+                mailScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(next));
                 if (size > tinyMailServiceProp.getWarnSize()) {
                     log.warn("plan next tiny-mail warn-size={}, idle={}", size, tinyMailServiceProp.getTryNext());
                 }

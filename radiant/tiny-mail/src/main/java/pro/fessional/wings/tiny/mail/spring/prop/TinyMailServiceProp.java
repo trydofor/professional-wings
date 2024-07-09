@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.mail.spring.prop;
 
 import lombok.Data;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
@@ -85,4 +86,11 @@ public class TinyMailServiceProp {
      */
     private boolean onlyRun = true;
     public static final String Key$onlyRun = Key + ".only-run";
+
+    /**
+     * @see TaskSchedulingProperties
+     * @see #Key$scheduler
+     */
+    private TaskSchedulingProperties scheduler = null;
+    public static final String Key$scheduler = Key + ".scheduler";
 }
