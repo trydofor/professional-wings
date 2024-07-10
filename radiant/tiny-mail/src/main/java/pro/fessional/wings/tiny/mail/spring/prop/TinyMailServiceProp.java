@@ -60,16 +60,25 @@ public class TinyMailServiceProp {
      *
      * @see #Key$warnSize
      */
-    private int warnSize = 1000;
+    private int warnSize = 50;
     public static final String Key$warnSize = Key + ".warn-size";
 
     /**
-     * how long after start, scan for unsent mail, `0` for no scan.
+     * idle time after afterPropertiesSet to scan for unsent/misfired mail, `&lt;=0` for disable.
      *
      * @see #Key$bootScan
+     * @see #Key$scanIdle
      */
     private Duration bootScan = Duration.ofSeconds(60);
     public static final String Key$bootScan = Key + ".boot-scan";
+
+    /**
+     * idle time to scan for unsent/misfired mail. `&lt;=0` for disable.
+     *
+     * @see #Key$scanIdle
+     */
+    private Duration scanIdle = Duration.ofMinutes(5);
+    public static final String Key$scanIdle = Key + ".scan-idle";
 
     /**
      * whether to send emails from this app only.

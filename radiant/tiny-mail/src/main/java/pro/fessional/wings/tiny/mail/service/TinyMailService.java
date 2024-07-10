@@ -82,15 +82,28 @@ public interface TinyMailService {
     long emit(long id, boolean retry, boolean check);
 
     /**
-     * Create(id is empty) or edit a mail, return the id
+     * Create(id is empty) or edit a mail, return the id.
+     * NOTE: no schedule to send, need manually send/post/emit it.
      */
     long save(@NotNull TinyMailPlain message);
 
     /**
-     * Sync scan the mail to resend, return the count, and send them async
+     * <pre>
+     * Sync scan the unsent mail to resend them async, return the count. and if idel is
+     * * null, only scan, nothing to idle
+     * * &gt; 0, adjust the scheduled scan interval mills
+     * * = 0, disable the scheduled scan
+     * * &lt; 0, reset to scan-idle prop if adjusted before
+     * </pre>
      */
-    int scan();
+    int scan(Long idle);
 
+    /**
+     * Sync scan the unsent mail to resend them async, return the count.
+     */
+    default int scan() {
+        return scan(null);
+    }
 
     /**
      * Create the mail, and auto send it in sync or async way.

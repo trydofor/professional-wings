@@ -188,8 +188,11 @@ public class MailSenderManager {
             final long slp = Sleep.ignoreInterrupt(10, 2000);
             log.info("batch mail dryrun and sleep {} ms", slp);
             final long avg = slp / dryrunCount;
+            long end = ThreadNow.millis();
             for (BatchResult rst : results) {
-                if (rst.costMillis < 0) rst.costMillis = avg;
+                if(rst.costMillis == 0) continue;
+                rst.costMillis = avg;
+                rst.exitMillis = end;
             }
         }
 
@@ -245,7 +248,7 @@ public class MailSenderManager {
                 long avg = (now - start) / len;
                 for (BatchResult br : result) {
                     br.costMillis = avg;
-                    br.doneMillis = now;
+                    br.exitMillis = now;
                     if (br.exception != null) {
                         log.warn("failed to batch send message, " + br.tinyMessage.toMainString());
                     }
@@ -472,7 +475,7 @@ public class MailSenderManager {
         @Getter
         private long costMillis = 0;
         @Getter
-        private long doneMillis = 0;
+        private long exitMillis = 0;
         @Getter
         private Exception exception;
 
