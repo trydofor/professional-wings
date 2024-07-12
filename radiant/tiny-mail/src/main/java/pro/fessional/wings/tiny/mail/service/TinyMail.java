@@ -88,6 +88,16 @@ public class TinyMail {
     protected LocalDateTime date;
 
     /**
+     * lazy bean to edit mail if mail_text is null
+     */
+    protected String lazyBean;
+
+    /**
+     * lazy para of lazy bean
+     */
+    protected String lazyPara;
+
+    /**
      * Max count of fail, defaults to system configuration
      */
     protected Integer maxFail = 0;
@@ -112,6 +122,10 @@ public class TinyMail {
     private String refKey2;
 
     //
+    public void setMailLazy(@NotNull TinyMailLazy bean, @Nullable Object para) {
+        lazyBean = bean.lazyBean();
+        lazyPara = bean.lazyPara(para);
+    }
 
     public void setContentText(String content) {
         this.content = content;

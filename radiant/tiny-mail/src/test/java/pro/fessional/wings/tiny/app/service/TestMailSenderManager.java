@@ -11,7 +11,9 @@ import pro.fessional.wings.tiny.mail.sender.MailWaitException;
 import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -30,17 +32,34 @@ public class TestMailSenderManager extends MailSenderManager {
     public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
         super.singleSend(message, maxWait, preparer);
 
+        String subj = message.getSubject();
+        if (subj.contains("AlwaysRuntimeException")) {
+            throw new RuntimeException("Mock " + subj);
+        }
+
         if (exception1st.add(message.getBizId())) {
-            String text = message.getSubject();
-            if (text.contains("MailWaitException")) {
-                throw new MailWaitException(ThreadNow.millis() + 5_000, false, false, new IllegalStateException("Mock"));
+            if (subj.contains("MailWaitException")) {
+                throw new MailWaitException(ThreadNow.millis() + 5_000, false, false, new IllegalStateException("Mock " + subj));
             }
-            if (text.contains("MailParseException")) {
-                throw new MailParseException("Mock");
+            if (subj.contains("MailParseException")) {
+                throw new MailParseException("Mock " + subj);
             }
-            if (text.contains("RuntimeException")) {
-                throw new RuntimeException("Mock");
+            if (subj.contains("RuntimeException")) {
+                throw new RuntimeException("Mock " + subj);
             }
         }
+    }
+
+    @Override
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
+        List<BatchResult> results = super.batchSend(messages, maxWait, preparer);
+
+        for (BatchResult result : results) {
+            String subj = result.getTinyMessage().getSubject();
+            if (subj.contains("AlwaysRuntimeException")) {
+                result.setException(new RuntimeException("Mock " + subj));
+            }
+        }
+        return results;
     }
 }

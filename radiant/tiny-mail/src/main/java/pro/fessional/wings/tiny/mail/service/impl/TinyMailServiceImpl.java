@@ -20,6 +20,7 @@ import org.springframework.mail.MailSendException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.best.AssertArgs;
+import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.mirana.pain.ThrowableUtil;
@@ -45,6 +46,7 @@ import pro.fessional.wings.tiny.mail.sender.MailWaitException;
 import pro.fessional.wings.tiny.mail.sender.TinyMailConfig;
 import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.service.TinyMail;
+import pro.fessional.wings.tiny.mail.service.TinyMailLazy;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
@@ -62,6 +64,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -97,12 +100,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected ResourceLoader resourceLoader;
     @Setter(onMethod_ = { @Autowired(required = false) })
     protected List<StatusHook> statusHooks;
+    @Setter(onMethod_ = { @Autowired(required = false) })
+    protected Map<String, TinyMailLazy> namedLazyBean;
 
     // init by afterPropertiesSet
     protected ThreadPoolTaskScheduler taskScheduler;
+    protected Map<String, TinyMailLazy> lazyBeanHolder;
 
-    private final PriorityQueue<AsyncMail> asyncMailQueue = new PriorityQueue<>();
-    private final TreeMap<Long, ScheduledFuture<?>> asyncMailSched = new TreeMap<>();
+    protected final PriorityQueue<AsyncMail> asyncMailQueue = new PriorityQueue<>();
+    protected final TreeMap<Long, ScheduledFuture<?>> asyncMailSched = new TreeMap<>();
 
     @Override
     public boolean send(@NotNull TinyMail message, boolean retry) {
@@ -220,6 +226,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailFile(toString(msg.getAttachment()));
         po.setMailMark(msg.getMark());
         po.setMailDate(md);
+        po.setLazyBean(msg.getLazyBean());
+        po.setLazyPara(msg.getLazyPara());
 
         // PropertyMapper
         IfSetter.nonnull(po::setMaxFail, msg.getMaxFail());
@@ -345,6 +353,18 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         taskScheduler.initialize();
         log.info("tiny-mail mailScheduler, prefix=" + taskScheduler.getThreadNamePrefix());
 
+        if (namedLazyBean != null && !namedLazyBean.isEmpty()) {
+            lazyBeanHolder = new ConcurrentHashMap<>();
+            for (var en : namedLazyBean.entrySet()) {
+                TinyMailLazy bean = en.getValue();
+                TinyMailLazy old = lazyBeanHolder.put(bean.lazyBean(), bean);
+                if (old != null) {
+                    throw new IllegalStateException("lazy bean name existed, name=" + old.lazyBean() + ", new-bean=" + en.getKey());
+                }
+            }
+            log.info("tiny-mail TinyMailLazy, size=" + lazyBeanHolder.size());
+        }
+
         final long idle = tinyMailServiceProp.getBootScan().toMillis();
         if (idle > 0) {
             log.info("tiny-mail schedule boot-scan after={} ms", idle);
@@ -409,6 +429,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final LocalDateTime md = msg.getDate();
         po.setMailDate(md);
+        po.setLazyBean(msg.getLazyBean());
+        po.setLazyPara(msg.getLazyPara());
 
         po.setMaxFail(BoxedCastUtil.orElse(msg.getMaxFail(), tinyMailServiceProp.getMaxFail()));
         po.setMaxDone(BoxedCastUtil.orElse(msg.getMaxDone(), tinyMailServiceProp.getMaxDone()));
@@ -599,6 +621,61 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return nextSend;
     }
 
+    protected boolean editLazyMail(@NotNull WinMailSender po, @NotNull TinyMailMessage message) {
+        // nonnull means no need to edit
+        if (message.getContent() != null) return false;
+
+        var bean = lazyBeanHolder.get(po.getLazyBean());
+        AssertState.notNull(bean, "TinyMailLazy not found, bean={}", po.getLazyBean());
+
+        var edit = bean.lazyEdit(po.getLazyPara());
+        if (edit == null) return false;
+
+        final WinMailSenderTable t = winMailSenderDao.getTable();
+        final Map<Object, Object> setter = new HashMap<>();
+
+        Boolean html = edit.getHtml();
+        if(html != null){
+            setter.put(t.MailHtml, html);
+            message.setHtml(html);
+        }
+
+        String subj = edit.getSubject();
+        if(subj != null){
+            setter.put(t.MailSubj, subj);
+            message.setSubject(subj);
+        }
+
+        String text = edit.getContent();
+        if(text != null){
+            setter.put(t.MailText, text);
+            message.setContent(text);
+        }
+
+        Map<String, Resource> file = edit.getAttachment();
+        if(file != null && !file.isEmpty()){
+            setter.put(t.MailFile, stringResource(file));
+            message.setAttachment(file);
+        }
+
+        if(setter.isEmpty()) return false;
+
+        Long id = po.getId();
+        log.info("lazy edit tiny-mail, id={}", id);
+
+        journalService.commit(Jane.Lazify, journal -> {
+            setter.put(t.CommitId, journal.getCommitId());
+            setter.put(t.ModifyDt, journal.getCommitDt());
+            winMailSenderDao.ctx()
+                            .update(t)
+                            .set(setter)
+                            .where(t.Id.eq(id))
+                            .execute();
+        });
+
+        return true;
+    }
+
     private boolean doSyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
         final long start;
         if (check) {
@@ -615,6 +692,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         Exception exception = null;
         try {
+            editLazyMail(po, message);
             mailSenderManager.singleSend(message);
         }
         catch (Exception e) {
@@ -625,7 +703,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             long nxt = saveSendResult(po, message, end - start, end, exception, retry);
             if (nxt > 0) {
                 planAsyncMail(new AsyncMail(po.getId(), nxt, retry, check, null, message));
-                log.debug("schedule tiny-mail next-send, err={}, id={}, subject={}", exception == null, po.getId(), po.getMailSubj());
+                log.debug("plan tiny-mail next-send, err={}, id={}, subject={}", exception == null, po.getId(), po.getMailSubj());
             }
         }
 
@@ -649,33 +727,39 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         final long nsm = ns == null ? 0 : DateLocaling.sysEpoch(ns);
         final long now = ThreadNow.millis();
         final Long id = po.getId();
-        final long nxt;
+
+        long next;
         if (nsm > now) {
-            nxt = nsm;
+            next = nsm;
             log.debug("plan async tiny-mail date={} id={}", ns, id);
         }
         else {
-            nxt = now;
+            next = now;
             log.debug("plan async tiny-mail date=now id={}", id);
         }
 
-        // check format, may fail
+        boolean lzk = false;
         try {
+            lzk = editLazyMail(po, message); // lazy ok
             mailSenderManager.checkMessage(message);
         }
         catch (Exception e) {
             log.error("tiny-mail format error", e);
-            // save format error without retry
-            saveSendResult(po, message, 0, now, e, false);
-            return -1;
+            long nx = saveSendResult(po, message, 0, now, e, !lzk && retry); // retry if lazy fail
+            if (nx > 0) {
+                next = nx;
+            }
+            else {
+                return -1;
+            }
         }
 
-        planAsyncMail(new AsyncMail(id, nxt, retry, check, po, message));
-        return nxt;
+        planAsyncMail(new AsyncMail(id, next, retry, check, po, message));
+        return next;
     }
 
     private void planAsyncMail(@NotNull AsyncMail mail) {
-        log.info("planAsyncMail tiny-mail, id={}", mail.id);
+        log.info("plan async tiny-mail, id={}", mail.id);
         synchronized (asyncMailQueue) {
             asyncMailQueue.removeIf(it -> it.id == mail.id);
             asyncMailQueue.add(mail);
@@ -698,7 +782,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             }
         }
 
-        log.info("planAsyncMail tiny-mail, size={}", ids.size());
+        log.info("plan async tiny-mail, size={}", ids.size());
         synchronized (asyncMailQueue) {
             asyncMailQueue.removeIf(it -> ids.contains(it.id));
             asyncMailQueue.addAll(mails);
@@ -709,12 +793,12 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     private void planAsyncMail(long next) {
         if (next <= 0) {
-            log.debug("planAsyncMail tiny-mail, skip={}", next);
+            log.debug("plan async tiny-mail, skip={}", next);
             return;
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("planAsyncMail tiny-mail, next={}", DateLocaling.sysLdt(next));
+            log.debug("plan async tiny-mail, next={}", DateLocaling.sysLdt(next));
         }
 
         final long nxt = (next / 1_000L + 1) * 1_000L; // ceiling to second
@@ -783,8 +867,9 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                         continue;
                     }
 
+                    TinyMailMessage msg = null;
                     if (am.message != null) {
-                        messages.add(am.message);
+                        msg = am.message;
                     }
                     else {
                         final String conf = po.getMailConf();
@@ -793,8 +878,22 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                             log.warn("tiny-mail conf={} not found", conf);
                         }
                         else {
-                            messages.add(makeMailMessage(config, po, null));
+                            msg = makeMailMessage(config, po, null);
                         }
+                    }
+
+                    if (msg != null) {
+                        try {
+                            editLazyMail(po, msg);
+                        }
+                        catch (Exception e) {
+                            log.error("tiny-mail lazy error", e);
+                            long nxt = saveSendResult(po, msg, 0, start, e, am.retry);
+                            if (nxt > 0) {
+                                nexts.add(new AsyncMail(po.getId(), nxt, am.retry, am.check, null, msg));
+                            }
+                        }
+                        messages.add(msg);
                     }
                 }
 
@@ -934,6 +1033,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     public enum Jane {
         Insert,
-        Update
+        Update,
+        Lazify
     }
 }

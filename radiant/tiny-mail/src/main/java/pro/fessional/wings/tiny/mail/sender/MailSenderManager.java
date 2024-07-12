@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -476,7 +477,7 @@ public class MailSenderManager {
         private long costMillis = 0;
         @Getter
         private long exitMillis = 0;
-        @Getter
+        @Getter @Setter
         private Exception exception;
 
         private JavaMailSender mailSender;

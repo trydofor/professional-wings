@@ -156,6 +156,16 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
     public final TableField<WinMailSenderRecord, LocalDateTime> MailDate = createField(DSL.name("mail_date"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
+     * The column <code>win_mail_sender.lazy_bean</code>.
+     */
+    public final TableField<WinMailSenderRecord, String> LazyBean = createField(DSL.name("lazy_bean"), SQLDataType.VARCHAR(300).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.lazy_para</code>.
+     */
+    public final TableField<WinMailSenderRecord, String> LazyPara = createField(DSL.name("lazy_para"), SQLDataType.CLOB, this, "");
+
+    /**
      * The column <code>win_mail_sender.last_send</code>.
      */
     public final TableField<WinMailSenderRecord, LocalDateTime> LastSend = createField(DSL.name("last_send"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");

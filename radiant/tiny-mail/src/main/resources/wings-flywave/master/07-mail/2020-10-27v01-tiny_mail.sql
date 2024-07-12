@@ -18,6 +18,8 @@ CREATE TABLE `win_mail_sender` (
     `mail_file`  TEXT         NULL COMMENT 'attachment name and path map, json format',
     `mail_mark`  VARCHAR(900) NOT NULL DEFAULT '' COMMENT 'business key to lookup',
     `mail_date`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'scheduled mail send (sys)',
+    `lazy_bean`  VARCHAR(300) NOT NULL DEFAULT '' COMMENT 'lazy bean to edit mail if mail_text is null',
+    `lazy_para`  TEXT         NULL COMMENT 'lazy para of lazy bean',
     `last_send`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'previous send (sys)',
     `last_fail`  TEXT         NULL COMMENT 'previous fail info',
     `last_done`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'previous success (sys)',

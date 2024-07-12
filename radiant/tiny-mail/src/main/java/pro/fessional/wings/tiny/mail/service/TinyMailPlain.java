@@ -1,6 +1,8 @@
 package pro.fessional.wings.tiny.mail.service;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -91,6 +93,16 @@ public class TinyMailPlain {
     private LocalDateTime date;
 
     /**
+     * lazy bean to edit mail if mail_text is null
+     */
+    private String lazyBean;
+
+    /**
+     * lazy para of lazy bean
+     */
+    private String lazyPara;
+
+    /**
      * Next send time, system time zone, update when non-null
      */
     private LocalDateTime nextSend;
@@ -169,4 +181,11 @@ public class TinyMailPlain {
      * Send parameter, whether to check the sending condition, otherwise it is forced to send
      */
     private Boolean check;
+
+    //
+    public void setMailLazy(@NotNull TinyMailLazy bean, @Nullable Object para) {
+        lazyBean = bean.lazyBean();
+        lazyPara = bean.lazyPara(para);
+    }
+
 }

@@ -27,6 +27,7 @@ public enum WingsRevision implements RevisionRegister {
     V03_21_1026_02_FixTaskTune(2021_1026_02L, "fix task tune", "branch/somefix/03-task-tune", "radiant/tiny-task/src/main/resources/wings-flywave"),
     V04_21_1026_03_FixConfSize(2021_1026_03L, "fix conf size", "branch/somefix/04-conf-size", "wings/warlock/src/main/resources/wings-flywave"),
     V05_21_1026_05_FixJournal(2021_1026_05L, "fix journal elapse", "branch/somefix/05-journal-elapse", "wings/faceless/src/main/resources/wings-flywave"),
+    V06_21_1026_06_FixLazyMail(2021_1026_06L, "fix lazy mail", "branch/somefix/06-lazy-mail", "radiant/tiny-mail/src/main/resources/wings-flywave"),
 
     // testing
     V90_22_0601_01_TestSchema(2022_0601_01L, "test v1 schema", "master", "wings/testing-faceless/src/main/resources/wings-flywave/"),
