@@ -40,6 +40,7 @@ import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
 import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
+import pro.fessional.wings.tiny.mail.sender.MailRetryException;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager.BatchResult;
 import pro.fessional.wings.tiny.mail.sender.MailWaitException;
@@ -112,74 +113,105 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Override
     public boolean send(@NotNull TinyMail message, boolean retry) {
-        final String conf = message.getConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "tiny-mail conf={} not found", conf);
-
-        final WinMailSender po = saveMailSender(config, message);
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        return doSyncSend(po, mailMessage, retry, true);
+        return doSend(true, message, retry) == 0;
     }
 
     @Override
-    public boolean post(@NotNull TinyMail message, boolean retry) {
+    public long post(@NotNull TinyMail message, boolean retry) {
         try {
-            return send(message, retry);
+            return doSend(true, message, retry);
+        }
+        catch (MailRetryException e) {
+            log.warn("fail to post tiny-mail, next-retry=" + e.getNextEpoch() + ", subject=" + message.getSubject(), e.getCause());
+            return e.getNextEpoch();
         }
         catch (Exception e) {
-            log.error("fail to post tiny-mail, subject=" + message.getSubject(), e);
-            return false;
+            log.error("fail to post tiny-mail, retry=" + retry + ", subject=" + message.getSubject(), e);
+            return -2;
         }
     }
 
     @Override
     public long emit(@NotNull TinyMail message, boolean retry) {
-        final String conf = message.getConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "tiny-mail conf={} not found", conf);
-
-        final WinMailSender po = saveMailSender(config, message);
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        return doAsyncSend(po, mailMessage, retry, true);
+        try {
+            return doSend(false, message, retry);
+        }
+        catch (MailRetryException e) {
+            log.warn("fail to emit tiny-mail, next-retry=" + e.getNextEpoch() + ", subject=" + message.getSubject(), e.getCause());
+            return e.getNextEpoch();
+        }
+        catch (Exception e) {
+            log.error("fail to emit tiny-mail, retry=" + retry + ", subject=" + message.getSubject(), e);
+            return -2;
+        }
     }
 
     @Override
     public boolean send(long id, boolean retry, boolean check) {
-        final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        if (po == null) {
-            log.warn("tiny-mail not found by id={}, skip send", id);
-            return false;
-        }
-        final String conf = po.getMailConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        if (config == null) {
-            log.warn("tiny-mail conf={} not found", conf);
-            return false;
-        }
-
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
-        return doSyncSend(po, mailMessage, retry, check);
+        return doSend(true, id, retry, check) == 0;
     }
 
     @Override
-    public boolean post(long id, boolean retry, boolean check) {
+    public long post(long id, boolean retry, boolean check) {
         try {
-            return send(id, retry, check);
+            return doSend(true, id, retry, check);
+        }
+        catch (MailRetryException e) {
+            log.warn("fail to post tiny-mail, next-retry=" + e.getNextEpoch() + ", id=" + id, e.getCause());
+            return e.getNextEpoch();
         }
         catch (Exception e) {
-            log.error("fail to post tiny-mail, id=" + id, e);
-            return false;
+            log.error("fail to post tiny-mail, retry=" + retry + ", id=" + id, e);
+            return -2;
         }
     }
 
     @Override
     public long emit(long id, boolean retry, boolean check) {
-        final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        if (po == null) {
-            log.warn("tiny-mail not found by id={}, skip emit", id);
-            return -1;
+        try {
+            return doSend(false, id, retry, check);
         }
-        return doAsyncSend(po, null, retry, check);
+        catch (MailRetryException e) {
+            log.warn("fail to emit tiny-mail, next-retry=" + e.getNextEpoch() + ", id=" + id, e.getCause());
+            return e.getNextEpoch();
+        }
+        catch (Exception e) {
+            log.error("fail to emit tiny-mail, retry=" + retry + ", id=" + id, e);
+            return -2;
+        }
+    }
+
+    protected long doSend(boolean sync, @NotNull TinyMail message, boolean retry) {
+        final String conf = message.getConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "tiny-mail conf={} not found", conf);
+
+        final WinMailSender po = saveMailSender(config, message);
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, true);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, true);
+        }
+    }
+
+    protected long doSend(boolean sync, long id, boolean retry, boolean check) {
+        final WinMailSender po = winMailSenderDao.fetchOneById(id);
+        AssertArgs.notNull(po, "tiny-mail not found by id={}, skip send", id);
+
+        final String conf = po.getMailConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "tiny-mail conf={} not found", conf);
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, check);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, check);
+        }
     }
 
     @Override
@@ -497,6 +529,14 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             return true;
         }
 
+        if (po.getMailText() == null) {
+            var bean = lazyBeanHolder.get(po.getLazyBean());
+            if (bean == null) {
+                log.error("stop lazy tiny-mail, not found bean={}, id={}", bean, po.getId());
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -521,6 +561,9 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return false;
     }
 
+    /**
+     * next if done lt max or exception and retry
+     */
     protected long saveSendResult(@NotNull WinMailSender po, @NotNull TinyMailMessage message, long cost, long exit, Exception exception, boolean retry) {
         long nextSend = -1;
         try {
@@ -635,30 +678,30 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         final Map<Object, Object> setter = new HashMap<>();
 
         Boolean html = edit.getHtml();
-        if(html != null){
+        if (html != null) {
             setter.put(t.MailHtml, html);
             message.setHtml(html);
         }
 
         String subj = edit.getSubject();
-        if(subj != null){
+        if (subj != null) {
             setter.put(t.MailSubj, subj);
             message.setSubject(subj);
         }
 
         String text = edit.getContent();
-        if(text != null){
+        if (text != null) {
             setter.put(t.MailText, text);
             message.setContent(text);
         }
 
         Map<String, Resource> file = edit.getAttachment();
-        if(file != null && !file.isEmpty()){
+        if (file != null && !file.isEmpty()) {
             setter.put(t.MailFile, stringResource(file));
             message.setAttachment(file);
         }
 
-        if(setter.isEmpty()) return false;
+        if (setter.isEmpty()) return false;
 
         Long id = po.getId();
         log.info("lazy edit tiny-mail, id={}", id);
@@ -676,15 +719,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return true;
     }
 
-    private boolean doSyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
+    private long doSyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
         final long start;
         if (check) {
             // condition not match
-            if (notMatchProp(po)) return false;
+            if (notMatchProp(po)) return -1;
 
             start = ThreadNow.millis();
             // others do it
-            if (notNextLock(po, start)) return false;
+            if (notNextLock(po, start)) return -1;
         }
         else {
             start = ThreadNow.millis();
@@ -704,19 +747,21 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (nxt > 0) {
                 planAsyncMail(new AsyncMail(po.getId(), nxt, retry, check, null, message));
                 log.debug("plan tiny-mail next-send, err={}, id={}, subject={}", exception == null, po.getId(), po.getMailSubj());
+                if (exception != null) {
+                    exception = new MailRetryException(nxt, exception); // runtime
+                }
             }
         }
 
-        if (exception != null) {
-            if (exception instanceof RuntimeException) {
-                throw (RuntimeException) exception;
-            }
-            else {
-                throw new MailSendException("failed tiny-mail, id=" + po.getId() + ", subject=" + po.getMailSubj(), exception);
-            }
-        }
+        if (exception == null) return 0;
 
-        return true;
+        // rethrow exception
+        if (exception instanceof RuntimeException) {
+            throw (RuntimeException) exception;
+        }
+        else {
+            throw new MailSendException("failed tiny-mail, id=" + po.getId() + ", subject=" + po.getMailSubj(), exception);
+        }
     }
 
     private long doAsyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
@@ -744,7 +789,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             mailSenderManager.checkMessage(message);
         }
         catch (Exception e) {
-            log.error("tiny-mail format error", e);
+            log.error("tiny-mail check error, id=" + id, e);
             long nx = saveSendResult(po, message, 0, now, e, !lzk && retry); // retry if lazy fail
             if (nx > 0) {
                 next = nx;
@@ -935,7 +980,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     private final AtomicInteger trimSchedConter = new AtomicInteger(0);
-    @Setter @Getter
+    @Setter
+    @Getter
     private int maxAsyncSched = 1;
 
     private void trimAsyncMailSched() {

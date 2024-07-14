@@ -15,6 +15,7 @@ import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.tiny.mail.TestingMailUtil;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
+import pro.fessional.wings.tiny.mail.sender.MailRetryException;
 import pro.fessional.wings.tiny.mail.service.impl.TinyMailServiceImpl;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
@@ -127,8 +128,8 @@ class TinyMailServiceDbTest {
                 tinyMailService.send(id, true, true);
                 if (err) Assertions.fail();
             }
-            catch (Exception e) {
-                Assertions.assertTrue(e.getMessage().contains("Mock"));
+            catch (MailRetryException e) {
+                Assertions.assertTrue(e.getCause().getMessage().contains("Mock"));
             }
 
             WinMailSender po = winMailSenderDao.fetchOneById(id);

@@ -16,27 +16,43 @@ import java.time.LocalDateTime;
 public interface TinyMailService {
 
     /**
-     * Sync send, return success or not, or throw exception.
-     * If not success, async retry
+     * <pre>
+     * Save and Sync single send. and return,
+     * - false, if check fail.
+     * - throw if send fail, MailRetryException if async retry.
+     * - true, otherwise.
+     * </pre>
      */
     boolean send(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry
+     * <pre>
+     * Save and Sync single send, fire and forget, no exception throw. and return,
+     * - -2, if throw non MailRetryException.
+     * - -1, if check fail.
+     * - 0, if send success.
+     * - &gt; now(), (estimated retry time) if fail and async retry
+     * </pre>
      */
-    boolean post(@NotNull TinyMail message, boolean retry);
+    long post(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry.
+     * <pre>
+     * Async batch send, no exception throw. auto in batch send. and return,
+     * - -2, if throw non MailRetryException.
+     * - -1 if check fail.
+     * - &gt; now() estimated retry time if fail and async retry
+     * </pre>
      */
     long emit(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Sync send, return success or not, or throw exception.
-     * If not success, async retry
+     * <pre>
+     * Save and Sync single send. and return,
+     * - false, if check fail.
+     * - throw if send fail, MailRetryException if async retry.
+     * - true, otherwise.
+     * </pre>
      */
     default boolean send(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -44,18 +60,24 @@ public interface TinyMailService {
     }
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry
+     * <pre>
+     * Save and Sync single send, fire and forget, no exception throw. and return,
+     * - -1, if check fail.
+     * - 0, if send success.
+     * - &gt; now(), (estimated retry time) if fail and async retry
+     * </pre>
      */
-    default boolean post(@NotNull TinyMailPlain message) {
+    default long post(@NotNull TinyMailPlain message) {
         final long id = save(message);
         return post(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
     }
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry.
+     * <pre>
+     * Save and Async batch send, no exception throw. auto in batch send. and return,
+     * - -1 if check fail.
+     * - &gt; now() estimated retry time if fail and async retry
+     * </pre>
      */
     default long emit(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -63,21 +85,31 @@ public interface TinyMailService {
     }
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Load and Sync single send. and return,
+     * - false, if check fail.
+     * - throw if send fail, MailRetryException if async retry.
+     * - true, otherwise.
+     * </pre>
      */
     boolean send(long id, boolean retry, boolean check);
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Load and Sync single send, fire and forget, no exception throw. and return,
+     * - -1, if check fail.
+     * - 0, if send success.
+     * - &gt; now(), (estimated retry time) if fail and async retry
+     * </pre>
      */
-    boolean post(long id, boolean retry, boolean check);
+    long post(long id, boolean retry, boolean check);
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Load and Async batch send, no exception throw. auto in batch send. and return,
+     * - -1 if check fail.
+     * - &gt; now() estimated retry time if fail and async retry
+     * </pre>
      */
     long emit(long id, boolean retry, boolean check);
 
@@ -106,15 +138,17 @@ public interface TinyMailService {
     }
 
     /**
-     * Create the mail, and auto send it in sync or async way.
-     * `-1` means failure, `0` means sync send,
-     * otherwise means async send at estimated sending time
+     * <pre>
+     * Save and auto post/emit by its mail-date. and retrun,
+     * - -1, if check fail.
+     * - 0, if send success.
+     * - &gt; now(), (estimated retry time) if fail and async retry
+     * </pre>
      */
     default long auto(@NotNull TinyMail message, boolean retry) {
         final LocalDateTime md = message.getDate();
         if (md == null || md.isBefore(ThreadNow.localDateTime())) {
-            final boolean ok = send(message, retry);
-            return ok ? 0 : -1;
+            return post(message, retry);
         }
         else {
             return emit(message, retry);
@@ -122,16 +156,18 @@ public interface TinyMailService {
     }
 
     /**
-     * Create the mail, and auto send it in sync or async way.
-     * `-1` means failure, `0` means sync send,
-     * otherwise means async send at estimated sending time
+     * <pre>
+     * Save and auto post/emit by its mail-date. and retrun,
+     * - -1, if check fail.
+     * - 0, if send success.
+     * - &gt; now(), (estimated retry time) if fail and async retry
+     * </pre>
      */
     default long auto(@NotNull TinyMailPlain message) {
         final long id = save(message);
         final LocalDateTime md = message.getDate();
         if (md == null || md.isBefore(ThreadNow.localDateTime())) {
-            final boolean ok = send(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
-            return ok ? 0 : -1;
+            return post(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
         }
         else {
             return emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
