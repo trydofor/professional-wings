@@ -57,7 +57,7 @@ class TinyMailServiceDbTest {
     protected TinyMailLazy tinyMailLazy;
 
     @Test
-    @TmsLink("C15006")
+    @TmsLink("C15017")
     void mockData() {
         bootScan();
         sendError();
@@ -67,7 +67,7 @@ class TinyMailServiceDbTest {
         String subject = TestingMailUtil.dryrun("TinyMailService bootScan", mailProperties);
         TinyMailPlain mail0 = new TinyMailPlain();
         mail0.setSubject(subject);
-        mail0.setContent("bootScan");
+        mail0.setContent("boot scan");
         long id = tinyMailService.save(mail0);
         Assertions.assertTrue(id > 0);
         // before boot scan
@@ -96,44 +96,76 @@ class TinyMailServiceDbTest {
     }
 
     void sendError() {
-        int time = 10;
-        String etk = "RuntimeException";
-        String atk = "AlwaysRuntimeException";
-        Set<Long> ids = new HashSet<>();
-        String subj = TestingMailUtil.dryrun("TinyMailService", mailProperties);
+
+        final String subj = TestingMailUtil.dryrun("TinyMailService", mailProperties);
+        int time = 5;
+        final ArrayList<Long> ids = new ArrayList<>(time);
+        final Set<Long> awlNg = new HashSet<>();
+        final Set<Long> lzyNg = new HashSet<>();
+        final Set<Long> txtNg = new HashSet<>();
 
         for (int i = 0; i < time; i++) {
-            TinyMailPlain ml = new TinyMailPlain();
-            boolean err = i % 3 == 0;
-            String tkn = err ? " " + etk + " " : " ";
+            final TinyMailPlain ml = new TinyMailPlain();
 
-            if (i == 0) {
-                ml.setSubject(subj + " " + atk + " " + i);
+            final long id;
+            if (i % 5 == 0) {
+                ml.setSubject(subj + " sendError AlwaysRuntimeException " + i);
+                ml.setContent("text AlwaysRuntimeException " + i);
+                id = tinyMailService.save(ml);
+                awlNg.add(id);
             }
-            else {
-                ml.setSubject(subj + tkn + i);
+            else if (i % 5 == 1) { // lazy ng
+                ml.setSubject(subj + " sendError lazy RuntimeException " + i);
+                ml.setMailLazy(tinyMailLazy, "lazy RuntimeException " + i);
+                id = tinyMailService.save(ml);
+                lzyNg.add(id);
+            }
+            else if (i % 5 == 2) { // text ng
+                ml.setSubject(subj + " sendError text RuntimeException " + i);
+                ml.setContent("text RuntimeException " + i);
+                id = tinyMailService.save(ml);
+                txtNg.add(id);
+            }
+            else if (i % 5 == 3) { // lzy ok
+                ml.setSubject(subj + " sendError lazy " + i);
+                ml.setMailLazy(tinyMailLazy, "lazy " + i);
+                id = tinyMailService.save(ml);
+            }
+            else { // text ok
+                ml.setSubject(subj + " sendError text " + i);
+                ml.setContent("text " + i);
+                id = tinyMailService.save(ml);
             }
 
-            if (i % 2 == 0) {
-                ml.setContent("mail text " + i);
-            }
-            else {
-                ml.setMailLazy(tinyMailLazy, "lazy" + tkn + i);
-            }
-
-            long id = tinyMailService.save(ml);
             ids.add(id);
 
             try {
-                tinyMailService.send(id, true, true);
-                if (err) Assertions.fail();
+                boolean rc = tinyMailService.send(id, true, true);
+                if (lzyNg.contains(id)) {
+                    Assertions.assertFalse(rc);
+                }
+                else if (awlNg.contains(id) || txtNg.contains(id)) {
+                    Assertions.fail();
+                }
+                else {
+                    Assertions.assertTrue(rc);
+                }
             }
             catch (MailRetryException e) {
                 Assertions.assertTrue(e.getCause().getMessage().contains("Mock"));
             }
 
             WinMailSender po = winMailSenderDao.fetchOneById(id);
-            if (err) {
+
+            if (lzyNg.contains(id)) {
+                Assertions.assertTrue(EmptySugar.asEmptyValue(po.getNextSend())); // stop next
+                Assertions.assertTrue(StringUtils.isNotBlank(po.getLastFail()));
+                Assertions.assertTrue(StringUtils.isBlank(po.getMailText()));
+                Assertions.assertEquals(1, po.getSumFail());
+                Assertions.assertEquals(1, po.getSumSend());
+                Assertions.assertEquals(0, po.getSumDone());
+            }
+            else if (awlNg.contains(id) || txtNg.contains(id)) {
                 Assertions.assertTrue(po.getNextSend().isAfter(ThreadNow.localDateTime()));
                 Assertions.assertTrue(StringUtils.isNotBlank(po.getLastFail()));
                 Assertions.assertEquals(1, po.getSumFail());
@@ -154,29 +186,34 @@ class TinyMailServiceDbTest {
         log.info("after try next, slept={}", ms);
 
         List<WinMailSender> pos = winMailSenderDao.fetchById(ids);
+        int maxFail = tinyMailServiceProp.getMaxFail();
         for (WinMailSender po : pos) {
             Assertions.assertTrue(EmptySugar.asEmptyValue(po.getNextSend()));
             Assertions.assertTrue(EmptySugar.nonEmptyValue(po.getLastSend()));
-            int sumFail = 0;
 
-            String sub = po.getMailSubj();
-            if (sub.contains(etk) || sub.contains(atk)) {
-                sumFail++;
-            }
-            else if (po.getLazyPara() != null && po.getLazyPara().contains(etk)) {
-                sumFail++;
-            }
-
-            if (sub.contains(atk)) {
-                int maxFail = tinyMailServiceProp.getMaxFail();
+            Long id = po.getId();
+            if (awlNg.contains(id)) {
                 Assertions.assertEquals(maxFail, po.getSumSend());
                 Assertions.assertEquals(maxFail, po.getSumFail());
                 Assertions.assertEquals(0, po.getSumDone());
                 Assertions.assertTrue(StringUtils.isNotBlank(po.getLastFail()));
             }
+            else if (lzyNg.contains(id)) {
+                Assertions.assertEquals(1, po.getSumSend());
+                Assertions.assertEquals(1, po.getSumFail());
+                Assertions.assertEquals(0, po.getSumDone());
+                Assertions.assertTrue(StringUtils.isBlank(po.getMailText()));
+                Assertions.assertTrue(StringUtils.isNotBlank(po.getLastFail()));
+            }
+            else if (txtNg.contains(id)) {
+                Assertions.assertEquals(2, po.getSumSend());
+                Assertions.assertEquals(1, po.getSumFail());
+                Assertions.assertEquals(1, po.getSumDone());
+                Assertions.assertTrue(StringUtils.isBlank(po.getLastFail()));
+            }
             else {
-                Assertions.assertEquals(sumFail + 1, po.getSumSend());
-                Assertions.assertEquals(sumFail, po.getSumFail());
+                Assertions.assertEquals(1, po.getSumSend());
+                Assertions.assertEquals(0, po.getSumFail());
                 Assertions.assertEquals(1, po.getSumDone());
                 Assertions.assertTrue(StringUtils.isBlank(po.getLastFail()));
             }
@@ -187,5 +224,38 @@ class TinyMailServiceDbTest {
         Assertions.assertTrue(queue.isEmpty());
         TreeMap<Long, ScheduledFuture<?>> sched = tinyMailService.listAsyncMailSched();
         Assertions.assertTrue(sched.isEmpty());
+
+        // retry as if it was fixed, but 1st send error
+        for (Long id : lzyNg) {
+            long rc = tinyMailService.post(id, false, true);
+            Assertions.assertEquals(TinyMailService.ErrOther, rc);
+        }
+
+        // retry, no 1st error
+        for (Long id : lzyNg) {
+            long rc = tinyMailService.post(id, false, true);
+            Assertions.assertEquals(TinyMailService.Success, rc);
+        }
+
+        // retry with check
+        for (Long id : lzyNg) {
+            long rc = tinyMailService.post(id, false, true);
+            Assertions.assertEquals(TinyMailService.ErrCheck, rc);
+        }
+
+        // force to send without check
+        for (Long id : lzyNg) {
+            long rc = tinyMailService.post(id, false, false);
+            Assertions.assertEquals(TinyMailService.Success, rc);
+        }
+
+        List<WinMailSender> pvz = winMailSenderDao.fetchById(lzyNg);
+        for (WinMailSender po : pvz) {
+            Assertions.assertEquals(4, po.getSumSend());
+            Assertions.assertEquals(2, po.getSumFail());
+            Assertions.assertEquals(2, po.getSumDone());
+            Assertions.assertTrue(StringUtils.isNotBlank(po.getMailText()));
+            Assertions.assertTrue(StringUtils.isBlank(po.getLastFail()));
+        }
     }
 }

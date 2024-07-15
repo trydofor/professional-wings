@@ -433,3 +433,5 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 15014 TinyTaskExecServiceTest: sleep 70s and check task
 * 15015 MailNoticeTest: title dryrun mailNotice
 * 15016 MailSenderManagerTest: title dryrun batch mail
+* 15017 TinyMailServiceDbTest: mock fail and check database
+

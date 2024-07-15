@@ -2,6 +2,7 @@ package pro.fessional.wings.tiny.app.service;
 
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.tiny.mail.service.TinyMailLazy;
 
 import java.util.HashSet;
@@ -17,16 +18,16 @@ public class TestTinyMailLazy implements TinyMailLazy {
 
     @Override
     public @Nullable Edit lazyEdit(@Nullable String para) {
-        if(para == null) return null;
-
-        if (exception1st.add(para)) {
+        if (para == null) return null;
+        String txt = FastJsonHelper.object(para, String.class);
+        if (exception1st.add(txt)) {
             if (para.contains("RuntimeException")) {
-                throw new RuntimeException("Mock "+ para);
+                throw new RuntimeException("Mock " + txt);
             }
         }
 
         Edit edit = new Edit();
-        edit.setContent(para);
+        edit.setContent(txt);
         return edit;
     }
 }

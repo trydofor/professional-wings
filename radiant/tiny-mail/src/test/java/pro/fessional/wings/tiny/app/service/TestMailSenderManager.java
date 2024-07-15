@@ -32,20 +32,20 @@ public class TestMailSenderManager extends MailSenderManager {
     public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
         super.singleSend(message, maxWait, preparer);
 
-        String subj = message.getSubject();
-        if (subj.contains("AlwaysRuntimeException")) {
-            throw new RuntimeException("Mock " + subj);
+        String text = message.getContent();
+        if (text.contains("AlwaysRuntimeException")) {
+            throw new RuntimeException("Mock " + text);
         }
 
         if (exception1st.add(message.getBizId())) {
-            if (subj.contains("MailWaitException")) {
-                throw new MailWaitException(ThreadNow.millis() + 5_000, false, false, new IllegalStateException("Mock " + subj));
+            if (text.contains("MailWaitException")) {
+                throw new MailWaitException(ThreadNow.millis() + 5_000, false, false, new IllegalStateException("Mock " + text));
             }
-            if (subj.contains("MailParseException")) {
-                throw new MailParseException("Mock " + subj);
+            if (text.contains("MailParseException")) {
+                throw new MailParseException("Mock " + text);
             }
-            if (subj.contains("RuntimeException")) {
-                throw new RuntimeException("Mock " + subj);
+            if (text.contains("RuntimeException")) {
+                throw new RuntimeException("Mock " + text);
             }
         }
     }
@@ -55,9 +55,9 @@ public class TestMailSenderManager extends MailSenderManager {
         List<BatchResult> results = super.batchSend(messages, maxWait, preparer);
 
         for (BatchResult result : results) {
-            String subj = result.getTinyMessage().getSubject();
-            if (subj.contains("AlwaysRuntimeException")) {
-                result.setException(new RuntimeException("Mock " + subj));
+            String text = result.getTinyMessage().getContent();
+            if (text.contains("AlwaysRuntimeException")) {
+                result.setException(new RuntimeException("Mock " + text));
             }
         }
         return results;
