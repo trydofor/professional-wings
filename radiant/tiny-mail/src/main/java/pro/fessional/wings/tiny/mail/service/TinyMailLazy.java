@@ -25,7 +25,8 @@ public interface TinyMailLazy {
     }
 
     /**
-     * use lazyPara to edit the lazy mail if returned items is nonnull
+     * use lazyPara to edit the lazy mail if get nonnull item.
+     * stop sending if get exception or all null items
      */
     @Nullable
     Edit lazyEdit(@Nullable String para);

@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.mail.MailException;
 
 /**
+ * should wait until waitEpoch, then may retry
+ *
  * @author trydofor
  * @since 2023-01-03
  */

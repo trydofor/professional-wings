@@ -21,7 +21,7 @@ public interface TinyMailService {
     int Success = 0;
 
     /**
-     * failed to check before send. e.g. prop, lock or format
+     * failed to check before send. e.g. prepare and check prop, lock, format
      */
     int ErrCheck = -1;
 
@@ -142,10 +142,17 @@ public interface TinyMailService {
     long emit(long id, boolean retry, boolean check);
 
     /**
-     * Create(id is empty) or edit a mail, return the id.
+     * Create(id is empty) or edit a mail with check, return the id.
      * NOTE: no schedule to send, need manually send/post/emit it.
      */
-    long save(@NotNull TinyMailPlain message);
+    default long save(@NotNull TinyMailPlain message){
+        return save(message, true);
+    }
+    /**
+     * Create(id is empty) or edit a mail with check, return the id.
+     * NOTE: no schedule to send, need manually send/post/emit it.
+     */
+    long save(@NotNull TinyMailPlain message, boolean check);
 
     /**
      * <pre>
