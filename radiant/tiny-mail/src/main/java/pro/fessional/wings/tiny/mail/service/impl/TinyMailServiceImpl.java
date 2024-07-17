@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
@@ -19,6 +20,7 @@ import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailSendException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.best.Param;
 import pro.fessional.mirana.cast.BoxedCastUtil;
@@ -66,7 +68,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -100,14 +101,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected TinyMailServiceProp tinyMailServiceProp;
     @Setter(onMethod_ = { @Autowired })
     protected ResourceLoader resourceLoader;
-    @Setter(onMethod_ = { @Autowired(required = false) })
-    protected List<StatusHook> statusHooks;
-    @Setter(onMethod_ = { @Autowired(required = false) })
-    protected Map<String, TinyMailLazy> namedLazyBean;
+    @Setter(onMethod_ = { @Autowired })
+    protected ObjectProvider<StatusHook> statusHookProvider;
+    @Setter(onMethod_ = { @Autowired })
+    protected ObjectProvider<TinyMailLazy> lazyBeanProvider;
 
     // init by afterPropertiesSet
     protected ThreadPoolTaskScheduler taskScheduler;
-    protected Map<String, TinyMailLazy> lazyBeanHolder;
+    protected SingletonSupplier<Map<String, TinyMailLazy>> lazyBeanHolder;
+    protected SingletonSupplier<List<StatusHook>> statusHookHolder;
 
     protected final PriorityQueue<AsyncMail> asyncMailQueue = new PriorityQueue<>();
     protected final TreeMap<Long, ScheduledFuture<?>> asyncMailSched = new TreeMap<>();
@@ -182,37 +184,37 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
     }
 
-    protected long doSend(boolean sync, @NotNull TinyMail message, boolean retry) {
-        final String conf = message.getConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
+    @Override
+    public void afterPropertiesSet() {
+        ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder();
+        TaskSchedulingProperties scheduler = tinyMailServiceProp.getScheduler();
+        builder = builder.poolSize(scheduler.getPool().getSize());
+        builder = builder.threadNamePrefix(scheduler.getThreadNamePrefix());
+        TaskSchedulingProperties.Shutdown shutdown = scheduler.getShutdown();
+        builder = builder.awaitTermination(shutdown.isAwaitTermination());
+        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
 
-        final WinMailSender po = saveMailSender(config, message);
+        taskScheduler = TaskSchedulerHelper.Ttl(builder);
+        taskScheduler.initialize();
+        log.info("tiny-mail taskScheduler, prefix=" + taskScheduler.getThreadNamePrefix());
 
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        if (sync) {
-            return doSyncSend(po, mailMessage, retry, true);
+        final long idle = tinyMailServiceProp.getBootScan().toMillis();
+        if (idle > 0) {
+            log.info("tiny-mail schedule boot-scan after={} ms", idle);
+            taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
         }
-        else {
-            return doAsyncSend(po, mailMessage, retry, true);
-        }
-    }
 
-    protected long doSend(boolean sync, long id, boolean retry, boolean check) {
-        final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        AssertArgs.notNull(po, "skip tiny-mail not found by id={}", id);
-
-        final String conf = po.getMailConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "skip tiny-mail conf={} not found, id={}", conf, id);
-
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
-        if (sync) {
-            return doSyncSend(po, mailMessage, retry, check);
-        }
-        else {
-            return doAsyncSend(po, mailMessage, retry, check);
-        }
+        statusHookHolder = SingletonSupplier.of(() -> statusHookProvider.orderedStream().toList());
+        lazyBeanHolder = SingletonSupplier.of(() -> {
+            Map<String, TinyMailLazy> map = new HashMap<>();
+            for (TinyMailLazy bean : lazyBeanProvider) {
+                TinyMailLazy old = map.put(bean.lazyBean(), bean);
+                if (old != null) {
+                    log.error("lazy bean name existed, name={}, new-bean={}", old.lazyBean(), bean.getClass());
+                }
+            }
+            return map.isEmpty() ? Collections.emptyMap() : map;
+        });
     }
 
     @Override
@@ -374,39 +376,6 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return size;
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder();
-        TaskSchedulingProperties scheduler = tinyMailServiceProp.getScheduler();
-        builder = builder.poolSize(scheduler.getPool().getSize());
-        builder = builder.threadNamePrefix(scheduler.getThreadNamePrefix());
-        TaskSchedulingProperties.Shutdown shutdown = scheduler.getShutdown();
-        builder = builder.awaitTermination(shutdown.isAwaitTermination());
-        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
-
-        taskScheduler = TaskSchedulerHelper.Ttl(builder);
-        taskScheduler.initialize();
-        log.info("tiny-mail taskScheduler, prefix=" + taskScheduler.getThreadNamePrefix());
-
-        if (namedLazyBean != null && !namedLazyBean.isEmpty()) {
-            lazyBeanHolder = new ConcurrentHashMap<>();
-            for (var en : namedLazyBean.entrySet()) {
-                TinyMailLazy bean = en.getValue();
-                TinyMailLazy old = lazyBeanHolder.put(bean.lazyBean(), bean);
-                if (old != null) {
-                    throw new IllegalStateException("lazy bean name existed, name=" + old.lazyBean() + ", new-bean=" + en.getKey());
-                }
-            }
-            log.info("tiny-mail TinyMailLazy beans, size=" + lazyBeanHolder.size());
-        }
-
-        final long idle = tinyMailServiceProp.getBootScan().toMillis();
-        if (idle > 0) {
-            log.info("tiny-mail schedule boot-scan after={} ms", idle);
-            taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
-        }
-    }
-
     protected TinyMailMessage makeMailMessage(@NotNull TinyMailConfig config, @NotNull WinMailSender po, @Nullable TinyMail msg) {
         final TinyMailMessage message = new TinyMailMessage();
         TinyMailConfig.ConfSetter.toAny(message, config);
@@ -533,7 +502,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         if (po.getMailText() == null) {
-            var bean = lazyBeanHolder.get(po.getLazyBean());
+            var bean = lazyBeanHolder.obtain().get(po.getLazyBean());
             if (bean == null) {
                 log.error("stop lazy tiny-mail, not found bean={}, id={}", bean, po.getId());
                 return true;
@@ -562,6 +531,39 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         return false;
+    }
+
+    protected long doSend(boolean sync, @NotNull TinyMail message, boolean retry) {
+        final String conf = message.getConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
+
+        final WinMailSender po = saveMailSender(config, message);
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, true);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, true);
+        }
+    }
+
+    protected long doSend(boolean sync, long id, boolean retry, boolean check) {
+        final WinMailSender po = winMailSenderDao.fetchOneById(id);
+        AssertArgs.notNull(po, "skip tiny-mail not found by id={}", id);
+
+        final String conf = po.getMailConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "skip tiny-mail conf={} not found, id={}", conf, id);
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, check);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, check);
+        }
     }
 
     /**
@@ -629,16 +631,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             }
 
             boolean hookStop = false;
-            if (statusHooks != null) {
-                for (StatusHook sh : statusHooks) {
-                    try {
-                        if (sh.stop(po, cost, exception)) {
-                            hookStop = true;
-                        }
+
+            for (StatusHook sh : statusHookHolder.obtain()) {
+                try {
+                    if (sh.stop(po, cost, exception)) {
+                        hookStop = true;
                     }
-                    catch (Exception e) {
-                        log.error("should NOT throw in hook, hook-class=" + sh.getClass().getName(), e);
-                    }
+                }
+                catch (Exception e) {
+                    log.error("should NOT throw in hook, hook-class=" + sh.getClass().getName(), e);
                 }
             }
 
@@ -678,7 +679,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final Long id = po.getId();
         final String bn = po.getLazyBean();
-        var bean = lazyBeanHolder.get(bn);
+        var bean = lazyBeanHolder.obtain().get(bn);
         if (bean == null) {
             throw new MailStopException("tiny-mail lazy-edit, not-found bean=" + bn + ", id=" + id);
         }

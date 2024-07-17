@@ -1,9 +1,13 @@
 package pro.fessional.wings.tiny.app.service;
 
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
+import pro.fessional.wings.tiny.mail.service.TinyMail;
 import pro.fessional.wings.tiny.mail.service.TinyMailLazy;
+import pro.fessional.wings.tiny.mail.service.TinyMailService;
 
 import java.util.HashSet;
 
@@ -15,6 +19,18 @@ import java.util.HashSet;
 public class TestTinyMailLazy implements TinyMailLazy {
 
     private final HashSet<String> exception1st = new HashSet<>();
+
+    @Setter(onMethod_ = { @Autowired })
+    protected TinyMailService tinyMailService;
+
+    /**
+     * Testing::
+     * Requested bean is currently in creation:
+     * Is there an unresolvable circular reference?
+     */
+    public void send(TinyMail mail) {
+        tinyMailService.send(mail, true);
+    }
 
     @Override
     public @Nullable Edit lazyEdit(@Nullable String para) {
