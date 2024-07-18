@@ -369,12 +369,12 @@ class DefaultRevisionManager(
             val msgAly = applyMessage(reviSql.second)
 
             if (isUpto && !notAppd) {
-                interactive.log(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=true, db=$plainName")
                 continue
             }
 
             if (!isUpto && notAppd) {
-                interactive.log(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=false, db=$plainName")
                 continue
             }
 

@@ -459,6 +459,16 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return po;
     }
 
+    @Nullable
+    protected TinyMailLazy findLazyBean(String name) {
+        return lazyBeanHolder.obtain().get(name);
+    }
+
+    @NotNull
+    protected List<StatusHook> findStatusHook() {
+        return statusHookHolder.obtain();
+    }
+
     /**
      * should skip sending, condition not match
      */
@@ -502,9 +512,10 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         if (po.getMailText() == null) {
-            var bean = lazyBeanHolder.obtain().get(po.getLazyBean());
+            String bn = po.getLazyBean();
+            var bean = findLazyBean(bn);
             if (bean == null) {
-                log.error("stop lazy tiny-mail, not found bean={}, id={}", bean, po.getId());
+                log.error("stop lazy tiny-mail, not found bean={}, id={}", bn, po.getId());
                 return true;
             }
         }
@@ -632,7 +643,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
             boolean hookStop = false;
 
-            for (StatusHook sh : statusHookHolder.obtain()) {
+            for (StatusHook sh : findStatusHook()) {
                 try {
                     if (sh.stop(po, cost, exception)) {
                         hookStop = true;
@@ -679,7 +690,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final Long id = po.getId();
         final String bn = po.getLazyBean();
-        var bean = lazyBeanHolder.obtain().get(bn);
+        var bean = findLazyBean(bn);
         if (bean == null) {
             throw new MailStopException("tiny-mail lazy-edit, not-found bean=" + bn + ", id=" + id);
         }
@@ -776,11 +787,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             }
         }
 
-        if (exception == null) return Success;
-
-        // rethrow exception
-        if (exception instanceof RuntimeException) {
-            throw (RuntimeException) exception;
+        if (exception == null) {
+            return Success;
+        }
+        else if (exception instanceof RuntimeException re) {
+            throw re; // rethrow exception
         }
         else {
             throw new MailSendException("failed tiny-mail, id=" + id + ", subject=" + po.getMailSubj(), exception);
