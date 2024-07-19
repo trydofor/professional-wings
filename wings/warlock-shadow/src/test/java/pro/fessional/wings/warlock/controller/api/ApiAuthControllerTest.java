@@ -19,6 +19,7 @@ import pro.fessional.mirana.bits.HmacHelp;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
@@ -56,24 +57,23 @@ import static pro.fessional.wings.warlock.app.controller.TestToyApiController.Te
  * @since 2022-11-16
  */
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "wings.warlock.apiauth.must-signature=false",
-                "wings.enabled.slardar.restream=false",
-        })
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+        "wings.enabled.slardar.restream=false",
+    })
 @Slf4j
 class ApiAuthControllerTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WarlockApiAuthProp apiAuthProp;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private WarlockUrlmapProp urlmapProp;
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
+    @Setter(onMethod_ = { @Value("${local.server.port}") })
     private int apiPort;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private OkHttpClient okHttpClient;
 
     private final String client = "wings-trydofor";
@@ -93,10 +93,10 @@ class ApiAuthControllerTest {
 
     private HttpUrl.Builder urlBuilder() {
         return new HttpUrl.Builder()
-                .scheme("http")
-                .host("localhost")
-                .port(apiPort)
-                .encodedPath(ApiSimple);
+            .scheme("http")
+            .host("localhost")
+            .port(apiPort)
+            .encodedPath(ApiSimple);
     }
 
     private String accessToken = null;
@@ -104,33 +104,33 @@ class ApiAuthControllerTest {
     private String getToken() {
         if (accessToken != null) return accessToken;
         final HttpUrl.Builder u1 = new HttpUrl.Builder()
-                .scheme("http")
-                .host("localhost")
-                .port(apiPort)
-                .encodedPath(urlmapProp.getOauthAuthorize())
-                .addQueryParameter(WarlockOauthService.ClientId, client);
+            .scheme("http")
+            .host("localhost")
+            .port(apiPort)
+            .encodedPath(urlmapProp.getOauthAuthorize())
+            .addQueryParameter(WarlockOauthService.ClientId, client);
         final String t1 = OkHttpClientHelper.getText(okHttpClient, u1.toString());
         final String code = FastJsonHelper.object(t1).getString(WarlockOauthService.Code);
 
         final HttpUrl.Builder u2 = new HttpUrl.Builder()
-                .scheme("http")
-                .host("localhost")
-                .port(apiPort)
-                .encodedPath(urlmapProp.getOauthAccessToken())
-                .addQueryParameter(WarlockOauthService.ClientId, client)
-                .addQueryParameter(WarlockOauthService.ClientSecret, secret)
-                .addQueryParameter(WarlockOauthService.Code, code);
+            .scheme("http")
+            .host("localhost")
+            .port(apiPort)
+            .encodedPath(urlmapProp.getOauthAccessToken())
+            .addQueryParameter(WarlockOauthService.ClientId, client)
+            .addQueryParameter(WarlockOauthService.ClientSecret, secret)
+            .addQueryParameter(WarlockOauthService.Code, code);
 
         final String t2 = OkHttpClientHelper.postJson(okHttpClient, u2.toString(), "");
-        accessToken =  FastJsonHelper.object(t2).getString(WarlockOauthService.AccessToken);
+        accessToken = FastJsonHelper.object(t2).getString(WarlockOauthService.AccessToken);
         return accessToken;
     }
 
     @Test
     @TmsLink("C14024")
     public void testJsonJson() throws IOException {
-        String[] clients = {client, getToken()};
-        String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
+        String[] clients = { client, getToken() };
+        String[] timestamps = { String.valueOf(Now.millis()), Null.Str };
         for (String c : clients) {
             for (String t : timestamps) {
                 jsonJson(c, t, md5);
@@ -158,17 +158,19 @@ class ApiAuthControllerTest {
 
         final String para = FormatUtil.sortParam(param);
         final String signature = sumFun == null
-                                 ? Null.Str
-                                 : sumFun.apply(para + jsonBody + secret + timestamp);
-
+            ? Null.Str
+            : sumFun.apply(para + jsonBody + secret + timestamp);
+        final boolean signed = !signature.isEmpty();
         RequestBody body = RequestBody.create(jsonBody, APPLICATION_JSON_VALUE);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(ubd.build())
-                .header(apiAuthProp.getClientHeader(), client)
-                .header(apiAuthProp.getTimestampHeader(), timestamp)
-                .header(apiAuthProp.getSignatureHeader(), signature)
-                .post(body)
-                .build();
+            .url(ubd.build())
+            .header(apiAuthProp.getClientHeader(), client)
+            .header(apiAuthProp.getTimestampHeader(), timestamp)
+            .header(apiAuthProp.getSignatureHeader(), signature)
+            .header("ticket", String.valueOf(client.startsWith("win-")))
+            .header("signed", String.valueOf(signed))
+            .post(body)
+            .build();
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, request, false);
         Assertions.assertNotNull(r2);
@@ -179,12 +181,12 @@ class ApiAuthControllerTest {
         final String text = resBody.string();
         Assertions.assertEquals(jsonBody, text);
 
-        final String stmp = r2.header(apiAuthProp.getTimestampHeader());
+        final String stmp = EmptySugar.nullToEmpty(r2.header(apiAuthProp.getTimestampHeader()));
         if (!timestamp.isEmpty()) {
             Assertions.assertEquals(timestamp, stmp);
         }
 
-        if (sumFun != null) {
+        if (signed) {
             final String sign = r2.header(apiAuthProp.getSignatureHeader());
             Assertions.assertNotNull(sign);
             final String data1 = text + secret + stmp;
@@ -201,8 +203,8 @@ class ApiAuthControllerTest {
     @Test
     @TmsLink("C14025")
     public void testFileJson() throws IOException {
-        String[] clients = {client, getToken()};
-        String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
+        String[] clients = { client, getToken() };
+        String[] timestamps = { String.valueOf(Now.millis()), Null.Str };
         for (String c : clients) {
             for (String t : timestamps) {
                 fileJson(c, t, md5, true);
@@ -231,20 +233,23 @@ class ApiAuthControllerTest {
 
         final String para = FormatUtil.sortParam(param);
         final String signature = sumFun == null
-                                 ? Null.Str
-                                 : sumFun.apply(para + secret + timestamp);
+            ? Null.Str
+            : sumFun.apply(para + secret + timestamp);
+        final boolean signed = !signature.isEmpty();
 
         MultipartBody.Builder body = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(fileKey, fileName, RequestBody.create(fileBody.getBytes(UTF_8), MULTIPART_FORM_DATA_VALUE));
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(fileKey, fileName, RequestBody.create(fileBody.getBytes(UTF_8), MULTIPART_FORM_DATA_VALUE));
 
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(ubd.build())
-                .header(apiAuthProp.getClientHeader(), client)
-                .header(apiAuthProp.getTimestampHeader(), timestamp)
-                .header(apiAuthProp.getSignatureHeader(), signature)
-                .post(body.build())
-                .build();
+            .url(ubd.build())
+            .header(apiAuthProp.getClientHeader(), client)
+            .header(apiAuthProp.getTimestampHeader(), timestamp)
+            .header(apiAuthProp.getSignatureHeader(), signature)
+            .header("ticket", String.valueOf(client.startsWith("win-")))
+            .header("signed", String.valueOf(signed))
+            .post(body.build())
+            .build();
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, request, false);
         Assertions.assertNotNull(r2);
@@ -260,12 +265,12 @@ class ApiAuthControllerTest {
         final String text = resBody.string();
         Assertions.assertEquals(jsonBody, text);
 
-        final String stmp = r2.header(apiAuthProp.getTimestampHeader());
+        final String stmp = EmptySugar.nullToEmpty(r2.header(apiAuthProp.getTimestampHeader()));
         if (!timestamp.isEmpty()) {
             Assertions.assertEquals(timestamp, stmp);
         }
 
-        if (sumFun != null) {
+        if (signed) {
             final String sign = r2.header(apiAuthProp.getSignatureHeader());
             Assertions.assertNotNull(sign);
             final String data1 = text + secret + stmp;
@@ -283,8 +288,8 @@ class ApiAuthControllerTest {
     @Test
     @TmsLink("C14026")
     public void testJsonFile() throws IOException {
-        String[] clients = {client, getToken()};
-        String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
+        String[] clients = { client, getToken() };
+        String[] timestamps = { String.valueOf(Now.millis()), Null.Str };
         for (String c : clients) {
             for (String t : timestamps) {
                 jsonFile(c, t, md5, true);
@@ -311,18 +316,21 @@ class ApiAuthControllerTest {
 
         final String para = FormatUtil.sortParam(param);
         final String signature = sumFun == null
-                                 ? Null.Str
-                                 : sumFun.apply(para + jsonBody + secret + timestamp);
-        final String dgst = digest && sumFun != null ? sumFun.apply(jsonBody) : Null.Str;
+            ? Null.Str
+            : sumFun.apply(para + jsonBody + secret + timestamp);
+        final boolean signed = !signature.isEmpty();
+        final String dgst = signed && digest ? sumFun.apply(jsonBody) : Null.Str;
         RequestBody body = RequestBody.create(jsonBody, APPLICATION_JSON_VALUE);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(ubd.build())
-                .header(apiAuthProp.getClientHeader(), client)
-                .header(apiAuthProp.getTimestampHeader(), timestamp)
-                .header(apiAuthProp.getSignatureHeader(), signature)
-                .header(apiAuthProp.getDigestHeader(), dgst)
-                .post(body)
-                .build();
+            .url(ubd.build())
+            .header(apiAuthProp.getClientHeader(), client)
+            .header(apiAuthProp.getTimestampHeader(), timestamp)
+            .header(apiAuthProp.getSignatureHeader(), signature)
+            .header(apiAuthProp.getDigestHeader(), dgst)
+            .header("ticket", String.valueOf(client.startsWith("win-")))
+            .header("signed", String.valueOf(signed))
+            .post(body)
+            .build();
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, request, false);
         Assertions.assertNotNull(r2);
@@ -333,7 +341,7 @@ class ApiAuthControllerTest {
         final String text = resBody.string();
         Assertions.assertEquals(fileBody, text);
 
-        final String stmp = r2.header(apiAuthProp.getTimestampHeader());
+        final String stmp = EmptySugar.nullToEmpty(r2.header(apiAuthProp.getTimestampHeader()));
         if (!timestamp.isEmpty()) {
             Assertions.assertEquals(timestamp, stmp);
         }
@@ -344,7 +352,7 @@ class ApiAuthControllerTest {
         Assertions.assertEquals(fileName, disposition.getFilename());
 
         final String data1;
-        if (digest && sumFun != null) {
+        if (signed && digest) {
             final String sum = sumFun.apply(fileBody);
             Assertions.assertEquals(sum, r2.header(apiAuthProp.getDigestHeader()));
             data1 = sum + secret + stmp;
@@ -353,7 +361,7 @@ class ApiAuthControllerTest {
             data1 = secret + stmp;
         }
 
-        if (sumFun != null) {
+        if (signed) {
             final String sign = r2.header(apiAuthProp.getSignatureHeader());
             Assertions.assertNotNull(sign);
 
@@ -369,8 +377,8 @@ class ApiAuthControllerTest {
     @Test
     @TmsLink("C14027")
     public void testFileFile() throws IOException {
-        String[] clients = {client, getToken()};
-        String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
+        String[] clients = { client, getToken() };
+        String[] timestamps = { String.valueOf(Now.millis()), Null.Str };
         for (String c : clients) {
             for (String t : timestamps) {
                 fileFile(c, t, md5, true);
@@ -386,8 +394,10 @@ class ApiAuthControllerTest {
         param.put(ReqMethod, ModFileFile);
         param.put(ResFileName, fileName);
         param.put(ResFileBody, fileBody);
+
+        final boolean signed = sumFun != null;
         final String dgst;
-        if (digest && sumFun != null) {
+        if (signed && digest) {
             dgst = sumFun.apply(fileBody);
             param.put(fileSum, dgst);
         }
@@ -396,7 +406,7 @@ class ApiAuthControllerTest {
         }
 
         final String para = FormatUtil.sortParam(param);
-        param.remove(fileSum);
+        param.remove(fileSum); // remove from query string, post by form
 
         HttpUrl.Builder ubd = urlBuilder();
         for (Map.Entry<String, String> en : param.entrySet()) {
@@ -406,22 +416,27 @@ class ApiAuthControllerTest {
             }
         }
 
-        final String signature = sumFun == null
-                                 ? Null.Str
-                                 : sumFun.apply(para + jsonBody + secret + timestamp);
+        final String signature = !signed
+            ? Null.Str
+            : sumFun.apply(para + secret + timestamp);
 
         MultipartBody.Builder body = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart(fileKey, fileName, RequestBody.create(fileBody.getBytes(UTF_8), MULTIPART_FORM_DATA_VALUE))
-                .addFormDataPart(fileSum, dgst);
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(fileKey, fileName, RequestBody.create(fileBody.getBytes(UTF_8), MULTIPART_FORM_DATA_VALUE));
+
+        if (!dgst.isEmpty()) {
+            body.addFormDataPart(fileSum, dgst); // pass fileSum by form
+        }
 
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(ubd.build())
-                .header(apiAuthProp.getClientHeader(), client)
-                .header(apiAuthProp.getTimestampHeader(), timestamp)
-                .header(apiAuthProp.getSignatureHeader(), signature)
-                .post(body.build())
-                .build();
+            .url(ubd.build())
+            .header(apiAuthProp.getClientHeader(), client)
+            .header(apiAuthProp.getTimestampHeader(), timestamp)
+            .header(apiAuthProp.getSignatureHeader(), signature)
+            .header("ticket", String.valueOf(client.startsWith("win-")))
+            .header("signed", String.valueOf(signed))
+            .post(body.build())
+            .build();
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, request, false);
         Assertions.assertNotNull(r2);
@@ -432,7 +447,7 @@ class ApiAuthControllerTest {
         final String text = resBody.string();
         Assertions.assertEquals(fileBody, text);
 
-        final String stmp = r2.header(apiAuthProp.getTimestampHeader());
+        final String stmp = EmptySugar.nullToEmpty(r2.header(apiAuthProp.getTimestampHeader()));
         if (!timestamp.isEmpty()) {
             Assertions.assertEquals(timestamp, stmp);
         }
@@ -443,7 +458,7 @@ class ApiAuthControllerTest {
         Assertions.assertEquals(fileName, disposition.getFilename());
 
         final String data1;
-        if (digest && sumFun != null) {
+        if (signed && digest) {
             final String sum = sumFun.apply(fileBody);
             Assertions.assertEquals(sum, r2.header(apiAuthProp.getDigestHeader()));
             data1 = sum + secret + stmp;
@@ -452,7 +467,7 @@ class ApiAuthControllerTest {
             data1 = secret + stmp;
         }
 
-        if (sumFun != null) {
+        if (signed) {
             final String sign = r2.header(apiAuthProp.getSignatureHeader());
             Assertions.assertNotNull(sign);
 
