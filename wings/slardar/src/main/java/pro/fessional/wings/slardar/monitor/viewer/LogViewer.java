@@ -1,66 +1,44 @@
 package pro.fessional.wings.slardar.monitor.viewer;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.cache2k.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.id.Ulid;
-import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
-import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author trydofor
  * @since 2021-07-20
  */
 @Slf4j
-@RestController
-@ConditionalWingsEnabled(abs = LogConf.Key$enable)
 public class LogViewer implements WarnFilter {
 
     @Getter
     private final LogConf conf;
     private final Cache<String, String> cache;
 
-    @Autowired
-    public LogViewer(SlardarMonitorProp prop) {
-        this(prop.getView());
-    }
-
     public LogViewer(LogConf conf) {
         this.conf = conf;
         this.cache = WingsCache2k.builder(LogViewer.class, "cache", 2_000, conf.getAlive(), null, String.class, String.class).build();
     }
 
-    @Operation(summary = "Alarm logs can be viewed in conjunction with alarm notifications when self-monitoring is enabled.", description = """
-        # Usage
-        Pass the log id to view the log.
-        ## Params
-        * @param id - log id, max 2k caches in 36H
-        ## Returns
-        * @return {200 | string} log context or empty""")
-    @GetMapping(value = "${" + LogConf.Key$mapping + "}")
-    public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
+    public void view(String id, OutputStream output) throws IOException {
         if (id == null) return;
         final String log = cache.get(id);
         if (log == null) return;
@@ -69,11 +47,10 @@ public class LogViewer implements WarnFilter {
 
         try (FileInputStream fis = new FileInputStream(file)) {
             final long len = conf.getLength().toBytes();
-            final ServletOutputStream outputStream = res.getOutputStream();
-            IOUtils.copyLarge(fis, res.getOutputStream(), 0L, len);
+            IOUtils.copyLarge(fis, output, 0L, len);
             if (file.length() - len > 0) {
                 final String more = String.format("\n\n...... %,d / %,d bytes", len, file.length());
-                outputStream.write(more.getBytes());
+                output.write(more.getBytes());
             }
         }
     }
@@ -116,30 +93,32 @@ public class LogViewer implements WarnFilter {
         }
     }
 
-    private boolean canIgnoreHead(String out) {
-        if (conf.getIgnore().isEmpty()) return false;
+    protected boolean canIgnoreHead(String out) {
+        final Collection<String> ignores = conf.getIgnore().values();
+        if (ignores.isEmpty()) return false;
 
         long max = conf.getLength().toBytes();
         final File file = new File(out);
         if (file.length() > max || !file.canRead()) return false;
 
+        final Pattern head = conf.getHeader();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            final Collection<String> ign = conf.getIgnore().values();
             String line;
             int tol = 0;
             int cnt = 0;
-            out:
             while ((line = reader.readLine()) != null && max > 0) {
-                if (line.isEmpty()) {
+                max -= line.length() + 1; // loose calculation
+
+                if (line.isEmpty() || (head != null && !head.matcher(line).find())) {
                     continue;
                 }
-                //
-                max -= line.length(); // loose calculation
+
+                // only match header line
                 tol++;
-                for (String s : ign) {
+                for (String s : ignores) {
                     if (line.contains(s)) {
                         cnt++;
-                        continue out;
+                        break;
                     }
                 }
             }

@@ -6,6 +6,7 @@ import org.springframework.util.unit.DataSize;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author trydofor
@@ -54,6 +55,14 @@ public class LogConf {
      */
     private String domain = "";
     public static final String Key$domain = Key + ".domain";
+
+    /**
+     * regexp of section header, e.g. `2023-02-04T11:09:32.692+08:00`, `2024-07-23 01:31:59.063`
+     *
+     * @see #Key$header
+     */
+    private Pattern header = null;
+    public static final String Key$header = Key + ".header";
 
     /**
      * ignored alert string in logs.

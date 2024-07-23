@@ -12,6 +12,7 @@ import pro.fessional.wings.slardar.notice.DingTalkNotice;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import static pro.fessional.wings.silencer.datetime.DateTimePattern.FMT_FULL_19Z;
@@ -28,6 +29,7 @@ public class DingTalkReport implements WarnReport {
 
     private final String dingConfig;
     private final DingTalkNotice dingTalkNotice;
+    private final AtomicLong counter = new AtomicLong(1);
 
     protected String gitInfo = null;
 
@@ -81,7 +83,7 @@ public class DingTalkReport implements WarnReport {
             subject = subject + " " + conf.getNoticeKeyword();
         }
 
-        final boolean rst = dingTalkNotice.send(conf, subject, text);
+        final boolean rst = dingTalkNotice.send(conf, subject + " #" + counter.getAndIncrement(), text);
         return rst ? Sts.Done : Sts.Fail;
     }
 
