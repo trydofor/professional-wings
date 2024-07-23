@@ -44,7 +44,7 @@ CREATE TABLE `win_task_define` (
     PRIMARY KEY (`id`),
     UNIQUE INDEX uq_tasker_bean (`tasker_bean`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='120/Task Define';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='141/Task Define';
 
 CREATE TABLE `win_task_result` (
     `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
@@ -60,6 +60,6 @@ CREATE TABLE `win_task_result` (
     PRIMARY KEY (`id`),
     INDEX ix_task_id (`task_id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='122/Task Result';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='142/Task Result';
 
 -- CALL FLYWAVE('2020-10-26v01-tiny_task.sql');

@@ -42,6 +42,6 @@ CREATE TABLE `win_mail_sender` (
     INDEX ix_ref_key1 (`ref_key1`),
     INDEX ix_ref_key2 (`ref_key2`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='124/Mail Sending';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='143/Mail Sending';
 
 -- CALL FLYWAVE('2020-10-27v01-tiny_mail.sql');
