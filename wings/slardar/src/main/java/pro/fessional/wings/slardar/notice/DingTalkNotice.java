@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.notice;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -173,7 +174,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
-            executor = Executors.newSingleThreadExecutor();
+            executor = TtlExecutors.getTtlExecutor(Executors.newWorkStealingPool(2));
         }
     }
 

@@ -27,12 +27,12 @@ public class DatabaseFacelessTest extends TestingDatabase {
     @TmsLink("C14082")
     void resetSchemaWingsFaceless() {
         reset(
-                V00_19_0512_01_Schema,
-                V01_19_0520_01_IdLog,
-                V01_19_0521_01_EnumI18n,
-                V03_20_1023_01_AuthEnum,
-                V90_22_0601_01_TestSchema,
-                V90_22_0601_02_TestRecord
+            V00_19_0512_01_Schema,
+            V01_19_0520_01_IdLog,
+            V01_19_0521_01_EnumI18n,
+            V03_20_1023_01_AuthEnum,
+            V90_22_0601_01_TestSchema,
+            V90_22_0601_02_TestRecord
         );
     }
 }

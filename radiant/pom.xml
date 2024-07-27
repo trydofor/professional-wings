@@ -18,6 +18,7 @@
     <description>Radiant components under GhostShip Model</description>
 
     <modules>
+        <module>tiny-grow</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
     </modules>

@@ -26,13 +26,13 @@ public class DatabaseWarlockTest extends TestingDatabase {
     @TmsLink("C14007")
     void resetSchemaWingsWarlock() {
         reset(
-                V00_19_0512_01_Schema,
-                V01_19_0520_01_IdLog,
-                V01_19_0521_01_EnumI18n,
-                V03_20_1023_01_AuthEnum,
-                V04_20_1024_01_UserLogin,
-                V04_20_1024_02_RolePermit,
-                V05_20_1025_01_ConfRuntime
+            V00_19_0512_01_Schema,
+            V01_19_0520_01_IdLog,
+            V01_19_0521_01_EnumI18n,
+            V03_20_1023_01_AuthEnum,
+            V04_20_1024_01_UserLogin,
+            V04_20_1024_02_RolePermit,
+            V05_20_1025_01_ConfRuntime
         );
     }
 }

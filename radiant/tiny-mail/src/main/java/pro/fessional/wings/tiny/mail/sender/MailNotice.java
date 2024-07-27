@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -91,7 +92,7 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
     public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
-            executor = Executors.newSingleThreadExecutor();
+            executor = TtlExecutors.getTtlExecutor(Executors.newWorkStealingPool(2));
         }
     }
 }

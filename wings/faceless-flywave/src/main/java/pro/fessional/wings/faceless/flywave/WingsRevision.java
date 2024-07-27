@@ -20,6 +20,7 @@ public enum WingsRevision implements RevisionRegister {
     V05_20_1025_01_ConfRuntime(2020_1025_01L, "runtime config", "master/05-conf", "wings/warlock/src/main/resources/wings-flywave"),
     V06_20_1026_01_TinyTask(2020_1026_01L, "tiny task", "master/06-task", "radiant/tiny-task/src/main/resources/wings-flywave"),
     V07_20_1027_01_TinyMail(2020_1027_01L, "tiny mail", "master/07-mail", "radiant/tiny-mail/src/main/resources/wings-flywave"),
+    V08_20_1028_01_TinyGrow(2020_1028_01L, "tiny grow", "master/08-grow", "radiant/tiny-grow/src/main/resources/wings-flywave"),
 
     // upgrade
     V01_21_0918_01_FixAuthn(2021_0918_01L, "fix authn", "branch/somefix/01-authn-fix", "wings/warlock/src/main/resources/wings-flywave"),

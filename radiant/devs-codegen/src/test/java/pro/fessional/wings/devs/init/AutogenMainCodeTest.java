@@ -29,13 +29,13 @@ import java.util.List;
 @EnabledIfSystemProperty(named = "devs-autogen", matches = "true")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenMainCodeTest {
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private DataSource dataSource;
-    @Setter(onMethod_ = {@Value("${spring.datasource.url}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.url}") })
     private String jdbcUrl;
-    @Setter(onMethod_ = {@Value("${spring.datasource.username}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.username}") })
     private String jdbcUser;
-    @Setter(onMethod_ = {@Value("${spring.datasource.password}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.password}") })
     private String jdbcPass;
 
     private final String projectRoot = "../../";
@@ -48,6 +48,8 @@ public class AutogenMainCodeTest {
         autogen20WarlockAutogenAuth(); // warlock/security
 
         autogen21WarlockAutogenJooq(); // warlock/database
+
+        autogen31TinyGrowAutogenJooq(); // tiny/grow
         autogen31TinyMailAutogenJooq(); // tiny/mail
         autogen31TinyTaskAutogenJooq(); // tiny/task
     }
@@ -69,7 +71,7 @@ public class AutogenMainCodeTest {
         generator.setTargetDir(projectRoot + "wings/warlock/src/main/java-gen/");
         generator.setTargetPkg("pro.fessional.wings.warlock.enums.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
-                h -> h.includeType(Warlock2EnumGenerator.warlockEnums));
+            h -> h.includeType(Warlock2EnumGenerator.warlockEnums));
     }
 
     void autogen20WarlockAutogenAuth() {
@@ -91,13 +93,22 @@ public class AutogenMainCodeTest {
             bd -> bd.setGlobalSuffix("Warlock"));
     }
 
+    void autogen31TinyGrowAutogenJooq() {
+        ProjectJooqGenerator generator = new ProjectJooqGenerator();
+        generator.setTargetDir(projectRoot + "radiant/tiny-grow/src/main/java-gen/");
+        generator.setTargetPkg("pro.fessional.wings.tiny.grow.database.autogen");
+        generator.gen(jdbcUrl, jdbcUser, jdbcPass,
+            bd -> bd.databaseIncludes("win_grow_track"),
+            bd -> bd.setGlobalSuffix("TinyGrow"));
+    }
+
     void autogen31TinyMailAutogenJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();
         generator.setTargetDir(projectRoot + "radiant/tiny-mail/src/main/java-gen/");
         generator.setTargetPkg("pro.fessional.wings.tiny.mail.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
-                bd -> bd.databaseIncludes("win_mail_sender"),
-                bd -> bd.setGlobalSuffix("TinyMail"));
+            bd -> bd.databaseIncludes("win_mail_sender"),
+            bd -> bd.setGlobalSuffix("TinyMail"));
     }
 
     void autogen31TinyTaskAutogenJooq() {
@@ -105,7 +116,7 @@ public class AutogenMainCodeTest {
         generator.setTargetDir(projectRoot + "radiant/tiny-task/src/main/java-gen/");
         generator.setTargetPkg("pro.fessional.wings.tiny.task.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
-                bd -> bd.databaseIncludes("win_task_define", "win_task_result"),
-                bd -> bd.setGlobalSuffix("TinyTask"));
+            bd -> bd.databaseIncludes("win_task_define", "win_task_result"),
+            bd -> bd.setGlobalSuffix("TinyTask"));
     }
 }

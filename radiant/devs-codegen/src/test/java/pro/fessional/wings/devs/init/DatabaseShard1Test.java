@@ -23,10 +23,10 @@ public class DatabaseShard1Test extends TestingDatabase {
     @TmsLink("C14084")
     void resetSchemaWingsShard1() {
         reset(
-                V00_19_0512_01_Schema,
-                V01_19_0520_01_IdLog,
-                V90_22_0601_01_TestSchema,
-                V90_22_0601_02_TestRecord
+            V00_19_0512_01_Schema,
+            V01_19_0520_01_IdLog,
+            V90_22_0601_01_TestSchema,
+            V90_22_0601_02_TestRecord
         );
 
         shard("tst_sharding", 5);
