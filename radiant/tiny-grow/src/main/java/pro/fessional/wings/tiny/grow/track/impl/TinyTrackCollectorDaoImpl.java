@@ -2,7 +2,6 @@ package pro.fessional.wings.tiny.grow.track.impl;
 
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +13,8 @@ import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.fastjson.filter.ExcludePropertyPreFilter;
 import pro.fessional.wings.tiny.grow.database.autogen.tables.daos.WinGrowTrackDao;
 import pro.fessional.wings.tiny.grow.database.autogen.tables.pojos.WinGrowTrack;
-import pro.fessional.wings.tiny.grow.spring.prop.TinyTrackExcludeProp;
 import pro.fessional.wings.tiny.grow.track.TinyTrackService;
-
-import java.util.Map;
+import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
 /**
  * @author trydofor
@@ -25,7 +22,7 @@ import java.util.Map;
  */
 @Service
 @ConditionalWingsEnabled
-public class TinyTrackCollectorDaoImpl implements TinyTrackService.Collector, InitializingBean {
+public class TinyTrackCollectorDaoImpl implements TinyTrackService.Collector {
 
     @Setter(onMethod_ = { @Autowired })
     protected WinGrowTrackDao winGrowTrackDao;
@@ -33,39 +30,24 @@ public class TinyTrackCollectorDaoImpl implements TinyTrackService.Collector, In
     @Setter(onMethod_ = { @Autowired })
     protected LightIdService lightIdService;
 
-    @Setter(onMethod_ = { @Autowired })
-    protected TinyTrackExcludeProp tinyTrackExcludeProp;
-
-    protected ExcludePropertyPreFilter excludePropertyPreFilter;
-
     @Override
     @Transactional
-    public void collect(TinyTrackService.Tracking tracking) {
+    public void collect(TinyTracking tracking) {
         WinGrowTrack pojo = new WinGrowTrack();
         pojo.setId(lightIdService.getId(winGrowTrackDao.getTable()));
-        buildPojo(pojo, tracking);
+
+        buildProp(pojo, tracking);
+        buildExec(pojo, tracking);
+
         winGrowTrackDao.insert(pojo);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        excludePropertyPreFilter = new ExcludePropertyPreFilter();
-        excludePropertyPreFilter.addClazz(tinyTrackExcludeProp.getClazz().values());
-        excludePropertyPreFilter.addEqual(tinyTrackExcludeProp.getEqual().values());
-        excludePropertyPreFilter.addRegex(tinyTrackExcludeProp.getRegex().values());
-    }
-
-    protected void buildPojo(@NotNull WinGrowTrack pojo, @NotNull TinyTrackService.Tracking tracking) {
+    protected void buildProp(@NotNull WinGrowTrack pojo, @NotNull TinyTracking tracking) {
         pojo.setCreateDt(DateLocaling.sysLdt(tracking.getBegin()));
 
         pojo.setTrackKey(tracking.getKey());
         pojo.setTrackRef(tracking.getRef());
         pojo.setTrackApp(tracking.getApp());
-
-        pojo.setTrackEnv(encodeEnv(tracking.getEnv()));
-        pojo.setTrackIns(encodeIns(tracking.getIns()));
-        pojo.setTrackOut(encodeOut(tracking.getOut()));
-        pojo.setTrackErr(encodeErr(tracking.getErr()));
 
         pojo.setElapseMs(tracking.getElapse());
 
@@ -83,19 +65,12 @@ public class TinyTrackCollectorDaoImpl implements TinyTrackService.Collector, In
         pojo.setWordRef(tracking.getWordRef());
     }
 
-    protected String encodeEnv(Map<String, Object> env) {
-        return FastJsonHelper.string(env, excludePropertyPreFilter);
-    }
+    protected void buildExec(@NotNull WinGrowTrack pojo, @NotNull TinyTracking tracking) {
+        ExcludePropertyPreFilter filter = new ExcludePropertyPreFilter(tracking.getOmitRule());
 
-    protected String encodeIns(Object[] ins) {
-        return FastJsonHelper.string(ins, excludePropertyPreFilter);
-    }
-
-    protected String encodeOut(Object out) {
-        return FastJsonHelper.string(out, excludePropertyPreFilter);
-    }
-
-    protected String encodeErr(Throwable err) {
-        return ThrowableUtil.toString(err);
+        pojo.setTrackEnv(FastJsonHelper.string(tracking.getEnv(), filter));
+        pojo.setTrackIns(FastJsonHelper.string(tracking.getIns(), filter));
+        pojo.setTrackOut(FastJsonHelper.string(tracking.getOut(), filter));
+        pojo.setTrackErr(ThrowableUtil.toString(tracking.getErr()));
     }
 }

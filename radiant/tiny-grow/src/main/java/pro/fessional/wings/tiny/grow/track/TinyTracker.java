@@ -1,5 +1,7 @@
 package pro.fessional.wings.tiny.grow.track;
 
+import org.intellij.lang.annotations.Language;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,14 +29,31 @@ public @interface TinyTracker {
 
     /**
      * <pre>
-     * The name of this AOP object's method that will mix the `Tracking` after return/throw,
-     * its parameters is the `Tracking` prepended to the parameters of the AOP method.
+     * The name of this AOP object's method that will mix the `TinyTracking` after return/throw,
+     * its parameters is the `TinyTracking` prepended to the parameters of the AOP method.
      *
      * * saveOrder(long, Order) - the AOP method
-     * * saveOrder(Tracking, long, Order) - same as AOP method if mix is empty
-     * * saveOrderMix(Tracking, long, Order) - if mix is saveOrderMix
+     * * saveOrder(TinyTracking, long, Order) - same as AOP method if mix is empty
+     * * saveOrderMix(TinyTracking, long, Order) - if mix is saveOrderMix
      * </pre>
-     * @see TinyTrackService.Tracking
+     *
+     * @see TinyTracking
      */
     String mix() default "";
+
+    /**
+     * omit the property if it is instance of
+     */
+    Class<?>[] omitClass() default {};
+
+    /**
+     * omit the property if its name equals
+     */
+    String[] omitEqual() default {};
+
+    /**
+     * omit the property if its name match regex
+     */
+    @Language("regexp")
+    String[] omitRegex() default {};
 }

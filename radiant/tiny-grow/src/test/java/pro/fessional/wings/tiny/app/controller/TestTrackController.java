@@ -17,7 +17,7 @@ import pro.fessional.wings.tiny.grow.track.TinyTracker;
 @RestController
 public class TestTrackController {
 
-    @TinyTracker
+    @TinyTracker(omitClass = HttpServletRequest.class)
     @RequestMapping("/test/track.json")
     public TestTrackData track(@RequestParam("id") long id, @RequestParam("str") String str, HttpServletRequest ignore) {
         TestTrackCollectorImpl.CodeKeys.putIfAbsent(str, Boolean.TRUE);

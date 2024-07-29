@@ -1,13 +1,11 @@
 package pro.fessional.wings.tiny.grow.track;
 
-import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.mirana.cast.MethodConvertor;
 
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.concurrent.FutureTask;
 
 /**
  * Data tracking in async, never throws
@@ -20,23 +18,23 @@ public interface TinyTrackService {
     /**
      * async executor
      */
-    void async(Runnable run);
+    FutureTask<Void> async(Runnable run);
 
     /**
      * begin a tracking with key and ref
      */
     @NotNull
-    Tracking begin(@NotNull String key, @NotNull String ref);
+    TinyTracking begin(@NotNull String key, @NotNull String ref);
 
     /**
      * post the tracking, fire and forget, never throws
      */
-    void track(@NotNull Tracking tracking, boolean async);
+    void track(@NotNull TinyTracking tracking, boolean async);
 
     /**
      * async post the tracking, fire and forget, never throws
      */
-    default void track(@NotNull Tracking tracking) {
+    default void track(@NotNull TinyTracking tracking) {
         track(tracking, true);
     }
 
@@ -44,7 +42,7 @@ public interface TinyTrackService {
      * raw string key and 'string' ref
      */
     @NotNull
-    default Tracking begin(@NotNull String key) {
+    default TinyTracking begin(@NotNull String key) {
         return begin(key, "string");
     }
 
@@ -53,7 +51,7 @@ public interface TinyTrackService {
      * e.g. a.b.c.MyClass#method(String,int)
      */
     @NotNull
-    default Tracking begin(@NotNull Method key) {
+    default TinyTracking begin(@NotNull Method key) {
         String str = MethodConvertor.method2Str(key);
         return begin(str, "method");
     }
@@ -63,7 +61,7 @@ public interface TinyTrackService {
      * e.g. a.b.c.MyEnum#Name
      */
     @NotNull
-    default Tracking begin(@NotNull Enum<?> key) {
+    default TinyTracking begin(@NotNull Enum<?> key) {
         String str = EnumConvertor.enum2Str(key);
         return begin(str, "enum");
     }
@@ -72,47 +70,6 @@ public interface TinyTrackService {
      * collect tracking to different impl, e.g. Dao to database
      */
     interface Collector {
-        void collect(Tracking tracking);
-    }
-
-    @Data
-    class Tracking {
-        private final long begin;
-        private final String key;
-        private final String ref;
-
-        private String app;
-        @NotNull
-        private Map<String, Object> env = new LinkedHashMap<>();
-        @NotNull
-        private Object[] ins = new Object[0];
-        private Object out;
-        private Throwable err;
-        private long elapse;
-
-        private long userKey;
-        private long userRef;
-
-        private long dataKey;
-        private long dataRef;
-        private long dataOpt;
-
-        private String codeKey;
-        private String codeRef;
-        private String codeOpt;
-
-        private String wordRef;
-
-        public void setIns(Object... ins) {
-            this.ins = ins;
-        }
-
-        public void addEnv(String key, Object value) {
-            env.put(key, value);
-        }
-
-        public void addEnv(Map<String, Object> envs) {
-            env.putAll(envs);
-        }
+        void collect(TinyTracking tracking);
     }
 }

@@ -18,13 +18,15 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.tiny.grow.track.TinyTrackService;
-import pro.fessional.wings.tiny.grow.track.TinyTrackService.Tracking;
 import pro.fessional.wings.tiny.grow.track.TinyTracker;
+import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * @author trydofor
@@ -45,13 +47,15 @@ public class TinyTrackAround {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final TinyTracker anno = method.getAnnotation(TinyTracker.class);
 
-        final Tracking tracking = tryTrack(method, anno);
+        final TinyTracking tracking = tryTrack(method, anno);
         if (tracking == null) {
             return joinPoint.proceed();
         }
 
+        tracking.setIns(joinPoint.getArgs());
+        tracking.addOmit(omitRule(method, anno));
+
         try {
-            tracking.setIns(joinPoint.getArgs());
             Object out = joinPoint.proceed();
             tracking.setOut(out);
             return out;
@@ -70,10 +74,9 @@ public class TinyTrackAround {
         }
     }
 
-    protected void mixAsync(@NotNull Tracking tracking, @NotNull Method method, @NotNull TinyTracker anno, @NotNull JoinPoint joinPoint) {
+    protected void mixAsync(@NotNull TinyTracking tracking, @NotNull Method method, @NotNull TinyTracker anno, @NotNull JoinPoint joinPoint) {
         // biz thread
         tracking.setElapse(ThreadNow.millis() - tracking.getBegin());
-        mixTrackEnv(tracking);
 
         // async thread
         tinyTrackService.async(() -> {
@@ -95,19 +98,8 @@ public class TinyTrackAround {
         });
     }
 
-    protected void mixTrackEnv(@NotNull Tracking tracking) {
-        final TerminalContext.Context ctx = TerminalContext.get(false);
-        if (!ctx.isNull()) {
-            tracking.addEnv("userId", ctx.getUserId());
-            tracking.addEnv("locale", ctx.getLocale().toLanguageTag());
-            tracking.addEnv("zoneid", ctx.getZoneId().getId());
-            tracking.addEnv("authType", ctx.getAuthType().name());
-            tracking.addEnv("username", ctx.getUsername());
-        }
-    }
-
     @Nullable
-    protected Tracking tryTrack(@NotNull Method method, @NotNull TinyTracker anno) {
+    protected TinyTracking tryTrack(@NotNull Method method, @NotNull TinyTracker anno) {
         try {
             final String key = anno.key();
             if (StringUtils.isEmpty(key)) {
@@ -127,6 +119,24 @@ public class TinyTrackAround {
         }
     }
 
+    private final ConcurrentHashMap<Method, Set<Object>> omitRules = new ConcurrentHashMap<>();
+
+    protected Set<Object> omitRule(@NotNull Method method, @NotNull TinyTracker anno) {
+        return omitRules.computeIfAbsent(method, k -> {
+            Set<Object> set = new HashSet<>();
+            for (Class<?> clz : anno.omitClass()) {
+                set.add(clz);
+            }
+            for (String str : anno.omitEqual()) {
+                set.add(str);
+            }
+            for (String ptn : anno.omitRegex()) {
+                set.add(Pattern.compile(ptn));
+            }
+            return set;
+        });
+    }
+
     private final ConcurrentHashMap<Method, Method> mixMethod = new ConcurrentHashMap<>();
 
     @Nullable
@@ -139,7 +149,7 @@ public class TinyTrackAround {
                 }
                 Class<?>[] pm = method.getParameterTypes();
                 Class<?>[] pn = new Class<?>[pm.length + 1];
-                pn[0] = Tracking.class;
+                pn[0] = TinyTracking.class;
                 System.arraycopy(pm, 0, pn, 1, pm.length);
                 Method md = method.getDeclaringClass().getDeclaredMethod(nm, pn);
                 md.setAccessible(true);

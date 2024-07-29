@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.fastjson.filter;
 
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.filter.PropertyPreFilter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,28 +25,39 @@ public class ExcludePropertyPreFilter implements PropertyPreFilter {
     private final Set<String> equal = new HashSet<>();
     private final Set<Pattern> regex = new HashSet<>();
 
-    public void addClazz(@NotNull Class<?> clz) {
-        clazz.add(clz);
+    /**
+     * <pre>
+     * support exclude type,
+     * * Class - object is instance of
+     * * String - name equals
+     * * Pattern - name matches regexp
+     * * Collection - any of above type
+     * * Object[] - any of above type
+     * </pre>
+     */
+    public ExcludePropertyPreFilter(Object exclude) {
+        addExclude(exclude);
     }
 
-    public void addEqual(@NotNull String str) {
-        equal.add(str);
-    }
-
-    public void addRegex(Pattern ptn) {
-        regex.add(ptn);
-    }
-
-    public void addClazz(@NotNull Collection<Class<?>> clz) {
-        clazz.addAll(clz);
-    }
-
-    public void addEqual(@NotNull Collection<String> str) {
-        equal.addAll(str);
-    }
-
-    public void addRegex(Collection<Pattern> ptn) {
-        regex.addAll(ptn);
+    protected void addExclude(Object exclude) {
+        if (exclude == null) {
+            return;
+        }
+        else if (exclude instanceof Class<?> clz) {
+            clazz.add(clz);
+        }
+        else if (exclude instanceof String str) {
+            equal.add(str);
+        }
+        else if (exclude instanceof Pattern reg) {
+            regex.add(reg);
+        }
+        else if (exclude instanceof Collection<?> col) {
+            for (Object o : col) addExclude(o);
+        }
+        else if (exclude instanceof Object[] arr) {
+            for (Object o : arr) addExclude(o);
+        }
     }
 
     @Override

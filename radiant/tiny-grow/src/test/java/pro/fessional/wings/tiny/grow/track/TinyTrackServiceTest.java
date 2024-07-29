@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.grow.track;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -28,8 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2024-07-27
  */
 @SpringBootTest(properties = {
-    "wings.tiny.grow.track.exclude.equal[password]=password",
-    "wings.tiny.grow.track.exclude.regex[secret]=(?i).*secret",
+    "wings.tiny.grow.track.omit.clazz[jakarta.ServletRequest]=", // disable, use annotation
+    "wings.tiny.grow.track.omit.equal[password]=password",
+    "wings.tiny.grow.track.omit.regex[secret]=(?i).*secret",
 })
 @Slf4j
 @AutoConfigureMockMvc
@@ -50,6 +52,7 @@ class TinyTrackServiceTest {
     private final long now = (ThreadNow.millis() / 100) * 100;
 
     @Test
+    @TmsLink("C15018")
     void service() {
         String key11 = Ulid.next();
         String key12 = Ulid.next();
@@ -59,6 +62,15 @@ class TinyTrackServiceTest {
 
         checkPojo(11, key11, false, "pro.fessional.wings.tiny.app.service.TestTrack1Service#track(long,String)", "Local", now + 11, key11);
         checkPojo(12, key12, false, "pro.fessional.wings.tiny.app.service.TestTrack1Service#trackTx(long,String)", "Local", 0, "");
+
+        String key13 = Ulid.next();
+        String key14 = Ulid.next();
+        testTrack1Service.track13(now + 13, key13);
+        testTrack1Service.track14(now + 14, key14);
+        waitCodeKey(key13, key14);
+
+        checkPojo(13, key13, false, "pro.fessional.wings.tiny.app.service.TestTrack1Service#track13(long,String)", "Local", now + 13, key13);
+        checkPojo(14, key14, false, "pro.fessional.wings.tiny.app.service.TestTrack1Service#track14(long,String)", "Local", now + 14, key14);
 
         String key21 = Ulid.next();
         String key22 = Ulid.next();
@@ -71,6 +83,7 @@ class TinyTrackServiceTest {
     }
 
     @Test
+    @TmsLink("C15019")
     void mvc() throws Exception {
         String key31 = Ulid.next();
         final MvcResult mvcResult = mvc.perform(get("/test/track.json")

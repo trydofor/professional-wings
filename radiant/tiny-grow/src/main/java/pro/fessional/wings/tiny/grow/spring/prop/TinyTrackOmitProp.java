@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static pro.fessional.wings.tiny.grow.spring.prop.TinyTrackExcludeProp.Key;
+import static pro.fessional.wings.tiny.grow.spring.prop.TinyTrackOmitProp.Key;
 
 /**
  * @author trydofor
@@ -15,12 +15,12 @@ import static pro.fessional.wings.tiny.grow.spring.prop.TinyTrackExcludeProp.Key
  */
 @Data
 @ConfigurationProperties(Key)
-public class TinyTrackExcludeProp {
+public class TinyTrackOmitProp {
 
-    public static final String Key = "wings.tiny.grow.track.exclude";
+    public static final String Key = "wings.tiny.grow.track.omit";
 
     /**
-     * exclude the property if it is instance of
+     * omit the property if it is instance of. empty means disable
      *
      * @see #Key$clazz
      */
@@ -28,7 +28,7 @@ public class TinyTrackExcludeProp {
     public static final String Key$clazz = Key + ".clazz";
 
     /**
-     * exclude the property if its name equals
+     * omit the property if its name equals. empty means disable
      *
      * @see #Key$equal
      */
@@ -36,7 +36,7 @@ public class TinyTrackExcludeProp {
     public static final String Key$equal = Key + ".equal";
 
     /**
-     * exclude the property if its name match regex
+     * omit the property if its name match regex. empty means disable
      *
      * @see #Key$regex
      */

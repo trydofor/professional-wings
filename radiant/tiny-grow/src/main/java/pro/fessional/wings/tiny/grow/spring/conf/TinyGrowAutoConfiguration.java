@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Import;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.grow.spring.bean.TinyTrackConfiguration;
-import pro.fessional.wings.tiny.grow.spring.prop.TinyTrackExcludeProp;
+import pro.fessional.wings.tiny.grow.spring.prop.TinyTrackOmitProp;
 
 /**
  * @author trydofor
@@ -13,7 +13,7 @@ import pro.fessional.wings.tiny.grow.spring.prop.TinyTrackExcludeProp;
  */
 @AutoConfiguration
 @ConditionalWingsEnabled
-@ConfigurationPropertiesScan(basePackageClasses = TinyTrackExcludeProp.class)
+@ConfigurationPropertiesScan(basePackageClasses = TinyTrackOmitProp.class)
 @Import(TinyTrackConfiguration.class)
 public class TinyGrowAutoConfiguration {
 }

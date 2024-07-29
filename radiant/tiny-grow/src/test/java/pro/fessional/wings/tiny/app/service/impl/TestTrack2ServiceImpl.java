@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.tiny.app.service.TestTrack2Service;
 import pro.fessional.wings.tiny.app.service.TestTrackData;
-import pro.fessional.wings.tiny.grow.track.TinyTrackService;
 import pro.fessional.wings.tiny.grow.track.TinyTracker;
+import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
 /**
  * @author trydofor
@@ -24,7 +24,7 @@ public class TestTrack2ServiceImpl implements TestTrack2Service {
         return new TestTrackData(id, str);
     }
 
-    private void track(TinyTrackService.Tracking trk, long id, String str) {
+    private void track(TinyTracking trk, long id, String str) {
         trk.setDataKey(id);
         trk.setCodeKey(str);
     }
