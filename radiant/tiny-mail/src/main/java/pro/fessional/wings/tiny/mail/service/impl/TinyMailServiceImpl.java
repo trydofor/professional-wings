@@ -257,16 +257,17 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailReply(toString(msg.getReply(), config.getReply()));
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
-        po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
+        po.setMailHtml(EmptySugar.emptyOrElse(msg.getHtml(), config::getHtml));
         po.setMailFile(toString(msg.getAttachment()));
         po.setMailMark(msg.getMark());
+
         po.setMailDate(md);
         po.setLazyBean(msg.getLazyBean());
         po.setLazyPara(msg.getLazyPara());
 
         // PropertyMapper
-        IfSetter.nonnull(po::setMaxFail, msg.getMaxFail());
-        IfSetter.nonnull(po::setMaxDone, msg.getMaxDone());
+        po.setMaxFail(EmptySugar.emptyOrElse(msg.getMaxFail(), tinyMailServiceProp::getMaxFail));
+        po.setMaxDone(EmptySugar.emptyOrElse(msg.getMaxDone(), tinyMailServiceProp::getMaxDone));
 
         IfSetter.nonnull(po::setRefType, msg.getRefType());
         IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());
@@ -427,7 +428,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailReply(toString(msg.getReply(), config.getReply()));
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
-        po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
+        po.setMailHtml(EmptySugar.emptyOrElse(msg.getHtml(), config::getHtml));
         po.setMailFile(stringResource(msg.getAttachment()));
         po.setMailMark(msg.getMark());
 
@@ -436,8 +437,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setLazyBean(msg.getLazyBean());
         po.setLazyPara(msg.getLazyPara());
 
-        po.setMaxFail(BoxedCastUtil.orElse(msg.getMaxFail(), tinyMailServiceProp.getMaxFail()));
-        po.setMaxDone(BoxedCastUtil.orElse(msg.getMaxDone(), tinyMailServiceProp.getMaxDone()));
+        po.setMaxFail(EmptySugar.emptyOrElse(msg.getMaxFail(), tinyMailServiceProp::getMaxFail));
+        po.setMaxDone(EmptySugar.emptyOrElse(msg.getMaxDone(), tinyMailServiceProp::getMaxDone));
 
         IfSetter.nonnull(po::setRefType, msg.getRefType());
         IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());

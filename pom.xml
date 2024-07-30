@@ -295,6 +295,11 @@
                 <artifactId>tiny-mail</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-grow</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
             <!-- kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>

@@ -144,6 +144,9 @@
                         <directory>${wings.rootdir}/radiant/tiny-task/src/main/java</directory>
                         <directory>${wings.rootdir}/radiant/tiny-task/src/main/java-gen</directory>
                         <directory>${wings.rootdir}/radiant/tiny-task/target/generated-sources/annotations</directory>
+                        <directory>${wings.rootdir}/radiant/tiny-grow/src/main/java</directory>
+                        <directory>${wings.rootdir}/radiant/tiny-grow/src/main/java-gen</directory>
+                        <directory>${wings.rootdir}/radiant/tiny-grow/target/generated-sources/annotations</directory>
                     </sourceDirectories>
                 </configuration>
             </plugin>

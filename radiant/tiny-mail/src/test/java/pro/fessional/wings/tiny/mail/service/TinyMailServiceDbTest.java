@@ -249,6 +249,8 @@ class TinyMailServiceDbTest {
             Assertions.assertEquals(TinyMailService.Success, rc);
         }
 
+        // [DRYRUN]TinyMailService sendError lazy RuntimeException 1
+        // force to send, exceed max fail/done
         List<WinMailSender> pvz = winMailSenderDao.fetchById(lzyNg);
         for (WinMailSender po : pvz) {
             Assertions.assertEquals(4, po.getSumSend());
