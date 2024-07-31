@@ -1,5 +1,5 @@
 CREATE TABLE `sys_constant_enum` (
-    `id`   INT(11)      NOT NULL COMMENT 'id: 9+ digits for dynamic, 8 digits for static, 3-2-2 (table-column-value) segments, SUPER end with 00',
+    `id`   INT          NOT NULL COMMENT 'id: 9+ digits for dynamic, 8 digits for static, 3-2-2 (table-column-value) segments, SUPER end with 00',
     `type` VARCHAR(100) NOT NULL COMMENT 'enum group: same type for same enum, auto Pascal naming',
     `code` VARCHAR(100) NOT NULL COMMENT 'enum name: Fixed [code|id] for SUPER, external key, coding friendly',
     `hint` VARCHAR(100) NOT NULL COMMENT 'display message',

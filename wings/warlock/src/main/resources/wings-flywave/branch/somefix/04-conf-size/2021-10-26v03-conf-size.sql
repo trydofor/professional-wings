@@ -1,5 +1,5 @@
 ALTER TABLE `win_conf_runtime`
-    ADD COLUMN `enabled` TINYINT(1)    NOT NULL DEFAULT '1' COMMENT 'enabled' AFTER `key`,
+    ADD COLUMN `enabled` BOOLEAN       NOT NULL DEFAULT '1' COMMENT 'enabled' AFTER `key`,
     ADD COLUMN `outline` VARCHAR(5000) NOT NULL DEFAULT '' COMMENT 'value ResolvableType' AFTER `initial`,
     CHANGE COLUMN `current` `current` TEXT NOT NULL COMMENT 'current value',
     CHANGE COLUMN `previous` `previous` TEXT NOT NULL COMMENT 'previous value',

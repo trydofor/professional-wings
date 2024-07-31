@@ -1,6 +1,6 @@
 CREATE TABLE `win_conf_runtime` (
     `key`      VARCHAR(200)  NOT NULL COMMENT 'conf key:Enum|Class|String',
-    `enabled`  TINYINT(1)    NOT NULL DEFAULT '1' COMMENT 'enabled',
+    `enabled`  BOOLEAN       NOT NULL DEFAULT '1' COMMENT 'enabled',
     `current`  TEXT          NOT NULL COMMENT 'current value',
     `previous` TEXT          NOT NULL COMMENT 'previous value',
     `initial`  TEXT          NOT NULL COMMENT 'initial value',

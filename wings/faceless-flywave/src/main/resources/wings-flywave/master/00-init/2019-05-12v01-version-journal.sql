@@ -2,10 +2,10 @@
 -- CREATE DATABASE `wings` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 CREATE TABLE `sys_schema_version` (
-    `revision`  BIGINT(20)   NOT NULL COMMENT 'version + build',
+    `revision`  BIGINT       NOT NULL COMMENT 'version + build',
     `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime',
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime',
-    `commit_id` BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `commit_id` BIGINT       NOT NULL COMMENT 'commit id',
     `apply_dt`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'applied datetime',
     `comments`  VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'sql path',
     `upto_sql`  TEXT         NOT NULL COMMENT 'upgrade script',
@@ -18,7 +18,7 @@ CREATE TABLE `sys_schema_journal` (
     `table_name` VARCHAR(100) NOT NULL COMMENT 'plain table name',
     `create_dt`  DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime',
     `modify_dt`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime',
-    `commit_id`  BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `commit_id`  BIGINT       NOT NULL COMMENT 'commit id',
     `ddl_instbl` TEXT         NOT NULL COMMENT 'trace DDL of insert',
     `ddl_instrg` TEXT         NOT NULL COMMENT 'trigger DDL of insert',
     `ddl_updtbl` TEXT         NOT NULL COMMENT 'trace DDL of update',
