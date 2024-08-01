@@ -1,11 +1,9 @@
 {
   "groups": [
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"},
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"}
   ],
   "properties": [
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FacelessAutoConfiguration", "type": "java.lang.Boolean"},
-
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.commitJournalModify", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.dataSourceContext", "type": "java.lang.Boolean"},
@@ -21,7 +19,9 @@
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightIdLoader", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightIdService", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightSequenceModify", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightSequenceSelect", "type": "java.lang.Boolean"}
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightSequenceSelect", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FacelessAutoConfiguration", "type": "java.lang.Boolean"}
   ],
   "hints": []
 }

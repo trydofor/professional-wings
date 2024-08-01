@@ -106,6 +106,18 @@ public class FlywaveConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    public MysqlDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
+        if ("mysql".equalsIgnoreCase(conf.getDialect())) {
+            log.info("FacelessFlywave spring-bean schemaDefinitionLoader");
+            return new MysqlDefinitionLoader();
+        }
+        else {
+            throw new IllegalArgumentException("only support mysql");
+        }
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
     public MySqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             log.info("FacelessFlywave spring-bean sqlStatementParser");
@@ -135,18 +147,6 @@ public class FlywaveConfiguration {
                 conf.getCommentMultiple(),
                 conf.getDelimiterDefault(),
                 conf.getDelimiterCommand());
-        }
-        else {
-            throw new IllegalArgumentException("only support mysql");
-        }
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
-    public MysqlDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
-        if ("mysql".equalsIgnoreCase(conf.getDialect())) {
-            log.info("FacelessFlywave spring-bean schemaDefinitionLoader");
-            return new MysqlDefinitionLoader();
         }
         else {
             throw new IllegalArgumentException("only support mysql");

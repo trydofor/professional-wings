@@ -1,34 +1,23 @@
 {
   "groups": [
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"}
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"}
   ],
   "properties": [
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarWebCnfAutoConfiguration", "type": "java.lang.Boolean"},
-
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarLocaleConfiguration", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarLocaleConfiguration.localeResolver", "type": "java.lang.Boolean"},
-
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration.okhttpRestTemplate", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration.restTemplateBuilder", "type": "java.lang.Boolean"},
-
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarWebFunAutoConfiguration", "type": "java.lang.Boolean"},
-
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCookieConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.cookie for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCookieConfiguration", "defaultValue": false, "type": "java.lang.Boolean", "description": "wings.enabled.slardar.cookie for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCookieConfiguration.wingsCookieFilter", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCookieConfiguration.wingsCookieInterceptor", "type": "java.lang.Boolean"},
 
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDebounceConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.debounce for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDebounceConfiguration.debounceInterceptor", "type": "java.lang.Boolean"},
 
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDomainExtendConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.domainx for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDomainExtendConfiguration", "defaultValue": false, "type": "java.lang.Boolean", "description": "wings.enabled.slardar.domainx for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDomainExtendConfiguration.wingsDomainExtendFilter", "type": "java.lang.Boolean"},
 
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarDoubleKillWebConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.double-kill for short."},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarDoubleKillWebConfiguration.doubleKillExceptionResolver", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDoubleKillWebConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.double-kill for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDoubleKillWebConfiguration.doubleKillExceptionResolver", "type": "java.lang.Boolean"},
 
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.first-blood for short."},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration", "defaultValue": false, "type": "java.lang.Boolean", "description": "wings.enabled.slardar.first-blood for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration.firstBloodImageHandler", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.first-blood-image for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration.firstBloodInterceptor", "type": "java.lang.Boolean"},
 
@@ -41,6 +30,17 @@
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonWebConfiguration.jacksonCustomizerFilter", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonWebConfiguration.jacksonFilterProvider", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarJacksonWebConfiguration.jacksonHelperRunner", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarLocaleConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarLocaleConfiguration.localeResolver", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration.okhttpRestTemplate", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration.restTemplateBuilder", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOverloadConfiguration", "defaultValue": false, "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOverloadConfiguration.overloadFallback", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarOverloadConfiguration.wingsOverloadFilter", "type": "java.lang.Boolean"},
 
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarPageQueryConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.slardar.pagequery for short."},
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarPageQueryConfiguration.pageQueryArgumentResolver", "type": "java.lang.Boolean"},
@@ -71,9 +71,10 @@
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarUndertowConfiguration.ut026010Customizer", "type": "java.lang.Boolean"},
 
     {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarWebMvcConfiguration", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarWebMvcConfiguration.mvcRequestMatcherBuilder", "type": "java.lang.Boolean"},
 
-    {"name": "wings.enabled.pro.fessional.wings.slardar.monitor.viewer.LogViewer", "type": "java.lang.Boolean", "description": "wings.slardar.monitor.view.enable for short."}
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarWebCnfAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarWebFunAutoConfiguration", "type": "java.lang.Boolean"}
   ],
   "hints": []
 }

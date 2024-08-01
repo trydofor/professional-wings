@@ -8,6 +8,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -27,7 +28,7 @@ public class SilencerRunnerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerRunnerConfiguration.class);
 
-    @Configuration(proxyBeanMethods = false)
+    @Component
     @ConditionalWingsEnabled
     public static class ReadyEvent {
         @EventListener
@@ -54,7 +55,7 @@ public class SilencerRunnerConfiguration {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Component
     @ConditionalWingsEnabled
     public static class StartedEvent {
         @EventListener

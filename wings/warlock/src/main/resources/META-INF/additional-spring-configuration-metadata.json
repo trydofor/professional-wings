@@ -1,10 +1,20 @@
 {
   "groups": [
-    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf"},
-    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean"}
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf"}
   ],
   "properties": [
-    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockAutoConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.SysStandardI18nDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinConfRuntimeDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinPermEntryDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleGrantDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserGrantDao", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao", "type": "java.lang.Boolean"},
 
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAutoRunConfiguration.databaseCheckerRunner", "type": "java.lang.Boolean"},
@@ -15,6 +25,9 @@
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration.registerRuntimeModeRunner", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration.runtimeConfService", "type": "java.lang.Boolean"},
 
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration.terminalJournalService", "type": "java.lang.Boolean"},
+
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.databaseGlobalLock", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockLockBeanConfiguration.jvmStaticGlobalLock", "type": "java.lang.Boolean"},
@@ -23,9 +36,11 @@
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration.tableChangePublisher", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockTableChangeConfiguration.wingsTableCudHandler", "type": "java.lang.Boolean"},
 
-    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration", "type": "java.lang.Boolean", "description": "wings.enabled.warlock.watching for short."},
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration", "defaultValue": false, "type": "java.lang.Boolean", "description": "wings.enabled.warlock.watching for short."},
     {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration.slowSqlJooqListener", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration.watchingAround", "type": "java.lang.Boolean"}
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockWatchingConfiguration.watchingAround", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.warlock.spring.conf.WarlockAutoConfiguration", "type": "java.lang.Boolean"}
   ],
   "hints": []
 }

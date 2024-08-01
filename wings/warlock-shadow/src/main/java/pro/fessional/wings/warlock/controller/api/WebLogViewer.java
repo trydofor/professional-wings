@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.monitor.viewer;
+package pro.fessional.wings.warlock.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.slardar.monitor.viewer.LogConf;
+import pro.fessional.wings.slardar.monitor.viewer.LogViewer;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.io.IOException;
