@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
+import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -22,7 +23,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -44,6 +44,7 @@ public class MetaJsonMaker {
         private final String root;
         @NotNull
         private final String claz;
+        @NotNull
         private final String pkg;
 
         private final boolean bool;
@@ -62,7 +63,7 @@ public class MetaJsonMaker {
      */
     @NotNull
     public List<Meta> scanMeta() throws Exception {
-        return scanMeta("pro.fessional");
+        return scanMeta("pro.fessional.wings");
     }
 
     /**
@@ -71,9 +72,12 @@ public class MetaJsonMaker {
     @NotNull
     public List<Meta> scanMeta(@NotNull String pkg) throws Exception {
 
-        var scanner = new ClassPathScanningCandidateComponentProvider(true) {
+        var scanner = new ClassPathScanningCandidateComponentProvider(false) {
+            {
+                addIncludeFilter((mr, ignore) -> mr.getClassMetadata().getClassName().startsWith(pkg));
+            }
             @Override
-            protected boolean isCandidateComponent(MetadataReader metadataReader) {
+            protected boolean isCandidateComponent(@NotNull MetadataReader ignore) {
                 return true;
             }
         };
@@ -91,11 +95,14 @@ public class MetaJsonMaker {
             if (!(bd instanceof ScannedGenericBeanDefinition gbd)) continue;
 
             final String name = gbd.getBeanClassName();
-            if (!name.startsWith(pkg)) continue;
+            if (name == null || !name.startsWith(pkg)) continue;
 
             final String pack = name.substring(0, name.lastIndexOf('.'));
 
-            String tmp = Objects.requireNonNull(gbd.getResource().getFile()).getCanonicalPath();
+            final Resource res = gbd.getResource();
+            if(res == null || !res.isFile()) continue;
+
+            final String tmp = res.getFile().getCanonicalPath();
             final String root = tmp.substring(0, tmp.indexOf("/target/classes"));
 
             final AnnotationMetadata amd = gbd.getMetadata();

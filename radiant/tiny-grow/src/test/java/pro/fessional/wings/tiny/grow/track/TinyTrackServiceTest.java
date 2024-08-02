@@ -113,7 +113,7 @@ class TinyTrackServiceTest {
         String ins = (web ? "[%s,\"%s\",{}]" : "[%s,\"%s\"]").formatted(iid, str);
         String out = "{\"id\":%s,\"str\":\"%s\"}".formatted(iid, str);
         WinGrowTrack pojo = winGrowTrackDao.fetchOne(t -> t.TrackIns.eq(ins));
-        Assertions.assertNotNull(pojo);
+        Assertions.assertNotNull(pojo, ins);
         Assertions.assertEquals(key, pojo.getTrackKey());
         Assertions.assertTrue(pojo.getTrackEnv().contains(env));
         Assertions.assertEquals(dkey, pojo.getDataKey());

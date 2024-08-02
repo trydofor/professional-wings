@@ -23,6 +23,7 @@ import pro.fessional.wings.tiny.grow.track.TinyTracker;
 import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -124,12 +125,8 @@ public class TinyTrackAround {
     protected Set<Object> omitRule(@NotNull Method method, @NotNull TinyTracker anno) {
         return omitRules.computeIfAbsent(method, k -> {
             Set<Object> set = new HashSet<>();
-            for (Class<?> clz : anno.omitClass()) {
-                set.add(clz);
-            }
-            for (String str : anno.omitEqual()) {
-                set.add(str);
-            }
+            Collections.addAll(set, anno.omitClass());
+            Collections.addAll(set, anno.omitEqual());
             for (String ptn : anno.omitRegex()) {
                 set.add(Pattern.compile(ptn));
             }

@@ -67,9 +67,16 @@ public interface TinyTrackService {
     }
 
     /**
-     * collect tracking to different impl, e.g. Dao to database
+     * sync prepare tracking prop, e.g. env, app
+     */
+    interface Preparer {
+        void prepare(@NotNull TinyTracking tracking);
+    }
+
+    /**
+     * aysnc collect tracking to different impl, e.g. Dao to database
      */
     interface Collector {
-        void collect(TinyTracking tracking);
+        void collect(@NotNull TinyTracking tracking);
     }
 }

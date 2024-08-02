@@ -77,6 +77,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     protected static final ConcurrentHashMap<Long, Integer> Booted = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Boolean> Untune = new ConcurrentHashMap<>();
 
+    private final AtomicInteger noticeCounter = new AtomicInteger(0);
+
     @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
 
@@ -349,27 +351,36 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         return rs;
     }
 
-    private String stringResult(Object result) {
+    protected String stringResult(Object result) {
         return JacksonHelper.string(result);
     }
 
-    private void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String sub, String msg, long ms, String... wh) {
+    protected void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String sub, String msg, long ms, String... wh) {
         if (ntc == null) return;
-        final String zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ms), ThreadNow.sysZoneId()).toString();
+
+        String key = null;
+        boolean rtn = StringUtils.isNotEmpty(msg);
         for (String w : wh) {
-            if (whs.contains(w)) {
-                if (w.equals(WhenFeed)) {
-                    if (!execProp.isDryrun() && StringUtils.isNotEmpty(msg)) {
-                        ntc.postNotice(cnf, sub + " " + w.toUpperCase(), zdt + "\n\n" + msg);
-                        return;
-                    }
-                }
-                else {
-                    ntc.postNotice(cnf, sub + " " + w.toUpperCase(), msg == null ? zdt : zdt + "\n\n" + msg);
-                    return;
+            if (!whs.contains(w)) continue;
+            if (w.equals(WhenFeed)) {
+                if (rtn && !execProp.isDryrun()) {
+                    key = w;
+                    break;
                 }
             }
+            else {
+                key = w;
+                break;
+            }
         }
+
+        if (key == null) return;
+
+        String sb = execProp.getNoticePrefix() + " " + sub + " " + key + " #" + noticeCounter.incrementAndGet();
+        String bd = appName + "\n" + ZonedDateTime.ofInstant(Instant.ofEpochMilli(ms), ThreadNow.sysZoneId());
+        if (rtn) bd = bd + "\n\n" + msg;
+
+        ntc.postNotice(cnf, sb, bd);
     }
 
     private boolean notNextLock(WinTaskDefine td, long now) {

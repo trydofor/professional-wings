@@ -148,7 +148,7 @@ jobs:
           </settings>
           EOF
       - name: Qodana Scan
-        uses: JetBrains/qodana-action@v2023.3
+        uses: JetBrains/qodana-action@v2024.1
         if: steps.settings.outputs.QODANA_SCAN == 'true'
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}

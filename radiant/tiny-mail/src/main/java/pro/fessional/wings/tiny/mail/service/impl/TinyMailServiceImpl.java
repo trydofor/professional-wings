@@ -782,9 +782,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (nxt > 0) {
                 planAsyncMail(new AsyncMail(id, nxt, retry, check, null, message));
                 log.debug("plan tiny-mail next-send, err={}, id={}, subject={}", exception == null, id, po.getMailSubj());
-                if (exception != null) {
-                    exception = new MailRetryException(nxt, exception); // runtime
-                }
+                if (exception != null) throw new MailRetryException(nxt, exception);
             }
         }
 

@@ -9,11 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
-import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.tiny.grow.spring.prop.TinyTrackOmitProp;
 import pro.fessional.wings.tiny.grow.track.TinyTrackService;
 import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
@@ -40,7 +36,7 @@ public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean 
     protected List<Collector> trackCollector;
 
     @Setter(onMethod_ = { @Autowired })
-    protected TinyTrackOmitProp tinyTrackOmitProp;
+    protected List<Preparer> trackPreparer;
 
     @Override
     public FutureTask<Void> async(Runnable run) {
@@ -54,21 +50,15 @@ public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean 
     public TinyTracking begin(@NotNull String key, @NotNull String ref) {
         final TinyTracking tracking = new TinyTracking(ThreadNow.millis(), key, ref);
 
-        tracking.setApp(ApplicationContextHelper.getApplicationName());
-        tracking.addEnv("run", RuntimeMode.getRunMode().name());
-
-        final TerminalContext.Context ctx = TerminalContext.get(false);
-        if (!ctx.isNull()) {
-            tracking.addEnv("userId", ctx.getUserId());
-            tracking.addEnv("locale", ctx.getLocale().toLanguageTag());
-            tracking.addEnv("zoneid", ctx.getZoneId().getId());
-            tracking.addEnv("authType", ctx.getAuthType().name());
-            tracking.addEnv("username", ctx.getUsername());
+        for (Preparer pr : trackPreparer) {
+            try {
+                pr.prepare(tracking);
+            }
+            catch (Exception e) {
+                log.error("tiny-track skip failed preparer=" + pr.getClass(), e);
+            }
         }
 
-        tracking.addOmit(tinyTrackOmitProp.getClazz().values());
-        tracking.addOmit(tinyTrackOmitProp.getEqual().values());
-        tracking.addOmit(tinyTrackOmitProp.getRegex().values());
         return tracking;
     }
 

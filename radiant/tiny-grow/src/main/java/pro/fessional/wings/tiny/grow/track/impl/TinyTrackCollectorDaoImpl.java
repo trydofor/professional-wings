@@ -32,7 +32,7 @@ public class TinyTrackCollectorDaoImpl implements TinyTrackService.Collector {
 
     @Override
     @Transactional
-    public void collect(TinyTracking tracking) {
+    public void collect(@NotNull TinyTracking tracking) {
         WinGrowTrack pojo = new WinGrowTrack();
         pojo.setId(lightIdService.getId(winGrowTrackDao.getTable()));
 
