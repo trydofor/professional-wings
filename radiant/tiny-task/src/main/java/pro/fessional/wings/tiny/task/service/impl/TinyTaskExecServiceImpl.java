@@ -4,6 +4,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.Trigger;
@@ -70,7 +72,7 @@ import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenFeed;
 @Service
 @ConditionalWingsEnabled
 @Slf4j
-public class TinyTaskExecServiceImpl implements TinyTaskExecService {
+public class TinyTaskExecServiceImpl implements TinyTaskExecService, InitializingBean, DisposableBean {
 
     protected static final ConcurrentHashMap<Long, ScheduledFuture<?>> Handle = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Boolean> Cancel = new ConcurrentHashMap<>();
@@ -97,6 +99,25 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecProp execProp;
 
+    protected volatile boolean isShutdown = false;
+
+    @Override
+    public void afterPropertiesSet() {
+        isShutdown = false;
+    }
+
+    @Override
+    public void destroy() {
+        isShutdown = true;
+        for (var en : Handle.entrySet()) {
+            var task = en.getValue();
+            if (task.isDone()) continue;
+
+            log.info("try to cancal tiny-task for shutdown, id={}", en.getKey());
+            task.cancel(false);
+        }
+    }
+
     @Override
     public boolean launch(long id) {
         Cancel.remove(id);
@@ -105,6 +126,11 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
     @Override
     public boolean force(long id) {
+        if (isShutdown) {
+            log.warn("skip tiny-task for shutdwon, id={}", id);
+            return false;
+        }
+
         final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
         if (td == null) {
             log.info("skip tiny-task for not found, id={}", id);
@@ -192,6 +218,11 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     }
 
     private boolean relaunch(long id) {
+        if (isShutdown) {
+            log.warn("skip tiny-task for shutdwon, id={}", id);
+            return false;
+        }
+
         final Lock lock = JvmStaticGlobalLock.get(id);
         try {
             lock.lock();

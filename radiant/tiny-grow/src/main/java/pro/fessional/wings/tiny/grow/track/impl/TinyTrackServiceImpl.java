@@ -4,6 +4,7 @@ import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,7 @@ import pro.fessional.wings.tiny.grow.track.TinyTracking;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
@@ -27,10 +29,11 @@ import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostP
 @Service
 @ConditionalWingsEnabled
 @Slf4j
-public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean {
+public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean, DisposableBean {
 
     @Setter(onMethod_ = { @Autowired(required = false), @Qualifier(DEFAULT_TASK_EXECUTOR_BEAN_NAME) })
     private Executor executor;
+    private boolean innerExecutor = false;
 
     @Setter(onMethod_ = { @Autowired })
     protected List<Collector> trackCollector;
@@ -85,10 +88,18 @@ public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean 
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
-            executor = TtlExecutors.getTtlExecutor(Executors.newWorkStealingPool(2));
+            executor = TtlExecutors.getTtlExecutorService(Executors.newWorkStealingPool(2));
+            innerExecutor = true;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (innerExecutor && executor instanceof ExecutorService es) {
+            es.shutdown();
         }
     }
 }

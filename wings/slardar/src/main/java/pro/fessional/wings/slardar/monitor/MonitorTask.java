@@ -3,13 +3,14 @@ package pro.fessional.wings.slardar.monitor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import pro.fessional.mirana.stat.JvmStat;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.slardar.context.Now;
 
-import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 @Setter @Getter
-public class MonitorTask implements InitializingBean {
+public class MonitorTask implements InitializingBean, DisposableBean {
 
     @Setter(onMethod_ = { @Autowired })
     private List<WarnMetric> warnMetrics = Collections.emptyList();
@@ -75,7 +76,7 @@ public class MonitorTask implements InitializingBean {
             log.warn("the app name of report should NOT blank");
         }
 
-        String jvm = ManagementFactory.getRuntimeMXBean().getName();
+        String jvm = JvmStat.jvmName();
         if (jvm != null) jvm = jvm.replace("@", "_");
 
         for (WarnReport report : warnReports) {
@@ -97,14 +98,18 @@ public class MonitorTask implements InitializingBean {
     }
 
     @Override
+    public void destroy() {
+        reportHook("shutting");
+    }
+
+    @Override
     public void afterPropertiesSet() {
-        if (hookSelf) {
-            reportHook("started");
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> reportHook("shutting")));
-        }
+        reportHook("started");
     }
 
     private void reportHook(String key) {
+        if (!hookSelf) return;
+
         try {
             WarnMetric.Warn wn = new WarnMetric.Warn();
             wn.setType(WarnMetric.Type.Text);

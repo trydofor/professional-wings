@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.async;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -14,7 +15,7 @@ import java.util.concurrent.ScheduledFuture;
  * @author trydofor
  * @since 2022-12-05
  */
-public class TaskSchedulerHelper {
+public class TaskSchedulerHelper implements DisposableBean {
 
     private static ThreadPoolTaskScheduler FastScheduler;
     private static ThreadPoolTaskScheduler ScheduledScheduler;
@@ -32,6 +33,10 @@ public class TaskSchedulerHelper {
         helperPrepared = true;
     }
 
+    @Override
+    public void destroy() {
+        helperPrepared = false;
+    }
 
     /**
      * whether this helper is prepared

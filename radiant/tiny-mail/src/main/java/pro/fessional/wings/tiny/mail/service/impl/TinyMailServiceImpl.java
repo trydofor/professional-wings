@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 @Service
 @ConditionalWingsEnabled
 @Slf4j
-public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
+public class TinyMailServiceImpl implements TinyMailService, InitializingBean, DisposableBean {
 
     @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
@@ -108,6 +109,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     // init by afterPropertiesSet
     protected ThreadPoolTaskScheduler taskScheduler;
+    protected volatile boolean isShutdown = false;
     protected SingletonSupplier<Map<String, TinyMailLazy>> lazyBeanHolder;
     protected SingletonSupplier<List<StatusHook>> statusHookHolder;
 
@@ -196,6 +198,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         taskScheduler = TaskSchedulerHelper.Ttl(builder);
         taskScheduler.initialize();
+        isShutdown = false;
         log.info("tiny-mail taskScheduler, prefix=" + taskScheduler.getThreadNamePrefix());
 
         final long idle = tinyMailServiceProp.getBootScan().toMillis();
@@ -215,6 +218,14 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             }
             return map.isEmpty() ? Collections.emptyMap() : map;
         });
+    }
+
+    @Override
+    public void destroy() {
+        isShutdown = true;
+        if (taskScheduler != null) {
+            taskScheduler.shutdown();
+        }
     }
 
     @Override
@@ -552,6 +563,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final WinMailSender po = saveMailSender(config, message);
 
+        if (isShutdown) {
+            log.warn("save but skip tiny-mail for shutdwon, subject={}", message.getSubject());
+            return ErrOther;
+        }
+
         final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
         if (sync) {
             return doSyncSend(po, mailMessage, retry, true);
@@ -562,6 +578,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     protected long doSend(boolean sync, long id, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("skip tiny-mail for shutdwon, id={}", id);
+            return ErrOther;
+        }
+
         final WinMailSender po = winMailSenderDao.fetchOneById(id);
         AssertArgs.notNull(po, "skip tiny-mail not found by id={}", id);
 
@@ -746,6 +767,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     private long doSyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("skip tiny-mail for shutdwon, id={}", po.getId());
+            return ErrOther;
+        }
+
         final long start;
         if (check) {
             // condition not match
@@ -798,6 +824,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     private long doAsyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("skip tiny-mail for shutdwon, id={}", po.getId());
+            return ErrOther;
+        }
+
         // condition not match
         if (check && notMatchProp(po)) return ErrCheck;
 

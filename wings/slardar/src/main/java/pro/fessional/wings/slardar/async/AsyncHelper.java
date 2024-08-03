@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.async;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.core.task.AsyncTaskExecutor;
 
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
  * @see TtlExecutors
  * @since 2024-05-13
  */
-public class AsyncHelper {
+public class AsyncHelper implements DisposableBean {
 
     private static Executor AsyncExecutor = null;
     private static AsyncTaskExecutor AppTaskExecutor = null;
@@ -32,6 +33,11 @@ public class AsyncHelper {
         ExecutorBuilder = Objects.requireNonNull(builder);
         LiteExecutor = Objects.requireNonNull(lite);
         helperPrepared = true;
+    }
+
+    @Override
+    public void destroy() {
+        helperPrepared = false;
     }
 
     /**

@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import pro.fessional.wings.silencer.notice.SmallNotice;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
@@ -26,7 +28,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean {
+public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean, DisposableBean {
 
     @NotNull @Getter
     protected final MailConfigProvider configProvider;
@@ -35,6 +37,7 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
 
     @Setter(onMethod_ = { @Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
     private Executor executor;
+    private boolean innerExecutor = false;
 
     @Setter @Getter
     private Map<String, TinyMailConfig> configs = Collections.emptyMap();
@@ -92,7 +95,15 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
     public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
-            executor = TtlExecutors.getTtlExecutor(Executors.newWorkStealingPool(2));
+            executor = TtlExecutors.getTtlExecutorService(Executors.newWorkStealingPool(2));
+            innerExecutor = true;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (innerExecutor && executor instanceof ExecutorService es) {
+            es.shutdown();
         }
     }
 }
