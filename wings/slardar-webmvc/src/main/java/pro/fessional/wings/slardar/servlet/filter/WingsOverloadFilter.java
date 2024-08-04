@@ -273,13 +273,8 @@ public class WingsOverloadFilter implements OrderedFilter {
                     }
                 }
 
-                log.info("wings-snap-response "
-                         + ", total-resp=" + total
-                         + ", p99=" + p99
-                         + ", p95=" + p95
-                         + ", p90=" + p90
-                         + ", process=" + requestProcess.get()
-                         + ", capacity=" + requestCapacity.get());
+                log.info("wings-snap-response, total-resp={}, p99={}, p95={}, p90={}, process={}, capacity={}",
+                    total, p99, p95, p90, requestProcess.get(), requestCapacity.get());
                 lastInfoStat.set(end);
             }
         }

@@ -83,6 +83,7 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
             }
             catch (Exception ex) {
                 if (log.isDebugEnabled()) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.debug("Skipping '" + writer.getFullName() + "' on '" + pojo.getClass().getName()
                               + "' as an exception was thrown when retrieving its value", ex);
                 }

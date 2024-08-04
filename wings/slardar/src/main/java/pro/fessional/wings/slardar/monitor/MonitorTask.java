@@ -57,6 +57,7 @@ public class MonitorTask implements InitializingBean, DisposableBean {
                 log.debug("check {} warns by {}", sz, nm);
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("failed to metric, name=" + nm, e);
             }
         }
@@ -82,7 +83,7 @@ public class MonitorTask implements InitializingBean, DisposableBean {
         for (WarnReport report : warnReports) {
             final String rpt = report.getClass().getName();
             try {
-                log.debug("check {} warns by {}", warns.size(), rpt);
+                log.debug("report {} warns by {}", warns.size(), rpt);
                 final WarnReport.Sts sts = report.report(app, jvm, warns);
                 if (sts == WarnReport.Sts.Fail) {
                     log.warn("failed to report={}", rpt);
@@ -92,6 +93,7 @@ public class MonitorTask implements InitializingBean, DisposableBean {
                 }
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("failed to report, name=" + rpt, e);
             }
         }

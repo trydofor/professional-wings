@@ -141,6 +141,7 @@ public class DefaultJournalService implements JournalService {
                 journalModify.elapse(cost, journal.getId());
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("fail to update elapse=" + cost + ", id=" + journal.getId(), e);
             }
         }

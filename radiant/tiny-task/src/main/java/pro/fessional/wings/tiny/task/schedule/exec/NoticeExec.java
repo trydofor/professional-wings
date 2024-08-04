@@ -53,6 +53,7 @@ public class NoticeExec<C> {
             beanObject.post(conf, subject, content);
         }
         catch (Exception e) {
+            // noinspection StringConcatenationArgumentToLogCall
             log.warn("failed to post notice, subject=" + subject + ", content=" + content, e);
         }
     }

@@ -109,6 +109,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
                 winUserAuthnDao.insert(auth);
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.error("failed to insert authn " + authn, e);
                 // Possibly unique key or value is oversize
                 throw new CodeException(e, CommonErrorEnum.DataExisted);

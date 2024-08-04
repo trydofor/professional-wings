@@ -124,9 +124,11 @@ public class MailSenderManager {
                 if (wt.host) {
                     mailHostWait.put(host, wt.wait);
                 }
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, message=" + message.toMainString(), me);
                 throw new MailWaitException(wt.wait, wt.host, wt.stop, me);
             }
+            // noinspection StringConcatenationArgumentToLogCall
             log.warn("failed to send message= " + message.toMainString(), me);
             throw me;
         }
@@ -191,7 +193,7 @@ public class MailSenderManager {
             final long avg = slp / dryrunCount;
             long end = ThreadNow.millis();
             for (BatchResult rst : results) {
-                if(rst.costMillis == 0) continue;
+                if (rst.costMillis == 0) continue;
                 rst.costMillis = avg;
                 rst.exitMillis = end;
             }
@@ -224,6 +226,7 @@ public class MailSenderManager {
                     for (String host : hosts) {
                         mailHostWait.put(host, wt.wait);
                     }
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, hosts=" + hosts, me);
                 }
 
@@ -251,7 +254,7 @@ public class MailSenderManager {
                     br.costMillis = avg;
                     br.exitMillis = now;
                     if (br.exception != null) {
-                        log.warn("failed to batch send message, " + br.tinyMessage.toMainString());
+                        log.warn("failed to batch send message, {}", br.tinyMessage.toMainString());
                     }
                 }
 
@@ -381,7 +384,8 @@ public class MailSenderManager {
                     helper.addAttachment(n1, en.getValue());
                 }
                 catch (Exception e) {
-                    log.warn("ignore error of optional resource, name=" + name);
+                    // noinspection StringConcatenationArgumentToLogCall
+                    log.warn("ignore error of optional resource, name=" + name, e);
                 }
             }
             else {

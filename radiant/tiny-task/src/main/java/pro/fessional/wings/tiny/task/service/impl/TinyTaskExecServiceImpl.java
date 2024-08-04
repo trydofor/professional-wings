@@ -127,7 +127,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
     @Override
     public boolean force(long id) {
         if (isShutdown) {
-            log.warn("skip tiny-task for shutdwon, id={}", id);
+            log.warn("skip tiny-task for shutdwon, force id={}", id);
             return false;
         }
 
@@ -174,6 +174,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 postNotice(notice, noticeConf, ntcWhen, taskerInfo, taskMsg, doneTms, WhenFeed, WhenDone);
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.error("tiny-task force fail, id=" + id, e);
                 failTms = ThreadNow.millis();
                 taskMsg = ThrowableUtil.toString(e);
@@ -184,6 +185,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                     saveResult(id, td.getPropkey(), execTms, failTms, doneTms, taskMsg, td.getDurFail());
                 }
                 catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("failed to save tiny-task result, id=" + id, e);
                 }
             }
@@ -219,7 +221,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
 
     private boolean relaunch(long id) {
         if (isShutdown) {
-            log.warn("skip tiny-task for shutdwon, id={}", id);
+            log.warn("skip tiny-task for shutdwon, relaunch id={}", id);
             return false;
         }
 
@@ -233,7 +235,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
 
             final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
             if (td == null) {
-                log.info("skip tiny-task for not found, id={}", id);
+                log.info("skip tiny-task for not found, relaunch id={}", id);
                 return false;
             }
 
@@ -308,6 +310,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 }
                 catch (Exception e) {
                     Throwable c = ThrowableUtil.cause(e, 1);
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("tiny-task fail, id=" + id + ", prop=" + key, c);
                     failTms = ThreadNow.millis();
                     exitMsg = ThrowableUtil.toString(c);
@@ -319,6 +322,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                         saveResult(id, key, execTms, failTms, doneTms, exitMsg, td.getDurFail());
                     }
                     catch (Exception e) {
+                        // noinspection StringConcatenationArgumentToLogCall
                         log.error("failed to save tiny-task result, id=" + id + ", prop=" + key, e);
                     }
 
@@ -578,13 +582,12 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 if (zeroMiss && n0 > 0 && now <= n0 + ((n1 - n0) * 25 / 100)) {
                     log.info("launch tiny-task for miss=0, next={}, id={}, prop={}", next, id, td.getPropkey());
                     nextExec = n0;
-                    break;
                 }
                 else {
                     log.info("launch tiny-task for next={}, id={}, prop={}", next, id, td.getPropkey());
                     nextExec = n1;
-                    break;
                 }
+                break;
             }
 
             if (timingMiss > 0 && now <= n1 + timingMiss) {

@@ -228,7 +228,7 @@ public class RevisionFitness {
                 throw new IllegalStateException("Wings Revision Diff Schemas Found:" + diffWarn);
             }
             else {
-                log.warn("Wings Revision Diff Schemas Found:" + diffWarn);
+                log.warn("Wings Revision Diff Schemas Found:{}", diffWarn);
             }
         }
 

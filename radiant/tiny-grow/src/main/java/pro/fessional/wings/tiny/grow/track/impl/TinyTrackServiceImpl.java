@@ -58,6 +58,7 @@ public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean,
                 pr.prepare(tracking);
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.error("tiny-track skip failed preparer=" + pr.getClass(), e);
             }
         }
@@ -82,6 +83,7 @@ public class TinyTrackServiceImpl implements TinyTrackService, InitializingBean,
                 cl.collect(tracking);
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.error("tiny-track skip failed collector=" + cl.getClass(), e);
             }
         }

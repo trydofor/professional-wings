@@ -145,9 +145,10 @@ public interface TinyMailService {
      * Create(id is empty) or edit a mail with check, return the id.
      * NOTE: no schedule to send, need manually send/post/emit it.
      */
-    default long save(@NotNull TinyMailPlain message){
+    default long save(@NotNull TinyMailPlain message) {
         return save(message, true);
     }
+
     /**
      * Create(id is empty) or edit a mail with check, return the id.
      * NOTE: no schedule to send, need manually send/post/emit it.
@@ -217,11 +218,11 @@ public interface TinyMailService {
         /**
          * hook status, return true will stop mail next send
          *
-         * @param po        mail info
-         * @param cost      send cost
-         * @param exception error if fail
+         * @param po    mail info
+         * @param cost  send cost
+         * @param error if fail
          * @return whether stop next send
          */
-        boolean stop(@NotNull WinMailSender po, long cost, Exception exception);
+        boolean stop(@NotNull WinMailSender po, long cost, Exception error);
     }
 }

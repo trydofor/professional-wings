@@ -37,6 +37,7 @@ public class ResourceHttpRequestUtil {
                     md.setAccessible(true);
                 }
                 catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.warn("failed to check resource=" + rq.getRequestURI(), e);
                 }
                 return md;

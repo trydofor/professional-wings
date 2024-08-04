@@ -45,10 +45,10 @@ public class SlardarCacheEndpoint {
             final String k = en.getKey();
             if (v instanceof State) {
                 cacheManagers.put(k, v);
-                log.info("init CacheManager with State, bean=" + k);
+                log.info("init CacheManager with State, bean={}", k);
             }
             else {
-                log.info("skip CacheManager without State, bean=" + k);
+                log.info("skip CacheManager without State, bean={}", k);
             }
         }
     }

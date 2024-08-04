@@ -70,6 +70,7 @@ public class TinyTrackAround {
                 mixAsync(tracking, method, anno, joinPoint);
             }
             catch (Throwable e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.error("tiny-track fails to mixAsync, method=" + MethodConvertor.method2Str(method), e);
             }
         }
@@ -91,6 +92,7 @@ public class TinyTrackAround {
                     mix.invoke(joinPoint.getTarget(), pn);
                 }
                 catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("tiny-track fails to mix=" + MethodConvertor.method2Str(mix), e);
                 }
             }
@@ -115,6 +117,7 @@ public class TinyTrackAround {
             return tinyTrackService.begin(key, ref);
         }
         catch (Exception e) {
+            // noinspection StringConcatenationArgumentToLogCall
             log.error("tiny-track fails to beginTracking, method=" + MethodConvertor.method2Str(method), e);
             return null;
         }

@@ -78,7 +78,7 @@ public class FacelessJooqCudProp {
             Map<String, Set<String>> temp = new LinkedHashMap<>();
             for (Map.Entry<String, Set<String>> en : table.entrySet()) {
                 if (en.getValue().contains(DisabledValue)) {
-                    log.info("remove disable value for table={}", en.getKey());
+                    log.info("ignore disable value for table={}", en.getKey());
                 }
                 else {
                     temp.put(en.getKey(), en.getValue());

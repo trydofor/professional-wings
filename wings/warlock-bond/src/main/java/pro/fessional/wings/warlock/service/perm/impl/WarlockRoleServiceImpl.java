@@ -132,6 +132,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                     winRoleEntryDao.insert(po);
                 }
                 catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("failed to insert role entry. name=" + name + ", remark=" + remark, e);
                     throw new CodeException(e, CommonErrorEnum.AssertState2, "role.name", name);
                 }

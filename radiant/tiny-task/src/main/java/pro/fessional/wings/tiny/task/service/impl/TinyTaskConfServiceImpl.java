@@ -316,6 +316,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                     return new NoticeExec<>(nb);
                 }
                 catch (ClassNotFoundException e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("failed to init notice bean=" + noticeBean, e);
                     throw new IllegalArgumentException(e);
                 }
