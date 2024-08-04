@@ -179,21 +179,29 @@ public class TaskerProp {
     }
 
     /**
-     * Within how many seconds of a misfire, execution is required,
-     * 0 means no execution. not use Default config.
+     * <pre>
+     * Within how many seconds of a misfire, execution is required, not use Default config.
+     * * `<0` - execute as `0` if now + miss * 1000 >= 0
+     * * `0` - execute if N0 < now <= N0 + (N1-N0) * 25% < N1
+     * * `>0` - execute if N1 < now <= N1 + miss * 1000
+     * </pre>
      */
-    protected int timingMiss = 0;
+    protected long timingMiss = 0;
+
+    public boolean notTimingMiss() {
+        return timingMiss == 0;
+    }
 
     /**
      * <pre>
      * the interval seconds of heartbeat and health-check, not use Default config.
      * it is considered as an exception if the last_exec is more than 2 heartbeats away from now.
-     * * `<0` - disable check
-     * * `0` - auto calculate, when cron, calc next_exec from last_exec, others, max rate and idle
+     * * `<0` - calculate as `0` if now + beat * 1000 >= 0
+     * * `0` - calculate, when cron, calc next_exec from last_exec, others, max rate and idle
      * * `>0` - fixed positive seconds
      * </pre>
      */
-    protected int timingBeat = 0;
+    protected long timingBeat = 0;
     /**
      * schedule start datetime at timingZone, in yyyy-MM-dd HH:mm:ss format,
      * 0 means disable, not use Default config.

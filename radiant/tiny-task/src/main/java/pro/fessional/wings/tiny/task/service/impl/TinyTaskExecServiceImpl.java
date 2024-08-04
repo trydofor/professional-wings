@@ -244,7 +244,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 return false;
             }
 
-            final long next = calcNextExec(td);
+            final long next = calcNextExec(td, ThreadNow.millis());
             if (next < 0) return false;
 
             // temp save before schedule to avoid kill
@@ -543,11 +543,10 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
         return true;
     }
 
-    private long calcNextExec(WinTaskDefine td) {
+    protected long calcNextExec(WinTaskDefine td, long now) {
         final String zid = td.getTimingZone();
         final ZoneId zone = StringUtils.isEmpty(zid) ? ThreadNow.sysZoneId() : ZoneId.of(zid);
 
-        final long now = ThreadNow.millis();
         if (notRanged(td, zone, now)) return -1;
 
         final Long id = td.getId();
@@ -555,15 +554,18 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
         final long timingMiss = td.getTimingMiss() * 1000L;
         // Planned, program was killed before execution ends
         final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
-        if (nextMs + timingMiss >= now) {
+        if (timingMiss >= 0 && nextMs + timingMiss >= now) {
             log.info("launch misfire tiny-task, id={}, prop={}", id, td.getPropkey());
             return nextMs;
         }
+
+        final boolean zeroMiss = timingMiss <= 0 && timingMiss + now >= 0;
 
         final Trigger trigger = makeTrigger(td, zone);
         final SimpleTriggerContext context = makeContext(td, zone, now);
 
         long nextExec = -1;
+        long n0 = -1;
         while (true) {
             Instant next = trigger.nextExecution(context);
             if (next == null) {
@@ -571,22 +573,28 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 break;
             }
 
-            final long nxt = next.toEpochMilli();
-            if (nxt < now) {
-                if (timingMiss > 0 && nxt + timingMiss >= now) {
-                    log.info("launch tiny-task for misfire={}, id={}, prop={}", next, id, td.getPropkey());
-                    nextExec = nxt;
+            final long n1 = next.toEpochMilli();
+            if (n1 >= now) {
+                if (zeroMiss && n0 > 0 && now <= n0 + ((n1 - n0) * 25 / 100)) {
+                    log.info("launch tiny-task for miss=0, next={}, id={}, prop={}", next, id, td.getPropkey());
+                    nextExec = n0;
                     break;
                 }
                 else {
-                    context.update(next, next, next);
+                    log.info("launch tiny-task for next={}, id={}, prop={}", next, id, td.getPropkey());
+                    nextExec = n1;
+                    break;
                 }
             }
-            else {
-                log.info("launch tiny-task for next={}, id={}, prop={}", next, id, td.getPropkey());
-                nextExec = nxt;
+
+            if (timingMiss > 0 && now <= n1 + timingMiss) {
+                log.info("launch tiny-task for miss={}, next={}, id={}, prop={}", timingMiss, next, id, td.getPropkey());
+                nextExec = n1;
                 break;
             }
+
+            context.update(next, next, next);
+            n0 = n1;
         }
 
         if (nextExec < 0) return -1;

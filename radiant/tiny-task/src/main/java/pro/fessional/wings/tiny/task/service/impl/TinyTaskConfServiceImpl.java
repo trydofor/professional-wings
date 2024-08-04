@@ -105,6 +105,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingIdle(anno.idle());
             rp.setTimingRate(anno.rate());
             rp.setTimingTune(anno.tune());
+            rp.setTimingMiss(anno.miss());
             log.debug("no prop, use annotation, key={}", key);
         }
         else {
@@ -113,6 +114,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingIdle(pp.notTimingIdle() ? anno.idle() : pp.getTimingIdle());
             rp.setTimingRate(pp.notTimingRate() ? anno.rate() : pp.getTimingRate());
             rp.setTimingTune(pp.notTimingTune() ? anno.tune() : pp.getTimingTune());
+            rp.setTimingMiss(pp.notTimingMiss() ? anno.miss() : pp.getTimingMiss());
         }
 
         // not default
@@ -125,7 +127,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTaskerName(pp.getTaskerName());
             rp.setTaskerFast(pp.isTaskerFast());
             //
-            rp.setTimingMiss(pp.getTimingMiss());
+
             rp.setTimingBeat(pp.getTimingBeat());
             rp.setDuringFrom(pp.getDuringFrom());
             rp.setDuringStop(pp.getDuringStop());
@@ -374,8 +376,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         wtd.setTimingIdle(prop.getTimingIdle());
         wtd.setTimingRate(prop.getTimingRate());
         wtd.setTimingTune(prop.getTimingTune());
-
         wtd.setTimingMiss(prop.getTimingMiss());
+
         wtd.setTimingBeat(prop.getTimingBeat());
         wtd.setDuringFrom(prop.getDuringFrom());
         wtd.setDuringStop(prop.getDuringStop());

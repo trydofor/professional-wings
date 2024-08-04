@@ -106,7 +106,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             .select(td.Id, td.TaskerName, td.LastExec,
                 td.TimingBeat, td.TimingRate, td.TimingIdle, td.TimingTune, td.TimingCron, td.TimingZone)
             .from(td)
-            .where(td.Enabled.eq(Boolean.TRUE).and(td.TimingBeat.ge(0)))
+            .where(td.Enabled.eq(Boolean.TRUE))
             .fetch()
             .into(WinTaskDefine.class);
 
@@ -133,8 +133,8 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
         warmed = true;
         return mis == null || mis.isEmpty() ? null
-            : "misfired tiny-task id@name, beat=-1 to skip\n"
-              + mis;
+            : "misfired tiny-task id@name\n"
+              + mis + "\nUPDATE win_task_define SET timing_beat = -UNIX_TIMESTAMP(now() + INTERVAL 1 hour ) WHERE id IN (...); to skip checking for 1 hour";
     }
 
     protected long calcBeatMills(WinTaskDefine td, long now) {
@@ -145,7 +145,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         }
 
         final long beat = td.getTimingBeat();
-        if (beat < 0) return beat;
+        if (beat < 0 && now + beat * 1000 < 0) return beat;
 
         final long lastExecSys = DateLocaling.sysEpoch(lastExec);
         if (beat > 0) return lastExecSys + beat * 1000L;
