@@ -4,10 +4,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import pro.fessional.mirana.cast.BoxedCastUtil;
+import pro.fessional.mirana.data.U;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.stat.JvmStat;
@@ -72,9 +74,9 @@ import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenFeed;
 @Service
 @ConditionalWingsEnabled
 @Slf4j
-public class TinyTaskExecServiceImpl implements TinyTaskExecService, InitializingBean, DisposableBean {
+public class TinyTaskExecServiceImpl implements TinyTaskExecService, InitializingBean {
 
-    protected static final ConcurrentHashMap<Long, ScheduledFuture<?>> Handle = new ConcurrentHashMap<>();
+    protected static final ConcurrentHashMap<Long, U.Three<ScheduledFuture<?>, Long, String>> Handle = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Boolean> Cancel = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Integer> Booted = new ConcurrentHashMap<>();
     protected static final ConcurrentHashMap<Long, Boolean> Untune = new ConcurrentHashMap<>();
@@ -99,23 +101,27 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
     @Setter(onMethod_ = { @Autowired })
     protected TinyTaskExecProp execProp;
 
-    protected volatile boolean isShutdown = false;
+    protected volatile boolean isShutdownFast = false;
+    protected volatile boolean isShutdownSlow = false;
 
     @Override
     public void afterPropertiesSet() {
-        isShutdown = false;
+        isShutdownFast = false;
+        isShutdownSlow = false;
     }
 
-    @Override
+    @EventListener(ContextClosedEvent.class)
     public void destroy() {
-        isShutdown = true;
+        log.info("tiny-task shutdown for ContextClosedEvent");
+        isShutdownFast = true;
+        isShutdownSlow = true;
         for (var en : Handle.entrySet()) {
-            var task = en.getValue();
-            if (task.isDone()) continue;
-
-            log.info("try to cancal tiny-task for shutdown, id={}", en.getKey());
+            var tvl = en.getValue();
+            var task = tvl.one();
+            log.info("try to cancal tiny-task for shutdown, id={}, key={}, next_sys={}", en.getKey(), tvl.three(), DateLocaling.sysLdt(tvl.two()));
             task.cancel(false);
         }
+        Handle.clear();
     }
 
     @Override
@@ -126,19 +132,31 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
 
     @Override
     public boolean force(long id) {
-        if (isShutdown) {
-            log.warn("skip tiny-task for shutdwon, force id={}", id);
+        if (isShutdownFast && isShutdownSlow) {
+            log.warn("cancel tiny-task for shutdown all on force, id={}", id);
             return false;
         }
 
         final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
         if (td == null) {
-            log.info("skip tiny-task for not found, id={}", id);
+            log.info("skip tiny-task for not found on force, id={}", id);
             return false;
         }
 
         final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
-        final var scheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
+        if (fast && isShutdownFast || !fast && isShutdownSlow) {
+            log.warn("cancal tiny-task for shutdown on force, fast={}, id={}", fast, id);
+            return false;
+        }
+
+        final var scheduler = TaskSchedulerHelper.Scheduler(fast);
+        if (scheduler.getScheduledExecutor().isShutdown()) {
+            log.warn("cancal tiny-task for Executor shutdown on force, fast={}, id={}", fast, id);
+            if (fast) isShutdownFast = true;
+            else isShutdownSlow = true;
+            return false;
+        }
+
         scheduler.schedule(() -> {
             long execTms = ThreadNow.millis();
             long doneTms = -1;
@@ -190,22 +208,23 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
                 }
             }
         }, Instant.ofEpochMilli(ThreadNow.millis()));
+
         return true;
     }
 
     @Override
     public boolean cancel(long id) {
         Cancel.put(id, Boolean.TRUE);
-        final ScheduledFuture<?> ft = Handle.get(id);
-        if (ft == null) {
+        final var tvl = Handle.get(id);
+        if (tvl == null) {
             log.info("cancel not found, id={}", id);
             return true;
         }
-        final boolean r = ft.cancel(false);
+        final boolean r = tvl.one().cancel(false);
         if (r) {
             Handle.remove(id);
         }
-        log.info("cancel success={}, id={}", r, id);
+        log.info("cancel success, id={}, key={}, next_sys={}", id, tvl.three(), DateLocaling.sysLdt(tvl.two()));
         return r;
     }
 
@@ -220,8 +239,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
     }
 
     private boolean relaunch(long id) {
-        if (isShutdown) {
-            log.warn("skip tiny-task for shutdwon, relaunch id={}", id);
+        if (isShutdownFast && isShutdownSlow) {
+            log.warn("cancel tiny-task for shutdown all on relaunch, id={}", id);
             return false;
         }
 
@@ -229,13 +248,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
         try {
             lock.lock();
             if (Handle.containsKey(id)) {
-                log.info("skip tiny-task for launching, id={}", id);
+                log.info("skip tiny-task on launching, id={}", id);
                 return false;
             }
 
             final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
             if (td == null) {
-                log.info("skip tiny-task for not found, relaunch id={}", id);
+                log.info("skip tiny-task for not found on relaunch id={}", id);
                 return false;
             }
 
@@ -253,15 +272,21 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
             saveNextExec(next, td);
 
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
-            final var taskScheduler = fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
+            if (fast && isShutdownFast || !fast && isShutdownSlow) {
+                log.warn("cancal tiny-task for shutdown on relaunch, fast={}, id={}", fast, id);
+                return false;
+            }
 
-            if (taskScheduler.getScheduledExecutor().isShutdown()) {
-                log.error("TaskScheduler={} is shutdown, id={}, prop={}", fast, id, key);
+            final var scheduler = TaskSchedulerHelper.Scheduler(fast);
+            if (scheduler.getScheduledExecutor().isShutdown()) {
+                log.warn("cancal tiny-task for Executor shutdown on relaunch, fast={}, id={}, prop={}", fast, id, key);
+                if (fast) isShutdownFast = true;
+                else isShutdownSlow = true;
                 return false;
             }
 
             log.info("prepare tiny-task id={}, prop={}", id, key);
-            final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
+            final ScheduledFuture<?> handle = scheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {
                     if (notNextLock(td, execTms)) {
@@ -333,7 +358,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
             }, Instant.ofEpochMilli(next));
 
             //
-            Handle.put(id, handle);
+            Handle.put(id, U.of(handle, next, key));
             return true;
         }
         finally {

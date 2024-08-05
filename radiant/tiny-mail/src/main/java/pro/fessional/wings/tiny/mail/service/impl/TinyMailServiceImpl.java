@@ -2,19 +2,19 @@ package pro.fessional.wings.tiny.mail.service.impl;
 
 import jakarta.mail.MessagingException;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailParseException;
@@ -69,8 +69,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -84,7 +84,7 @@ import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 @Service
 @ConditionalWingsEnabled
 @Slf4j
-public class TinyMailServiceImpl implements TinyMailService, InitializingBean, DisposableBean {
+public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Setter(onMethod_ = { @Value("${spring.application.name}") })
     protected String appName;
@@ -114,7 +114,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
     protected SingletonSupplier<List<StatusHook>> statusHookHolder;
 
     protected final PriorityQueue<AsyncMail> asyncMailQueue = new PriorityQueue<>();
-    protected final TreeMap<Long, ScheduledFuture<?>> asyncMailSched = new TreeMap<>();
+    protected final ConcurrentHashMap<Long, ScheduledFuture<?>> asyncMailTask = new ConcurrentHashMap<>();
 
     @Override
     public boolean send(@NotNull TinyMail message, boolean retry) {
@@ -212,7 +212,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
         final long idle = tinyMailServiceProp.getBootScan().toMillis();
         if (idle > 0) {
             log.info("tiny-mail schedule boot-scan after={} ms", idle);
-            taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
+            var task = taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
+            idleScanTask.set(task);
         }
 
         statusHookHolder = SingletonSupplier.of(() -> statusHookProvider.orderedStream().toList());
@@ -228,11 +229,29 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
         });
     }
 
-    @Override
+    @EventListener(ContextClosedEvent.class)
     public void destroy() {
         isShutdown = true;
+
         if (taskScheduler != null) {
             taskScheduler.shutdown();
+        }
+
+        int size = 0;
+        for (ScheduledFuture<?> task : asyncMailTask.values()) {
+            task.cancel(false);
+            size++;
+        }
+
+        if (size > 0) {
+            asyncMailTask.clear();
+            log.info("cancel async mail for shutdown, size={}", size);
+        }
+
+        ScheduledFuture<?> task = idleScanTask.get();
+        if (task != null) {
+            task.cancel(false);
+            log.info("cancel async scan mail for shutdown");
         }
     }
 
@@ -331,10 +350,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
     }
 
     @NotNull
-    public TreeMap<Long, ScheduledFuture<?>> listAsyncMailSched() {
-        synchronized (asyncMailSched) {
-            return new TreeMap(asyncMailSched);
-        }
+    public TreeMap<Long, ScheduledFuture<?>> listAsyncMailTask() {
+        return new TreeMap(asyncMailTask);
     }
 
     protected final AtomicLong idleScanMills = new AtomicLong(-1);
@@ -922,11 +939,16 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
         }
 
         final long nxt = (next / 1_000L + 1) * 1_000L; // ceiling to second
-        synchronized (asyncMailSched) {
-            asyncMailSched.computeIfAbsent(nxt, k ->
-                taskScheduler.schedule(this::sendAsyncMail, Instant.ofEpochMilli(nxt))
-            );
-        }
+        asyncMailTask.computeIfAbsent(nxt, k ->
+            taskScheduler.schedule(() -> {
+                try {
+                    sendAsyncMail();
+                }
+                finally {
+                    asyncMailTask.remove(k);
+                }
+            }, Instant.ofEpochMilli(nxt))
+        );
     }
 
     private void sendAsyncMail() {
@@ -1047,41 +1069,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean, D
                     log.debug("plan tiny-mail queue-size={}, idle={}", qs, tinyMailServiceProp.getTryNext());
                 }
             }
-
-            trimAsyncMailSched();
         }
-    }
-
-    private final AtomicInteger trimSchedConter = new AtomicInteger(0);
-    @Setter
-    @Getter
-    private int maxAsyncSched = 1;
-
-    private void trimAsyncMailSched() {
-        synchronized (trimSchedConter) {
-            if (trimSchedConter.get() > maxAsyncSched) return;
-            trimSchedConter.incrementAndGet();
-        }
-
-        taskScheduler.schedule(() -> {
-                trimSchedConter.decrementAndGet();
-
-                final int ts;
-                synchronized (asyncMailSched) {
-                    asyncMailSched.entrySet().removeIf(it -> it.getValue().isDone());
-                    ts = asyncMailSched.size();
-                }
-
-                final int ws = tinyMailServiceProp.getWarnSize();
-                if (ts > ws) {
-                    log.warn("plan tiny-mail sched-size={}", ts);
-                }
-                else {
-                    log.debug("plan tiny-mail sched-size={}", ts);
-                }
-            }
-            , Instant.ofEpochMilli(ThreadNow.millis() + 1_000)
-        );
     }
 
     @Nullable

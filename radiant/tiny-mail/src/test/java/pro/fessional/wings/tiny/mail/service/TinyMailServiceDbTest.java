@@ -222,7 +222,7 @@ class TinyMailServiceDbTest {
         Sleep.ignoreInterrupt(2_000L);
         ArrayList<TinyMailServiceImpl.AsyncMail> queue = tinyMailService.listAsyncMailQueue();
         Assertions.assertTrue(queue.isEmpty());
-        TreeMap<Long, ScheduledFuture<?>> sched = tinyMailService.listAsyncMailSched();
+        TreeMap<Long, ScheduledFuture<?>> sched = tinyMailService.listAsyncMailTask();
         Assertions.assertTrue(sched.isEmpty());
 
         // retry as if it was fixed, but 1st send error

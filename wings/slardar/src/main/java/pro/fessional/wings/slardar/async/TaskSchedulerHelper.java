@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.async;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.scheduling.Trigger;
@@ -9,7 +10,9 @@ import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author trydofor
@@ -36,6 +39,10 @@ public class TaskSchedulerHelper implements DisposableBean {
     @Override
     public void destroy() {
         helperPrepared = false;
+        for (var task : TaskRun.values()) {
+            task.cancel(false);
+        }
+        TaskRun.clear();
     }
 
     /**
@@ -52,9 +59,11 @@ public class TaskSchedulerHelper implements DisposableBean {
         return builder.configure(new TtlThreadPoolTaskScheduler());
     }
 
-    /**
-     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
-     */
+    @NotNull
+    public static ThreadPoolTaskScheduler Scheduler(boolean fast) {
+        return fast ? Fast() : Scheduled();
+    }
+
     @NotNull
     public static ThreadPoolTaskScheduler Fast() {
         if (FastScheduler == null) {
@@ -64,7 +73,7 @@ public class TaskSchedulerHelper implements DisposableBean {
     }
 
     /**
-     * see NamingSlardarConst#slardarHeavyScheduler
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
      */
     @NotNull
     public static ThreadPoolTaskScheduler Scheduled() {
@@ -78,7 +87,7 @@ public class TaskSchedulerHelper implements DisposableBean {
     /**
      * just like default @Scheduled
      *
-     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
      */
     public static void Scheduled(@NotNull Runnable task) {
         Scheduled().execute(task);
@@ -87,28 +96,152 @@ public class TaskSchedulerHelper implements DisposableBean {
     /**
      * just like default @Scheduled
      *
-     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
+    @NotNull
     public static ScheduledFuture<?> Scheduled(long delayMs, @NotNull Runnable task) {
-        return Scheduled().schedule(task, Instant.ofEpochMilli(ThreadNow.millis() + delayMs));
+        return Scheduled(Scheduled(), delayMs, task);
     }
 
     /**
      * just like default @Scheduled
      *
-     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
-    public static ScheduledFuture<?> Scheduled(Instant start, @NotNull Runnable task) {
-        return Scheduled().schedule(task, start);
+    @NotNull
+    public static ScheduledFuture<?> Scheduled(@NotNull Instant start, @NotNull Runnable task) {
+        return Scheduled(Scheduled(), start, task);
     }
 
     /**
      * just like default @Scheduled
      *
-     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
-    public static ScheduledFuture<?> Scheduled(Trigger trigger, @NotNull Runnable task) {
-        return Scheduled().schedule(task, trigger);
+    @Nullable
+    public static ScheduledFuture<?> Scheduled(@NotNull Trigger trigger, @NotNull Runnable task) {
+        return Scheduled(Scheduled(), trigger, task);
+    }
+
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     */
+    public static void Scheduled(boolean fast, @NotNull Runnable task) {
+        Scheduler(fast).execute(task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
+     */
+    @NotNull
+    public static ScheduledFuture<?> Scheduled(boolean fast, long delayMs, @NotNull Runnable task) {
+        return Scheduled(Scheduler(fast), delayMs, task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
+     */
+    @NotNull
+    public static ScheduledFuture<?> Scheduled(boolean fast, @NotNull Instant start, @NotNull Runnable task) {
+        return Scheduled(Scheduler(fast), start, task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
+     */
+    @Nullable
+    public static ScheduledFuture<?> Scheduled(boolean fast, @NotNull Trigger trigger, @NotNull Runnable task) {
+        return Scheduled(Scheduler(fast), trigger, task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
+     */
+    @NotNull
+    public static ScheduledFuture<?> Scheduled(@NotNull ThreadPoolTaskScheduler scheduler, long delayMs, @NotNull Runnable task) {
+        return Scheduled(scheduler, Instant.ofEpochMilli(ThreadNow.millis() + delayMs), task);
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
+     */
+    @NotNull
+    public static ScheduledFuture<?> Scheduled(@NotNull ThreadPoolTaskScheduler scheduler, @NotNull Instant start, @NotNull Runnable task) {
+        final Task tsk = new Task(task);
+        final var future = scheduler.schedule(tsk, start);
+        if (tsk.run) {
+            TaskRun.put(tsk.seq, future);
+        }
+        return future;
+    }
+
+    /**
+     * just like default @Scheduled
+     *
+     * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
+     */
+    @Nullable
+    public static ScheduledFuture<?> Scheduled(@NotNull ThreadPoolTaskScheduler scheduler, @NotNull Trigger trigger, @NotNull Runnable task) {
+        final Task tsk = new Task(task);
+        final var future = scheduler.schedule(tsk, trigger);
+        if (future != null && tsk.run) {
+            TaskRun.put(tsk.seq, future);
+        }
+        return future;
+    }
+
+    /**
+     * clean done task and get the running size
+     */
+    public static int runningSize() {
+        TaskRun.entrySet().removeIf(en -> en.getValue().isDone());
+        return TaskRun.size();
+    }
+
+    private static final ConcurrentHashMap<Long, ScheduledFuture<?>> TaskRun = new ConcurrentHashMap<>();
+    private static final AtomicLong TaskSeq = new AtomicLong(0);
+
+    private static class Task implements Runnable {
+        private final Long seq = TaskSeq.incrementAndGet();
+        private volatile boolean run = true;
+        private final Runnable runnable;
+
+        public Task(Runnable run) {
+            runnable = run;
+        }
+
+        @Override
+        public void run() {
+            try {
+                runnable.run();
+            }
+            finally {
+                run = false;
+                TaskRun.remove(seq);
+            }
+        }
     }
 
     /**
