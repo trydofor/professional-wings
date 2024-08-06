@@ -36,7 +36,7 @@ public class TinyTrackPreparerTermImpl implements TinyTrackService.Preparer {
         }
 
         String adr = ctx.getTerminal(TerminalAddr);
-        if (adr != null) tracking.addEnv("addr", id);
+        if (adr != null) tracking.addEnv("addr", adr);
         String agt = ctx.getTerminal(TerminalAgent);
         if (agt != null) tracking.addEnv("agent", agt);
     }
