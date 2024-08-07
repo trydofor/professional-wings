@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet.request;
+package pro.fessional.wings.slardar.servlet.dummy;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
@@ -39,7 +39,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class FakeHttpServletRequest implements HttpServletRequest {
+public class DummyHttpServletRequest implements HttpServletRequest {
 
     private String authType;
     private Cookie[] cookies;

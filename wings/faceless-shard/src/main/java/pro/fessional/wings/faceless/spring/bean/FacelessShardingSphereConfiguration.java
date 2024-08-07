@@ -2,7 +2,9 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shardingsphere.driver.jdbc.core.driver.ShardingSphereURLManager;
+import org.apache.shardingsphere.driver.ShardingSphereDriver;
+import org.apache.shardingsphere.infra.url.core.ShardingSphereURL;
+import org.apache.shardingsphere.infra.url.core.ShardingSphereURLLoadEngine;
 import org.apache.shardingsphere.infra.util.yaml.YamlEngine;
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRootConfiguration;
 import org.apache.shardingsphere.infra.yaml.config.swapper.resource.YamlDataSourceConfigurationSwapper;
@@ -20,6 +22,7 @@ import java.util.Map;
 /**
  * Config sharding datasource to DataSourceContext
  *
+ * @see ShardingSphereDriver
  * @author trydofor
  */
 
@@ -31,12 +34,16 @@ public class FacelessShardingSphereConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public DataSourceContext.Customizer shardingDataSourceContext(@Value("${spring.datasource.url}") String jdbcUrl) throws Exception {
-        if (!jdbcUrl.startsWith("jdbc:shardingsphere:")) {
+        String urlPrefix = "jdbc:shardingsphere:";
+        if (!jdbcUrl.startsWith(urlPrefix)) {
             log.info("FacelessShard skip shardingSphereCustomizer jdbcUrl=" + jdbcUrl);
             return ignored -> false;
         }
 
-        final byte[] yamlBytes = ShardingSphereURLManager.getContent(jdbcUrl, "jdbc:shardingsphere:");
+        ShardingSphereURL shardingUrl = ShardingSphereURL.parse(jdbcUrl.substring(urlPrefix.length()));
+        ShardingSphereURLLoadEngine engine = new ShardingSphereURLLoadEngine(shardingUrl);
+
+        final byte[] yamlBytes = engine.loadContent();
         YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
         final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
         final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
