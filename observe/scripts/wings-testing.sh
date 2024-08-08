@@ -23,7 +23,7 @@ if [[ "$MAVEN_OPTS" == "" ]]; then
 fi
 
 if [[ "$LOG_LEVEL" == "" ]]; then
-  echo -e "\033[32m log level (INFO)? [INFO|DEBUG|WARN|ERROR]\033[m"
+  echo -e "\033[32m log level (INFO)? [INFO|DEBUG|WARN|ERROR]\033[0m"
   read -r _ans </dev/tty
   if [[ "$_ans" == "" ]] ;then
     LOG_LEVEL="INFO"
@@ -41,7 +41,7 @@ if [[ "$TEST_VERBOSE" == "" ]]; then
 fi
 
 if [[ "$COVERALLS_DRYRUN" == "" ]]; then
-  echo -e "\033[32m dryrun coveralls (y)? [y|n]\033[m"
+  echo -e "\033[32m dryrun coveralls (y)? [y|n]\033[0m"
   read -r _ans </dev/tty
   if [[ "$_ans" == "" || "$_ans" == "y" ]]; then
     COVERALLS_DRYRUN="true"
@@ -55,7 +55,7 @@ this_file="$0"
 cd $(dirname "$this_file")
 cd ../.. # to wings project dir
 
-echo -e "\033[32m from which step (1) to run?\033[m"
+echo -e "\033[32m from which step (1) to run?\033[0m"
 echo "1 - clean install"
 echo "2 - devs-initdb"
 echo "3 - test"

@@ -37,14 +37,14 @@ $IMAGE_ENV_JAVA_ADD \
 
 #######
 function show_help() {
-    echo -e '\033[32m clean <dep|app|all> <boot-jar> \033[m clean docker-<dep|app|all> build dir of boot-jar'
-    echo -e '\033[32m print <dep|app|all> <boot-jar> \033[m print docker-<dep|app|all> Dockerfile of boot-jar'
-    echo -e '\033[32m unzip <dep|app|all> <boot-jar> \033[m unzip docker-<dep|app|all> files of boot-jar'
-    echo -e '\033[32m build <dep|app|all> <boot-jar> \033[m build docker-<dep|app|all> image of boot-jar'
-    echo -e '\033[32m help \033[m show this'
-    echo -e '\033[32m <dep> \033[m only dependencies + spring-boot-loader'
-    echo -e '\033[32m <app> \033[m <dep> + napshot-dependencies + application'
-    echo -e '\033[32m <all> \033[m <dep> + <app>'
+    echo -e '\033[32m clean <dep|app|all> <boot-jar> \033[0m clean docker-<dep|app|all> build dir of boot-jar'
+    echo -e '\033[32m print <dep|app|all> <boot-jar> \033[0m print docker-<dep|app|all> Dockerfile of boot-jar'
+    echo -e '\033[32m unzip <dep|app|all> <boot-jar> \033[0m unzip docker-<dep|app|all> files of boot-jar'
+    echo -e '\033[32m build <dep|app|all> <boot-jar> \033[0m build docker-<dep|app|all> image of boot-jar'
+    echo -e '\033[32m help \033[0m show this'
+    echo -e '\033[32m <dep> \033[0m only dependencies + spring-boot-loader'
+    echo -e '\033[32m <app> \033[0m <dep> + napshot-dependencies + application'
+    echo -e '\033[32m <all> \033[0m <dep> + <app>'
 }
 
 function docker_file() {

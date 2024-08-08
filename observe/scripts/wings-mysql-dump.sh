@@ -26,10 +26,10 @@ dumpopts=${*:3}
 logxopts="--no-data"
 confopts=--defaults-extra-file=$extracnf
 if [[ -f "$extracnf" ]]; then
-    echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
+    echo -e "\033[0;33mNOTE: defaults-extra-file \033[0m"
     grep -E "^(host|port|user)" "$extracnf"
 else
-    echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[m"
+    echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[0m"
 cat << 'EOF'
 [client]
 protocol=tcp
@@ -52,9 +52,9 @@ unalias mysql >/dev/null 2>&1
 unalias mysqldump >/dev/null 2>&1
 
 if [[ "$database" == "" ]]; then
-    echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[m"
+    echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[0m"
     echo "./wings-mysql-dump.sh wings-mysql-client.cnf database  --no-data"
-    echo -e "\033[0;33mNOTE:current databases \033[m"
+    echo -e "\033[0;33mNOTE:current databases \033[0m"
     # shellcheck disable=SC2086
     mysql $confopts -N -e "show databases;"
     exit
@@ -81,7 +81,7 @@ if [[ $logs_cnt == 0 ]]; then
     echo "no logs tables to dump"
     echo "-- no logs tables to dump" > "$dump_logs_file"
 else
-    echo -e "\033[0;33mNOTE: dump logs tables without data, count=$logs_cnt\033[m"
+    echo -e "\033[0;33mNOTE: dump logs tables without data, count=$logs_cnt\033[0m"
 
     # shellcheck disable=SC2046,SC2086
     if mysqldump $confopts $dumpopts $logxopts \
@@ -98,7 +98,7 @@ if [[ $main_cnt == 0 ]]; then
     echo "no main tables to dump"
     echo "-- no main tables to dump" > "$dump_main_file"
 else
-    echo -e "\033[0;33mNOTE: dump main tables with data, count=$main_cnt\033[m"
+    echo -e "\033[0;33mNOTE: dump main tables with data, count=$main_cnt\033[0m"
     # shellcheck disable=SC2046,SC2086
     if mysqldump $confopts $dumpopts \
     "$database" $(grep -vE '\$|__' "$dump_tbl_file") > "$dump_main_file"; then
@@ -109,13 +109,13 @@ else
     fi
 fi
 
-echo -e "\033[0;33mNOTE: dump file $dump_head\033[m"
+echo -e "\033[0;33mNOTE: dump file $dump_head\033[0m"
 echo >> "$dump_tbl_file"
 
 # shellcheck disable=SC2010
 ls -lsh |grep "$dump_head" | tee -a "$dump_tbl_file"
 
-echo -e "\033[0;33mNOTE: tips for zip, scp, restore \033[m"
+echo -e "\033[0;33mNOTE: tips for zip, scp, restore \033[0m"
 tee -a "$dump_tip_file" << EOF
 ## checksum
 md5sum -c $dump_md5_file # checksum
@@ -153,7 +153,7 @@ cat $dump_logs_file $dump_main_file \\
 ./reset-password.sh \$mycnf \$newdb;
 EOF
 
-echo -e "\033[0;33mNOTE: tar files into $dump_tar_file \033[m"
+echo -e "\033[0;33mNOTE: tar files into $dump_tar_file \033[0m"
 tar -czf "$dump_tar_file" "$dump_tip_file" "$dump_tbl_file" "$dump_logs_file" "$dump_main_file" \
 && md5sum "$dump_tar_file" | tee "$dump_md5_file" \
 && rm -f "$dump_tbl_file" "$dump_logs_file" "$dump_main_file"
