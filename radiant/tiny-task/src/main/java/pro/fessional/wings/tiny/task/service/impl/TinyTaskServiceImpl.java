@@ -45,7 +45,7 @@ public class TinyTaskServiceImpl implements TinyTaskService {
         final Set<Conf> conf = tinyTaskConfService.config(taskerBean);
         final Set<Task> rst = new HashSet<>();
         for (Conf cnf : conf) {
-            if (cnf.isEnabled() && cnf.isAutorun()) {
+            if (cnf.isEnabled() && cnf.isAutorun() && cnf.isMatched()) {
                 final boolean cd = tinyTaskExecService.launch(cnf.getId());
                 log.info("schedule bean tiny-task {}, scheduled={}", cnf, cd);
                 rst.add(new Task(cnf.getId(), cnf.getKey(), cd));

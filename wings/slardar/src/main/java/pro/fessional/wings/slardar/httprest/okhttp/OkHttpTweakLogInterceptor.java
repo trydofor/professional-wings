@@ -6,6 +6,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.logging.LogLevel;
 import pro.fessional.mirana.time.StopWatch;
@@ -13,7 +14,10 @@ import pro.fessional.wings.silencer.tweak.TweakLogger;
 import pro.fessional.wings.silencer.watch.Watches;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.boot.logging.LogLevel.DEBUG;
 import static org.springframework.boot.logging.LogLevel.ERROR;
@@ -43,10 +47,12 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
     public static final HttpLoggingInterceptor.Logger LoggerWarn = log::warn;
 
     private final EnumMap<LogLevel, HttpLoggingInterceptor> mapping = new EnumMap<>(LogLevel.class);
+    private final Set<String> nopUrlToken = new HashSet<>();
 
-    public OkHttpTweakLogInterceptor() {
+    public OkHttpTweakLogInterceptor(Collection<String> nop) {
         resetMapping();
         TweakLogger.asCoreLevel(log.getName());
+        nopUrlToken.addAll(nop);
     }
 
     /**
@@ -93,7 +99,19 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
     @NotNull
     @Override
     public Response intercept(@NotNull Interceptor.Chain chain) throws IOException {
-        final LogLevel lvl = TweakLogger.currentLevel(log.getName());
+        boolean off = false;
+        if (!nopUrlToken.isEmpty()) {
+            String url = chain.request().url().toString();
+            for (String tkn : nopUrlToken) {
+                if (StringUtils.containsIgnoreCase(url, tkn)) {
+                    log.debug("exclude intercept, token={}, url={}", tkn, url);
+                    off = true;
+                    break;
+                }
+            }
+        }
+
+        final LogLevel lvl = off ? LogLevel.OFF : TweakLogger.currentLevel(log.getName());
         final HttpLoggingInterceptor itc = mapping.get(lvl);
 
         final StopWatch current = Watches.current();

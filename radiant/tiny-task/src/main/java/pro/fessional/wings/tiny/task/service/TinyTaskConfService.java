@@ -25,8 +25,8 @@ public interface TinyTaskConfService {
      * <pre>
      * Configure the TinyTasker annotated and enabled method , return the taskId.
      * - throw exception if property not exist
-     * - save to database if not exist in database
-     * - save to database, if exist in database, but higher version
+     * - insert to database if not exist in database
+     * - update to database, if exist and matched and lower version
      * - otherwise no operation
      * </pre>
      */
@@ -72,5 +72,9 @@ public interface TinyTaskConfService {
         private final String key;
         private final boolean enabled;
         private final boolean autorun;
+        /**
+         * matched app and run
+         */
+        private final boolean matched;
     }
 }

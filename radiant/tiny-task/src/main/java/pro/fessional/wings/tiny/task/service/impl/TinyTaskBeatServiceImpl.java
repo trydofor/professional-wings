@@ -13,7 +13,6 @@ import org.springframework.scheduling.support.CronExpression;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
-import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
@@ -113,11 +112,6 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         final StringBuilder mis = warmed ? new StringBuilder() : null;
         for (WinTaskDefine r : tks) {
             log.debug("check health tiny-task id={}, name={}", r.getId(), r.getTaskerName());
-
-            final String runs = r.getTaskerRuns();
-            if (StringUtils.isNotBlank(runs) && !RuntimeMode.voteRunMode(runs)) {
-                continue;
-            }
 
             // coordinate to system timezone
             long beat = calcBeatMills(r, now);

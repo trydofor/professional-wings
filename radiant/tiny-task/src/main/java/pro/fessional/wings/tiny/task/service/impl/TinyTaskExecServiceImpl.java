@@ -381,6 +381,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
         for (String s : commaArray(apps)) {
             if (s.trim().equals(appName)) return false;
         }
+
         log.info("skip tiny-task for not apps={}, cur={}, id={}, prop={}", apps, appName, id, key);
         return true;
     }
@@ -398,8 +399,9 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService, Initializin
             log.info("skip tiny-task for not runs={}, cur={}, id={}, prop={}", runs, rmd, id, key);
             return true;
         }
-
-        return false;
+        else {
+            return false;
+        }
     }
 
     private Set<String> noticeWhen(String nw) {
