@@ -23,12 +23,12 @@ public class SlardarMonitorProp {
     public static final String Key = "wings.slardar.monitor";
 
     /**
-     * Monitor its own cron, `-` means stop this cron, default 10 minutes.
+     * Monitor its own cron, `-` means stop this cron, default 17 minutes.
      *
      * @see #Key$cron
      */
     public static final String Key$cron = Key + ".cron";
-    private String cron = "0 */10 * * * ?";
+    private String cron = "17 */17 * * * ?";
 
     /**
      * whether to send notice for the start and stop of its own jvm hook
