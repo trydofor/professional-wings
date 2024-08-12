@@ -44,6 +44,7 @@ public class RuntimeModeTest {
         Assertions.assertTrue(RuntimeMode.voteRunMode(" !local, "));
         Assertions.assertFalse(RuntimeMode.voteRunMode(" !develop, !test, "));
         Assertions.assertFalse(RuntimeMode.voteRunMode(" !test, "));
+        Assertions.assertFalse(RuntimeMode.voteRunMode("!test"));
     }
 
     @Test
