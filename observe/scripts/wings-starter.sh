@@ -148,15 +148,30 @@ function print_args() {
         git_jar="${BOOT_JAR}"
     fi
     if [[ -f "$git_jar" ]]; then
-        giti=$(jar tf "$git_jar" 2>/dev/null | grep git.properties )
+        tmp="./tmp-$BOOT_MD5"
+        jls="$tmp/jar-list.txt"
+        mkdir -p "$tmp"
+        jar tf "$git_jar" > "$jls"
+
+        giti=$(grep 'git.properties' "$jls")
         if [[ "$giti" != "" ]]; then
-            tmp="./tmp-$BOOT_MD5"
-            mkdir -p "$tmp"
             (cd "$tmp" && jar xf "$git_jar" "$giti")
-            echo -e "\033[37;42;1mINFO: ==== git build info ==== \033[0m"
-            grep -vE '=$' "$tmp/$giti"
-            rm -rf "$tmp"
+            if [[ -f "$tmp/$giti" ]]; then
+                echo -e "\033[37;42;1mINFO: ==== git build info ==== \033[0m"
+                grep -vE '=$' "$tmp/$giti"
+            fi
         fi
+
+        wngi=$(grep -E 'silencer-[1-9].*.jar' "$jls")
+        if [[ "$wngi" != "" ]]; then
+            (cd "$tmp" && jar xf "$git_jar" "$wngi" && jar xf "$wngi" git.properties)
+            if [[ -f "$tmp/git.properties" ]]; then
+                echo -e "\033[37;42;1mINFO: ==== git wings info ==== \033[0m"
+                grep -vE '=$' "$tmp/git.properties"
+            fi
+        fi
+
+        rm -rf "$tmp"
     fi
 }
 

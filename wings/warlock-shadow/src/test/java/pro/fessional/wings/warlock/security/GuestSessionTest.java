@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 /**
- * <a href="https://github.com/trydofor/pro.fessional.wings/issues/106">Principal required</a>
+ * <a href="https://github.com/trydofor/professional-wings/issues/106">Principal required</a>
  *
  * @author trydofor
  * @since 2021-03-09
