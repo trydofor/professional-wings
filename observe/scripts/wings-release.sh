@@ -276,7 +276,7 @@ case "$1" in
         check_cmd git
 
         echo -e "\033[37;42;1m ==== PULL $WORK_DIR ==== \033[0m"
-        git pull
+        git pull --force
         echo -e "\033[37;42;1m ==== DONE $WORK_DIR ==== \033[0m"
         git status
         git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
