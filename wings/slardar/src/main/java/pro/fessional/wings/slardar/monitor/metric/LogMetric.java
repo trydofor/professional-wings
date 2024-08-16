@@ -62,7 +62,7 @@ public class LogMetric implements WarnMetric {
         }
 
         final long from = readLastForm();
-        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getPreview(), rule.getRuntimeKeys());
+        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getPreview(), rule.getSection(), rule.getRuntimeKeys());
         log.debug("LogStat-{}, stat={}", key, stat);
         writeLastFrom(stat);
 
@@ -223,6 +223,13 @@ public class LogMetric implements WarnMetric {
          */
         private int preview = 10;
         public static final String Key$preview = Key + ".preview";
+
+        /**
+         * section size of intended lines
+         * @see #Key$section
+         */
+        private int section = 50;
+        public static final String Key$section = Key + ".section";
 
         /**
          * log charset
