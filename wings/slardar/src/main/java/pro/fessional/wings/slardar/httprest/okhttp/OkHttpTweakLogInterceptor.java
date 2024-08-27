@@ -119,14 +119,14 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
             return itc.intercept(chain);
         }
 
-        //
+        // watch if the caller thread has watching
         final Request request = chain.request();
         final String name = "OkHttp " + request.method() + " " + request.url();
-        try (StopWatch.Watch watch = current.start(name)) {
+        try (StopWatch.Watch ignore = current.start(name)) {
             return itc.intercept(chain);
         }
         finally {
-            Watches.release(true, null);
+            Watches.release(true);
         }
     }
 
