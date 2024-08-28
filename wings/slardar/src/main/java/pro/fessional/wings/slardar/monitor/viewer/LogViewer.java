@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.cache2k.Cache;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.id.Ulid;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
@@ -17,9 +18,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -31,11 +34,13 @@ public class LogViewer implements WarnFilter {
 
     @Getter
     private final LogConf conf;
+    private final Set<String> keys = new HashSet<>();
     private final Cache<String, String> cache;
 
-    public LogViewer(LogConf conf) {
+    public LogViewer(@NotNull LogConf conf, @NotNull Collection<String> keys) {
         this.conf = conf;
         this.cache = WingsCache2k.builder(LogViewer.class, "cache", 2_000, conf.getAlive(), null, String.class, String.class).build();
+        this.keys.addAll(keys);
     }
 
     public void view(String id, OutputStream output) throws IOException {
@@ -101,15 +106,15 @@ public class LogViewer implements WarnFilter {
         final File file = new File(out);
         if (file.length() > max || !file.canRead()) return false;
 
-        final Pattern head = conf.getHeader();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             int tol = 0;
             int cnt = 0;
+            final Pattern head = conf.getHeader();
             while ((line = reader.readLine()) != null && max > 0) {
                 max -= line.length() + 1; // loose calculation
 
-                if (line.isEmpty() || (head != null && !head.matcher(line).find())) {
+                if (ignoreLine(line, head)) {
                     continue;
                 }
 
@@ -125,7 +130,23 @@ public class LogViewer implements WarnFilter {
             return tol == cnt;
         }
         catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean ignoreLine(String line, Pattern head) {
+        if (line.isEmpty()) return true;
+
+        if (head != null && !head.matcher(line).find()) {
             return true;
         }
+
+        for (String key : keys) {
+            if (line.contains(key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

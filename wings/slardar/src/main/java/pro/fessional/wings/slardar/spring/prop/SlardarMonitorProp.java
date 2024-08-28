@@ -7,6 +7,7 @@ import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.viewer.LogConf;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -70,4 +71,15 @@ public class SlardarMonitorProp {
      */
     private String dingNotice = "monitor";
     public static final String Key$dingNotice = Key + ".ding-notice";
+
+    /**
+     * generate all log's rule keys
+     */
+    public LinkedHashSet<String> genRuleKey() {
+        LinkedHashSet<String> rst = new LinkedHashSet<>();
+        for (LogMetric.Rule rl : log.values()) {
+            rst.addAll(rl.genRuleKey());
+        }
+        return rst;
+    }
 }

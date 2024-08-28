@@ -62,7 +62,7 @@ public class LogMetric implements WarnMetric {
         }
 
         final long from = readLastForm();
-        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getPreview(), rule.getSection(), rule.getRuntimeKeys());
+        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getPreview(), rule.getSection(), rule.genStatKey());
         log.debug("LogStat-{}, stat={}", key, stat);
         writeLastFrom(stat);
 
@@ -226,6 +226,7 @@ public class LogMetric implements WarnMetric {
 
         /**
          * section size of intended lines
+         *
          * @see #Key$section
          */
         private int section = 50;
@@ -280,26 +281,38 @@ public class LogMetric implements WarnMetric {
          * Auto remove a pair of quotes, construct bytes by charset
          */
         @SneakyThrows
-        public List<LogStat.Word> getRuntimeKeys() {
+        public List<LogStat.Word> genStatKey() {
             List<LogStat.Word> rst = new ArrayList<>();
-            if (level != null) {
-                for (String s : level) {
-                    String kw = trimKey(s, false);
-                    if (kw.isEmpty()) continue;
-                    LogStat.Word wd = new LogStat.Word();
-                    wd.range2 = bound;
-                    wd.bytes = kw.getBytes(charset);
-                    rst.add(wd);
-                }
-                for (String s : keyword) {
-                    String kw = trimKey(s, false);
-                    if (kw.isEmpty()) continue;
-                    LogStat.Word wd = new LogStat.Word();
-                    wd.range1 = bound;
-                    wd.bytes = kw.getBytes(charset);
-                    rst.add(wd);
+            for (String kw : genRuleKey()) {
+                LogStat.Word wd = new LogStat.Word();
+                wd.range2 = bound;
+                wd.bytes = kw.getBytes(charset);
+                rst.add(wd);
+            }
+            return rst;
+        }
+
+        /**
+         * Auto remove a pair of quotes, merge level and its keyword
+         */
+        public List<String> genRuleKey() {
+            List<String> rst = new ArrayList<>();
+            if (level == null) return rst;
+
+            for (String s : level) {
+                String kw = trimKey(s, false);
+                if (!kw.isEmpty()) {
+                    rst.add(kw);
                 }
             }
+
+            for (String s : keyword) {
+                String kw = trimKey(s, false);
+                if (kw.isEmpty()) {
+                    rst.add(kw);
+                }
+            }
+
             return rst;
         }
     }

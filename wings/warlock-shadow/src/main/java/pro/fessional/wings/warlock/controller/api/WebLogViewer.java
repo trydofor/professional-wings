@@ -25,7 +25,7 @@ public class WebLogViewer extends LogViewer {
 
     @Autowired
     public WebLogViewer(SlardarMonitorProp prop) {
-        super(prop.getView());
+        super(prop.getView(), prop.genRuleKey());
     }
 
     @Operation(summary = "Alarm logs can be viewed in conjunction with alarm notifications when self-monitoring is enabled.", description = """
