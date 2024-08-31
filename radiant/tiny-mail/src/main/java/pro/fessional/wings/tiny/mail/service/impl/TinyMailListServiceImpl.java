@@ -72,6 +72,8 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
         bo.setHtml(po.getMailHtml());
         bo.setMark(po.getMailMark());
         bo.setDate(po.getMailDate());
+        bo.setLazyBean(po.getLazyBean());
+        bo.setLazyPara(po.getLazyPara());
 
         bo.setCreateDt(po.getCreateDt());
         bo.setLastSend(po.getLastSend());
@@ -198,17 +200,18 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
     @Override
     public void afterPropertiesSet() {
         final WinMailSenderTable t = winMailSenderDao.getTable();
+        // skip large field
         plainFields = new SelectField[]{
             t.Id, t.MailApps, t.MailRuns, t.MailConf,
             t.MailFrom, t.MailTo, t.MailCc, t.MailBcc,
-            t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
-            t.MailHtml, t.MailMark, t.MailDate,
+            t.MailReply, t.MailSubj, /*t.MailText, t.MailFile,*/
+            t.MailHtml, t.MailMark, t.MailDate, t.LazyBean, /*t.LazyPara,*/
             t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
             t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
             };
 
         sortsFields.put("id", t.Id);
         sortsFields.put("done", t.LastDone);
-        sortsFields.put("fail", t.LastFail);
+        sortsFields.put("send", t.LastSend);
     }
 }

@@ -7,5 +7,14 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
  * @since 2019-09-12
  */
 public interface CommitJournalModify {
+
+    /**
+     * insert new journal
+     */
     int insert(JournalService.Journal journal);
+
+    /**
+     * update elapse mills by id
+     */
+    int elapse(long mills, long id);
 }

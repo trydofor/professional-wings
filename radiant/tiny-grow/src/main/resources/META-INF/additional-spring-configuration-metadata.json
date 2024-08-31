@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.database.autogen.tables.daos"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.database.autogen.tables.daos.WinGrowTrackDao", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.spring.bean.TinyTrackConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.spring.bean.TinyTrackConfiguration$DaoServScan", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.spring.conf.TinyGrowAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl.TinyTrackAround", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl.TinyTrackCollectorDaoImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl.TinyTrackPreparerPropImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl.TinyTrackPreparerTermImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.grow.track.impl.TinyTrackServiceImpl", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

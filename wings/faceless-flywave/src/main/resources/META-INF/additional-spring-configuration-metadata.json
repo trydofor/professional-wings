@@ -1,13 +1,9 @@
 {
   "groups": [
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"},
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"}
   ],
   "properties": [
-    {"name": "java.awt.headless", "type": "java.lang.Boolean"},
-
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration", "type": "java.lang.Boolean"},
-
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.revisionCheckerRunner", "type": "java.lang.Boolean", "description": "wings.faceless.flywave.checker for short."},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.schemaDefinitionLoader", "type": "java.lang.Boolean"},
@@ -15,7 +11,10 @@
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.schemaJournalManager", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.schemaShardingManager", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.schemaVersionManger", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.sqlSegmentProcessor", "type": "java.lang.Boolean"}
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.sqlSegmentProcessor", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FlywaveConfiguration.sqlStatementParser", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration", "defaultValue": false, "type": "java.lang.Boolean", "description": "wings.enabled.faceless.flywave for short."}
   ],
   "hints": []
 }

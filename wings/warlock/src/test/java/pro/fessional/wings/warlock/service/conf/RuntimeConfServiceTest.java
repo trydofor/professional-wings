@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
 import pro.fessional.mirana.time.Sleep;
+import pro.fessional.wings.silencer.support.TypeSugar;
 import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.slardar.cache.SimpleCacheTemplate;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.testing.silencer.TestingLoggerAssert;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -24,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * Need init database via BootDatabaseTest
@@ -33,14 +38,23 @@ import java.util.Set;
  * @since 2022-03-09
  */
 @SpringBootTest(properties = {
-        "logging.level.root=DEBUG", // AssertionLogger
-        "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
+    "logging.level.root=DEBUG", // AssertionLogger
+    "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
 })
 @DependsOnDatabaseInitialization
 class RuntimeConfServiceTest {
 
-    @Setter(onMethod_ = {@Autowired})
-    private RuntimeConfService runtimeConfService;
+    private final SimpleCacheTemplate<Object> cacheTemplate = new SimpleCacheTemplate<>(
+        CacheConst.RuntimeConfService.CacheManager,
+        CacheConst.RuntimeConfService.CacheName);
+
+    @Setter(onMethod_ = { @Autowired })
+    protected RuntimeConfService runtimeConfService;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.cacheTemplate.setBeanFactory(applicationContext);
+    }
 
     @Test
     @TmsLink("C14008")
@@ -53,6 +67,8 @@ class RuntimeConfServiceTest {
         assertSimple(ZonedDateTime.class, ZonedDateTime.of(ldt, ZoneId.of("Asia/Shanghai")));
         assertSimple(Long.class, 1023L);
         assertSimple(Integer.class, 10);
+
+        assertEnable(Integer.class);
         //
         final Map<CacheManager, Set<String>> mgr = WingsCacheHelper.getManager(RuntimeConfServiceImpl.class);
         Assertions.assertEquals(1, mgr.size());
@@ -67,25 +83,45 @@ class RuntimeConfServiceTest {
     }
 
     private <T> void assertSimple(Class<T> clz, T obj) {
-        runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName());
+        runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName(), null);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
+
+        final Object obj2 = cacheTemplate.getArgKey(clz.getName(), TypeSugar.describe(clz));
+        Assertions.assertEquals(obj, obj2);
+    }
+
+    private <T> void assertEnable(Class<T> clz) {
+        runtimeConfService.enable(clz, false);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final T obj1 = runtimeConfService.getSimple(clz, clz);
+        Assertions.assertNull(obj1);
+        runtimeConfService.enable(clz, true);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final T obj2 = runtimeConfService.getSimple(clz, clz);
+        Assertions.assertNotNull(obj2);
     }
 
     @Test
     @TmsLink("C14009")
     void testCollection() {
         List<String> ls = List.of("Jan", "Fer");
-        runtimeConfService.newObject(List.class, ls, "test list");
+        runtimeConfService.newObject(List.class, ls, "test list", null, List.class, String.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<String> ls1 = runtimeConfService.getList(List.class, String.class);
         Assertions.assertEquals(ls, ls1);
 
+        Set<LocalDate> ss = Set.of(LocalDate.now(), LocalDate.now().plusDays(1));
+        runtimeConfService.newObject(Set.class, ss, "test set LocalDate", null, Set.class, LocalDate.class);
+        Sleep.ignoreInterrupt(1000); // wait for event sync
+        final Set<LocalDate> ss1 = runtimeConfService.getSet(Set.class, LocalDate.class);
+        Assertions.assertEquals(ss, ss1);
+
         Map<String, Boolean> map = new HashMap<>();
         map.put("Jan", true);
         map.put("Fer", false);
-        runtimeConfService.newObject(Map.class, map, "test map");
+        runtimeConfService.newObject(Map.class, map, "test map", null, Map.class, String.class, Boolean.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final Map<String, Boolean> map1 = runtimeConfService.getMap(Map.class, String.class, Boolean.class);
         Assertions.assertEquals(map, map1);
@@ -102,7 +138,7 @@ class RuntimeConfServiceTest {
     @TmsLink("C14010")
     void testJson() {
         Dto dto = new Dto();
-        runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest");
+        runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest", null);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
@@ -124,7 +160,7 @@ class RuntimeConfServiceTest {
     void testMode() {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfServiceTest.testMode";
-        runtimeConfService.newObject(key, arm, "test RunMode");
+        runtimeConfService.newObject(key, arm, "test RunMode", null, List.class, RunMode.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         Assertions.assertEquals(arm, arm1);
@@ -147,7 +183,7 @@ class RuntimeConfServiceTest {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfCacheTest.testCache";
         // insert on duplicated key
-        runtimeConfService.newObject(key, arm, "test RunMode");
+        runtimeConfService.newObject(key, arm, "test RunMode", null, List.class, RunMode.class);
         Sleep.ignoreInterrupt(1000); // wait for event sync
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);

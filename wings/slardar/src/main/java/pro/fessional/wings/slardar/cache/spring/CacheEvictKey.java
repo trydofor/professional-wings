@@ -40,7 +40,7 @@ public class CacheEvictKey {
      *
      * @see #KeyGenerator
      */
-    @Contract("_->this")
+    @Contract("_,_,_->this")
     public final CacheEvictKey add(Object target, Method method, Object... arg) {
         if (keys.isEmpty()) {
             keys = new LinkedList<>();

@@ -2,12 +2,14 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -27,11 +29,11 @@ public class SilencerRunnerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerRunnerConfiguration.class);
 
-    @Configuration(proxyBeanMethods = false)
+    @Component
     @ConditionalWingsEnabled
-    public static class ReadyEvent {
-        @EventListener
-        public void on(ApplicationReadyEvent event) {
+    public static class ReadyEvent implements ApplicationListener<ApplicationReadyEvent> {
+        @Override
+        public void onApplicationEvent(@NotNull ApplicationReadyEvent event) {
             final ConfigurableApplicationContext context = event.getApplicationContext();
             final Map<String, ApplicationReadyEventRunner> beans = context.getBeansOfType(ApplicationReadyEventRunner.class);
             if (beans.isEmpty()) {
@@ -54,12 +56,12 @@ public class SilencerRunnerConfiguration {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Component
     @ConditionalWingsEnabled
-    public static class StartedEvent {
-        @EventListener
-        public void on(ApplicationStartedEvent startedEvent) {
-            final ConfigurableApplicationContext context = startedEvent.getApplicationContext();
+    public static class StartedEvent implements ApplicationListener<ApplicationStartedEvent> {
+        @Override
+        public void onApplicationEvent(@NotNull ApplicationStartedEvent event) {
+            final ConfigurableApplicationContext context = event.getApplicationContext();
             final Map<String, ApplicationStartedEventRunner> beans = context.getBeansOfType(ApplicationStartedEventRunner.class);
             if (beans.isEmpty()) {
                 log.info("===>>> Silencer applicationStartedEventRunner empty");

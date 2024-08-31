@@ -3,14 +3,13 @@ package pro.fessional.wings.slardar.notice;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.jackson.AesString;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.mergeNotValue;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
  * @author trydofor
@@ -72,36 +71,30 @@ public class DingTalkConf {
         }
     }
 
-    /**
-     * use all properties from that
-     */
-    public void adopt(DingTalkConf that) {
-        if (that == null) return;
+    public static final IfSetter<DingTalkConf, DingTalkConf> ConfSetter = (thiz, that, absent, present) -> {
+        if (that == null) return thiz;
 
-        dryrun = that.dryrun;
-        webhookUrl = that.webhookUrl;
-        digestSecret = that.digestSecret;
-        accessToken = that.accessToken;
-        noticeKeyword = that.noticeKeyword;
-        msgType = that.msgType;
-        noticeMobiles.putAll(that.noticeMobiles);
-    }
+        if (absent == IfSetter.Absent.Invalid) {
+            if (thiz.dryrun == null) thiz.dryrun = that.dryrun;
+            if (PropHelper.invalid(thiz.webhookUrl)) thiz.webhookUrl = that.webhookUrl;
+            if (PropHelper.invalid(thiz.digestSecret)) thiz.digestSecret = that.digestSecret;
+            if (PropHelper.invalid(thiz.accessToken)) thiz.accessToken = that.accessToken;
+            if (PropHelper.invalid(thiz.noticeKeyword)) thiz.noticeKeyword = that.noticeKeyword;
+            if (PropHelper.invalid(thiz.msgType)) thiz.msgType = that.msgType;
+            PropHelper.mergeToInvalid(thiz.noticeMobiles, that.noticeMobiles);
+        }
+        else {
+            thiz.dryrun = that.dryrun;
+            thiz.webhookUrl = that.webhookUrl;
+            thiz.digestSecret = that.digestSecret;
+            thiz.accessToken = that.accessToken;
+            thiz.noticeKeyword = that.noticeKeyword;
+            thiz.msgType = that.msgType;
+            thiz.noticeMobiles.putAll(that.noticeMobiles);
+        }
 
-    /**
-     * if this.property is invalid, then use that.property.
-     * except for 'noticeMobiles' which merge value only if key matches.
-     */
-    public void merge(DingTalkConf that) {
-        if (that == null) return;
-
-        if (dryrun == null) dryrun = that.dryrun;
-        if (notValue(webhookUrl)) webhookUrl = that.webhookUrl;
-        if (notValue(digestSecret)) digestSecret = that.digestSecret;
-        if (notValue(accessToken)) accessToken = that.accessToken;
-        if (notValue(noticeKeyword)) noticeKeyword = that.noticeKeyword;
-        if (notValue(msgType)) msgType = that.msgType;
-        mergeNotValue(noticeMobiles, that.noticeMobiles);
-    }
+        return thiz;
+    };
 
     public interface Loader {
         /**

@@ -5,7 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.time.StopWatch;
+
+import java.util.function.BiConsumer;
 
 /**
  * Performance Monitoring
@@ -57,16 +60,38 @@ public class Watches {
 
     /**
      * Release the current timer and returns whether all timers have finished.
-     * When all timings are finished, clear the log if clean, write to log if token != null.
+     * When all timings are finished, clear the watches if clean.
      */
-    public static boolean release(boolean clean, String token) {
+    public static boolean release(boolean clean) {
+        return release(clean, null, WatchHandler);
+    }
+
+    /**
+     * Release the current timer and returns whether all timers have finished.
+     * When all timings are finished, handle the StopWatch if token is not null, clear the watches if clean.
+     */
+    public static boolean release(boolean clean, @Nullable String token) {
+        return release(clean, token, WatchHandler);
+    }
+
+    /**
+     * Release the current timer and returns whether all timers have finished.
+     * When all timings are finished, handle the StopWatch if token is not null, clear the watches if clean.
+     */
+    public static boolean release(boolean clean, @Nullable String token, @NotNull BiConsumer<String, StopWatch> handle) {
         StopWatch watch = StopWatches.get();
         if (watch == null || watch.isRunning()) return false;
 
         StopWatches.remove();
         if (token != null) {
-            logging(token, watch);
+            try {
+                handle.accept(token, watch);
+            }
+            catch (Exception e) {
+                DummyBlock.ignore(e);
+            }
         }
+
         if (clean) {
             watch.clear();
         }
@@ -74,9 +99,16 @@ public class Watches {
     }
 
     /**
-     * output info to the log with token at Warn level
+     * to handle the StopWatch when timings are finished and token is not null.
+     * should handle the StopWatch before its clean.
+     *
+     * @param handler token and StopWatch are not null
      */
-    public static void logging(String token, StopWatch watch) {
-        log.warn("Watching {} {}", token, watch);
+    public static void setWatchHandler(BiConsumer<String, StopWatch> handler) {
+        WatchHandler = handler;
     }
+
+    private static volatile BiConsumer<String, StopWatch> WatchHandler = (token, watch) -> {
+        log.warn("Watching {} {}", token, watch);
+    };
 }

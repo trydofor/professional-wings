@@ -31,7 +31,7 @@ public class FlywaveVerProp {
      * @see #Key$schemaVersionTable
      */
     private String schemaVersionTable = "sys_schema_version";
-    public static final String Key$schemaVersionTable = Key + ".schema-version-table";
+    public static final String Key$schemaVersionTable = Key + ".schema-version-table"; // refer by database checker
 
     /**
      * table name of journal.

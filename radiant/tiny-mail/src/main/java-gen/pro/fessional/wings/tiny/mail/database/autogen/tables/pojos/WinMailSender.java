@@ -49,6 +49,8 @@ public class WinMailSender implements IWinMailSender {
     private String mailFile;
     private String mailMark;
     private LocalDateTime mailDate;
+    private String lazyBean;
+    private String lazyPara;
     private LocalDateTime lastSend;
     private String lastFail;
     private LocalDateTime lastDone;
@@ -86,6 +88,8 @@ public class WinMailSender implements IWinMailSender {
         this.mailFile = value.getMailFile();
         this.mailMark = value.getMailMark();
         this.mailDate = value.getMailDate();
+        this.lazyBean = value.getLazyBean();
+        this.lazyPara = value.getLazyPara();
         this.lastSend = value.getLastSend();
         this.lastFail = value.getLastFail();
         this.lastDone = value.getLastDone();
@@ -122,6 +126,8 @@ public class WinMailSender implements IWinMailSender {
         String mailFile,
         String mailMark,
         LocalDateTime mailDate,
+        String lazyBean,
+        String lazyPara,
         LocalDateTime lastSend,
         String lastFail,
         LocalDateTime lastDone,
@@ -156,6 +162,8 @@ public class WinMailSender implements IWinMailSender {
         this.mailFile = mailFile;
         this.mailMark = mailMark;
         this.mailDate = mailDate;
+        this.lazyBean = lazyBean;
+        this.lazyPara = lazyPara;
         this.lastSend = lastSend;
         this.lastFail = lastFail;
         this.lastDone = lastDone;
@@ -1693,6 +1701,166 @@ public class WinMailSender implements IWinMailSender {
 
 
     /**
+     * Getter for <code>win_mail_sender.lazy_bean</code>.
+     */
+    @Override
+    public String getLazyBean() {
+        return this.lazyBean;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.lazy_bean</code>.
+     */
+    @Override
+    public void setLazyBean(String lazyBean) {
+        this.lazyBean = lazyBean;
+    }
+
+    @Transient
+    public void setLazyBeanIf(String lazyBean, boolean bool) {
+        if (bool) {
+            this.lazyBean = lazyBean;
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIf(Supplier<String> lazyBean, boolean bool) {
+        if (bool) {
+            this.lazyBean = lazyBean.get();
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIf(String lazyBean, Predicate<String> bool) {
+        if (bool.test(lazyBean)) {
+            this.lazyBean = lazyBean;
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIf(String lazyBean, Predicate<String> bool, Supplier<String>... lazyBeans) {
+        if (bool.test(lazyBean)) {
+            this.lazyBean = lazyBean;
+            return;
+        }
+        for (Supplier<String> supplier : lazyBeans) {
+            lazyBean = supplier.get();
+            if (bool.test(lazyBean)) {
+                this.lazyBean = lazyBean;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIfNot(String lazyBean, Predicate<String> bool) {
+        if (!bool.test(lazyBean)) {
+            this.lazyBean = lazyBean;
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIfNot(String lazyBean, Predicate<String> bool, Supplier<String>... lazyBeans) {
+        if (!bool.test(lazyBean)) {
+            this.lazyBean = lazyBean;
+            return;
+        }
+        for (Supplier<String> supplier : lazyBeans) {
+            lazyBean = supplier.get();
+            if (!bool.test(lazyBean)) {
+                this.lazyBean = lazyBean;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLazyBeanIf(UnaryOperator<String> lazyBean) {
+        this.lazyBean = lazyBean.apply(this.lazyBean);
+    }
+
+
+    /**
+     * Getter for <code>win_mail_sender.lazy_para</code>.
+     */
+    @Override
+    public String getLazyPara() {
+        return this.lazyPara;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.lazy_para</code>.
+     */
+    @Override
+    public void setLazyPara(String lazyPara) {
+        this.lazyPara = lazyPara;
+    }
+
+    @Transient
+    public void setLazyParaIf(String lazyPara, boolean bool) {
+        if (bool) {
+            this.lazyPara = lazyPara;
+        }
+    }
+
+    @Transient
+    public void setLazyParaIf(Supplier<String> lazyPara, boolean bool) {
+        if (bool) {
+            this.lazyPara = lazyPara.get();
+        }
+    }
+
+    @Transient
+    public void setLazyParaIf(String lazyPara, Predicate<String> bool) {
+        if (bool.test(lazyPara)) {
+            this.lazyPara = lazyPara;
+        }
+    }
+
+    @Transient
+    public void setLazyParaIf(String lazyPara, Predicate<String> bool, Supplier<String>... lazyParas) {
+        if (bool.test(lazyPara)) {
+            this.lazyPara = lazyPara;
+            return;
+        }
+        for (Supplier<String> supplier : lazyParas) {
+            lazyPara = supplier.get();
+            if (bool.test(lazyPara)) {
+                this.lazyPara = lazyPara;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLazyParaIfNot(String lazyPara, Predicate<String> bool) {
+        if (!bool.test(lazyPara)) {
+            this.lazyPara = lazyPara;
+        }
+    }
+
+    @Transient
+    public void setLazyParaIfNot(String lazyPara, Predicate<String> bool, Supplier<String>... lazyParas) {
+        if (!bool.test(lazyPara)) {
+            this.lazyPara = lazyPara;
+            return;
+        }
+        for (Supplier<String> supplier : lazyParas) {
+            lazyPara = supplier.get();
+            if (!bool.test(lazyPara)) {
+                this.lazyPara = lazyPara;
+                return;
+            }
+        }
+    }
+
+    @Transient
+    public void setLazyParaIf(UnaryOperator<String> lazyPara) {
+        this.lazyPara = lazyPara.apply(this.lazyPara);
+    }
+
+
+    /**
      * Getter for <code>win_mail_sender.last_send</code>.
      */
     @Override
@@ -2935,6 +3103,18 @@ public class WinMailSender implements IWinMailSender {
         }
         else if (!this.mailDate.equals(other.mailDate))
             return false;
+        if (this.lazyBean == null) {
+            if (other.lazyBean != null)
+                return false;
+        }
+        else if (!this.lazyBean.equals(other.lazyBean))
+            return false;
+        if (this.lazyPara == null) {
+            if (other.lazyPara != null)
+                return false;
+        }
+        else if (!this.lazyPara.equals(other.lazyPara))
+            return false;
         if (this.lastSend == null) {
             if (other.lastSend != null)
                 return false;
@@ -3045,6 +3225,8 @@ public class WinMailSender implements IWinMailSender {
         result = prime * result + ((this.mailFile == null) ? 0 : this.mailFile.hashCode());
         result = prime * result + ((this.mailMark == null) ? 0 : this.mailMark.hashCode());
         result = prime * result + ((this.mailDate == null) ? 0 : this.mailDate.hashCode());
+        result = prime * result + ((this.lazyBean == null) ? 0 : this.lazyBean.hashCode());
+        result = prime * result + ((this.lazyPara == null) ? 0 : this.lazyPara.hashCode());
         result = prime * result + ((this.lastSend == null) ? 0 : this.lastSend.hashCode());
         result = prime * result + ((this.lastFail == null) ? 0 : this.lastFail.hashCode());
         result = prime * result + ((this.lastDone == null) ? 0 : this.lastDone.hashCode());
@@ -3085,6 +3267,8 @@ public class WinMailSender implements IWinMailSender {
         sb.append(", ").append(mailFile);
         sb.append(", ").append(mailMark);
         sb.append(", ").append(mailDate);
+        sb.append(", ").append(lazyBean);
+        sb.append(", ").append(lazyPara);
         sb.append(", ").append(lastSend);
         sb.append(", ").append(lastFail);
         sb.append(", ").append(lastDone);
@@ -3129,6 +3313,8 @@ public class WinMailSender implements IWinMailSender {
         setMailFile(from.getMailFile());
         setMailMark(from.getMailMark());
         setMailDate(from.getMailDate());
+        setLazyBean(from.getLazyBean());
+        setLazyPara(from.getLazyPara());
         setLastSend(from.getLastSend());
         setLastFail(from.getLastFail());
         setLastDone(from.getLastDone());

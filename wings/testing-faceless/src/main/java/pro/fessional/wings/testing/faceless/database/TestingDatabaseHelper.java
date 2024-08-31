@@ -143,12 +143,12 @@ public class TestingDatabaseHelper {
 
     public static void testcaseNotice(String... mes) {
         for (String s : mes) {
-            log.info(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
+            log.info(">>=>🦁🦁🦁 {} 🦁🦁🦁<=<<", s);
         }
     }
 
     public static void breakpointDebug(String... mes) {
-        Arrays.stream(mes).forEach(s -> log.debug(">>=>🐶🐶🐶 " + s + " 🐶🐶🐶<=<<"));
+        Arrays.stream(mes).forEach(s -> log.debug(">>=>🐶🐶🐶 {} 🐶🐶🐶<=<<", s));
     }
 
     public static void execWingsSql(JdbcTemplate jdbcTemplate, String path) {

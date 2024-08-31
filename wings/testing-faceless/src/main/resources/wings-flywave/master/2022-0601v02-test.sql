@@ -20,3 +20,5 @@ VALUES (100, -1, 'LOGIN_INFO-00', 'OTHER_INFO-00'),
        (117, -1, 'LOGIN_INFO-17', 'OTHER_INFO-17'),
        (118, -1, 'LOGIN_INFO-18', 'OTHER_INFO-18'),
        (119, -1, 'LOGIN_INFO-19', 'OTHER_INFO-19');
+
+-- CALL FLYWAVE('2022-0601v02-test.sql');

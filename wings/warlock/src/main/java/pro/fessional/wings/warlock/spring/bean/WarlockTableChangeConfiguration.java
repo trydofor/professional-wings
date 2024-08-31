@@ -2,7 +2,6 @@ package pro.fessional.wings.warlock.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration;
@@ -25,17 +24,8 @@ public class WarlockTableChangeConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public TableChangePublisherImpl tableChangePublisher() {
-        log.info("Warlock spring-bean tableChangePublisher");
-        final ApplicationEventPublisher publisher;
-        if (EventPublishHelper.hasAsyncGlobal()) {
-            publisher = EventPublishHelper.AsyncGlobal;
-            log.info("Warlock conf tableChangePublisher with async global");
-        }
-        else {
-            publisher = EventPublishHelper.AsyncSpring;
-            log.info("Warlock conf tableChangePublisher with async spring");
-        }
-        return new TableChangePublisherImpl(publisher);
+        log.info("Warlock spring-bean tableChangePublisher with AsyncWidely Publisher");
+        return new TableChangePublisherImpl(EventPublishHelper.AsyncWidely);
     }
 
     @Bean

@@ -1,9 +1,9 @@
 CREATE TABLE `win_perm_entry` (
-    `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
+    `id`        BIGINT       NOT NULL COMMENT 'primary key',
     `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime(sys)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
-    `commit_id` BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `commit_id` BIGINT       NOT NULL COMMENT 'commit id',
     `scopes`    VARCHAR(200) NOT NULL COMMENT 'all lowercase, period-separated',
     `action`    VARCHAR(50)  NOT NULL COMMENT 'all lowercase',
     `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'comment',
@@ -13,11 +13,11 @@ CREATE TABLE `win_perm_entry` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='130/Perm Entry';
 
 CREATE TABLE `win_role_entry` (
-    `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
+    `id`        BIGINT       NOT NULL COMMENT 'primary key',
     `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime(sys)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
-    `commit_id` BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `commit_id` BIGINT       NOT NULL COMMENT 'commit id',
     `name`      VARCHAR(50)  NOT NULL COMMENT 'all uppercase, no separated, no ROLE_ prefix',
     `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'comment',
     PRIMARY KEY (`id`),
@@ -26,21 +26,21 @@ CREATE TABLE `win_role_entry` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='131/Role Entry';
 
 CREATE TABLE `win_role_grant` (
-    `refer_role`  BIGINT(20)  NOT NULL COMMENT 'current role/win_role_entry.id',
-    `grant_type`  INT(11)     NOT NULL COMMENT 'grant type/13301##:Role,Perm',
-    `grant_entry` BIGINT(20)  NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
+    `refer_role`  BIGINT      NOT NULL COMMENT 'current role/win_role_entry.id',
+    `grant_type`  INT         NOT NULL COMMENT 'grant type/13301##:Role,Perm',
+    `grant_entry` BIGINT      NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
     `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
-    `commit_id`   BIGINT(20)  NOT NULL COMMENT 'commit id',
+    `commit_id`   BIGINT      NOT NULL COMMENT 'commit id',
     PRIMARY KEY (`refer_role`, `grant_type`, `grant_entry`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='134/Role Grant';
 
 CREATE TABLE `win_user_grant` (
-    `refer_user`  BIGINT(20)  NOT NULL COMMENT 'current user/win_user_basis.id',
-    `grant_type`  INT(11)     NOT NULL COMMENT 'grant type/13301##:Role,Perm',
-    `grant_entry` BIGINT(20)  NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
+    `refer_user`  BIGINT      NOT NULL COMMENT 'current user/win_user_basis.id',
+    `grant_type`  INT         NOT NULL COMMENT 'grant type/13301##:Role,Perm',
+    `grant_entry` BIGINT      NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
     `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
-    `commit_id`   BIGINT(20)  NOT NULL COMMENT 'commit id',
+    `commit_id`   BIGINT      NOT NULL COMMENT 'commit id',
     PRIMARY KEY (`refer_user`, `grant_type`, `grant_entry`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='135/User Grant';
@@ -88,3 +88,5 @@ VALUES (1, 1330101, 1, NOW(3), 0),
 -- Grant super perm to root user
 REPLACE INTO `win_user_grant`(`refer_user`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330102, 1, NOW(3), 0);
+
+-- CALL FLYWAVE('2020-10-24v02-role_permit.sql');

@@ -37,7 +37,7 @@
 ```bash
 ## (1) get source code
 git clone --depth 1 https://github.com/\
-trydofor/pro.fessional.wings.git
+trydofor/professional-wings.git
 ## (2) install dependency using java8
 # asdf shell java temurin-8.0.412+8
 git submodule update --remote --init

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <version>3.2.8</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -23,7 +23,7 @@
         <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
         <revision>3.2.130-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
-        <spring-boot.version>3.2.2</spring-boot.version>
+        <spring-boot.version>3.2.8</spring-boot.version>
         <!--  -->
         <wings.version>${revision}</wings.version>
         <!--suppress UnresolvedMavenProperty fulfill by directory-maven-plugin -->
@@ -40,47 +40,47 @@
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version> <!-- https://mapstruct.org/documentation/1.6/reference/html/#_set_up -->
-        <guava.version>33.0.0-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.15.1</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <guava.version>33.2.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.16.1</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/changes-report.html -->
         <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
-        <commons-text.version>1.11.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
+        <commons-text.version>1.12.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
-        <mirana.version>2.7.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.7.3</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.5.1</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.51</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.52</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.6.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.5</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
-        <bouncycastle.version>1.77</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
+        <bouncycastle.version>1.78.1</bouncycastle.version> <!-- https://www.bouncycastle.org/download/bouncy-castle-java/#release-notes -->
         <justauth.version>1.16.6</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- sharding jdbc -->
-        <shardingsphere.version>5.4.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <shardingsphere.version>5.5.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>3.0.2</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>3.2.0</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <springdoc.version>2.3.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <boot-admin.version>3.2.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>7.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
-        <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
-        <allure.version>2.25.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
-        <druid.version>1.2.21</druid.version> <!-- https://github.com/alibaba/druid/releases -->
-        <jmh.version>1.37</jmh.version> <!-- https://github.com/alibaba/druid/releases -->
+        <springdoc.version>2.5.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
+        <boot-admin.version>3.2.3</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>7.12.1</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
+        <retrofit.version>2.11.0</retrofit.version> <!-- https://github.com/square/retrofit/releases -->
+        <allure.version>2.29.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
+        <druid.version>1.2.23</druid.version> <!-- https://github.com/alibaba/druid/releases -->
+        <jmh.version>1.37</jmh.version> <!-- https://github.com/openjdk/jmh/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
         <directory-maven-plugin.version>1.0</directory-maven-plugin.version> <!-- https://github.com/jdcasey/directory-maven-plugin -->
-        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
-        <nexus-staging-plugin.version>1.6.13</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
+        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/releases -->
+        <nexus-staging-plugin.version>1.7.0</nexus-staging-plugin.version> <!-- https://github.com/sonatype/nexus-maven-plugins/tree/main/staging/maven-plugin -->
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version> <!-- https://github.com/hazendaz/coveralls-maven-plugin -->
-        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
-        <dokka-maven-plugin.version>1.9.10</dokka-maven-plugin.version> <!-- https://kotlinlang.org/docs/dokka-maven.html#general-configuration -->
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
+        <dokka-maven-plugin.version>1.9.20</dokka-maven-plugin.version> <!-- https://kotlinlang.org/docs/dokka-maven.html#general-configuration -->
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
-        <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
-        <jib-maven-plugin.version>3.4.1</jib-maven-plugin.version> <!-- https://github.com/GoogleContainerTools/jib/releases -->
+        <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
+        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version> <!-- https://github.com/GoogleContainerTools/jib/releases -->
         <jib-layer-filter.version>0.3.0</jib-layer-filter.version> <!-- https://github.com/GoogleContainerTools/jib-extensions/blob/master/first-party/jib-layer-filter-extension-maven/README.md -->
-        <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version> <!-- https://maven.apache.org/enforcer/maven-enforcer-plugin/ -->
-        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version> <!-- https://www.mojohaus.org/versions/versions-maven-plugin -->
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version> <!-- https://maven.apache.org/enforcer/maven-enforcer-plugin/ -->
+        <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version> <!-- https://www.mojohaus.org/versions/versions-maven-plugin -->
         <!-- java, kotlin sources  -->
         <source.srcMainJava>${project.basedir}/src/main/java</source.srcMainJava>
         <source.srcMainJavaGen>${project.basedir}/src/main/java-gen</source.srcMainJavaGen>
@@ -295,6 +295,11 @@
                 <artifactId>tiny-mail</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-grow</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
             <!-- kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -317,8 +322,15 @@
             <!-- sharding sphere -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-jdbc-core</artifactId>
+                <artifactId>shardingsphere-jdbc</artifactId>
                 <version>${shardingsphere.version}</version>
+                <!-- https://github.com/apache/shardingsphere/pull/31143 -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shardingsphere</groupId>
+                        <artifactId>shardingsphere-test-util</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- session cache -->
             <!-- spring-session-bom
@@ -892,17 +904,8 @@
                     <groupId>io.github.git-commit-id</groupId>
                     <artifactId>git-commit-id-maven-plugin</artifactId>
                     <version>${git-commit-id-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>git-infos</id>
-                            <goals>
-                                <goal>revision</goal>
-                            </goals>
-                            <phase>initialize</phase>
-                        </execution>
-                    </executions>
                     <configuration>
-                        <verbose>true</verbose>
+                        <verbose>false</verbose>
                         <offline>true</offline>
                         <failOnNoGitDirectory>false</failOnNoGitDirectory>
                         <generateGitPropertiesFile>true</generateGitPropertiesFile>
@@ -959,18 +962,6 @@
             </plugins>
         </pluginManagement>
     </build>
-    <repositories>
-        <repository>
-            <id>oss-sonatype</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <profiles>
         <profile>
             <id>module-example</id>
@@ -980,6 +971,24 @@
             <modules>
                 <module>example</module>
             </modules>
+        </profile>
+        <profile>
+            <id>repo-snapshot</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>oss-sonatype</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
         </profile>
         <profile>
             <id>wings-kotlin-1test</id>

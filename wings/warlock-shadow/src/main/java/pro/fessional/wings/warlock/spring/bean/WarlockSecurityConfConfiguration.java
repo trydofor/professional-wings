@@ -29,9 +29,9 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
-import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
+import pro.fessional.wings.slardar.servlet.dummy.DummyHttpServletRequest;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
@@ -72,7 +72,7 @@ public class WarlockSecurityConfConfiguration {
             // https://github.com/spring-projects/spring-security/issues/10938
             final Map<String, String> webIgnore = securityProp.getWebIgnore();
             if (!webIgnore.isEmpty()) {
-                final Set<String> ignores = CommonPropHelper.onlyValue(webIgnore.values());
+                final Set<String> ignores = PropHelper.onlyValid(webIgnore.values());
                 log.info("WarlockShadow conf WebSecurity, ignoring=" + String.join("\n,", ignores));
                 web.ignoring().requestMatchers(ignores.toArray(String[]::new));
             }
@@ -168,14 +168,14 @@ public class WarlockSecurityConfConfiguration {
 
         return http -> http.authorizeHttpRequests(conf -> {
             // 1 PermitAll
-            final Set<String> permed = CommonPropHelper.onlyValue(securityProp.getPermitAll().values());
+            final Set<String> permed = PropHelper.onlyValid(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
                 conf.requestMatchers(permed.toArray(String[]::new)).permitAll();
             }
 
             // 2 Authenticated
-            final Set<String> authed = CommonPropHelper.onlyValue(securityProp.getAuthenticated().values());
+            final Set<String> authed = PropHelper.onlyValid(securityProp.getAuthenticated().values());
             if (!authed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
                 conf.requestMatchers(authed.toArray(String[]::new)).authenticated();
@@ -188,7 +188,7 @@ public class WarlockSecurityConfConfiguration {
                 for (Map.Entry<String, Set<String>> en : securityProp.getAuthority().entrySet()) {
                     final String perm = en.getKey();
                     for (String url : en.getValue()) {
-                        if (CommonPropHelper.hasValue(url)) {
+                        if (PropHelper.valid(url)) {
                             final Set<String> st = urlPerm.computeIfAbsent(url, k -> new HashSet<>());
                             st.add(perm);
                         }
@@ -197,7 +197,7 @@ public class WarlockSecurityConfConfiguration {
                 // desc
                 for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
                     final String url = en.getKey();
-                    final Set<String> pms = CommonPropHelper.onlyValue(en.getValue());
+                    final Set<String> pms = PropHelper.onlyValid(en.getValue());
                     log.info("WarlockShadow conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
                     conf.requestMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }
@@ -304,61 +304,135 @@ public class WarlockSecurityConfConfiguration {
     public ApplicationRunnerOrdered securityCheckUrlRunner(WarlockSecurityProp securityProp, ApplicationContext ctx) {
         log.info("WarlockShadow spring-runs securityCheckUrlRunner");
         return new ApplicationRunnerOrdered(WingsOrdered.Lv1Config, ignored -> {
-            log.info("WarlockShadow check security url config");
+            try {
+                secCheckUrl(securityProp, ctx);
+            }
+            catch (RuntimeException e) {
+                log.error("set wings.enabled.warlock.sec-check-url=false to skip check", e);
+                throw e;
+            }
+        });
+    }
 
-            String servletName = "dispatcherServlet";
-            for (ServletRegistrationBean<?> srb : ctx.getBeanProvider(ServletRegistrationBean.class)) {
-                if (srb.getServlet() instanceof DispatcherServlet) {
-                    servletName = srb.getServletName();
-                    break;
+    private static void secCheckUrl(WarlockSecurityProp securityProp, ApplicationContext ctx) {
+        log.info("WarlockShadow check security url config");
+
+        String servletName = "dispatcherServlet";
+        for (ServletRegistrationBean<?> srb : ctx.getBeanProvider(ServletRegistrationBean.class)) {
+            if (srb.getServlet() instanceof DispatcherServlet) {
+                servletName = srb.getServletName();
+                break;
+            }
+        }
+
+        Map<String, String> matchers = new LinkedHashMap<>();
+        Map<String, DummyHttpServletRequest> requests = new LinkedHashMap<>();
+
+        for (var en : securityProp.getWebIgnore().entrySet()) {
+            String ptn = en.getValue();
+            if (!StringUtils.hasText(ptn)) continue;
+            matchers.put("WebIgnore:" + en.getKey(), ptn);
+            requests.put(ptn, SecurityConfigHelper.dummyMatcherRequest(ptn, servletName));
+        }
+        for (var en : securityProp.getPermitAll().entrySet()) {
+            String ptn = en.getValue();
+            if (!StringUtils.hasText(ptn)) continue;
+            matchers.put("PermitAll:" + en.getKey(), ptn);
+            requests.put(ptn, SecurityConfigHelper.dummyMatcherRequest(ptn, servletName));
+        }
+        for (var en : securityProp.getAuthenticated().entrySet()) {
+            String ptn = en.getValue();
+            if (!StringUtils.hasText(ptn)) continue;
+            matchers.put("Authenticated:" + en.getKey(), ptn);
+            requests.put(ptn, SecurityConfigHelper.dummyMatcherRequest(ptn, servletName));
+        }
+        for (var en : securityProp.getAuthority().entrySet()) {
+            int c = 0;
+            String k = en.getKey();
+            for (String ptn : en.getValue()) {
+                if (!StringUtils.hasText(ptn)) continue;
+                matchers.put("Authority:" + k + "[" + (c++) + "]", ptn);
+                requests.put(ptn, SecurityConfigHelper.dummyMatcherRequest(ptn, servletName));
+            }
+        }
+        final AtomicReference<RequestMatcher> opt = new AtomicReference<>();
+        MatcherHelper matcherHelper = MatcherHelper.of(ctx, opt);
+
+        // check including
+        for (var en : matchers.entrySet()) {
+            String ptn = en.getValue();
+            requests.remove(ptn);
+            if (requests.isEmpty()) break;
+
+            matcherHelper.requestMatchers(ptn);
+            RequestMatcher mt = opt.get();
+            for (var er : requests.entrySet()) {
+                try {
+                    if (mt.matches(er.getValue())) {
+                        log.warn(en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                    }
+                }
+                catch (RuntimeException e) {
+                    log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                    throw e;
                 }
             }
+        }
+        matchers.clear();
+        requests.clear();
 
-            Map<String, String> matchers = new LinkedHashMap<>();
-            Map<String, FakeHttpServletRequest> requests = new LinkedHashMap<>();
+        // check auth url
+        String loginPage = securityProp.getLoginPage();
+        if (StringUtils.hasText(loginPage)) {
+            requests.put(loginPage, SecurityConfigHelper.dummyMatcherRequest(loginPage, servletName));
+        }
+        String logoutUrl = securityProp.getLogoutUrl();
+        if (StringUtils.hasText(logoutUrl)) {
+            requests.put(logoutUrl, SecurityConfigHelper.dummyMatcherRequest(logoutUrl, servletName));
+        }
+        String loginProcUrl = securityProp.getLoginProcUrl();
+        if (StringUtils.hasText(loginProcUrl)) {
+            requests.put(loginProcUrl, SecurityConfigHelper.dummyMatcherRequest(loginProcUrl, servletName));
+        }
 
-            for (var en : securityProp.getWebIgnore().entrySet()) {
-                String ptn = en.getValue();
-                if (!StringUtils.hasText(ptn)) continue;
-                matchers.put("WebIgnore:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
+        StringBuilder err = new StringBuilder();
+        for (var en : securityProp.getWebIgnore().entrySet()) {
+            String ptn = en.getValue();
+            if (!StringUtils.hasText(ptn)) continue;
+            if (requests.isEmpty()) break;
+
+            matcherHelper.requestMatchers(ptn);
+            RequestMatcher mt = opt.get();
+            for (var er : requests.entrySet()) {
+                try {
+                    if (mt.matches(er.getValue())) {
+                        err.append("\nWebIgnore:").append(en.getKey()).append(" should exclude ").append(er.getKey());
+                    }
+                }
+                catch (RuntimeException e) {
+                    log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                    throw e;
+                }
             }
+        }
+
+        String anyRequest = securityProp.getAnyRequest();
+        if (!StringUtils.hasText(anyRequest)
+            || "permitAll".equalsIgnoreCase(anyRequest)
+            || "anonymous".equalsIgnoreCase(anyRequest)) {
             for (var en : securityProp.getPermitAll().entrySet()) {
                 String ptn = en.getValue();
                 if (!StringUtils.hasText(ptn)) continue;
-                matchers.put("PermitAll:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
-            }
-            for (var en : securityProp.getAuthenticated().entrySet()) {
-                String ptn = en.getValue();
-                if (!StringUtils.hasText(ptn)) continue;
-                matchers.put("Authenticated:" + en.getKey(), ptn);
-                requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
-            }
-            for (var en : securityProp.getAuthority().entrySet()) {
-                int c = 0;
-                String k = en.getKey();
-                for (String ptn : en.getValue()) {
-                    if (!StringUtils.hasText(ptn)) continue;
-                    matchers.put("Authority:" + k + "[" + (c++) + "]", ptn);
-                    requests.put(ptn, SecurityConfigHelper.fakeMatcherRequest(ptn, servletName));
-                }
-            }
-            final AtomicReference<RequestMatcher> opt = new AtomicReference<>();
-            MatcherHelper matcherHelper = MatcherHelper.of(ctx, opt);
-
-            // check including
-            for (var en : matchers.entrySet()) {
-                String ptn = en.getValue();
-                requests.remove(ptn);
                 if (requests.isEmpty()) break;
 
                 matcherHelper.requestMatchers(ptn);
                 RequestMatcher mt = opt.get();
-                for (var er : requests.entrySet()) {
+                for (var it = requests.entrySet().iterator(); it.hasNext(); ) {
+                    var er = it.next();
                     try {
                         if (mt.matches(er.getValue())) {
-                            log.warn(en.getKey() + "=" + ptn + " should not contain " + er.getKey());
+                            log.debug("WarlockShadow security url permit all include " + er.getKey());
+                            it.remove();
                         }
                     }
                     catch (RuntimeException e) {
@@ -367,82 +441,18 @@ public class WarlockSecurityConfConfiguration {
                     }
                 }
             }
-            matchers.clear();
-            requests.clear();
-
-            // check auth url
-            String loginPage = securityProp.getLoginPage();
-            if (StringUtils.hasText(loginPage)) {
-                requests.put(loginPage, SecurityConfigHelper.fakeMatcherRequest(loginPage, servletName));
+            if (!requests.isEmpty()) {
+                err.append("\nPermitAll should include urls: ").append(String.join(", ", requests.keySet()));
             }
-            String logoutUrl = securityProp.getLogoutUrl();
-            if (StringUtils.hasText(logoutUrl)) {
-                requests.put(logoutUrl, SecurityConfigHelper.fakeMatcherRequest(logoutUrl, servletName));
-            }
-            String loginProcUrl = securityProp.getLoginProcUrl();
-            if (StringUtils.hasText(loginProcUrl)) {
-                requests.put(loginProcUrl, SecurityConfigHelper.fakeMatcherRequest(loginProcUrl, servletName));
-            }
+        }
 
-            StringBuilder err = new StringBuilder();
-            for (var en : securityProp.getWebIgnore().entrySet()) {
-                String ptn = en.getValue();
-                if (!StringUtils.hasText(ptn)) continue;
-                if (requests.isEmpty()) break;
-
-                matcherHelper.requestMatchers(ptn);
-                RequestMatcher mt = opt.get();
-                for (var er : requests.entrySet()) {
-                    try {
-                        if (mt.matches(er.getValue())) {
-                            err.append("\nWebIgnore:").append(en.getKey()).append(" should exclude ").append(er.getKey());
-                        }
-                    }
-                    catch (RuntimeException e) {
-                        log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
-                        throw e;
-                    }
-                }
-            }
-
-            String anyRequest = securityProp.getAnyRequest();
-            if (!StringUtils.hasText(anyRequest)
-                || "permitAll".equalsIgnoreCase(anyRequest)
-                || "anonymous".equalsIgnoreCase(anyRequest)) {
-                for (var en : securityProp.getPermitAll().entrySet()) {
-                    String ptn = en.getValue();
-                    if (!StringUtils.hasText(ptn)) continue;
-                    if (requests.isEmpty()) break;
-
-                    matcherHelper.requestMatchers(ptn);
-                    RequestMatcher mt = opt.get();
-                    for (var it = requests.entrySet().iterator(); it.hasNext(); ) {
-                        var er = it.next();
-                        try {
-                            if (mt.matches(er.getValue())) {
-                                log.debug("WarlockShadow security url permit all include " + er.getKey());
-                                it.remove();
-                            }
-                        }
-                        catch (RuntimeException e) {
-                            log.error("failed to check " + en.getKey() + "=" + ptn + " should not contain " + er.getKey());
-                            throw e;
-                        }
-                    }
-                }
-                if (!requests.isEmpty()) {
-                    err.append("\nPermitAll should include urls: ").append(String.join(", ", requests.keySet()));
-                }
-            }
-
-            if (!err.isEmpty()) {
-                String msg = err.toString();
-                log.error(msg);
-                throw new IllegalStateException(
-                    "\nWarlockSecurityConfConfiguration has security url conflict to fix." +
-                    "\nor disable checking by `wings.enabled.warlock.sec-check-url=false`" +
-                    msg);
-            }
-        });
+        if (!err.isEmpty()) {
+            String msg = err.toString();
+            log.error(msg);
+            throw new IllegalStateException(
+                "\nWarlockSecurityConfConfiguration has security url conflict to fix." +
+                "\nor disable checking by `wings.enabled.warlock.sec-check-url=false`" +
+                msg);
+        }
     }
 }

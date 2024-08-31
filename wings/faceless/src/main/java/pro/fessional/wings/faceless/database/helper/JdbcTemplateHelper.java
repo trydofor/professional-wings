@@ -76,7 +76,18 @@ public class JdbcTemplateHelper {
      * in mysql (not ANSI_QUOTES), return `table`
      */
     @NotNull
-    protected static Function<String, String> Quotes = (String name) -> "`" + name + "`";
+    protected static Function<String, String> Quotes = (String name) -> {
+        int pos0 = name.indexOf('`');
+        if (pos0 >= 0) {
+            int pos1 = name.lastIndexOf('`');
+            if(pos0 == 0 && pos1 == name.length() -1) {
+                int pos = name.indexOf('`', pos0 + 1, pos1);
+                if(pos < 0) return name;
+            }
+            name = name.replace("`","");
+        }
+        return "`" + name + "`";
+    };
 
     public static void initSafeTable(JdbcTemplate tmpl) {
         tmpl.query(ShowTableSql, rs -> {

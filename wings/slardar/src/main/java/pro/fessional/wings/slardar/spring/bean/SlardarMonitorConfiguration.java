@@ -10,10 +10,10 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
@@ -27,9 +27,9 @@ import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 import java.io.File;
 import java.util.Map;
 
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.branch;
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.buildDate;
-import static pro.fessional.wings.silencer.spring.help.VersionInfoHelper.commitIdShort;
+import static pro.fessional.wings.silencer.support.InspectHelper.branch;
+import static pro.fessional.wings.silencer.support.InspectHelper.buildDate;
+import static pro.fessional.wings.silencer.support.InspectHelper.commitIdShort;
 
 /**
  * @author trydofor
@@ -44,9 +44,8 @@ public class SlardarMonitorConfiguration {
 
 
     // Dynamic register Bean LogMetric
-    @Configuration(proxyBeanMethods = false)
+    @Component
     @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$monitorLog)
-    @ComponentScan(basePackageClasses = MonitorTask.class)
     public static class LogMonitor implements BeanFactoryPostProcessor, EnvironmentAware {
 
         private SlardarMonitorProp slardarMonitorProp;

@@ -80,8 +80,8 @@ class TinyTaskExecServiceTest {
             long spaned = 0;
             if (prevExec != null) {
                 spaned = Duration.between(timeExec, prevExec).abs().toSeconds() + 2;
-                log.info("WinTaskResult, id={}, exec={}, exit={}, fail={}, span={}", it.getTaskId(), timeExec, it.getTimeExit(), it.getExitFail(), spaned);
-                Assertions.assertTrue(spaned >= span);
+                log.info("WinTaskResult, id={}, exec={}, exit={}, fail={}, spaned={}", it.getTaskId(), timeExec, it.getTimeExit(), it.getExitFail(), spaned);
+                Assertions.assertTrue(spaned >= span, "spaned=" + spaned + " vs span=" + span);
             }
             else {
                 log.info("WinTaskResult, id={}, exec={}, exit={}, fail={}", it.getTaskId(), timeExec, it.getTimeExit(), it.getExitFail());

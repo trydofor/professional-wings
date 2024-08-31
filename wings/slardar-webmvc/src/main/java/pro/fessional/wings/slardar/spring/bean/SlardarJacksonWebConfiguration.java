@@ -275,14 +275,18 @@ public class SlardarJacksonWebConfiguration {
                 var builder = context.getBean(Jackson2ObjectMapperBuilder.class);
 
                 // wings
-                bindXmlWings(builder.createXmlMapper(true).build());
-                bindJsonWings(builder.createXmlMapper(false).build());
+                prepareWings(
+                    builder.createXmlMapper(false).build(),
+                    builder.createXmlMapper(true).build()
+                );
 
                 // bean
                 var jsonBean = context.getBeanProvider(ObjectMapper.class);
-                bindJsonBean(jsonBean.getIfAvailable(() -> context.getBean(ObjectMapper.class)));
                 var xmlBean = context.getBeanProvider(XmlMapper.class);
-                bindXmlBean(xmlBean.getIfAvailable(() -> builder.createXmlMapper(true).build()));
+                prepareBean(
+                    jsonBean.getIfAvailable(() -> builder.createXmlMapper(false).build()),
+                    xmlBean.getIfAvailable(() -> builder.createXmlMapper(true).build())
+                );
 
                 // at last, restore createXmlMapper to false
                 builder.createXmlMapper(false);

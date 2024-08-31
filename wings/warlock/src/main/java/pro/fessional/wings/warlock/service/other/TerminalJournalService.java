@@ -22,8 +22,19 @@ public class TerminalJournalService extends DefaultJournalService {
     }
 
     @Override
-    public @NotNull <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
-        if (loginInfo == null || loginInfo.isEmpty()) {
+    @NotNull
+    public Journal create(long parentId, @NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
+        return super.create(parentId, eventName, terminal(loginInfo), targetKey, otherInfo);
+    }
+
+    @Override
+    @NotNull
+    public <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
+        return super.submit(eventName, terminal(loginInfo), targetKey, otherInfo, commitSet);
+    }
+
+    private String terminal(String loginInfo) {
+        if (loginInfo == null || loginInfo.isBlank()) {
             final TerminalContext.Context ctx = TerminalContext.get(false);
             if (!ctx.isNull()) {
                 loginInfo = JsonTemplate.obj(obj -> {
@@ -35,6 +46,7 @@ public class TerminalJournalService extends DefaultJournalService {
                 });
             }
         }
-        return super.submit(eventName, loginInfo, targetKey, otherInfo, commitSet);
+
+        return loginInfo;
     }
 }

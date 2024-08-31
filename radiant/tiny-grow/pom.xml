@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pro.fessional.wings</groupId>
+        <artifactId>radiant</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>tiny-grow</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Radiant::Tiny::Grow</name>
+    <description>Tiny data tracking, growth analysis</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooq</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-webmvc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- revision fit -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-flywave</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-codegen</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>testing-docker</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

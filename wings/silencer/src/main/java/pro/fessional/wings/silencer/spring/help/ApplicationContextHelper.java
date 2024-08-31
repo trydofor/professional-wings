@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -14,6 +15,7 @@ import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.best.Param;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,10 +34,19 @@ public class ApplicationContextHelper {
 
     private static ConfigurableApplicationContext context;
     private static ConfigurableEnvironment environment;
+    private static boolean helperPrepared = false;
 
-    protected ApplicationContextHelper(ConfigurableApplicationContext ctx) {
+    protected ApplicationContextHelper(@NotNull ConfigurableApplicationContext ctx) {
         context = Objects.requireNonNull(ctx);
         environment = Objects.requireNonNull(ctx.getEnvironment());
+        helperPrepared = true;
+    }
+
+    /**
+     * whether this helper is prepared
+     */
+    public static boolean isPrepared() {
+        return helperPrepared;
     }
 
     /**
@@ -174,6 +185,11 @@ public class ApplicationContextHelper {
     }
 
     @NotNull
+    public static <T> ObjectProvider<T> getBeanProvider(ResolvableType type) {
+        return context.getBeanProvider(type);
+    }
+
+    @NotNull
     public static <T> SingletonSupplier<T> getSingletonSupplier(Class<T> type) {
         return SingletonSupplier.of(() -> context.getBean(type));
     }
@@ -181,6 +197,44 @@ public class ApplicationContextHelper {
     @NotNull
     public static <T> SingletonSupplier<T> getSingletonSupplier(Class<T> type, Supplier<T> elze) {
         return SingletonSupplier.of(() -> context.getBeanProvider(type).getIfAvailable(elze));
+    }
+
+    /**
+     * SingletonSupplier of ordered bean list
+     */
+    @NotNull
+    public static <T> SingletonSupplier<List<T>> getSingletonSupplierOfList(Class<T> type) {
+        return getSingletonSupplierOfList(type, Collections::emptyList);
+    }
+
+    /**
+     * SingletonSupplier of ordered bean list, elze if empty
+     */
+    @NotNull
+    public static <T> SingletonSupplier<List<T>> getSingletonSupplierOfList(Class<T> type, Supplier<List<T>> elze) {
+        return SingletonSupplier.of(() -> {
+            var lst = context.getBeanProvider(type).orderedStream().toList();
+            return lst.isEmpty() ? elze.get() : lst;
+        });
+    }
+
+    /**
+     * SingletonSupplier of bean and its name map
+     */
+    @NotNull
+    public static <T> SingletonSupplier<Map<String, T>> getSingletonSupplierOfMap(Class<T> type) {
+        return getSingletonSupplierOfMap(type, Collections::emptyMap);
+    }
+
+    /**
+     * SingletonSupplier of bean and its name map, elze if empty
+     */
+    @NotNull
+    public static <T> SingletonSupplier<Map<String, T>> getSingletonSupplierOfMap(Class<T> type, Supplier<Map<String, T>> elze) {
+        return SingletonSupplier.of(() -> {
+            var map = context.getBeansOfType(type);
+            return map.isEmpty() ? elze.get() : map;
+        });
     }
 
     public static String getMessage(String code, Locale locale, Object... arg) {

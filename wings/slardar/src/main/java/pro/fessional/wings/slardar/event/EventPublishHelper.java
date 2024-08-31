@@ -49,7 +49,7 @@ public class EventPublishHelper {
      * <p>
      * throws IllegalStateException if no globalPublisher
      *
-     * @see #hasAsyncGlobal
+     * @see #isPreparedGlobal
      */
     public static final ApplicationEventPublisher AsyncGlobal = new GlobalPub(true);
 
@@ -61,24 +61,48 @@ public class EventPublishHelper {
      */
     public static final ApplicationEventPublisher AsyncWidely = new GlobalPub(false);
 
-    private static Executor executor;
+    private static Executor asyncExecutor;
     private static ApplicationEventPublisher springPublisher;
     private static ApplicationEventPublisher globalPublisher;
 
-    public static void setGlobalPublisher(ApplicationEventPublisher globalPublisher) {
-        EventPublishHelper.globalPublisher = globalPublisher;
+    public static void prepareAsyncExecutor(@NotNull Executor async) {
+        asyncExecutor = async;
     }
 
-    public static void setExecutor(Executor executor) {
-        EventPublishHelper.executor = executor;
+    public static void prepareSpringPublisher(@NotNull ApplicationEventPublisher spring) {
+        springPublisher = spring;
     }
 
-    public static void setSpringPublisher(ApplicationEventPublisher springPublisher) {
-        EventPublishHelper.springPublisher = springPublisher;
+    public static void prepareGlobalPublisher(@NotNull ApplicationEventPublisher global) {
+        globalPublisher = global;
     }
 
-    public static boolean hasAsyncGlobal() {
-        return globalPublisher != null;
+    /**
+     * whether global is prepared
+     */
+    public static boolean isPreparedGlobal() {
+        return globalPublisher != null && asyncExecutor != null;
+    }
+
+    /**
+     * whether app async is prepared
+     */
+    public static boolean isPreparedAsync() {
+        return springPublisher != null && asyncExecutor != null;
+    }
+
+    /**
+     * whether app sync is prepared
+     */
+    public static boolean isPreparedSync() {
+        return springPublisher != null;
+    }
+
+    /**
+     * whether this helper is fully prepared
+     */
+    public static boolean isPrepared() {
+        return springPublisher != null && globalPublisher != null && asyncExecutor != null;
     }
 
     private static class SyncPub implements ApplicationEventPublisher {
@@ -93,7 +117,7 @@ public class EventPublishHelper {
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            executor.execute(() -> springPublisher.publishEvent(event));
+            asyncExecutor.execute(() -> springPublisher.publishEvent(event));
         }
     }
 
@@ -105,7 +129,7 @@ public class EventPublishHelper {
         @Override
         public void publishEvent(@NotNull Object event) {
             if (globalPublisher != null) {
-                executor.execute(() -> globalPublisher.publishEvent(event));
+                asyncExecutor.execute(() -> globalPublisher.publishEvent(event));
             }
             else {
                 if (strict) {
@@ -114,7 +138,7 @@ public class EventPublishHelper {
                 else {
                     log.warn("no globalPublisher, publish by spring async in no strict");
                 }
-                executor.execute(() -> springPublisher.publishEvent(event));
+                asyncExecutor.execute(() -> springPublisher.publishEvent(event));
             }
         }
     }

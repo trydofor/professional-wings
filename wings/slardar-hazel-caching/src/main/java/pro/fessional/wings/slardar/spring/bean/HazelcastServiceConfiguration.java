@@ -32,7 +32,7 @@ public class HazelcastServiceConfiguration {
         @Autowired
         public void auto(HazelcastInstance instance, ApplicationEventPublisher publisher) {
             HazelcastSyncPublisher global = new HazelcastSyncPublisher(instance, publisher);
-            EventPublishHelper.setGlobalPublisher(global);
+            EventPublishHelper.prepareGlobalPublisher(global);
             log.info("SlardarHazelCaching spring-auto initHazelcastSyncPublisher, uuid=" + global.getMessageListenerUuid());
         }
     }

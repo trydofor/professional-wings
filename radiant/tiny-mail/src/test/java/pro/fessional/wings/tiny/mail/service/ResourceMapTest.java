@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -36,7 +36,7 @@ public class ResourceMapTest {
 
         Map<String, String> urls = new LinkedHashMap<>();
         for (Map.Entry<String, Resource> en : res1.entrySet()) {
-            urls.put(en.getKey(), CommonPropHelper.toString(en.getValue()));
+            urls.put(en.getKey(), PropHelper.stringResource(en.getValue()));
         }
         final String json = objectMapper.writeValueAsString(urls);
         Map<String, Resource> res2 = new LinkedHashMap<>();

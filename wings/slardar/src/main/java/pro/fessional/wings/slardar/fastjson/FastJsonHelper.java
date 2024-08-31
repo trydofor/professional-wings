@@ -5,13 +5,14 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONPath;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.filter.Filter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.lock.ArrayKey;
-import pro.fessional.wings.silencer.enhance.TypeSugar;
+import pro.fessional.wings.silencer.support.TypeSugar;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -220,6 +221,23 @@ public class FastJsonHelper {
     public static byte[] bytes(Object obj) {
         if (obj == null) return null;
         return JSON.toJSONBytes(obj, WingsWriter);
+    }
+
+    /**
+     * Serialization using the wings convention,
+     * output as string wherever possible to ensure data precision,
+     * but not affecting Java type inverse parsing
+     */
+    @Contract("!null,_->!null")
+    public static String string(Object obj, Filter... filters) {
+        if (obj == null) return null;
+        return JSON.toJSONString(obj, filters, WingsWriter);
+    }
+
+    @Contract("!null,_->!null")
+    public static byte[] bytes(Object obj, Filter... filters) {
+        if (obj == null) return null;
+        return JSON.toJSONBytes(obj, filters, WingsWriter);
     }
 
     //// path

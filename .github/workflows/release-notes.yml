@@ -62,6 +62,8 @@ jobs:
                 labels: [ "feature" ]
               - title: "🐞 Bug Fixes"
                 labels: [ "bug" ]
+              - title: "💥 Breaking Change"
+                labels: [ "break" ]
               - title: "💎 Enhancements"
                 labels: [ "better", "devops", "quality" ]
               - title: "📝 Documentation"

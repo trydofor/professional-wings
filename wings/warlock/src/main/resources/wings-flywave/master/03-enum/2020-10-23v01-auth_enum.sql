@@ -13,3 +13,5 @@ VALUES (1200200, 'user_status', 'user_status', 'user status', 'classpath:/wings-
        (1330100, 'grant_type', 'grant_type', 'grant type', 'classpath:/wings-tmpl/ConstantEnumTemplate.java'),
        (1330101, 'grant_type', 'perm', 'permit', 'permit'),
        (1330102, 'grant_type', 'role', 'role', 'role');
+
+-- CALL FLYWAVE('2020-10-23v01-auth_enum.sql');

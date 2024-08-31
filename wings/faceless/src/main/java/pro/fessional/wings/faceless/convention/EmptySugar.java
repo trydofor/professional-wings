@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.convention;
 
+import org.jetbrains.annotations.Contract;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 /**
  * `isXxx/notXxx` for exact comparison, `asXxx/nonXxx` for range comparison
@@ -147,7 +150,7 @@ public class EmptySugar {
     // /////////////////////
 
     public static boolean asEmptyValue(String v) {
-        return v == null || v.trim().isEmpty();
+        return v == null || v.isBlank();
     }
 
     public static boolean asEmptyValue(Integer v) {
@@ -432,5 +435,135 @@ public class EmptySugar {
 
     public static Boolean emptyToNull(Boolean v) {
         return nullToTrue(v) ? null : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static String emptyOrElse(String v, String elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Integer emptyOrElse(Integer v, Integer elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Long emptyOrElse(Long v, Long elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Double emptyOrElse(Double v, Double elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Float emptyOrElse(Float v, Float elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static BigDecimal emptyOrElse(BigDecimal v, BigDecimal elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static BigInteger emptyOrElse(BigInteger v, BigInteger elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalDate emptyOrElse(LocalDate v, LocalDate elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalTime emptyOrElse(LocalTime v, LocalTime elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalDateTime emptyOrElse(LocalDateTime v, LocalDateTime elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static ZonedDateTime emptyOrElse(ZonedDateTime v, ZonedDateTime elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static OffsetDateTime emptyOrElse(OffsetDateTime v, OffsetDateTime elz) {
+        return asEmptyValue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Boolean emptyOrElse(Boolean v, Boolean elz) {
+        return nullToTrue(v) ? elz : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static String emptyOrElse(String v, Supplier<String> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Integer emptyOrElse(Integer v, Supplier<Integer> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Long emptyOrElse(Long v, Supplier<Long> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Double emptyOrElse(Double v, Supplier<Double> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Float emptyOrElse(Float v, Supplier<Float> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static BigDecimal emptyOrElse(BigDecimal v, Supplier<BigDecimal> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static BigInteger emptyOrElse(BigInteger v, Supplier<BigInteger> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalDate emptyOrElse(LocalDate v, Supplier<LocalDate> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalTime emptyOrElse(LocalTime v, Supplier<LocalTime> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static LocalDateTime emptyOrElse(LocalDateTime v, Supplier<LocalDateTime> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static ZonedDateTime emptyOrElse(ZonedDateTime v, Supplier<ZonedDateTime> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static OffsetDateTime emptyOrElse(OffsetDateTime v, Supplier<OffsetDateTime> elz) {
+        return asEmptyValue(v) ? elz.get() : v;
+    }
+
+    @Contract("_,!null->!null")
+    public static Boolean emptyOrElse(Boolean v, Supplier<Boolean> elz) {
+        return nullToTrue(v) ? elz.get() : v;
     }
 }

@@ -103,6 +103,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
                 }
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("LightSequence failed to load dbMax, name=" + name, e);
                 return Long.MIN_VALUE;
             }

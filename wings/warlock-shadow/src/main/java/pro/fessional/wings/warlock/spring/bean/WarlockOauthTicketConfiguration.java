@@ -54,13 +54,17 @@ public class WarlockOauthTicketConfiguration {
 
         for (Map.Entry<String, WarlockTicketService.Pass> en : warlockTicketProp.getClient().entrySet()) {
             final WarlockTicketService.Pass pass = en.getValue();
-            final String client = en.getKey();
+            String client = pass.getClient();
+            if (client == null || client.isBlank()) {
+                client = en.getKey();
+                pass.setClient(client);
+            }
+
             final String secret = pass.getSecret();
             if (secret == null || secret.isEmpty()) {
                 log.warn("WarlockShadow spring-conf skip warlockTicketService.client=" + client + " for empty secret");
                 continue;
             }
-            pass.setClient(client);
             log.info("WarlockShadow spring-conf warlockTicketService.client=" + client);
             bean.addClient(pass);
         }

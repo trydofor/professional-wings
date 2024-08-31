@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,6 @@ import pro.fessional.mirana.io.CircleInputStream;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
-import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalContext.Context;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
@@ -59,12 +57,6 @@ public abstract class AbstractApiAuthController {
     public static final int SHA1_LEN = MdHelp.LEN_SHA1_HEX;
     public static final int HMAC_LEN = 64;
 
-    /**
-     * Whether it is compatible mode (send clientId directly), or only the ticket mode.
-     */
-    @Setter @Getter
-    private boolean compatible = true;
-
     @Setter(onMethod_ = { @Autowired })
     protected WarlockApiAuthProp apiAuthProp;
 
@@ -75,21 +67,43 @@ public abstract class AbstractApiAuthController {
     protected TerminalInterceptor terminalInterceptor;
 
     /**
-     * To annotate `@RequestMapping`, Need subclass Override
+     * annotate `@RequestMapping` as api entry to invoke super.requestMapping with ticket, signed
+     *
+     * @see #requestMapping(HttpServletRequest, HttpServletResponse, boolean, boolean)
      */
     public void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+        requestMapping(request, response, true, true);
+    }
+
+    /**
+     * After passing validate, this method performs business logic.
+     * `true` means it has been processed and can response,
+     * `false` means it has not been processed.
+     */
+    public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws IOException;
+
+    /**
+     * called by subclass as API entry
+     *
+     * @param request  request from client
+     * @param response response to client
+     * @param ticket   clientId is ticket format, otherwise is simple key
+     * @param signed   have signature and digest check
+     */
+    protected void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, boolean ticket, boolean signed) {
         //
         Pass pass = null;
         final String cid = request.getHeader(apiAuthProp.getClientHeader());
         if (cid != null) {
-            final Term term = ticketService.decode(cid);
-            if (term != null) {
-                pass = ticketService.findPass(term.getClientId());
-            }
-            else { // invalid token or compatible mode
-                if (compatible) {
-                    pass = ticketService.findPass(cid);
+            if (ticket) {
+                final Term term = ticketService.decode(cid);
+                if (term != null) {
+                    pass = ticketService.findPass(term.getClientId());
                 }
+            }
+            // ticket compatible simple key
+            if(pass == null) {
+                pass = ticketService.findPass(cid);
             }
         }
 
@@ -99,7 +113,7 @@ public abstract class AbstractApiAuthController {
         }
 
         //
-        final ApiEntity entity = validate(request, pass.getSecret());
+        final ApiEntity entity = validate(request, pass, signed);
         if (entity.error != null) {
             responseText(response, apiAuthProp.getErrorSignature(), entity.error);
             return;
@@ -112,7 +126,7 @@ public abstract class AbstractApiAuthController {
         try {
             entity.terminal = ctx;
             if (handle(request, entity)) {
-                responseBody(response, entity, pass);
+                responseBody(response, entity, pass, signed);
                 handled = true;
             }
         }
@@ -129,67 +143,78 @@ public abstract class AbstractApiAuthController {
     }
 
     @SneakyThrows
-    protected void responseBody(@NotNull HttpServletResponse response, @NotNull ApiEntity entity, @NotNull Pass pass) {
+    protected void responseBody(@NotNull HttpServletResponse response, @NotNull ApiEntity entity, @NotNull Pass pass, boolean signed) {
         // Auth-Client
         response.setHeader(apiAuthProp.getClientHeader(), pass.getClient());
 
         // Auth-Timestamp
-        final String timestamp = entity.timestamp.isEmpty() ? String.valueOf(Now.millis()) : entity.timestamp;
-        response.setHeader(apiAuthProp.getTimestampHeader(), timestamp);
+        final String timestamp = entity.timestamp;
+        if(!timestamp.isEmpty()) {
+            response.setHeader(apiAuthProp.getTimestampHeader(), timestamp);
+        }
 
         // Other Headers
         for (Map.Entry<String, String> en : entity.resHead.entrySet()) {
             response.setHeader(en.getKey(), en.getValue());
         }
 
-        final int sgnLen = entity.signature.length();
-        final String secret = pass.getSecret();
         // response json
         if (entity.resFile == null) {
             final String body = entity.resText;
-            final String data = body + secret + timestamp;
-            // Auth-Signature
-            String signature = signature(data, sgnLen, secret);
-            if (!signature.isEmpty()) {
-                response.setHeader(apiAuthProp.getSignatureHeader(), signature);
+
+            if (signed) {
+                final String secret = pass.getSecret();
+                final String data = body + secret + timestamp;
+                // Auth-Signature
+                String signature = signature(data, entity.signature.length(), secret);
+                if (!signature.isEmpty()) {
+                    response.setHeader(apiAuthProp.getSignatureHeader(), signature);
+                }
             }
+
             // Content-Type
             response.setContentType(APPLICATION_JSON_VALUE);
             responseText(response, HttpStatus.OK.value(), body);
         }
         else {
             // response file
-            final int size = entity.resFile.available();
-            int sumLen = 0; // Digest Algorithm
-            if (size < apiAuthProp.getDigestMax().toBytes()) {
-                for (Map.Entry<String, String> en : entity.reqPara.entrySet()) {
-                    if (en.getKey().endsWith(".sum")) {
-                        sumLen = en.getValue().length();
-                        break;
-                    }
-                }
-                if (sumLen == 0) {
-                    sumLen = entity.digest.length();
-                }
-            }
-
-            final String data;
             final InputStream body;
-            if (sumLen == MD5_LEN || sumLen == SHA1_LEN) {
-                body = new CircleInputStream(entity.resFile);
-                final String digest = digest(body, sumLen);
-                data = digest + secret + timestamp;
-                response.setHeader(apiAuthProp.getDigestHeader(), digest);
+            if (!signed) {
+                body = entity.resFile;
             }
             else {
-                body = entity.resFile;
-                data = secret + timestamp;
-            }
+                final int size = entity.resFile.available();
+                int sumLen = 0; // Digest Algorithm
+                if (size < apiAuthProp.getDigestMax().toBytes()) {
+                    for (Map.Entry<String, String> en : entity.reqPara.entrySet()) {
+                        if (en.getKey().endsWith(".sum")) {
+                            sumLen = en.getValue().length();
+                            break;
+                        }
+                    }
+                    if (sumLen == 0) {
+                        sumLen = entity.digest.length();
+                    }
+                }
 
-            // Auth-Signature
-            String signature = signature(data, sgnLen, secret);
-            if (!signature.isEmpty()) {
-                response.setHeader(apiAuthProp.getSignatureHeader(), signature);
+                final String data;
+                final String secret = pass.getSecret();
+                if (sumLen == MD5_LEN || sumLen == SHA1_LEN) {
+                    body = new CircleInputStream(entity.resFile);
+                    final String digest = digest(body, sumLen);
+                    data = digest + secret + timestamp;
+                    response.setHeader(apiAuthProp.getDigestHeader(), digest);
+                }
+                else {
+                    body = entity.resFile;
+                    data = secret + timestamp;
+                }
+
+                // Auth-Signature
+                String signature = signature(data, entity.signature.length(), secret);
+                if (!signature.isEmpty()) {
+                    response.setHeader(apiAuthProp.getSignatureHeader(), signature);
+                }
             }
 
             // Content-Type
@@ -222,24 +247,26 @@ public abstract class AbstractApiAuthController {
 
     @NotNull
     @SneakyThrows
-    public ApiEntity parse(@NotNull HttpServletRequest request, boolean mustSign) {
+    protected ApiEntity parse(@NotNull HttpServletRequest request, boolean signed) {
         final ApiEntity entity = new ApiEntity();
-        final String sgn = request.getHeader(apiAuthProp.getSignatureHeader());
-        if (sgn == null || sgn.isEmpty()) {
-            if (mustSign) {
+
+        if (signed) {
+            final String sgn = request.getHeader(apiAuthProp.getSignatureHeader());
+            if (sgn == null || sgn.isEmpty()) {
                 entity.error = ApiError.SignatureMissing;
                 return entity;
             }
-        }
-        else {
-            entity.signature = sgn;
+            else {
+                entity.signature = sgn;
+            }
+
+            final String sum = request.getHeader(apiAuthProp.getDigestHeader());
+            if (sum != null) {
+                entity.digest = sum;
+            }
         }
 
-        final String sum = request.getHeader(apiAuthProp.getDigestHeader());
-        if (sum != null) {
-            entity.digest = sum;
-        }
-
+        // identify request and sign
         final String tms = request.getHeader(apiAuthProp.getTimestampHeader());
         if (tms != null) {
             entity.timestamp = tms;
@@ -293,14 +320,16 @@ public abstract class AbstractApiAuthController {
     /**
      * Validate an Api request and returns Entity if it does not fail (successful or unvalidated),
      * otherwise it returns null.
+     * check digest if secret is not empty
      */
     @SneakyThrows
     @NotNull
-    public ApiEntity validate(@NotNull HttpServletRequest request, @NotNull String secret) {
-        final boolean mustSign = apiAuthProp.isMustSignature();
-        final ApiEntity entity = parse(request, mustSign);
-        if (entity.error != null) return entity;
+    protected ApiEntity validate(@NotNull HttpServletRequest request, @NotNull Pass pass, boolean signed) {
+        final ApiEntity entity = parse(request, signed);
 
+        if (!signed || entity.error != null) return entity; // not signed or error
+
+        final String secret = Null.notNull(pass.getSecret());
         final String para = FormatUtil.sortParam(entity.reqPara);
         //
         final String data;
@@ -334,12 +363,11 @@ public abstract class AbstractApiAuthController {
 
         // validate signature
         final String sign = signature(data, entity.signature.length(), secret);
-        if (mustSign && !sign.equalsIgnoreCase(entity.signature)) {
+        if (!sign.equalsIgnoreCase(entity.signature)) {
             entity.error = ApiError.SignatureInvalid;
         }
         return entity;
     }
-
 
     @SneakyThrows
     private Part checkDigest(String sum, Part pt) {
@@ -400,13 +428,6 @@ public abstract class AbstractApiAuthController {
             return Null.Str;
         }
     }
-
-    /**
-     * After passing validate, this method performs business logic.
-     * `true` means it has been processed and can response,
-     * `false` means it has not been processed.
-     */
-    public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws IOException;
 
     public enum ApiError {
         SignatureMissing,

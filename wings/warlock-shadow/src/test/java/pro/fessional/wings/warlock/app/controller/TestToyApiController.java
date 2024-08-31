@@ -22,6 +22,7 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.controller.api.AbstractApiAuthController;
+import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,29 +41,31 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public class TestToyApiController extends AbstractApiAuthController {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TestWatchingService testWatchingService;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private SlardarSessionProp slardarSessionProp;
+    @Setter(onMethod_ = { @Autowired })
+    protected WarlockApiAuthProp warlockApiAuthProp;
 
     @PostMapping(value = "/api/test.json", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testJsonApi(
-            @RequestHeader("Auth-Client") String client,
-            @RequestHeader("Auth-Signature") String signature,
-            @RequestHeader(value = "Auth-Timestamp", required = false) Long timestamp,
-            @RequestParam Map<String, String> para,
-            @RequestBody String body
+        @RequestHeader("Auth-Client") String client,
+        @RequestHeader("Auth-Signature") String signature,
+        @RequestHeader(value = "Auth-Timestamp", required = false) Long timestamp,
+        @RequestParam Map<String, String> para,
+        @RequestBody String body
     ) {
         return ResponseEntity.ok("ok");
     }
 
     @PostMapping(value = "/api/test.json", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> testFileApi(
-            @RequestHeader("Auth-Client") String client,
-            @RequestHeader("Auth-Signature") String signature,
-            @RequestHeader(value = "Auth-Timestamp", required = false) Long timestamp,
-            @RequestParam Map<String, String> para,
-            @RequestParam Map<String, MultipartFile> files
+        @RequestHeader("Auth-Client") String client,
+        @RequestHeader("Auth-Signature") String signature,
+        @RequestHeader(value = "Auth-Timestamp", required = false) Long timestamp,
+        @RequestParam Map<String, String> para,
+        @RequestParam Map<String, MultipartFile> files
     ) {
         return ResponseEntity.ok("ok");
     }
@@ -95,13 +98,6 @@ public class TestToyApiController extends AbstractApiAuthController {
 
     public static final String ApiSimple = "/api/simple.json";
 
-    @Override
-    @PostMapping(ApiSimple)
-    public void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
-        log.info("ApiRequestMapping...");
-        super.requestMapping(request, response);
-    }
-
     public static final String ReqJsonBody = "ReqJsonBody";
     public static final String ReqFileKey = "ReqFileKey";
     public static final String ReqFileName = "ReqFileName";
@@ -117,6 +113,15 @@ public class TestToyApiController extends AbstractApiAuthController {
     public static final String ModFileFile = "ModFileFile";
     public static final String ModJsonJson = "ModJsonJson";
     public static final String ModFileJson = "ModFileJson";
+
+    @Override
+    @PostMapping(ApiSimple)
+    public void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+        log.info("ApiRequestMapping...");
+        boolean ticket = "true".equalsIgnoreCase(request.getHeader("ticket"));
+        boolean signed = "true".equalsIgnoreCase(request.getHeader("signed"));
+        super.requestMapping(request, response, ticket, signed);
+    }
 
     @Override
     public boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws IOException {

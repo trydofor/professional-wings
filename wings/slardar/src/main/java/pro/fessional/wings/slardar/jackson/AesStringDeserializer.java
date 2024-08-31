@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.jackson.AesString.Misfire;
 
 import java.io.IOException;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingValue;
+import static pro.fessional.wings.silencer.support.PropHelper.MaskingValue;
 
 /**
  * @author trydofor

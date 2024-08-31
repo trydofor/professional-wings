@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.func.Lam;
 import pro.fessional.mirana.time.ThreadNow;
 
@@ -106,6 +107,7 @@ public interface TinyTaskService {
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
     default Task schedule(@NotNull Lam.Ref lambdaRefer, @Nullable Object taskerPara) {
+        AssertArgs.notNull(lambdaRefer.object, "schedule object is null");
         return schedule(lambdaRefer.object, lambdaRefer.method, taskerPara);
     }
 

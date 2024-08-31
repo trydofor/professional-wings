@@ -22,11 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author trydofor
  * @since 2022-11-16
  */
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "wings.warlock.apiauth.must-signature=false",
-        })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 class OkHttpTokenizeTest {
 

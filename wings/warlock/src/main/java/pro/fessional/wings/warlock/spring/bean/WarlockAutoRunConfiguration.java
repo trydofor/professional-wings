@@ -10,8 +10,8 @@ import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
-import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
@@ -34,9 +34,9 @@ public class WarlockAutoRunConfiguration {
      */
     @Bean
     @ConditionalWingsEnabled
-    public CommandLineRunnerOrdered databaseCheckerRunner(DataSource dataSource, WarlockCheckProp prop) {
+    public ApplicationInspectRunner databaseCheckerRunner(DataSource dataSource, WarlockCheckProp prop) {
         log.info("Warlock spring-runs databaseCheckerRunner");
-        return new CommandLineRunnerOrdered(WingsOrdered.Lv2Resource, ignored -> {
+        return new ApplicationInspectRunner(WingsOrdered.Lv2Resource, ignored -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         });

@@ -78,6 +78,16 @@ public @interface TinyTasker {
     int tune() default 0;
 
     /**
+     * <pre>
+     * Within how many seconds of a misfire, execution is required.
+     * * `<0` - disable execution
+     * * `0` - execute if N0 < now <= N0 + (N1-N0) * 25% < N1
+     * * `>0` - execute if N1 < now <= N1 + miss
+     * </pre>
+     */
+    int miss() default 0;
+
+    /**
      * Adding to a SpringBean can be auto config by Wings at startup.
      */
     @Target({ ElementType.TYPE })

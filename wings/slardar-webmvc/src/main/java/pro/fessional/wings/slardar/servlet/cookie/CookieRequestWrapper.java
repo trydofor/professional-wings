@@ -38,6 +38,7 @@ public class CookieRequestWrapper extends HttpServletRequestWrapper {
                     cookies[i] = reader.apply(ck);
                 }
                 catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.info("failed to wrap cookie=" + ck, e);
                 }
 

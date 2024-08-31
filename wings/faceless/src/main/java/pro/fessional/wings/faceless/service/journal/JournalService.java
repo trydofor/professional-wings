@@ -27,6 +27,8 @@ public interface JournalService {
     class Journal {
         private final long commitId;
         private final LocalDateTime commitDt;
+        private final long parentId;
+        private final long commitMs;
         private final String eventName;
         private final String targetKey;
         private final String loginInfo;
@@ -79,8 +81,29 @@ public interface JournalService {
     }
 
     /**
+     * set and return elapse mills of the journal, can ignore error.
+     * SHOULD use the default connection without an explicit transaction.
+     * NOTE: submit/commit auto elapse, but create not.
+     */
+    long elapse(@NotNull Journal journal);
+
+    /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventName event name
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @return Journal without the context
+     */
+    @NotNull
+    Journal create(long parentId, @NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo);
+
+    /**
      * Submit the operation (event) with journal and return some result.
-     * Should with Transactional Propagation.REQUIRES_NEW
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      *
      * @param eventName event name
      * @param loginInfo login info ,eg. userId, ip
@@ -93,6 +116,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      *
      * @param eventName event name
      * @param loginInfo login info ,eg. userId, ip
@@ -110,7 +134,27 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventClass use Class.getName as eventName
+     * @param loginInfo  login info ,eg. userId, ip
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Class<?> eventClass, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        String lgn = loginInfo == null ? EmptyValue.VARCHAR : loginInfo;
+        String key = targetKey == null ? EmptyValue.VARCHAR : String.valueOf(targetKey);
+        String oth = otherInfo == null ? EmptyValue.VARCHAR : String.valueOf(otherInfo);
+        return create(parentId, eventClass.getName(), lgn, key, oth);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
      * @param eventClass use Class.getName as eventName
@@ -130,6 +174,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
      * @param eventClass use Class.getName as eventName
@@ -148,7 +193,23 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Class<?> eventClass, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        return create(parentId, eventClass, null, targetKey, otherInfo);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -164,6 +225,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -178,7 +240,22 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Class<?> eventClass, @Nullable Object targetKey) {
+        return create(parentId, eventClass, null, targetKey, null);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -193,6 +270,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -206,7 +284,21 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventClass use Class.getName as eventName
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Class<?> eventClass) {
+        return create(parentId, eventClass, null, null, null);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -220,6 +312,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventClass use Class.getName as eventName
@@ -231,8 +324,29 @@ public interface JournalService {
         return commit(eventClass, null, null, null, commitSet);
     }
 
+
+    /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventEnum convert enum with EnumConvertor
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Enum<?> eventEnum, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        String lgn = loginInfo == null ? EmptyValue.VARCHAR : loginInfo;
+        String key = targetKey == null ? EmptyValue.VARCHAR : String.valueOf(targetKey);
+        String oth = otherInfo == null ? EmptyValue.VARCHAR : String.valueOf(otherInfo);
+        return create(parentId, EnumConvertor.enum2Str(eventEnum), lgn, key, oth);
+    }
+
     /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -252,6 +366,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -270,7 +385,23 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Enum<?> eventEnum, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        return create(parentId, eventEnum, null, targetKey, otherInfo);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -286,6 +417,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -300,7 +432,22 @@ public interface JournalService {
     }
 
     /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Enum<?> eventEnum, @Nullable Object targetKey) {
+        return create(parentId, eventEnum, null, targetKey);
+    }
+
+    /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -315,6 +462,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -327,8 +475,23 @@ public interface JournalService {
         return commit(eventEnum, null, targetKey, null, commitSet);
     }
 
+
+    /**
+     * create new Journal without the context.
+     * SHOULD create journal in REQUIRES_NEW.
+     *
+     * @param parentId parent id, default 0;
+     * @param eventEnum convert enum with EnumConvertor
+     * @return Journal without the context
+     */
+    @NotNull
+    default Journal create(long parentId, @NotNull Enum<?> eventEnum) {
+        return create(parentId, eventEnum, null, null);
+    }
+
     /**
      * Submit the operation (event) with journal and return some result.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor
@@ -342,6 +505,7 @@ public interface JournalService {
 
     /**
      * Commit the operation (event) with journal and return the journal.
+     * SHOULD create journal in REQUIRES_NEW, but not affect commitSet
      * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
      * @param eventEnum convert enum with EnumConvertor

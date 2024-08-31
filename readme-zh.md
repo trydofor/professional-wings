@@ -37,7 +37,7 @@
 ```bash
 ## ① 获取源码，成功后进入项目目录
 git clone --depth 1 https://github.com/\
-trydofor/pro.fessional.wings.git
+trydofor/professional-wings.git
 ## ② 安装依赖，可跳过，支持java8编译
 # asdf shell java temurin-8.0.412+8
 git submodule update --remote --init

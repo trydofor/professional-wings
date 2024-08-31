@@ -7,6 +7,7 @@ import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.viewer.LogConf;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -23,12 +24,12 @@ public class SlardarMonitorProp {
     public static final String Key = "wings.slardar.monitor";
 
     /**
-     * Monitor its own cron, `-` means stop this cron, default 10 minutes.
+     * Monitor its own cron, `-` means stop this cron, default 17 minutes.
      *
      * @see #Key$cron
      */
     public static final String Key$cron = Key + ".cron";
-    private String cron = "0 */10 * * * ?";
+    private String cron = "17 */17 * * * ?";
 
     /**
      * whether to send notice for the start and stop of its own jvm hook
@@ -70,4 +71,15 @@ public class SlardarMonitorProp {
      */
     private String dingNotice = "monitor";
     public static final String Key$dingNotice = Key + ".ding-notice";
+
+    /**
+     * generate all log's rule keys
+     */
+    public LinkedHashSet<String> genRuleKey() {
+        LinkedHashSet<String> rst = new LinkedHashSet<>();
+        for (LogMetric.Rule rl : log.values()) {
+            rst.addAll(rl.genRuleKey());
+        }
+        return rst;
+    }
 }

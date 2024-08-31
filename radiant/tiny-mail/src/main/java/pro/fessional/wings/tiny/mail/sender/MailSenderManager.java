@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.silencer.support.PropHelper;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
 import java.math.BigDecimal;
@@ -122,9 +124,11 @@ public class MailSenderManager {
                 if (wt.host) {
                     mailHostWait.put(host, wt.wait);
                 }
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, message=" + message.toMainString(), me);
                 throw new MailWaitException(wt.wait, wt.host, wt.stop, me);
             }
+            // noinspection StringConcatenationArgumentToLogCall
             log.warn("failed to send message= " + message.toMainString(), me);
             throw me;
         }
@@ -187,8 +191,11 @@ public class MailSenderManager {
             final long slp = Sleep.ignoreInterrupt(10, 2000);
             log.info("batch mail dryrun and sleep {} ms", slp);
             final long avg = slp / dryrunCount;
+            long end = ThreadNow.millis();
             for (BatchResult rst : results) {
-                if (rst.costMillis < 0) rst.costMillis = avg;
+                if (rst.costMillis == 0) continue;
+                rst.costMillis = avg;
+                rst.exitMillis = end;
             }
         }
 
@@ -219,6 +226,7 @@ public class MailSenderManager {
                     for (String host : hosts) {
                         mailHostWait.put(host, wt.wait);
                     }
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, hosts=" + hosts, me);
                 }
 
@@ -244,9 +252,9 @@ public class MailSenderManager {
                 long avg = (now - start) / len;
                 for (BatchResult br : result) {
                     br.costMillis = avg;
-                    br.doneMillis = now;
+                    br.exitMillis = now;
                     if (br.exception != null) {
-                        log.warn("failed to batch send message, " + br.tinyMessage.toMainString());
+                        log.warn("failed to batch send message, {}", br.tinyMessage.toMainString());
                     }
                 }
 
@@ -368,9 +376,20 @@ public class MailSenderManager {
         }
 
         final Map<String, Resource> files = message.getAttachment();
-        if (files != null) {
-            for (Map.Entry<String, Resource> en : files.entrySet()) {
-                helper.addAttachment(en.getKey(), en.getValue());
+        for (Map.Entry<String, Resource> en : files.entrySet()) {
+            final String name = en.getKey();
+            final String n1 = PropHelper.removeOptional(name, null);
+            if (n1 != null) {
+                try {
+                    helper.addAttachment(n1, en.getValue());
+                }
+                catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
+                    log.warn("ignore error of optional resource, name=" + name, e);
+                }
+            }
+            else {
+                helper.addAttachment(name, en.getValue());
             }
         }
 
@@ -461,8 +480,8 @@ public class MailSenderManager {
         @Getter
         private long costMillis = 0;
         @Getter
-        private long doneMillis = 0;
-        @Getter
+        private long exitMillis = 0;
+        @Getter @Setter
         private Exception exception;
 
         private JavaMailSender mailSender;

@@ -17,33 +17,40 @@ import pro.fessional.wings.silencer.watch.Watches;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.warlock.app.service.TestWatchingService;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author trydofor
  * @since 2022-11-22
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "spring.wings.warlock.enabled.watching=true",
-                "wings.warlock.watching.jooq-threshold=0",
-                "wings.warlock.watching.service-threshold=0",
-                "wings.warlock.watching.controller-threshold=0",
-        })
+    properties = {
+        "spring.wings.warlock.enabled.watching=true",
+        "wings.warlock.watching.jooq-threshold=0",
+        "wings.warlock.watching.service-threshold=0",
+        "wings.warlock.watching.controller-threshold=0",
+    })
 @Slf4j
 @DependsOnDatabaseInitialization
 public class WarlockWatchingTest {
 
-    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    @Setter(onMethod_ = { @Value("http://localhost:${local.server.port}") })
     private String host;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private OkHttpClient okHttpClient;
 
-    /**
-     * Check the log
-     */
     @Test
     @TmsLink("C14037")
     public void testWatching() {
+        final AtomicReference<String> tkn = new AtomicReference<>();
+        final AtomicReference<String> wtc = new AtomicReference<>();
+
+        Watches.setWatchHandler((t, w) -> {
+            tkn.set(t);
+            wtc.set(w.toString());
+        });
+
         final StopWatch.Watch watch = Watches.acquire("testWatching");
         final Request.Builder body = new Request.Builder().url(host + "/test/watching.json");
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, body, false);
@@ -55,5 +62,8 @@ public class WarlockWatchingTest {
         // async in async task pool
         Assertions.assertTrue(2 <= TestWatchingService.AsyncWatch.size());
         Assertions.assertTrue(TestWatchingService.WatchOwner.getWatches().isEmpty());
+
+        Assertions.assertEquals("testWatching", tkn.get());
+        Assertions.assertTrue(wtc.get().contains("testWatching"), wtc.get());
     }
 }

@@ -14,7 +14,7 @@ import pro.fessional.wings.silencer.encrypt.Aes256Provider;
 
 import java.io.IOException;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingValue;
+import static pro.fessional.wings.silencer.support.PropHelper.MaskingValue;
 
 
 /**

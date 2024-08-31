@@ -49,9 +49,10 @@ public class NullsCache2k extends SpringCache2kCache {
         return value;
     }
 
-    @SuppressWarnings("NullableProblems")
+    @SuppressWarnings({ "NullableProblems", "ConstantConditions" })
     @Override
     public void put(@NotNull Object key, Object value) {
+        // SuppressWarnings Condition `value == null` is always `false`
         if (value == null) {
             if (nulls != null) {
                 nulls.put(key, Boolean.TRUE);

@@ -8,7 +8,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPattern;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.servlet.request.FakeHttpServletRequest;
+import pro.fessional.wings.slardar.servlet.dummy.DummyHttpServletRequest;
+import pro.fessional.wings.slardar.servlet.dummy.DummyServletContext;
 import pro.fessional.wings.slardar.spring.conf.WingsBindAuthnConfigurer;
 
 import java.net.URLEncoder;
@@ -73,9 +74,9 @@ public class SecurityConfigHelper {
      * fake the HttpServletRequest to test matcher
      */
     @NotNull
-    public static FakeHttpServletRequest fakeMatcherRequest(@NotNull String path) {
+    public static DummyHttpServletRequest dummyMatcherRequest(@NotNull String path) {
         path = encodePathPattern(path);
-        FakeHttpServletRequest request = new FakeHttpServletRequest();
+        DummyHttpServletRequest request = new DummyHttpServletRequest();
         request.setPathInfo(path);
         request.setRequestURI(path);
         return request;
@@ -86,11 +87,12 @@ public class SecurityConfigHelper {
      * see <a href="https://github.com/trydofor/professional-wings/issues/226">Failed to find servlet xx in the servlet context</a>
      */
     @NotNull
-    public static FakeHttpServletRequest fakeMatcherRequest(@NotNull String path, String servletName) {
+    public static DummyHttpServletRequest dummyMatcherRequest(@NotNull String path, String servletName) {
         path = encodePathPattern(path);
-        FakeHttpServletRequest request = new FakeHttpServletRequest();
+        DummyHttpServletRequest request = new DummyHttpServletRequest();
         request.setPathInfo(path);
         request.setRequestURI(path);
+        request.setServletContext(new DummyServletContext());
         if (servletName != null) {
             request.getHttpServletMapping().setServletName(servletName);
         }

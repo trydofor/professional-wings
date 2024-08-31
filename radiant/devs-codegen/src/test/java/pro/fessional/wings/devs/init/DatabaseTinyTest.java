@@ -9,6 +9,7 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V00_19_0512_01_
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V01_19_0520_01_IdLog;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V06_20_1026_01_TinyTask;
 import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_TinyMail;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V08_20_1028_01_TinyGrow;
 
 
 /**
@@ -23,10 +24,11 @@ public class DatabaseTinyTest extends TestingDatabase {
     @TmsLink("C15010")
     void resetSchemaWingsTiny() {
         reset(
-                V00_19_0512_01_Schema,
-                V01_19_0520_01_IdLog,
-                V06_20_1026_01_TinyTask,
-                V07_20_1027_01_TinyMail
+            V00_19_0512_01_Schema,
+            V01_19_0520_01_IdLog,
+            V06_20_1026_01_TinyTask,
+            V07_20_1027_01_TinyMail,
+            V08_20_1028_01_TinyGrow
         );
     }
 }

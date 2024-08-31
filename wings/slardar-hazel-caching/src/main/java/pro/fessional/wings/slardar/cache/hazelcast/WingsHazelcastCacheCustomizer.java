@@ -75,6 +75,7 @@ public class WingsHazelcastCacheCustomizer implements HazelcastConfigCustomizer 
             }
         }
         catch (InvalidConfigurationException e) {
+            // noinspection StringConcatenationArgumentToLogCall
             log.error("failed to change MapConfig, name=" + name, e);
         }
     }

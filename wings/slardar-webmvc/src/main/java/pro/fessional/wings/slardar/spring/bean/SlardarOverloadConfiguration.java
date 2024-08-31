@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,6 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.best.DummyBlock;
-import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
@@ -39,18 +37,16 @@ public class SlardarOverloadConfiguration {
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
-    @Order(WingsOrdered.Lv4Application)
+    @Order
     @ConditionalWingsEnabled
-    @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
-        private final WingsOverloadFilter overloadFilter;
-
         @Override
         @SuppressWarnings("BusyWait")
         public void onApplicationEvent(@NotNull ContextClosedEvent event) {
+            final WingsOverloadFilter overloadFilter = event.getApplicationContext().getBean(WingsOverloadFilter.class);
             overloadFilter.setRequestCapacity(Integer.MIN_VALUE);
             log.warn("SlardarWebmvc shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
-            for (long breaks = 60 * 1000, step = 30; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
+            for (long breaks = 20 * 1000, step = 100; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
                 try {
                     Thread.sleep(step); // busy wait
                     breaks -= step;

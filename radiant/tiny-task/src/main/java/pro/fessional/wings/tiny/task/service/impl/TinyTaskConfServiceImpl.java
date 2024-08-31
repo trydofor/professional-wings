@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.task.service.impl;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,8 @@ import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
@@ -47,6 +50,7 @@ import java.util.function.Function;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.springframework.core.MethodIntrospector.selectMethods;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
+import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
 
 /**
  * @author trydofor
@@ -105,6 +109,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingIdle(anno.idle());
             rp.setTimingRate(anno.rate());
             rp.setTimingTune(anno.tune());
+            rp.setTimingMiss(anno.miss());
             log.debug("no prop, use annotation, key={}", key);
         }
         else {
@@ -113,6 +118,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingIdle(pp.notTimingIdle() ? anno.idle() : pp.getTimingIdle());
             rp.setTimingRate(pp.notTimingRate() ? anno.rate() : pp.getTimingRate());
             rp.setTimingTune(pp.notTimingTune() ? anno.tune() : pp.getTimingTune());
+            rp.setTimingMiss(pp.notTimingMiss() ? anno.miss() : pp.getTimingMiss());
         }
 
         // not default
@@ -125,7 +131,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTaskerName(pp.getTaskerName());
             rp.setTaskerFast(pp.isTaskerFast());
             //
-            rp.setTimingMiss(pp.getTimingMiss());
+
             rp.setTimingBeat(pp.getTimingBeat());
             rp.setDuringFrom(pp.getDuringFrom());
             rp.setDuringStop(pp.getDuringStop());
@@ -154,7 +160,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     public TaskerProp database(long id, boolean nonnull) {
         final TaskerProp conf = fetchProp(TaskerProp.class, t -> t.Id.eq(id));
         if (conf == null && nonnull) {
-            throw new IllegalArgumentException("database tasker is null, id=" + id);
+            throw new IllegalArgumentException("database tiny-task is null, id=" + id);
         }
         return conf;
     }
@@ -171,7 +177,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             .fetchOne();
         if (r2 == null || isEmpty(r2.value1()) || isEmpty(r2.value2())) {
             if (nonnull) {
-                throw new IllegalArgumentException("database tasker is null, id=" + id);
+                throw new IllegalArgumentException("database tiny-task is null, id=" + id);
             }
             else {
                 return null;
@@ -188,10 +194,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     @NotNull
     public LinkedHashMap<String, Diff.V<?>> diffProp(long id) {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
-        AssertArgs.notNull(po, "database tasker is null, id={}", id);
+        AssertArgs.notNull(po, "database tiny-task is null, id={}", id);
 
         final TinyTasker anno = referAnno(po.getPropkey(), po.getTaskerBean());
-        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without tiny-task, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);
@@ -229,7 +235,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     private Conf config(@NotNull Class<?> claz, @NotNull Object bean, @NotNull Method method, @Nullable Object para) {
         final TinyTasker anno = method.getAnnotation(TinyTasker.class);
         if (anno == null) {
-            throw new IllegalStateException("need @TinyTasker, tasker method=" + method.getName() + ", class=" + claz.getName());
+            throw new IllegalStateException("need @TinyTasker, tiny-task method=" + method.getName() + ", class=" + claz.getName());
         }
 
         final String entry = TaskerHelper.tokenize(claz, method.getName());
@@ -243,7 +249,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             );
         }
 
-        log.info("find tiny task, prop={}, entry={}", key, entry);
+        log.info("find tiny-task, prop={}, entry={}", key, entry);
 
         if (isEmpty(prop.getTaskerName())) {
             prop.setTaskerName(claz.getSimpleName() + TaskerHelper.MethodPrefix + method.getName());
@@ -262,12 +268,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         final long id;
         final boolean enabled;
         final boolean autorun;
+        final boolean matched;
         final String noticeBean;
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.TaskerBean.eq(entry));
         if (po == null) {
             id = insertProp(prop, key);
             enabled = prop.isEnabled();
             autorun = prop.isAutorun();
+            matched = true;
             noticeBean = prop.getNoticeBean();
             log.info("insert prop to database, version={}, id={}", prop.getVersion(), id);
         }
@@ -275,8 +283,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             id = po.getId();
             enabled = BoxedCastUtil.orTrue(po.getEnabled());
             autorun = BoxedCastUtil.orTrue(po.getAutorun());
+            matched = hasApps(po.getTaskerApps()) && hasRuns(po.getTaskerRuns());
             noticeBean = po.getNoticeBean();
-            log.debug("find database config, version={}, id={}", prop.getVersion(), id);
+            log.debug("find database config, version={}, id={}, matched={}", prop.getVersion(), id, matched);
+
             // diff
             final LinkedHashMap<String, Diff.V<?>> df = diff(po, prop);
             if (!df.isEmpty()) {
@@ -288,12 +298,18 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                     sb.append(", pp=").append(en.getValue().getV2());
                     sb.append('\n');
                 }
-                if (po.getVersion() <= prop.getVersion()) {
+
+                if (matched && po.getVersion() <= prop.getVersion()) {
                     updateProp(prop, key, id);
-                    log.info("update prop to database, prop={}, diff={}", key, sb);
+                    log.warn("update prop to database(low-ver), prop={}, diff={}", key, sb);
                 }
                 else {
-                    log.warn("diff from prop and database, prop={}, diff={}", key, sb);
+                    if (matched) {
+                        log.warn("diff from prop(low-ver) and database, prop={}, diff={}", key, sb);
+                    }
+                    else {
+                        log.info("diff from prop and database but not matched, prop={}, diff={}", key, sb);
+                    }
                 }
             }
         }
@@ -306,7 +322,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                                             ", entry2=" + poKey.getTaskerBean());
         }
 
-        if (noticeBean != null && !noticeBean.isEmpty()) {
+        // keep bean and notice even if not matched to launch task bewteen the cluster
+        if (StringUtils.isNotEmpty(noticeBean)) {
             ExecHolder.getNotice(noticeBean, k -> {
                 try {
                     final Class<SmallNotice<?>> cz = (Class<SmallNotice<?>>) ClassUtils.forName(noticeBean, null);
@@ -314,20 +331,34 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                     return new NoticeExec<>(nb);
                 }
                 catch (ClassNotFoundException e) {
+                    // noinspection StringConcatenationArgumentToLogCall
                     log.error("failed to init notice bean=" + noticeBean, e);
                     throw new IllegalArgumentException(e);
                 }
             });
         }
 
-        return new Conf(id, key, enabled, autorun);
+        return new Conf(id, key, enabled, autorun, matched);
+    }
+
+    private boolean hasApps(String apps) {
+        if (StringUtils.isEmpty(apps)) return true;
+        for (String s : commaArray(apps)) {
+            if (s.trim().equals(appName)) return true;
+        }
+        return false;
+    }
+
+    private boolean hasRuns(String runs) {
+        if (StringUtils.isEmpty(runs)) return true;
+        return !RuntimeMode.isRunMode(RunMode.Nothing) && RuntimeMode.voteRunMode(runs);
     }
 
     private long insertProp(TaskerProp prop, String key) {
         return journalService.submit(Jane.Insert, journal -> {
             final WinTaskDefineTable t = winTaskDefineDao.getTable();
             final long id = lightIdService.getId(t);
-            final WinTaskDefine po = genWinTaskDefine(prop, key);
+            final WinTaskDefine po = genWinTaskDefine(prop, key, appName);
             po.setId(id);
             po.setNextLock(0);
             journal.create(po);
@@ -338,7 +369,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     private boolean updateProp(TaskerProp prop, String key, long id) {
         return journalService.submit(Jane.Update, journal -> {
-            WinTaskDefine po = genWinTaskDefine(prop, key);
+            WinTaskDefine po = genWinTaskDefine(prop, key, null);
             po.setId(id);
             journal.modify(po);
             final int rc = winTaskDefineDao.update(po, true);
@@ -347,7 +378,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     }
 
     @NotNull
-    private WinTaskDefine genWinTaskDefine(TaskerProp prop, String key) {
+    private WinTaskDefine genWinTaskDefine(TaskerProp prop, String key, String apps) {
         WinTaskDefine wtd = new WinTaskDefine();
 
         wtd.setEnabled(prop.isEnabled());
@@ -360,8 +391,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         wtd.setTaskerName(prop.getTaskerName());
         wtd.setTaskerFast(prop.isTaskerFast());
 
-        final String apps = prop.getTaskerApps();
-        wtd.setTaskerApps(isEmpty(apps) ? appName : apps);
+        final String ta = prop.getTaskerApps();
+        wtd.setTaskerApps(isEmpty(ta) ? apps : ta);
         wtd.setTaskerRuns(prop.getTaskerRuns());
 
         wtd.setNoticeBean(prop.getNoticeBean());
@@ -374,8 +405,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         wtd.setTimingIdle(prop.getTimingIdle());
         wtd.setTimingRate(prop.getTimingRate());
         wtd.setTimingTune(prop.getTimingTune());
-
         wtd.setTimingMiss(prop.getTimingMiss());
+
         wtd.setTimingBeat(prop.getTimingBeat());
         wtd.setDuringFrom(prop.getDuringFrom());
         wtd.setDuringStop(prop.getDuringStop());

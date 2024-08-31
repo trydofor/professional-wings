@@ -33,7 +33,7 @@ command="$2"
 option="$3"
 
 if [[ "$command" == "" || "$command" == "help" || ! -f "$userenv" ]]; then
-    echo -e '\033[37;42;1mNOTE: users env file\033[m'
+    echo -e '\033[37;42;1mNOTE: users env file\033[0m'
     # https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
     cat <<'EOF'
 execute=false
@@ -54,7 +54,7 @@ host_app=10.11.%
 host_dev=%
 host_dba=%
 EOF
-    echo -e '\033[37;42;1mNOTE: user manage\033[m'
+    echo -e '\033[37;42;1mNOTE: user manage\033[0m'
     cat <<'EOF'
 RENAME USER 'trydofor'@'%' TO 'trydofor'@'127.0.%';
 DROP USER IF EXISTS 'trydofor'@'%';
@@ -91,7 +91,7 @@ fi
 [[ "$host_dev" == "" ]] && host_dev=%
 [[ "$host_dba" == "" ]] && host_dba=%
 
-echo -e '\033[37;42;1mNOTE: users and passwd\033[m'
+echo -e '\033[37;42;1mNOTE: users and passwd\033[0m'
 grep -v '^#' <<EOF
 ${user_raw}${user_pre}${name_pre}raw  $pass_raw
 ${user_app}${user_pre}${name_pre}app  $pass_app
@@ -100,7 +100,7 @@ ${user_dba}${user_pre}${name_pre}dba  $pass_dba
 EOF
 
 temp_sql="$userenv.sql"
-echo -e "\033[37;42;1mNOTE: sql script $temp_sql\033[m"
+echo -e "\033[37;42;1mNOTE: sql script $temp_sql\033[0m"
 rm "$temp_sql" >/dev/null 2>&1
 
 if [[ "$command" == "create" ]]; then
@@ -148,7 +148,7 @@ if [[ "$execute" == "true" ]]; then
     unalias mysql >/dev/null 2>&1
 
     if [[ -f "$option" ]]; then
-        echo -e "\033[0;33mNOTE: current option file \033[m"
+        echo -e "\033[0;33mNOTE: current option file \033[0m"
         cat "$option"
         mysql --defaults-extra-file="$option" -vvv --force < "$temp_sql"
     else

@@ -119,6 +119,9 @@ class FastJsonTest {
         String json = FastJsonHelper.string(r);
         JSONObject obj = FastJsonHelper.object(json);
 
+        String json2 = FastJsonHelper.string(r,null);
+        Assertions.assertEquals(json, json2);
+
         JSONPath p1 = FastJsonHelper.path("$.success");
         JSONPath p2 = FastJsonHelper.path("$.success");
         Assertions.assertSame(p1, p2);

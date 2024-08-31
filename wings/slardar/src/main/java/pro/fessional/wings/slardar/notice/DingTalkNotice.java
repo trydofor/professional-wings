@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.notice;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -41,7 +44,7 @@ import static pro.fessional.wings.slardar.notice.DingTalkConf.MsgText;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBean {
+public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBean, DisposableBean {
 
     @NotNull
     private final Call.Factory callFactory;
@@ -50,6 +53,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
 
     @Setter(onMethod_ = { @Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
     private Executor executor;
+    private boolean innerExecutor = false;
 
     @Setter(onMethod_ = { @Autowired(required = false) })
     @Getter
@@ -64,8 +68,8 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @Override
     public DingTalkConf combineConfig(@Nullable DingTalkConf that) {
         final DingTalkConf newConf = new DingTalkConf();
-        newConf.adopt(that);
-        newConf.merge(configProp.getDefault());
+        DingTalkConf.ConfSetter.toAny(newConf, that);
+        DingTalkConf.ConfSetter.toInvalid(newConf, configProp.getDefault());
         return newConf;
     }
 
@@ -173,7 +177,15 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
-            executor = Executors.newSingleThreadExecutor();
+            executor = TtlExecutors.getTtlExecutorService(Executors.newWorkStealingPool(2));
+            innerExecutor = true;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (innerExecutor && executor instanceof ExecutorService es) {
+            es.shutdown();
         }
     }
 

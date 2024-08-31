@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-06-01
+THIS_VERSION=2024-08-08
 ################ system env to use ################
 # JAVA_HOME      # if JDK_HOME is not valid
 # JAVA_OPTS      # prepend to java args
@@ -83,14 +83,6 @@ BOOT_MD5=''                      # execute md5+jar in safe mode
 JAR_NAME=''                      # basename of boot-jar
 #
 function print_envs() {
-    echo -e "#################################################"
-    echo -e "# Version \033[32m$THIS_VERSION\033[m # for Mac&Lin / BusyBox&Bash"
-    echo -e "# use 'ln -s' to link this script to the execution 'target/workdir',"
-    echo -e "# the same basename '.env' (wings-release.env) will be auto loaded."
-    echo -e "# only one boot.jar run on one host, rename it to run more copies."
-    echo -e "# 'BOOT_ARG|JAVA_ARG|JDK8_ARG|JDK9_ARG' can be lazily evaluated"
-    echo -e "# in evaluation, ' for delayed, \" for immediate. default Java 11 G1"
-    echo -e "#################################################"
     echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
     echo "work-dir=$WORK_DIR"
     echo "env-link=$link_envs"
@@ -101,26 +93,39 @@ function print_envs() {
 }
 
 function print_help() {
+    echo -e "#################################################"
+    echo -e "# Version \033[32m$THIS_VERSION\033[0m # for Mac&Lin / BusyBox&Bash"
+    echo -e "# use 'ln -s' to link this script to the execution 'target/workdir',"
+    echo -e "# the same basename '.env' (wings-release.env) will be auto loaded."
+    echo -e "# e.g. ln -s /data/wings-script/wings-starter.sh my-starter.sh"
+    echo -e "#    my-starter.sh -> /data/wings-script/wings-starter.sh"
+    echo -e "#    my-starter.env"
+    echo -e "# only one boot.jar run on one host, rename it to run more copies."
+    echo -e "# 'BOOT_ARG|JAVA_ARG|JDK8_ARG|JDK9_ARG' can be lazily evaluated"
+    echo -e "# in evaluation, ' for delayed, \" for immediate."
+    echo -e "#################################################"
+    echo -e '\033[32m docker \033[0m start in docker with console log'
+    echo -e '\033[32m start \033[0m start the {boot-jar} and tail the log'
+    echo -e '\033[32m starts \033[0m start but Not wait log'
+    echo -e '\033[32m stop [snd=30]\033[0m stop the {boot-jar} gracefully in {snd} seconds'
+    echo -e '\033[32m stops [snd=30]\033[0m stop but Not confirm'
+    echo -e '\033[32m status \033[0m show the {boot-jar} runtime status'
+    echo -e '\033[32m warn \033[0m monitor the {boot-jar} and log'
+    echo -e '\033[32m live \033[0m monitor the {boot-jar} and auto restart if lost pid'
+    echo -e '\033[32m clean [days=30] [y] \033[0m clean up boot out/log/jar {days} ago but newest'
+    echo -e '\033[32m clean-out [days=30] [y] \033[0m clean up boot-out {days} ago but newest'
+    echo -e '\033[32m clean-log [days=30] [y] \033[0m clean up boot-log {days} ago but newest'
+    echo -e '\033[32m clean-jar [days=30] [y] \033[0m clean up boot-jar {days} ago but newest'
+    echo -e '\033[32m config \033[0m print config envs'
+    echo -e '\033[32m tail \033[0m tail boot log or out'
+    echo -e '\033[32m less \033[0m less boot log or out'
     echo
-    echo -e '\033[32m docker \033[m start in docker with console log'
-    echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
-    echo -e '\033[32m starts \033[m start but Not wait log'
-    echo -e '\033[32m stop [snd=30]\033[m stop the {boot-jar} gracefully in {snd} seconds'
-    echo -e '\033[32m stops [snd=30]\033[m stop but Not confirm'
-    echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
-    echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
-    echo -e '\033[32m live \033[m monitor the {boot-jar} and auto restart if lost pid'
-    echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago but newest'
-    echo -e '\033[32m clean-jar [days=30] [y] \033[m clean up boot-jar {days} ago but newest'
-    echo -e '\033[32m config \033[m print config envs'
-    echo -e '\033[32m tail \033[m tail boot log or out'
+    echo -e '\033[32m cron \033[0m show the {boot-jar} crontab usage'
+    echo -e '\033[32m free \033[0m check memory free'
+    echo -e '\033[32m check \033[0m check shell command'
+    echo -e '\033[32m help \033[0m print help message'
     echo
-    echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
-    echo -e '\033[32m free \033[m check memory free'
-    echo -e '\033[32m check \033[m check shell command'
-    echo -e '\033[32m help \033[m print help message'
-    echo
-    echo -e 'default is \033[37;43;1m start \033[m, for example'
+    echo -e 'default is \033[37;43;1m start \033[0m, for example'
     echo -e './wings-starter.sh'
     echo -e './wings-starter.sh status'
     echo -e './wings-starter.sh boot.jar start'
@@ -137,14 +142,45 @@ function print_args() {
     echo "BOOT_ARG=$BOOT_ARG"
     echo -e "\033[37;42;1mINFO: ==== java arguments ==== \033[0m"
     echo "$JAVA_OPT"
+
+    git_jar="${BOOT_JAR}_${BOOT_MD5}"
+    if [[ ! -f "$git_jar" ]]; then
+        git_jar="${BOOT_JAR}"
+    fi
+    if [[ -f "$git_jar" ]]; then
+        tmp="./tmp-$BOOT_MD5"
+        jls="$tmp/jar-list.txt"
+        mkdir -p "$tmp"
+        jar tf "$git_jar" > "$jls"
+
+        giti=$(grep 'git.properties' "$jls")
+        if [[ "$giti" != "" ]]; then
+            (cd "$tmp" && jar xf "$git_jar" "$giti")
+            if [[ -f "$tmp/$giti" ]]; then
+                echo -e "\033[37;42;1mINFO: ==== git build info ==== \033[0m"
+                grep -vE '=$' "$tmp/$giti"
+            fi
+        fi
+
+        wngi=$(grep -E 'silencer-[1-9].*.jar' "$jls")
+        if [[ "$wngi" != "" ]]; then
+            (cd "$tmp" && jar xf "$git_jar" "$wngi" && jar xf "$wngi" git.properties)
+            if [[ -f "$tmp/git.properties" ]]; then
+                echo -e "\033[37;42;1mINFO: ==== git wings info ==== \033[0m"
+                grep -vE '=$' "$tmp/git.properties"
+            fi
+        fi
+
+        rm -rf "$tmp"
+    fi
 }
 
 function check_cmd() {
     cmd=$(printf "%-10s" "$1")
     if info=$(which "$1") >/dev/null 2>&1; then
-        echo -e "\033[32m $cmd \033[m $info"
+        echo -e "\033[32m $cmd \033[0m $info"
     else
-        echo -e "\033[31m $cmd not found \033[m"
+        echo -e "\033[31m $cmd not found \033[0m"
     fi
 }
 
@@ -159,6 +195,7 @@ function check_user() {
 
 function check_java() {
     echo -e "\033[37;42;1mINFO: ==== java version ==== \033[0m"
+    echo -e "JAVA_HOME=\033[32m$JAVA_HOME\033[0m"
     if ! java -version; then
         echo -e "\033[37;41;1mERROR: can not found 'java' in the $PATH \033[0m"
         exit
@@ -202,7 +239,7 @@ function check_boot() {
 function safe_start() {
     # safe backup
     md5sum "$BOOT_JAR" >"$file_md5"
-    BOOT_MD5=$(awk '{print $1}' <"$file_md5")
+    BOOT_MD5=$(awk '{print $1}' "$file_md5")
     # `_` as delimiter
     safe_jar="${BOOT_JAR}_${BOOT_MD5}"
     if [[ ! -f "$safe_jar" ]]; then
@@ -229,7 +266,6 @@ if [[ -L "$this_file" ]]; then
     link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
-        echo -e "\033[37;42;1mINFO: load link-envs form $link_envs ==== \033[0m"
         # shellcheck disable=SC1090
         source "$link_envs"
     fi
@@ -237,7 +273,6 @@ fi
 
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
-    echo -e "\033[37;42;1mINFO: load this-envs form $this_envs ==== \033[0m"
     # shellcheck disable=SC1090
     source "$this_envs"
 else
@@ -245,7 +280,6 @@ else
 fi
 
 if [[ -f "$BOOT_ENVF" ]]; then
-    echo -e "\033[37;42;1mINFO: load boot-envs form $BOOT_ENVF ==== \033[0m"
     # shellcheck disable=SC1090
     source "$BOOT_ENVF"
 fi
@@ -274,11 +308,11 @@ case "$ARGS_RUN" in
     cron)
         this_path=$(realpath -s "$this_file")
         echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
-        echo -e "\033[32m crontab -e -u $USER_RUN \033[m"
-        echo -e "\033[32m crontab -l -u $USER_RUN \033[m"
-        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
-        echo -e "\033[32m */5 * * * * $this_path live >> $this_path.cron \033[m"
-        echo -e "\033[32m 0 0 * * * $this_path clean 30 y \033[m"
+        echo -e "\033[32m crontab -e -u $USER_RUN \033[0m"
+        echo -e "\033[32m crontab -l -u $USER_RUN \033[0m"
+        echo -e "\033[32m */5 * * * * $this_path warn \033[0m"
+        echo -e "\033[32m */5 * * * * $this_path live >> $this_path.cron \033[0m"
+        echo -e "\033[32m 0 0 * * * $this_path clean 30 y \033[0m"
         exit
         ;;
     free)
@@ -333,9 +367,8 @@ case "$ARGS_RUN" in
         exit
         ;;
     help)
-        echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
+        echo -e '\033[37;42;1mNOTE: help info, use the following\033[0m'
         print_help
-        print_envs
         exit
         ;;
 esac
@@ -366,14 +399,13 @@ fi
 # boot md5
 file_md5="${JAR_NAME}.md5"
 if [[ -f "$file_md5" ]]; then
-    BOOT_MD5=$(awk '{print $1}' <"$file_md5")
+    BOOT_MD5=$(awk '{print $1}' "$file_md5")
 fi
 
 # java home & path
 if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
     PATH=$JDK_HOME/bin:$PATH
     JAVA_HOME=$JDK_HOME
-    echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
 fi
 
 # lazy env eval
@@ -414,7 +446,7 @@ case "$ARGS_RUN" in
             pgrep -alf "$grep_key"
         fi
         ;;
-    start*)
+    start | starts)
         print_envs
         check_java
 
@@ -442,9 +474,9 @@ case "$ARGS_RUN" in
         if [[ "$ARGS_RUN" != "start" ]]; then
             echo -e "\033[37;42;1mINFO: tail -f $BOOT_OUT \033[0m"
             timeout -s 9 10 tail -f "$BOOT_OUT"
-            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
-            echo -e "\033[37;43;1m====== $BOOT_JAR ======\033[0m"
-            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            echo -e "\033[37;42;1m =====${BOOT_JAR//?/=}===== \033[0m"
+            echo -e "\033[37;42;1m ==== $BOOT_JAR ==== \033[0m"
+            echo -e "\033[37;42;1m =====${BOOT_JAR//?/=}===== \033[0m"
             exit
         fi
 
@@ -483,7 +515,7 @@ case "$ARGS_RUN" in
             tail -f "$tail_log"
         fi
         ;;
-    stop*)
+    stop | stops)
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
             exit
@@ -542,23 +574,14 @@ case "$ARGS_RUN" in
         ;;
     status)
         print_envs
+        check_java
+        print_args
+
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;41;1mERROR: not running $BOOT_JAR \033[0m"
             exit
         fi
 
-        check_java
-        print_args
-
-        tail_num=20
-        if [[ -f "$BOOT_OUT" ]]; then
-            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_OUT \033[0m"
-            tail -n $tail_num "$BOOT_OUT"
-        fi
-        if [[ -f "$BOOT_LOG" ]]; then
-            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_LOG \033[0m"
-            tail -n $tail_num "$BOOT_LOG"
-        fi
         pid=$(awk '{print $1}' "$BOOT_PID")
         cid=$(pgrep -f "$grep_key")
         echo -e "\033[37;42;1mINFO: boot.pid=$pid \033[0m"
@@ -569,48 +592,57 @@ case "$ARGS_RUN" in
             echo -e "\033[31mWARN: pid not match, proc-pid=$cid, file-pid=$pid \033[0m"
         fi
 
-        # shellcheck disable=SC2009
-        mrs=$(ps -o rss "$cid" | grep -v RSS | numfmt --grouping)
-        # shellcheck disable=SC2009
-        mvs=$(ps -o vsz "$cid" | grep -v VSZ | numfmt --grouping)
-        echo -e "\033[37;42;1mINFO: ps -o rss -o vsz $cid \033[0m"
-        echo -e "Resident (RSS) = $(printf '%*s' 12 $mrs) Kb"
-        echo -e "Virtual  (VSZ) = $(printf '%*s' 12 $mvs) Kb"
+        stm=$(ps -o lstart= "$cid")
+        etm=$(ps -o etime= "$cid" | tr -d ' ')
+        mrs=$(ps -o rss= "$cid" | numfmt --grouping)
+        mvs=$(ps -o vsz= "$cid" | numfmt --grouping)
+        echo -e "\033[37;42;1mINFO: ps -o rss,vsz,etime,lstart $cid \033[0m"
+        echo -e "Started Time   = $stm"
+        echo -e "Elapsed Time   = $etm"
+        echo -e "Resident (RSS) = $(printf '%12s' "$mrs") Kb"
+        echo -e "Virtual  (VSZ) = $(printf '%12s' "$mvs") Kb"
 
         if [[ "$USER_RUN" == "$USER" ]]; then
             echo -e "\033[37;42;1mINFO: $(which jstat) -gcutil $cid 1000 3 \033[0m"
             jstat -gcutil "$cid" 1000 3
-            echo -e "\033[37;42;1mINFO: $(which jstat) -gc $cid 1000 3 \033[0m"
-            jstat -gc "$cid" 1000 3
         else
             echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gcutil $cid 1000 3 \033[0m"
             echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gc $cid 1000 3 \033[0m"
         fi
 
-
         if id | grep -q '(sudo)'; then
             if which jhsdb &> /dev/null; then
                 _jhsdb=$(which jhsdb)
-                echo -e "\033[37;42;1mINFO: sudo $_jhsdb jmap --heap --pid $cid \033[m"
+                echo -e "\033[37;42;1mINFO: sudo $_jhsdb jmap --heap --pid $cid \033[0m"
                 sudo "$_jhsdb" jmap --heap --pid "$cid"
             else
                 _jmap=$(which jmap)
-                echo -e "\033[37;42;1mINFO: sudo $_jmap -heap $cid \033[m"
+                echo -e "\033[37;42;1mINFO: sudo $_jmap -heap $cid \033[0m"
                 sudo "$_jmap" -heap "$cid"
             fi
         else
             if which jhsdb &> /dev/null; then
-                echo -e "\033[37;43;1mNOTE: sudo $(which jhsdb) jmap --heap --pid $cid \033[m"
+                echo -e "\033[37;43;1mNOTE: sudo $(which jhsdb) jmap --heap --pid $cid \033[0m"
             else
-                echo -e "\033[37;43;1mNOTE: sudo $(which jmap) -heap $cid \033[m"
+                echo -e "\033[37;43;1mNOTE: sudo $(which jmap) -heap $cid \033[0m"
             fi
         fi
 
-        echo -e "\033[37;43;1mNOTE: ==== useful tool ==== \033[0m"
-        echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cid \033[m https://github.com/jvm-profiling-tools/async-profiler"
-        echo -e "\033[32m $(which java) -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
+        tail_num=20
+        if [[ -f "$BOOT_OUT" ]]; then
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_OUT \033[0m"
+            tail -n $tail_num "$BOOT_OUT"
+        fi
+        if [[ -f "$BOOT_LOG" ]]; then
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_LOG \033[0m"
+            tail -n $tail_num "$BOOT_LOG"
+        fi
+
+        echo -e "\033[37;42;1mINFO: ==== useful tool ==== \033[0m"
+        echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cid \033[0m https://github.com/jvm-profiling-tools/async-profiler"
+        echo -e "\033[32m $(which java) -jar arthas-boot.jar $cid \033[0m https://github.com/alibaba/arthas"
         ;;
-    tail)
+    tail | less)
         file_log=$BOOT_LOG
         if [[ ! -f "$file_log" ]]; then
             file_log=$BOOT_OUT
@@ -619,9 +651,14 @@ case "$ARGS_RUN" in
             echo -e "\033[37;41;1mERROR: no log found \033[0m"
             exit
         fi
-        tail_num=20
-        echo -e "\033[37;42;1mINFO: tail -f -n $tail_num $file_log \033[0m"
-        tail -f -n $tail_num "$file_log"
+        if [[ "$ARGS_RUN" == "tail" ]]; then
+            tail_num=20
+            echo -e "\033[37;42;1mINFO: tail -f -n $tail_num $file_log \033[0m"
+            tail -f -n $tail_num "$file_log"
+        else
+            echo -e "\033[37;42;1mINFO: less $file_log \033[0m"
+            less "$file_log"
+        fi
         ;;
     warn)
         warn_got=''
@@ -668,75 +705,105 @@ case "$ARGS_RUN" in
         check_user
         safe_start
         ;;
-    clean)
+    clean | clean-out | clean-log | clean-jar)
         dys="$2"
         if [[ "$dys" == "" ]]; then
             dys=30
         fi
         nwt=5
-        echo -e "\033[32m top log ${nwt}-newest ${JAR_NAME} \033[m"
-        # shellcheck disable=SC2012
-        ls -lt "./${JAR_NAME}"-* | head -n $nwt
-        echo -e "\033[32m find $(pwd) -name \"${JAR_NAME}-*\" -type f -mtime +$dys \033[m"
-        old=$(find . -name "${JAR_NAME}-*" -type f -mtime +$dys | wc -l)
-        if [[ $old -gt 10 ]]; then
-            exs="newest-log-${JAR_NAME}.tmp"
+
+        case "$ARGS_RUN" in clean | clean-out)
+            echo -e "\033[32m top out ${nwt}-newest of ${JAR_NAME} \033[0m"
             # shellcheck disable=SC2012
-            ls -t "./${JAR_NAME}"-* | head -n $nwt >"$exs"
+            ls -lt "./${JAR_NAME}"-* | head -n $nwt
+            echo -e "\033[32m find $(pwd) -name \"${JAR_NAME}-*\" -type f -mtime +$dys \033[0m"
+            old=$(find . -name "${JAR_NAME}-*" -type f -mtime +$dys | wc -l)
+            if [[ $old -gt 10 ]]; then
+                exs="newest-out-${JAR_NAME}.tmp"
+                # shellcheck disable=SC2012
+                ls -t "./${JAR_NAME}"-* | head -n $nwt >"$exs"
 
-            find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
-            echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
-            check_user
+                find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
+                echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago out file ==== \033[0m"
+                check_user
 
-            yon="$3"
-            if [[ "$3" == "" ]]; then
-                echo -e "\033[31mWARN: press <y> to rm them all, pwd=${WORK_DIR} \033[0m"
-                read -r yon
+                yon="$3"
+                if [[ "$3" == "" ]]; then
+                    echo -e "\033[31mWARN: press <y> to rm them all, pwd=${WORK_DIR} \033[0m"
+                    read -r yon
+                fi
+                if [[ "$yon" == "y" ]]; then
+                    find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
+                fi
+                rm -f "$exs"
+            else
+                echo -e "\033[37;42;1mNOTE: few ${dys}-days ago outs, pwd=${WORK_DIR} \033[0m"
             fi
-            if [[ "$yon" == "y" ]]; then
-                find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
-            fi
-            rm -f "$exs"
-        else
-            echo -e "\033[37;42;1mNOTE: few ${dys}-days ago logs, pwd=${WORK_DIR} \033[0m"
-        fi
-        ;;
-    clean-jar)
-        dys="$2"
-        if [[ "$dys" == "" ]]; then
-            dys=30
-        fi
-        jrt=$(dirname "$BOOT_JAR")
-        nwt=5
-        echo -e "\033[32m top jar ${nwt}-newest ${JAR_NAME} \033[m"
-        # shellcheck disable=SC2012
-        ls -lt "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt
-        echo -e "\033[32m find $jrt -name \"${JAR_NAME}[_-]*\" -type f -mtime +$dys \033[m"
-        old=$(find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys | wc -l)
-        if [[ $old -gt 10 ]]; then
-            exs="newest-jar-${JAR_NAME}.tmp"
+        esac
+
+        case "$ARGS_RUN" in clean | clean-log)
+            echo -e "\033[32m top log ${nwt}-newest of ${JAR_NAME} \033[0m"
+            jrt=$(dirname "$BOOT_LOG")
+            jnm=$(basename "$BOOT_LOG")
             # shellcheck disable=SC2012
-            ls -t "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt >"$exs"
+            ls -lt "${BOOT_LOG}".* | head -n $nwt
+            echo -e "\033[32m find $jrt -name \"${jnm}.*\" -type f -mtime +$dys \033[0m"
+            old=$(find "$jrt" -name "${jnm}-*" -type f -mtime +$dys | wc -l)
+            if [[ $old -gt 10 ]]; then
+                exs="newest-log-${JAR_NAME}.tmp"
+                # shellcheck disable=SC2012
+                ls -t "${BOOT_LOG}".* | head -n $nwt >"$exs"
 
-            find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
-            echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago jar, exclude top ${nwt}-newest ==== \033[0m"
-            check_user
+                find "$jrt" -name "${jnm}.*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
+                echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
+                check_user
 
-            yon="$3"
-            if [[ "$3" == "" ]]; then
-                echo -e "\033[31mWARN: press <y> to rm them all, pwd=$jrt \033[0m"
-                read -r yon
+                yon="$3"
+                if [[ "$3" == "" ]]; then
+                    echo -e "\033[31mWARN: press <y> to rm them all, pwd=$jrt \033[0m"
+                    read -r yon
+                fi
+                if [[ "$yon" == "y" ]]; then
+                    find "$jrt" -name "${jnm}.*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
+                fi
+                rm -f "$exs"
+            else
+                echo -e "\033[37;42;1mNOTE: few ${dys}-days ago logs, pwd=${jrt} \033[0m"
             fi
-            if [[ "$yon" == "y" ]]; then
-                find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
+        esac
+
+        case "$ARGS_RUN" in clean | clean-jar)
+            echo -e "\033[32m top jar ${nwt}-newest of ${JAR_NAME} \033[0m"
+            jrt=$(dirname "$BOOT_JAR")
+            # shellcheck disable=SC2012
+            ls -lt "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt
+            echo -e "\033[32m find $jrt -name \"${JAR_NAME}[_-]*\" -type f -mtime +$dys \033[0m"
+            old=$(find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys | wc -l)
+            if [[ $old -gt 10 ]]; then
+                exs="newest-jar-${JAR_NAME}.tmp"
+                # shellcheck disable=SC2012
+                ls -t "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt >"$exs"
+
+                find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
+                echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago jar, exclude top ${nwt}-newest ==== \033[0m"
+                check_user
+
+                yon="$3"
+                if [[ "$3" == "" ]]; then
+                    echo -e "\033[31mWARN: press <y> to rm them all, pwd=$jrt \033[0m"
+                    read -r yon
+                fi
+                if [[ "$yon" == "y" ]]; then
+                    find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
+                fi
+                rm -f "$exs"
+            else
+                echo -e "\033[37;42;1mNOTE: few ${dys}-days ago jars, pwd=$jrt \033[0m"
             fi
-            rm -f "$exs"
-        else
-            echo -e "\033[37;42;1mNOTE: few ${dys}-days ago jars, pwd=$jrt \033[0m"
-        fi
+        esac
         ;;
     config)
-        echo -e '\033[37;42;1mNOTE: ==== conf env ==== \033[m'
+        echo -e '\033[37;42;1mNOTE: ==== conf env ==== \033[0m'
         echo "WORK_DIR=$WORK_DIR"
         echo "TAIL_LOG=$TAIL_LOG"
         echo "USER_RUN=$USER_RUN"
@@ -760,8 +827,10 @@ case "$ARGS_RUN" in
         echo "WARN_RUN=$WARN_RUN"
         ;;
     *)
-        echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
+        echo -e "\033[37;41;1mERROR: unknown $ARGS_RUN, see the following\033[0m"
         print_help
         print_envs
+        check_java
+        print_args
         ;;
 esac

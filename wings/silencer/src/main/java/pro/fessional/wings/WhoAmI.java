@@ -43,7 +43,7 @@ public class WhoAmI {
         buff.append("\n\n## Detailed Description\n");
         buff.append("\n\n## Possible Solution\n");
 
-        String url = "https://github.com/trydofor/pro.fessional.wings/issues/new?body=" +
+        String url = "https://github.com/trydofor/professional-wings/issues/new?body=" +
                      URLEncoder.encode(buff.toString(), StandardCharsets.UTF_8)
                                .replace("+", "%20")
                                .replace("*", "%2A");

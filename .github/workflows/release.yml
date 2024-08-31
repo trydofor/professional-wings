@@ -148,7 +148,7 @@ jobs:
           </settings>
           EOF
       - name: Qodana Scan
-        uses: JetBrains/qodana-action@v2023.3
+        uses: JetBrains/qodana-action@v2024.1
         if: steps.settings.outputs.QODANA_SCAN == 'true'
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
@@ -156,7 +156,7 @@ jobs:
       - name: Test Coverage ${{ steps.settings.outputs.WINGS_VERSION }} ${{ steps.settings.outputs.GIT_BRANCH }}
         if: steps.settings.outputs.MVN_COVERAGE == 'true'
         run: |
-          mvn -P '!module-example,!module-devs' -Dmaven.test.skip=true clean install
+          mvn -P 'repo-snapshot,!module-example,!module-devs' -Dmaven.test.skip=true clean install
           mvn -pl ':devs-codegen' -Ddevs-initdb=true clean test
           mvn -P 'report-coverage,!module-example,!module-devs' -Dmaven.test.failure.ignore=$TESTFAILS_IGNORE test
           mvn -P 'report-coverage' -pl ':devs-coverage' -am jacoco:report-aggregate
@@ -181,7 +181,7 @@ jobs:
         if: steps.settings.outputs.MVN_DEPLOY_OSSRH == 'true'
         run: >
           mvn 
-          -P 'deploy,deploy-oss,!module-example,!module-devs'
+          -P 'repo-snapshot,deploy,deploy-oss,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           -Dorg.slf4j.simpleLogger.log.lombok=WARN
@@ -200,7 +200,7 @@ jobs:
         continue-on-error: ${{ inputs.deployAltrh != 'true' }}
         run: >
           mvn 
-          -P 'deploy,deploy-alt,deploy-old,!module-example,!module-devs'
+          -P 'repo-snapshot,deploy,deploy-alt,deploy-old,!module-example,!module-devs'
           ${{ steps.settings.outputs.MVN_REVISION }}
           -Dgpg.passphrase=${MVN_GPG_PASS}
           -Dorg.slf4j.simpleLogger.log.lombok=WARN

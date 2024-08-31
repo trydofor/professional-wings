@@ -18,6 +18,10 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar</artifactId>
         </dependency>
         <dependency>
@@ -25,14 +29,10 @@
             <artifactId>slardar-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- revision fit -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-codegen</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- test -->

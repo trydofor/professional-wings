@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
+import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 
 /**
  * Designed for non-runtime tuning, so no write protection is provided.
@@ -205,7 +205,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         for (Map.Entry<String, String> en : alias.entrySet()) {
             final String k = en.getKey();
             final String v = en.getValue();
-            if (k.equals(v) || notValue(v)) {
+            if (k.equals(v) || invalid(v)) {
                 continue;
             }
             aliasEnc.put(k, v);

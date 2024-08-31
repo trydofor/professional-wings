@@ -24,13 +24,13 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @Slf4j
 public class TestingDatabase {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TestingDatabaseHelper testingDatabaseHelper;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TestingPropertyHelper testingPropertyHelper;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected SchemaRevisionManager schemaRevisionManager;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected SchemaShardingManager schemaShardingManager;
 
     /**

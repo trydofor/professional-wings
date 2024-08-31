@@ -54,8 +54,8 @@ public class MailConfigProvider {
     @Contract("_->new")
     public TinyMailConfig combineConfig(@Nullable TinyMailConfig that) {
         final TinyMailConfig newConf = new TinyMailConfig();
-        newConf.adopt(that);
-        newConf.merge(configProp.getDefault());
+        TinyMailConfig.ConfSetter.toAny(newConf, that);
+        TinyMailConfig.ConfSetter.toInvalid(newConf, configProp.getDefault());
         return newConf;
     }
 }

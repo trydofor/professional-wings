@@ -20,8 +20,9 @@ import java.io.IOException;
 @Setter @Getter
 public class WingsReuseStreamFilter extends OncePerRequestFilter implements Ordered {
 
+    public static final int ORDER = WingsOrdered.Lv4Application;
 
-    private int order = WingsOrdered.Lv4Application;
+    private int order = ORDER;
     private RequestResponseLogging requestResponseLogging;
 
     @Override

@@ -101,9 +101,9 @@ public class JvmMetric implements WarnMetric {
         public static final String Key$processCent = Key + ".process-cent";
 
         /**
-         * process Cpu Load without percentage, range `[0, 100*cores]`
+         * process Cpu Load without percentage, range `[0, 100*cores]`, default=80x4
          */
-        private int processLoad = 150;
+        private int processLoad = 320;
         public static final String Key$processLoad = Key + ".process-load";
 
         /**

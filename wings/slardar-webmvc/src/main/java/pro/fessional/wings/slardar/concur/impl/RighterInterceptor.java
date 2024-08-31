@@ -110,6 +110,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             return true;
         }
         catch (Exception e) {
+            // noinspection StringConcatenationArgumentToLogCall
             log.info("failed to deserialize. session=" + session + ", audit=" + audit, e);
             responseError(response);
             return false;

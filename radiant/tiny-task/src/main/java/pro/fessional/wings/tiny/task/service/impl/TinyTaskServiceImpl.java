@@ -36,7 +36,7 @@ public class TinyTaskServiceImpl implements TinyTaskService {
     @Override
     @NotNull
     public ThreadPoolTaskScheduler referScheduler(boolean fast) {
-        return fast ? TaskSchedulerHelper.Fast() : TaskSchedulerHelper.Scheduled();
+        return TaskSchedulerHelper.Scheduler(fast);
     }
 
     @Override
@@ -45,13 +45,13 @@ public class TinyTaskServiceImpl implements TinyTaskService {
         final Set<Conf> conf = tinyTaskConfService.config(taskerBean);
         final Set<Task> rst = new HashSet<>();
         for (Conf cnf : conf) {
-            if (cnf.isEnabled() && cnf.isAutorun()) {
+            if (cnf.isEnabled() && cnf.isAutorun() && cnf.isMatched()) {
                 final boolean cd = tinyTaskExecService.launch(cnf.getId());
-                log.info("schedule task {}, scheduled={}", cnf, cd);
+                log.info("schedule bean tiny-task {}, scheduled={}", cnf, cd);
                 rst.add(new Task(cnf.getId(), cnf.getKey(), cd));
             }
             else {
-                log.info("skip task {}", cnf);
+                log.info("skip bean tiny-task {}", cnf);
             }
         }
         return rst;
@@ -63,11 +63,11 @@ public class TinyTaskServiceImpl implements TinyTaskService {
         final boolean cd;
         if (cnf.isEnabled()) {
             cd = tinyTaskExecService.launch(cnf.getId());
-            log.info("schedule task {}, scheduled={}", cnf, cd);
+            log.info("schedule method tiny-task {}, scheduled={}", cnf, cd);
         }
         else {
             cd = false;
-            log.info("skip task {}", cnf);
+            log.info("skip method tiny-task {}", cnf);
         }
 
         return new Task(cnf.getId(), cnf.getKey(), cd);

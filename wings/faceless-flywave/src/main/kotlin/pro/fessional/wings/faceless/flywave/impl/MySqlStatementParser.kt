@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import pro.fessional.mirana.bits.Bytes
 import pro.fessional.mirana.data.Null
 import pro.fessional.mirana.time.DateFormatter
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -94,7 +95,7 @@ class MySqlStatementParser : SqlStatementParser {
     }
 
     override fun parseTypeAndTable(sql: String): SqlStatementParser.SqlType {
-        if(sql.startsWith("SELECT ",true)) {
+        if (sql.startsWith("SELECT ", true)) {
             return SqlStatementParser.SqlType.Other
         }
 
@@ -124,18 +125,7 @@ class MySqlStatementParser : SqlStatementParser {
         return SqlStatementParser.SqlType.Other
     }
 
-    override fun safeName(str: String): String {
-        val i1 = str.indexOf('`')
-        if (i1 >= 0) {
-            val i2 = str.lastIndexOf('`')
-            return if (i1 == 0 && i2 == str.length - 1) {
-                str
-            } else {
-                "`${str.replaceAfter("`", "")}`"
-            }
-        }
-        return "`$str`"
-    }
+    override fun safeName(str: String): String = JdbcTemplateHelper.safeName(str)
 
     // https://dev.mysql.com/doc/refman/8.0/en/string-literals.html#character-escape-sequences
     override fun safeValue(obj: Any?): String {

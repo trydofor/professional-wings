@@ -16,27 +16,64 @@ import java.time.LocalDateTime;
 public interface TinyMailService {
 
     /**
-     * Sync send, return success or not, or throw exception.
-     * If not success, async retry
+     * send success
+     */
+    int Success = 0;
+
+    /**
+     * failed to check before send. e.g. prepare and check prop, lock, format
+     */
+    int ErrCheck = -1;
+
+    /**
+     * other than MailRetryException after check
+     */
+    int ErrOther = -2;
+
+    /**
+     * <pre>
+     * Save first, then Sync single send. and return,
+     * - true, if send success.
+     * - false, if check fail, e.g. prop, lock or format.
+     * - throw if send fail, MailRetryException if async retry.
+     * </pre>
+     *
+     * @throws MailRetryException if retry
+     * @throws Exception          if unhandled
      */
     boolean send(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry
+     * <pre>
+     * Save first, then Sync single send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - {@value #Success}, if send success.
+     * - mills &gt; now(), estimated retry time, if fail and async retry
+     * </pre>
      */
-    boolean post(@NotNull TinyMail message, boolean retry);
+    long post(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry.
+     * <pre>
+     * Save first, then Async batch send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - mills &gt; now(), estimated send or retry (when error) time
+     * </pre>
      */
     long emit(@NotNull TinyMail message, boolean retry);
 
     /**
-     * Sync send, return success or not, or throw exception.
-     * If not success, async retry
+     * <pre>
+     * Save first, then Sync single send. and return,
+     * - true, if send success.
+     * - false, if check fail, e.g. prop, lock or format.
+     * - throw if send fail, MailRetryException if async retry.
+     * </pre>
+     *
+     * @throws MailRetryException if retry
+     * @throws Exception          if unhandled
      */
     default boolean send(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -44,18 +81,26 @@ public interface TinyMailService {
     }
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry
+     * <pre>
+     * Save first, then Sync single send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - {@value #Success}, if send success.
+     * - mills &gt; now(), estimated retry time, if fail and async retry
+     * </pre>
      */
-    default boolean post(@NotNull TinyMailPlain message) {
+    default long post(@NotNull TinyMailPlain message) {
         final long id = save(message);
         return post(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
     }
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry.
+     * <pre>
+     * Save first, then Async batch send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - mills &gt; now(), estimated send or retry (when error) time
+     * </pre>
      */
     default long emit(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -63,45 +108,83 @@ public interface TinyMailService {
     }
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Save first, then Sync single send. and return,
+     * - true, if send success.
+     * - false, if check fail, e.g. prop, lock or format.
+     * - throw if send fail, MailRetryException if async retry.
+     * </pre>
+     *
+     * @throws MailRetryException if retry
+     * @throws Exception          if unhandled
      */
     boolean send(long id, boolean retry, boolean check);
 
     /**
-     * Sync send, fire and forget, no exception throw.
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Save first, then Sync single send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - {@value #Success}, if send success.
+     * - mills &gt; now(), estimated retry time, if fail and async retry
+     * </pre>
      */
-    boolean post(long id, boolean retry, boolean check);
+    long post(long id, boolean retry, boolean check);
 
     /**
-     * Async, no exception throw. auto batch send.
-     * Return the estimated sending time, `-1` for failure
-     * If not success, async retry, whether to check state before sending
+     * <pre>
+     * Save first, then Async batch send, fire and forget, no exception throw. and return,
+     * - {@value #ErrOther}, if throw non MailRetryException.
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - mills &gt; now(), estimated send or retry (when error) time
+     * </pre>
      */
     long emit(long id, boolean retry, boolean check);
 
     /**
-     * Create(id is empty) or edit a mail, return the id
+     * Create(id is empty) or edit a mail with check, return the id.
+     * NOTE: no schedule to send, need manually send/post/emit it.
      */
-    long save(@NotNull TinyMailPlain message);
+    default long save(@NotNull TinyMailPlain message) {
+        return save(message, true);
+    }
 
     /**
-     * Sync scan the mail to resend, return the count, and send them async
+     * Create(id is empty) or edit a mail with check, return the id.
+     * NOTE: no schedule to send, need manually send/post/emit it.
      */
-    int scan();
-
+    long save(@NotNull TinyMailPlain message, boolean check);
 
     /**
-     * Create the mail, and auto send it in sync or async way.
-     * `-1` means failure, `0` means sync send,
-     * otherwise means async send at estimated sending time
+     * <pre>
+     * Sync scan the unsent mail to resend them async, return the count. and if idel is
+     * * null, only scan, nothing to idle
+     * * &gt; 0, adjust the scheduled scan interval mills
+     * * = 0, disable the scheduled scan
+     * * &lt; 0, reset to scan-idle prop if adjusted before
+     * </pre>
+     */
+    int scan(Long idle);
+
+    /**
+     * Sync scan the unsent mail to resend them async, return the count.
+     */
+    default int scan() {
+        return scan(null);
+    }
+
+    /**
+     * <pre>
+     * Save first, then auto post/emit by its mail-date. and retrun,
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - {@value #Success}, if send success.
+     * - mills &gt; now(), estimated retry time, if fail and async retry
+     * </pre>
      */
     default long auto(@NotNull TinyMail message, boolean retry) {
         final LocalDateTime md = message.getDate();
         if (md == null || md.isBefore(ThreadNow.localDateTime())) {
-            final boolean ok = send(message, retry);
-            return ok ? 0 : -1;
+            return post(message, retry);
         }
         else {
             return emit(message, retry);
@@ -109,16 +192,18 @@ public interface TinyMailService {
     }
 
     /**
-     * Create the mail, and auto send it in sync or async way.
-     * `-1` means failure, `0` means sync send,
-     * otherwise means async send at estimated sending time
+     * <pre>
+     * Save first, then auto post/emit by its mail-date. and retrun,
+     * - {@value #ErrCheck}, if check fail, e.g. prop, lock or format.
+     * - {@value #Success}, if send success.
+     * - mills &gt; now(), estimated retry time, if fail and async retry
+     * </pre>
      */
     default long auto(@NotNull TinyMailPlain message) {
         final long id = save(message);
         final LocalDateTime md = message.getDate();
         if (md == null || md.isBefore(ThreadNow.localDateTime())) {
-            final boolean ok = send(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
-            return ok ? 0 : -1;
+            return post(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
         }
         else {
             return emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
@@ -133,11 +218,11 @@ public interface TinyMailService {
         /**
          * hook status, return true will stop mail next send
          *
-         * @param po        mail info
-         * @param cost      send cost
-         * @param exception error if fail
+         * @param po    mail info
+         * @param cost  send cost
+         * @param error if fail
          * @return whether stop next send
          */
-        boolean stop(@NotNull WinMailSender po, long cost, Exception exception);
+        boolean stop(@NotNull WinMailSender po, long cost, Exception error);
     }
 }

@@ -8,34 +8,26 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
-import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
-import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.project.ProjectEnumGenerator;
-import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
-import pro.fessional.wings.warlock.project.Warlock2EnumGenerator;
 import pro.fessional.wings.warlock.project.Warlock3JooqGenerator;
-import pro.fessional.wings.warlock.project.Warlock4AuthGenerator;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * @author trydofor
  * @since 2023-01-23
  */
- @SpringBootTest(properties = "testing.dbname=wings_faceless")
+@SpringBootTest(properties = "testing.dbname=wings_faceless")
 @EnabledIfSystemProperty(named = "devs-autogen", matches = "true")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenTestCodeTest {
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private DataSource dataSource;
-    @Setter(onMethod_ = {@Value("${spring.datasource.url}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.url}") })
     private String jdbcUrl;
-    @Setter(onMethod_ = {@Value("${spring.datasource.username}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.username}") })
     private String jdbcUser;
-    @Setter(onMethod_ = {@Value("${spring.datasource.password}")})
+    @Setter(onMethod_ = { @Value("${spring.datasource.password}") })
     private String jdbcPass;
 
     private final String projectRoot = "../../";

@@ -86,6 +86,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
                 }
             }
             catch (Exception e) {
+                // noinspection StringConcatenationArgumentToLogCall
                 log.warn("failed to getHandler in HandlerMapping=" + hm.getClass(), e);
             }
         }

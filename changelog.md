@@ -8,7 +8,7 @@ Help Yourself [Commits] and [History]
 
 Notable [Changes] in [WingsDoc]
 
-[History]: https://github.com/trydofor/pro.fessional.wings/tags
-[Commits]: https://github.com/trydofor/pro.fessional.wings/commits/develop
+[History]: https://github.com/trydofor/professional-wings/tags
+[Commits]: https://github.com/trydofor/professional-wings/commits/develop
 [Changes]: https://wings.fessional.pro/9-example/9a.wings-change/
 [WingsDoc]: https://wings.fessional.pro/

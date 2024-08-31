@@ -20,15 +20,16 @@ import pro.fessional.wings.tiny.mail.TestingMailUtil;
  * @since 2023-01-10
  */
 @SpringBootTest(properties = {
-        "wings.tiny.mail.service.boot-scan=0",
+    "wings.tiny.mail.service.scan-idle=0",
+    "wings.tiny.mail.service.boot-scan=0",
 })
 @Slf4j
 class TinyMailServiceTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TinyMailService tinyMailService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected MailProperties mailProperties;
 
     @Test

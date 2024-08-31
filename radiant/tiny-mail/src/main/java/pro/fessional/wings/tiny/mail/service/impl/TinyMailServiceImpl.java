@@ -1,48 +1,57 @@
 package pro.fessional.wings.tiny.mail.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.mail.MessagingException;
 import lombok.Data;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailSendException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.function.SingletonSupplier;
 import pro.fessional.mirana.best.AssertArgs;
+import pro.fessional.mirana.best.Param;
 import pro.fessional.mirana.cast.BoxedCastUtil;
-import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.cond.IfSetter;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
-import pro.fessional.wings.slardar.jackson.JacksonHelper;
+import pro.fessional.wings.silencer.support.PropHelper;
+import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
 import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
+import pro.fessional.wings.tiny.mail.sender.MailRetryException;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager.BatchResult;
+import pro.fessional.wings.tiny.mail.sender.MailStopException;
 import pro.fessional.wings.tiny.mail.sender.MailWaitException;
 import pro.fessional.wings.tiny.mail.sender.TinyMailConfig;
 import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.service.TinyMail;
+import pro.fessional.wings.tiny.mail.service.TinyMailLazy;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
@@ -50,18 +59,23 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
+import static pro.fessional.wings.silencer.support.PropHelper.commaArray;
+import static pro.fessional.wings.silencer.support.PropHelper.invalid;
 
 /**
  * @author trydofor
@@ -88,92 +102,165 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected TinyMailServiceProp tinyMailServiceProp;
     @Setter(onMethod_ = { @Autowired })
     protected ResourceLoader resourceLoader;
-    @Setter(onMethod_ = { @Autowired(required = false) })
-    protected List<StatusHook> statusHooks;
+    @Setter(onMethod_ = { @Autowired })
+    protected ObjectProvider<StatusHook> statusHookProvider;
+    @Setter(onMethod_ = { @Autowired })
+    protected ObjectProvider<TinyMailLazy> lazyBeanProvider;
 
-    @Setter(onMethod_ = { @Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) })
-    private ThreadPoolTaskScheduler taskScheduler;
+    // init by afterPropertiesSet
+    protected ThreadPoolTaskScheduler taskScheduler;
+    protected volatile boolean isShutdown = false;
+    protected SingletonSupplier<Map<String, TinyMailLazy>> lazyBeanHolder;
+    protected SingletonSupplier<List<StatusHook>> statusHookHolder;
 
-    @SuppressWarnings("all")
-    private final PriorityBlockingQueue<AsyncMail> asyncMails = new PriorityBlockingQueue<>();
+    protected final PriorityQueue<AsyncMail> asyncMailQueue = new PriorityQueue<>();
+    protected final ConcurrentHashMap<Long, ScheduledFuture<?>> asyncMailTask = new ConcurrentHashMap<>();
 
     @Override
     public boolean send(@NotNull TinyMail message, boolean retry) {
-        final String conf = message.getConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "mail conf={} not found", conf);
-
-        final WinMailSender po = saveMailSender(config, message);
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        return doSyncSend(po, mailMessage, retry, true);
+        return doSend(true, message, retry) == Success;
     }
 
     @Override
-    public boolean post(@NotNull TinyMail message, boolean retry) {
+    public long post(@NotNull TinyMail message, boolean retry) {
         try {
-            return send(message, retry);
+            return doSend(true, message, retry);
+        }
+        catch (MailRetryException e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.warn("fail to post tiny-mail, next-retry=" + e.getNextEpoch() + ", subject=" + message.getSubject(), e.getCause());
+            return e.getNextEpoch();
         }
         catch (Exception e) {
-            log.error("fail to post mail, subject=" + message.getSubject(), e);
-            return false;
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("fail to post tiny-mail, retry=" + retry + ", subject=" + message.getSubject(), e);
+            return ErrOther;
         }
     }
 
     @Override
     public long emit(@NotNull TinyMail message, boolean retry) {
-        final String conf = message.getConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "mail conf={} not found", conf);
-        final WinMailSender po = saveMailSender(config, message);
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        return doAsyncFreshSend(po, mailMessage, retry, true);
+        try {
+            return doSend(false, message, retry);
+        }
+        catch (MailRetryException e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.warn("fail to emit tiny-mail, next-retry=" + e.getNextEpoch() + ", subject=" + message.getSubject(), e.getCause());
+            return e.getNextEpoch();
+        }
+        catch (Exception e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("fail to emit tiny-mail, retry=" + retry + ", subject=" + message.getSubject(), e);
+            return ErrOther;
+        }
     }
 
     @Override
     public boolean send(long id, boolean retry, boolean check) {
-        final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        if (po == null) {
-            log.warn("mail not found by id={}, skip send", id);
-            return false;
-        }
-        final String conf = po.getMailConf();
-        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        if (config == null) {
-            log.warn("mail conf={} not found", conf);
-            return false;
-        }
-
-        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
-        return doSyncSend(po, mailMessage, retry, check);
+        return doSend(true, id, retry, check) == Success;
     }
 
     @Override
-    public boolean post(long id, boolean retry, boolean check) {
+    public long post(long id, boolean retry, boolean check) {
         try {
-            return send(id, retry, check);
+            return doSend(true, id, retry, check);
+        }
+        catch (MailRetryException e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.warn("fail to post tiny-mail, next-retry=" + e.getNextEpoch() + ", id=" + id, e.getCause());
+            return e.getNextEpoch();
         }
         catch (Exception e) {
-            log.error("fail to post mail, id=" + id, e);
-            return false;
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("fail to post tiny-mail, retry=" + retry + ", id=" + id, e);
+            return ErrOther;
         }
     }
 
     @Override
     public long emit(long id, boolean retry, boolean check) {
-        final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        if (po == null) {
-            log.warn("mail not found by id={}, skip emit", id);
-            return -1;
+        try {
+            return doSend(false, id, retry, check);
         }
-        return doAsyncFreshSend(po, null, retry, check);
+        catch (MailRetryException e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.warn("fail to emit tiny-mail, next-retry=" + e.getNextEpoch() + ", id=" + id, e.getCause());
+            return e.getNextEpoch();
+        }
+        catch (Exception e) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("fail to emit tiny-mail, retry=" + retry + ", id=" + id, e);
+            return ErrOther;
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder();
+        TaskSchedulingProperties scheduler = tinyMailServiceProp.getScheduler();
+        builder = builder.poolSize(scheduler.getPool().getSize());
+        builder = builder.threadNamePrefix(scheduler.getThreadNamePrefix());
+        TaskSchedulingProperties.Shutdown shutdown = scheduler.getShutdown();
+        builder = builder.awaitTermination(shutdown.isAwaitTermination());
+        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
+
+        taskScheduler = TaskSchedulerHelper.Ttl(builder);
+        taskScheduler.initialize();
+        isShutdown = false;
+        log.info("tiny-mail taskScheduler, prefix={}", taskScheduler.getThreadNamePrefix());
+
+        final long idle = tinyMailServiceProp.getBootScan().toMillis();
+        if (idle > 0) {
+            log.info("tiny-mail schedule boot-scan after={} ms", idle);
+            var task = taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
+            idleScanTask.set(task);
+        }
+
+        statusHookHolder = SingletonSupplier.of(() -> statusHookProvider.orderedStream().toList());
+        lazyBeanHolder = SingletonSupplier.of(() -> {
+            Map<String, TinyMailLazy> map = new HashMap<>();
+            for (TinyMailLazy bean : lazyBeanProvider) {
+                TinyMailLazy old = map.put(bean.lazyBean(), bean);
+                if (old != null) {
+                    log.error("lazy bean name existed, name={}, new-bean={}", old.lazyBean(), bean.getClass());
+                }
+            }
+            return map.isEmpty() ? Collections.emptyMap() : map;
+        });
+    }
+
+    @EventListener(ContextClosedEvent.class)
+    public void destroy() {
+        isShutdown = true;
+
+        if (taskScheduler != null) {
+            taskScheduler.shutdown();
+        }
+
+        int size = 0;
+        for (ScheduledFuture<?> task : asyncMailTask.values()) {
+            task.cancel(false);
+            size++;
+        }
+
+        if (size > 0) {
+            asyncMailTask.clear();
+            log.info("cancel async mail for shutdown, size={}", size);
+        }
+
+        ScheduledFuture<?> task = idleScanTask.get();
+        if (task != null) {
+            task.cancel(false);
+            log.info("cancel async scan mail for shutdown");
+        }
     }
 
     @Override
     @SuppressWarnings("DuplicatedCode")
-    public long save(@NotNull TinyMailPlain msg) {
+    public long save(@NotNull TinyMailPlain msg, boolean check) {
         final String conf = msg.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "mail conf={} not found", conf);
+        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
 
         final WinMailSender po = new WinMailSender();
         final boolean isNew = msg.getId() == null || msg.getId() <= 0;
@@ -194,7 +281,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
         else {
             id = msg.getId();
-            Null.notNull(msg.getNextSend(), po::setNextSend);
+            IfSetter.nonnull(po::setNextSend, msg.getNextSend());
         }
 
         po.setId(id);
@@ -208,21 +295,27 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailReply(toString(msg.getReply(), config.getReply()));
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
-        po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
-        po.setMailFile(toStringMap(msg.getAttachment()));
+        po.setMailHtml(EmptySugar.emptyOrElse(msg.getHtml(), config::getHtml));
+        po.setMailFile(toString(msg.getAttachment()));
         po.setMailMark(msg.getMark());
+
         po.setMailDate(md);
+        po.setLazyBean(msg.getLazyBean());
+        po.setLazyPara(msg.getLazyPara());
 
-        Null.notNull(msg.getMaxFail(), po::setMaxFail);
-        Null.notNull(msg.getMaxDone(), po::setMaxDone);
+        // PropertyMapper
+        po.setMaxFail(EmptySugar.emptyOrElse(msg.getMaxFail(), tinyMailServiceProp::getMaxFail));
+        po.setMaxDone(EmptySugar.emptyOrElse(msg.getMaxDone(), tinyMailServiceProp::getMaxDone));
 
-        Null.notNull(msg.getRefType(), po::setRefType);
-        Null.notNull(msg.getRefKey1(), po::setRefKey1);
-        Null.notNull(msg.getRefKey2(), po::setRefKey2);
+        IfSetter.nonnull(po::setRefType, msg.getRefType());
+        IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());
+        IfSetter.nonnull(po::setRefKey2, msg.getRefKey2());
 
-        // try to check message format
-        final TinyMailMessage tms = makeMailMessage(config, po, null);
-        mailSenderManager.checkMessage(tms);
+        if (check) {
+            // try to check message format
+            final TinyMailMessage tms = makeMailMessage(config, po, null);
+            mailSenderManager.checkMessage(tms);
+        }
 
         journalService.commit(Jane.Insert, journal -> {
             if (isNew) {
@@ -239,17 +332,72 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     @Override
-    public int scan() {
+    public int scan(Long idle) {
+        if (idle == null) return scanSync();
+
+        idleScanMills.set(idle);
+        final ScheduledFuture<?> task = idleScanTask.get();
+        if (task != null) task.cancel(false);
+
+        return scanIdle();
+    }
+
+    @NotNull
+    public ArrayList<AsyncMail> listAsyncMailQueue() {
+        synchronized (asyncMailQueue) {
+            return new ArrayList<>(asyncMailQueue);
+        }
+    }
+
+    @NotNull
+    public TreeMap<Long, ScheduledFuture<?>> listAsyncMailTask() {
+        return new TreeMap(asyncMailTask);
+    }
+
+    protected final AtomicLong idleScanMills = new AtomicLong(-1);
+    protected final AtomicReference<ScheduledFuture<?>> idleScanTask = new AtomicReference<>();
+
+    protected int scanIdle() {
+        int size = -1;
+        try {
+            size = scanSync();
+        }
+        catch (Exception e) {
+            log.error("fail to scanSync", e);
+        }
+
+        long idle = idleScanMills.get();
+
+        if (idle < 0) { // reset to prop
+            idle = tinyMailServiceProp.getScanIdle().toMillis();
+            idleScanMills.set(idle);
+            log.info("reset tiny-mail scan idle to prop={} ms", idle);
+        }
+
+        if (idle > 0) {
+            var task = taskScheduler.schedule(this::scanIdle, Instant.ofEpochMilli(ThreadNow.millis() + idle));
+            idleScanTask.set(task);
+            log.info("plan tiny-mail scan, idle={} ms", idle);
+        }
+        else {
+            idleScanTask.set(null);
+            log.info("stop tiny-mail scan, idle={} ms", idle);
+        }
+
+        return size;
+    }
+
+    protected int scanSync() {
         final long now = ThreadNow.millis();
         final LocalDateTime min = DateLocaling.sysLdt(now - tinyMailServiceProp.getMaxNext().toMillis());
         final LocalDateTime max = DateLocaling.sysLdt(now + tinyMailServiceProp.getTryNext().toMillis());
-        log.info("scan misfire-mail to queue, min={}, max={}", min, max);
+        log.info("scan tiny-mail to queue, next-send min={}, max={}", min, max);
 
         final WinMailSenderTable t = winMailSenderDao.getTable();
-        final List<AsyncMail> pos = winMailSenderDao
+        final List<AsyncMail> mails = winMailSenderDao
             .ctx()
             .selectFrom(t)
-            .where(t.NextSend.gt(min).and(t.NextSend.lt(max)))
+            .where(t.NextSend.ge(min).and(t.NextSend.lt(max)))
             .fetch()
             .into(WinMailSender.class)
             .stream()
@@ -258,50 +406,39 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             .toList();
 
         //
-        final int size = pos.size();
-        log.info("plan misfire-mail, size={}", size);
+        final int size = mails.size();
         if (size > 0) {
-            asyncMails.addAll(pos);
-            taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(now));
+            planAsyncMail(mails);
         }
         return size;
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        final long bms = tinyMailServiceProp.getBootScan().toMillis();
-        if (bms > 0) {
-            taskScheduler.schedule(this::scan, Instant.ofEpochMilli(ThreadNow.millis() + bms));
-        }
-    }
-
-    private TinyMailMessage makeMailMessage(@NotNull TinyMailConfig config, @NotNull WinMailSender po, @Nullable TinyMail msg) {
+    protected TinyMailMessage makeMailMessage(@NotNull TinyMailConfig config, @NotNull WinMailSender po, @Nullable TinyMail msg) {
         final TinyMailMessage message = new TinyMailMessage();
-        message.adopt(config);
+        TinyMailConfig.ConfSetter.toAny(message, config);
         message.setBizId(po.getId());
 
         if (msg == null) {
             message.setFrom(po.getMailFrom());
-            message.setTo(arrayOrNull(po.getMailTo(), true));
-            message.setCc(arrayOrNull(po.getMailCc(), true));
-            message.setBcc(arrayOrNull(po.getMailBcc(), true));
-            message.setReply(toStrOrNull(po.getMailReply()));
+            message.setTo(commaArray(po.getMailTo()));
+            message.setCc(commaArray(po.getMailCc()));
+            message.setBcc(commaArray(po.getMailBcc()));
+            message.setReply(EmptySugar.emptyToNull(po.getMailReply()));
             message.setHtml(po.getMailHtml());
             message.setSubject(po.getMailSubj());
             message.setContent(po.getMailText());
-            final Map<String, Resource> files = toResource(po.getMailFile());
+            final Map<String, Resource> files = resourceString(po.getMailFile());
             if (!files.isEmpty()) {
                 message.setAttachment(files);
             }
-            message.setBizMark(toStrOrNull(po.getMailMark()));
+            message.setBizMark(EmptySugar.emptyToNull(po.getMailMark()));
         }
         else {
-            if (msg.getFrom() != null) message.setFrom(msg.getFrom());
-            if (msg.getTo() != null) message.setTo(msg.getTo());
-            if (msg.getCc() != null) message.setCc(msg.getCc());
-            if (msg.getBcc() != null) message.setBcc(msg.getBcc());
-            if (msg.getReply() != null) message.setReply(msg.getReply());
-            if (msg.getHtml() != null) message.setHtml(msg.getHtml());
+            IfSetter.nonnull(message::setFrom, msg.getFrom());
+            IfSetter.nonnull(message::setTo, msg.getTo());
+            IfSetter.nonnull(message::setCc, msg.getCc());
+            IfSetter.nonnull(message::setReply, msg.getReply());
+            IfSetter.nonnull(message::setHtml, msg.getHtml());
             message.setSubject(msg.getSubject());
             message.setContent(msg.getContent());
             message.setAttachment(msg.getAttachment());
@@ -311,7 +448,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return message;
     }
 
-    private WinMailSender saveMailSender(@NotNull TinyMailConfig config, @NotNull TinyMail msg) {
+    protected WinMailSender saveMailSender(@NotNull TinyMailConfig config, @NotNull TinyMail msg) {
         final WinMailSender po = new WinMailSender();
         final long id = lightIdService.getId(winMailSenderDao.getTable());
         po.setId(id);
@@ -327,19 +464,21 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailReply(toString(msg.getReply(), config.getReply()));
         po.setMailSubj(msg.getSubject());
         po.setMailText(msg.getContent());
-        po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
-        po.setMailFile(toString(msg.getAttachment()));
+        po.setMailHtml(EmptySugar.emptyOrElse(msg.getHtml(), config::getHtml));
+        po.setMailFile(stringResource(msg.getAttachment()));
         po.setMailMark(msg.getMark());
 
         final LocalDateTime md = msg.getDate();
         po.setMailDate(md);
+        po.setLazyBean(msg.getLazyBean());
+        po.setLazyPara(msg.getLazyPara());
 
-        po.setMaxFail(BoxedCastUtil.orElse(msg.getMaxFail(), tinyMailServiceProp.getMaxFail()));
-        po.setMaxDone(BoxedCastUtil.orElse(msg.getMaxDone(), tinyMailServiceProp.getMaxDone()));
+        po.setMaxFail(EmptySugar.emptyOrElse(msg.getMaxFail(), tinyMailServiceProp::getMaxFail));
+        po.setMaxDone(EmptySugar.emptyOrElse(msg.getMaxDone(), tinyMailServiceProp::getMaxDone));
 
-        Null.notNull(msg.getRefType(), po::setRefType);
-        Null.notNull(msg.getRefKey1(), po::setRefKey1);
-        Null.notNull(msg.getRefKey2(), po::setRefKey2);
+        IfSetter.nonnull(po::setRefType, msg.getRefType());
+        IfSetter.nonnull(po::setRefKey1, msg.getRefKey1());
+        IfSetter.nonnull(po::setRefKey2, msg.getRefKey2());
 
         // Optimist lock
         po.setNextLock(0);
@@ -357,11 +496,24 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return po;
     }
 
-    private boolean notMatchProp(WinMailSender po) {
+    @Nullable
+    protected TinyMailLazy findLazyBean(String name) {
+        return lazyBeanHolder.obtain().get(name);
+    }
+
+    @NotNull
+    protected List<StatusHook> findStatusHook() {
+        return statusHookHolder.obtain();
+    }
+
+    /**
+     * should skip sending, condition not match
+     */
+    protected boolean notMatchProp(@NotNull WinMailSender po) {
         if (tinyMailServiceProp.isOnlyApp()) {
             final String ma = po.getMailApps();
             if (StringUtils.isNotEmpty(ma) && !appName.equalsIgnoreCase(ma)) {
-                log.debug("skip only send app-mail app={}, id={}", appName, po.getId());
+                log.debug("skip only send app tiny-mail app={}, id={}", appName, po.getId());
                 return true;
             }
         }
@@ -370,34 +522,48 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (StringUtils.isNotEmpty(mrs)) {
                 final RunMode rmd = RuntimeMode.getRunMode();
                 if (rmd == RunMode.Nothing) {
-                    log.debug("skip only send run-mail, run={}, id={}", mrs, po.getId());
+                    log.debug("skip only send run tiny-mail, run={}, id={}", mrs, po.getId());
                     return true;
                 }
-                if (!RuntimeMode.hasRunMode(arrayOrNull(mrs, true))) {
-                    log.debug("skip only send run-mail, run={}, cur={}, id={}", mrs, rmd, po.getId());
+                if (!RuntimeMode.voteRunMode(mrs)) {
+                    log.debug("skip only send run tiny-mail, run={}, cur={}, id={}", mrs, rmd, po.getId());
                     return true;
                 }
             }
         }
 
-        final int maxDone = BoxedCastUtil.orElse(po.getMaxDone(), 0) > 0 ? po.getMaxDone() : tinyMailServiceProp.getMaxDone();
-        final int sumDone = BoxedCastUtil.orElse(po.getSumDone(), 0);
+        final int poDone = BoxedCastUtil.orZero(po.getMaxDone());
+        final int maxDone = poDone > 0 ? poDone : tinyMailServiceProp.getMaxDone();
+        final int sumDone = BoxedCastUtil.orZero(po.getSumDone());
         if (sumDone >= maxDone) {
-            log.debug("skip max-send, max={}, sum={}, id={}", maxDone, sumDone, po.getId());
+            log.debug("skip max-send tiny-mail, max={}, sum={}, id={}", maxDone, sumDone, po.getId());
             return true;
         }
 
-        final int maxFail = BoxedCastUtil.orElse(po.getMaxFail(), 0) > 0 ? po.getMaxFail() : tinyMailServiceProp.getMaxFail();
-        final int sumFail = BoxedCastUtil.orElse(po.getSumFail(), 0);
+        final int poFail = BoxedCastUtil.orZero(po.getMaxFail());
+        final int maxFail = poFail > 0 ? poFail : tinyMailServiceProp.getMaxFail();
+        final int sumFail = BoxedCastUtil.orZero(po.getSumFail());
         if (sumFail >= maxFail) {
-            log.debug("skip max-fail, max={}, sum={}, id={}", maxFail, sumFail, po.getId());
+            log.debug("skip max-fail tiny-mail, max={}, sum={}, id={}", maxFail, sumFail, po.getId());
             return true;
+        }
+
+        if (po.getMailText() == null) {
+            String bn = po.getLazyBean();
+            var bean = findLazyBean(bn);
+            if (bean == null) {
+                log.error("stop lazy tiny-mail, not found bean={}, id={}", bn, po.getId());
+                return true;
+            }
         }
 
         return false;
     }
 
-    private boolean notNextLock(WinMailSender po, long now) {
+    /**
+     * should skip sending, others do it
+     */
+    protected boolean notNextLock(@NotNull WinMailSender po, long now) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
         final int rc = winMailSenderDao
             .ctx()
@@ -408,94 +574,148 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             .execute();
 
         if (rc <= 0) {
-            log.debug("skip not-next-lock mail, id={}", po.getId());
+            log.debug("skip not-next-lock tiny-mail, id={}", po.getId());
             return true;
         }
 
         return false;
     }
 
-    private void saveStatusAndRetry(@NotNull WinMailSender po, TinyMailMessage message, long cost, long now, Exception exception, boolean retry, boolean check, boolean rethrow) {
+    protected long doSend(boolean sync, @NotNull TinyMail message, boolean retry) {
+        final String conf = message.getConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
+
+        final WinMailSender po = saveMailSender(config, message);
+
+        if (isShutdown) {
+            log.warn("save but skip tiny-mail for shutdwon, subject={}", message.getSubject());
+            return ErrOther;
+        }
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, true);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, true);
+        }
+    }
+
+    protected long doSend(boolean sync, long id, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("doSend skip tiny-mail for shutdwon, id={}", id);
+            return ErrOther;
+        }
+
+        final WinMailSender po = winMailSenderDao.fetchOneById(id);
+        AssertArgs.notNull(po, "skip tiny-mail not found by id={}", id);
+
+        final String conf = po.getMailConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        AssertArgs.notNull(config, "skip tiny-mail conf={} not found, id={}", conf, id);
+
+        final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
+        if (sync) {
+            return doSyncSend(po, mailMessage, retry, check);
+        }
+        else {
+            return doAsyncSend(po, mailMessage, retry, check);
+        }
+    }
+
+    /**
+     * next if done lt max or exception and retry
+     */
+    protected long saveSendResult(@NotNull WinMailSender po, long cost, long exit, Exception error, boolean retry) {
         long nextSend = -1;
-        boolean notHookStop = true;
+        final Long id = po.getId();
         try {
             final WinMailSenderTable t = winMailSenderDao.getTable();
             final Map<Object, Object> setter = new HashMap<>();
-            if (exception == null) {
+            if (error == null) {
                 setter.put(t.LastFail, null);
-                setter.put(t.LastDone, DateLocaling.sysLdt(now));
+                setter.put(t.LastDone, DateLocaling.sysLdt(exit));
                 setter.put(t.LastCost, cost);
 
-                if (po.getSumDone() + 1 >= tinyMailServiceProp.getMaxDone()) {
-                    setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                    log.debug("done mail by max-send id={}, subject={}", po.getId(), po.getMailSubj());
+                final int poDone = BoxedCastUtil.orZero(po.getMaxDone());
+                final int maxDone = poDone > 0 ? poDone : tinyMailServiceProp.getMaxDone();
+                if (po.getSumDone() + 1 >= maxDone) {
+                    log.debug("done tiny-mail by max-send id={}, subject={}", id, po.getMailSubj());
                 }
                 else {
-                    nextSend = now + tinyMailServiceProp.getTryNext().toMillis();
-                    setter.put(t.NextSend, DateLocaling.sysLdt(nextSend));
-                    log.debug("next done-mail id={}, subject={}", po.getId(), po.getMailSubj());
+                    nextSend = exit + tinyMailServiceProp.getTryNext().toMillis();
+                    log.debug("next done tiny-mail id={}, subject={}", id, po.getMailSubj());
                 }
 
                 setter.put(t.SumSend, t.SumSend.add(1));
                 setter.put(t.SumDone, t.SumDone.add(1));
             }
             else {
-                setter.put(t.LastFail, ThrowableUtil.toString(exception));
+                setter.put(t.LastFail, ThrowableUtil.toString(error));
                 setter.put(t.LastDone, EmptyValue.DATE_TIME);
                 setter.put(t.LastCost, cost);
 
-                final int maxFail = BoxedCastUtil.orElse(po.getMaxFail(), 0) > 0 ? po.getMaxFail() : tinyMailServiceProp.getMaxFail();
+                final int poFail = BoxedCastUtil.orZero(po.getMaxFail());
+                final int maxFail = poFail > 0 ? poFail : tinyMailServiceProp.getMaxFail();
                 if (po.getSumFail() + 1 >= maxFail) {
-                    setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                    log.debug("done mail by max-fail id={}, subject={}", po.getId(), po.getMailSubj());
+                    log.debug("done tiny-mail by max-fail id={}, subject={}", id, po.getMailSubj());
                 }
                 else if (retry) {
-                    if (exception instanceof MailWaitException mwe) {
+                    if (error instanceof MailStopException) {
+                        // noinspection StringConcatenationArgumentToLogCall
+                        log.warn("stop tiny-mail by stop-exception, id=" + id, error);
+                    }
+                    else if (error instanceof MailWaitException mwe) {
                         if (mwe.isStopRetry()) {
-                            setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                            log.error("stop stop-retry mail, id=" + po.getId(), exception);
+                            // noinspection StringConcatenationArgumentToLogCall
+                            log.error("stop tiny-mail by stop-retry, id=" + id, error);
                         }
                         else {
                             nextSend = mwe.getWaitEpoch();
                         }
                     }
-                    else if (exception instanceof MailParseException || exception instanceof MessagingException) {
-                        setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                        log.error("failed to parse, stop mail, id=" + po.getId(), exception);
+                    else if (error instanceof MailParseException || error instanceof MessagingException) {
+                        // noinspection StringConcatenationArgumentToLogCall
+                        log.error("stop tiny-mail by failed parse, id=" + id, error);
                     }
                     else {
-                        nextSend = now + tinyMailServiceProp.getTryNext().toMillis();
-                    }
-
-                    if (nextSend > 0) {
-                        setter.put(t.NextSend, DateLocaling.sysLdt(nextSend));
-                        log.debug("next fail-mail id={}, subject={}", po.getId(), po.getMailSubj());
+                        nextSend = exit + tinyMailServiceProp.getTryNext().toMillis();
                     }
                 }
                 else {
-                    setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                    log.error("stop not-retry mail, id=" + po.getId(), exception);
+                    // noinspection StringConcatenationArgumentToLogCall
+                    log.error("stop tiny-mail by not-retry, id=" + id, error);
                 }
+
                 setter.put(t.SumSend, t.SumSend.add(1));
                 setter.put(t.SumFail, t.SumFail.add(1));
             }
 
-            if (statusHooks != null) {
-                for (StatusHook sh : statusHooks) {
-                    try {
-                        if (sh.stop(po, cost, exception)) {
-                            notHookStop = false;
-                        }
+            boolean hookStop = false;
+
+            for (StatusHook sh : findStatusHook()) {
+                try {
+                    if (sh.stop(po, cost, error)) {
+                        hookStop = true;
                     }
-                    catch (Exception e) {
-                        log.error("should NOT throw in hook, hook-class=" + sh.getClass().getName(), e);
-                    }
+                }
+                catch (Exception e) {
+                    // noinspection StringConcatenationArgumentToLogCall
+                    log.error("should NOT throw in hook, hook-class=" + sh.getClass().getName(), e);
                 }
             }
 
-            if (!notHookStop) {
+            if (hookStop) {
+                log.debug("stop tiny-mail by hook, id={}", id);
+            }
+
+            if (nextSend > 0) {
+                setter.put(t.NextSend, DateLocaling.sysLdt(nextSend));
+                log.debug("next tiny-mail id={}, subject={}", id, po.getMailSubj());
+            }
+            else {
                 setter.put(t.NextSend, EmptyValue.DATE_TIME);
-                log.debug("hook stop mail, id={}", po.getId());
             }
 
             journalService.commit(Jane.Update, journal -> {
@@ -504,183 +724,349 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 winMailSenderDao.ctx()
                                 .update(t)
                                 .set(setter)
-                                .where(t.Id.eq(po.getId()))
+                                .where(t.Id.eq(id))
                                 .execute();
             });
         }
         catch (Exception e) {
-            log.error("failed to save mail status, id=" + po.getId() + ", subject=" + po.getMailSubj(), e);
-            nextSend = now + tinyMailServiceProp.getTryNext().toMillis();
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("failed to save tiny-mail status, id=" + id + ", subject=" + po.getMailSubj(), e);
+            nextSend = exit + tinyMailServiceProp.getTryNext().toMillis();
         }
 
-        if (exception == null) {
-            if (notHookStop && nextSend > 0) {
-                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
-                log.debug("schedule done-mail send, id={}, subject={}", po.getId(), po.getMailSubj());
-            }
-        }
-        else {
-            if (notHookStop && retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
-                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
-                log.debug("schedule fail-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj());
-            }
-            else {
-                if (rethrow) {
-                    if (exception instanceof RuntimeException) {
-                        throw (RuntimeException) exception;
-                    }
-                    else {
-                        throw new MailSendException("failed mail, id=" + po.getId() + ", subject=" + po.getMailSubj(), exception);
-                    }
-                }
-                else {
-                    log.debug("no rethrow or retry mail, id=" + po.getId() + ", subject=" + po.getMailSubj());
-                }
-            }
-        }
+        return nextSend;
     }
 
-    private boolean doSyncSend(@NotNull WinMailSender po, TinyMailMessage mailMessage, boolean retry, boolean check) {
+    protected void editLazyMail(@NotNull WinMailSender po, @NotNull @Param.Out TinyMailMessage message) {
+        // nonnull means no need to edit
+        if (message.getContent() != null) return;
+
+        final Long id = po.getId();
+        final String bn = po.getLazyBean();
+        var bean = findLazyBean(bn);
+        if (bean == null) {
+            throw new MailStopException("tiny-mail lazy-edit, not-found bean=" + bn + ", id=" + id);
+        }
+
+        var edit = bean.lazyEdit(po.getLazyPara());
+        if (edit == null) {
+            throw new MailStopException("tiny-mail lazy-edit, edit is null, id=" + id);
+        }
+
+        final WinMailSenderTable t = winMailSenderDao.getTable();
+        final Map<Object, Object> setter = new HashMap<>();
+
+        Boolean html = edit.getHtml();
+        if (html != null) {
+            setter.put(t.MailHtml, html);
+            message.setHtml(html);
+        }
+
+        String subj = edit.getSubject();
+        if (subj != null) {
+            setter.put(t.MailSubj, subj);
+            message.setSubject(subj);
+        }
+
+        String text = edit.getContent();
+        if (text != null) {
+            setter.put(t.MailText, text);
+            message.setContent(text);
+        }
+
+        Map<String, Resource> file = edit.getAttachment();
+        if (file != null && !file.isEmpty()) {
+            setter.put(t.MailFile, stringResource(file));
+            message.setAttachment(file);
+        }
+
+        if (setter.isEmpty()) {
+            throw new MailStopException("tiny-mail lazy-edit, edit is empty, id=" + id);
+        }
+
+        log.debug("lazy-edit tiny-mail, id={}", id);
+
+        journalService.commit(Jane.Lazify, journal -> {
+            setter.put(t.CommitId, journal.getCommitId());
+            setter.put(t.ModifyDt, journal.getCommitDt());
+            winMailSenderDao.ctx()
+                            .update(t)
+                            .set(setter)
+                            .where(t.Id.eq(id))
+                            .execute();
+        });
+    }
+
+    private long doSyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("doSyncSend skip tiny-mail for shutdwon, id={}", po.getId());
+            return ErrOther;
+        }
+
         final long start;
         if (check) {
-            if (notMatchProp(po)) {
-                return false;
-            }
+            // condition not match
+            if (notMatchProp(po)) return ErrCheck;
 
             start = ThreadNow.millis();
-            if (notNextLock(po, start)) {
-                return false;
-            }
+            // others do it
+            if (notNextLock(po, start)) return ErrCheck;
         }
         else {
             start = ThreadNow.millis();
         }
 
-        Exception exception = null;
+        final Long id = po.getId();
         try {
-            mailSenderManager.singleSend(mailMessage);
+            editLazyMail(po, message);
+        }
+        catch (Exception err) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("stop tiny-mail for lazy-edit error, id=" + id, err);
+            saveSendResult(po, 0, start, err, false); // no retry is lazy fail
+            return ErrCheck;
+        }
+
+        Exception error = null;
+        final long next;
+        try {
+            mailSenderManager.singleSend(message);
         }
         catch (Exception e) {
-            exception = e;
+            error = e;
         }
         finally {
-            final long now = ThreadNow.millis();
-            saveStatusAndRetry(po, mailMessage, now - start, now, exception, retry, check, true);
+            final long end = ThreadNow.millis();
+            next = saveSendResult(po, end - start, end, error, retry);
         }
 
-        return exception == null;
-    }
+        if (next > 0) {
+            planAsyncMail(new AsyncMail(id, next, retry, check, null, message));
+            log.debug("plan tiny-mail next-send, err={}, id={}, subject={}", error == null, id, po.getMailSubj());
+            if (error != null) throw new MailRetryException(next, error);
+        }
 
-    private long doAsyncFreshSend(@NotNull WinMailSender po, TinyMailMessage message, boolean retry, boolean check) {
-        if (check && notMatchProp(po)) return -1;
+        if (error == null) return Success;
 
-        final LocalDateTime md = po.getNextSend();
-        final long mds = md == null ? 0 : DateLocaling.sysEpoch(md);
-        final long now = ThreadNow.millis();
-        final Long id = po.getId();
-        final long nxt;
-        if (mds > now) {
-            nxt = mds;
-            log.debug("plan async date={} id={}", md, id);
+        // noinspection ConstantValue
+        if (error instanceof RuntimeException re) {
+            throw re; // rethrow exception
         }
         else {
-            nxt = now;
-            log.debug("plan async date=now id={}", id);
+            throw new MailSendException("failed tiny-mail, id=" + id + ", subject=" + po.getMailSubj(), error);
         }
-
-        // check format
-        mailSenderManager.checkMessage(message);
-
-        asyncMails.add(new AsyncMail(id, nxt, retry, check, po, message));
-        taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nxt));
-        return nxt;
     }
 
-    private void doAsyncBatchSend() {
+    private long doAsyncSend(@NotNull WinMailSender po, @NotNull TinyMailMessage message, boolean retry, boolean check) {
+        if (isShutdown) {
+            log.warn("doAsyncSend skip tiny-mail for shutdwon, id={}", po.getId());
+            return ErrOther;
+        }
+
+        // condition not match
+        if (check && notMatchProp(po)) return ErrCheck;
+
         final long start = ThreadNow.millis();
-        final int bz = tinyMailServiceProp.getBatchSize();
+        final Long id = po.getId();
+        try {
+            editLazyMail(po, message);
+        }
+        catch (Exception err) {
+            // noinspection StringConcatenationArgumentToLogCall
+            log.error("stop tiny-mail for lazy-edit error, id=" + id, err);
+            saveSendResult(po, 0, start, err, false); // no retry is lazy fail
+            return ErrCheck;
+        }
+
+        final LocalDateTime ns = po.getNextSend();
+        final long nsm = ns == null ? 0 : DateLocaling.sysEpoch(ns);
+
+        long next;
+        if (nsm > start) {
+            next = nsm;
+            log.debug("plan async tiny-mail date={} id={}", ns, id);
+        }
+        else {
+            next = start;
+            log.debug("plan async tiny-mail date=now id={}", id);
+        }
+
+        planAsyncMail(new AsyncMail(id, next, retry, check, po, message));
+        return next;
+    }
+
+    private void planAsyncMail(@NotNull AsyncMail mail) {
+        log.debug("plan async tiny-mail, id={}", mail.id);
+        synchronized (asyncMailQueue) {
+            asyncMailQueue.removeIf(it -> it.id == mail.id);
+            asyncMailQueue.add(mail);
+        }
+        planAsyncMail(mail.next);
+    }
+
+    private void planAsyncMail(@NotNull Collection<AsyncMail> mails) {
+        if (mails.isEmpty()) return;
+
+        final Set<Long> ids = new HashSet<>();
+        long next = -1;
+        for (AsyncMail m : mails) {
+            ids.add(m.id);
+            if (next <= 0) {
+                next = m.next;
+            }
+            else if (m.next < next) {
+                next = m.next;
+            }
+        }
+
+        log.debug("plan async tiny-mail, size={}", ids.size());
+        synchronized (asyncMailQueue) {
+            asyncMailQueue.removeIf(it -> ids.contains(it.id));
+            asyncMailQueue.addAll(mails);
+        }
+
+        planAsyncMail(next);
+    }
+
+    private void planAsyncMail(long next) {
+        if (next <= 0) {
+            log.debug("plan async tiny-mail, skip={}", next);
+            return;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("plan async tiny-mail, next={}", DateLocaling.sysLdt(next));
+        }
+
+        final long nxt = (next / 1_000L + 1) * 1_000L; // ceiling to second
+        asyncMailTask.computeIfAbsent(nxt, k ->
+            taskScheduler.schedule(() -> {
+                try {
+                    sendAsyncMail();
+                }
+                finally {
+                    asyncMailTask.remove(k);
+                }
+            }, Instant.ofEpochMilli(nxt))
+        );
+    }
+
+    private void sendAsyncMail() {
+        final long start = ThreadNow.millis();
+        final int count = Math.max(tinyMailServiceProp.getBatchSize(), 1);
+        final HashMap<Long, AsyncMail> mails = new HashMap<>(count);
+        final HashMap<Long, WinMailSender> freshPo = new HashMap<>(count);
+        final ArrayList<Long> dirtyIds = new ArrayList<>(count);
+        final ArrayList<TinyMailMessage> messages = new ArrayList<>(count);
+        final ArrayList<AsyncMail> nexts = new ArrayList<>(count);
 
         try {
-            final AtomicInteger count = new AtomicInteger(bz > 0 ? bz : 1);
-            final HashMap<Long, AsyncMail> mails = new HashMap<>(count.get());
-            asyncMails.removeIf(it -> {
-                if (count.get() <= 0) return false;
-                if (it.next > start) {
-                    return false;
-                }
-                else {
-                    mails.put(it.id, it);
-                    count.decrementAndGet();
-                    return true;
-                }
-            });
+            while (true) {
+                mails.clear();
+                freshPo.clear();
+                dirtyIds.clear();
+                messages.clear();
+                nexts.clear();
 
-            if (mails.isEmpty()) return;
+                // get TopN by prioriy, remove dupli
+                synchronized (asyncMailQueue) {
+                    asyncMailQueue.removeIf(it -> {
+                        if (it.next > start) return false;
+                        if (mails.size() >= count) return mails.containsKey(it.id);
 
-            final Map<Long, WinMailSender> freshPo = new HashMap<>();
-            final List<Long> dirtyIds = new ArrayList<>();
-            for (AsyncMail am : mails.values()) {
-                if (am.fresher == null) {
-                    dirtyIds.add(am.id);
-                }
-                else {
-                    freshPo.put(am.id, am.fresher);
-                }
-            }
-
-            if (!dirtyIds.isEmpty()) {
-                final WinMailSenderTable t = winMailSenderDao.getTable();
-                winMailSenderDao
-                    .ctx()
-                    .selectFrom(t)
-                    .where(t.Id.in(dirtyIds))
-                    .fetchInto(WinMailSender.class)
-                    .forEach(po -> freshPo.put(po.getId(), po));
-            }
-
-            final List<TinyMailMessage> messages = new ArrayList<>(freshPo.size());
-            for (WinMailSender po : freshPo.values()) {
-                final AsyncMail am = mails.get(po.getId());
-
-                if (am != null && am.check && (notMatchProp(po) || notNextLock(po, start))) {
-                    continue;
+                        mails.put(it.id, it);
+                        return true;
+                    });
                 }
 
-                if (am != null && am.message != null) {
-                    messages.add(am.message);
-                }
-                else {
-                    final String conf = po.getMailConf();
-                    final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-                    if (config == null) {
-                        log.warn("mail conf={} not found", conf);
+                if (mails.isEmpty()) return;
+
+                for (AsyncMail am : mails.values()) {
+                    if (am.fresher == null) {
+                        dirtyIds.add(am.id);
                     }
                     else {
-                        messages.add(makeMailMessage(config, po, null));
+                        freshPo.put(am.id, am.fresher);
                     }
                 }
-            }
 
-            final List<BatchResult> results = mailSenderManager.batchSend(messages);
-            for (BatchResult result : results) {
-                final TinyMailMessage msg = result.getTinyMessage();
-                final WinMailSender po = freshPo.get(msg.getBizId()); // must not null
-                final AsyncMail am = mails.get(po.getId());
-                saveStatusAndRetry(po, msg, result.getCostMillis(), result.getDoneMillis(), result.getException(), am != null && am.retry, am != null && am.check, false);
+                if (!dirtyIds.isEmpty()) {
+                    final WinMailSenderTable t = winMailSenderDao.getTable();
+                    // mails >= freshPo + dirtyIds(db may less)
+                    winMailSenderDao
+                        .ctx()
+                        .selectFrom(t)
+                        .where(t.Id.in(dirtyIds))
+                        .fetchInto(WinMailSender.class)
+                        .forEach(po -> freshPo.put(po.getId(), po));
+                }
+
+                for (WinMailSender po : freshPo.values()) {
+                    final Long id = po.getId();
+                    final AsyncMail am = mails.get(id);
+                    if (am == null) continue; // never null
+
+                    if (am.check && (notMatchProp(po) || notNextLock(po, start))) {
+                        continue;
+                    }
+
+                    final TinyMailMessage msg;
+                    if (am.message != null) {
+                        msg = am.message;
+                    }
+                    else {
+                        final String conf = po.getMailConf();
+                        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+                        if (config == null) {
+                            log.warn("tiny-mail conf={} not found, id={}", conf, id);
+                            continue;
+                        }
+                        else {
+                            msg = makeMailMessage(config, po, null);
+                        }
+                    }
+
+                    try {
+                        editLazyMail(po, msg);
+                        messages.add(msg);
+                    }
+                    catch (Exception err) {
+                        // noinspection StringConcatenationArgumentToLogCall
+                        log.error("stop tiny-mail for lazy-edit error, id=" + id, err);
+                        saveSendResult(po, 0, start, err, false); // no retry is lazy fail
+                    }
+                }
+
+                final List<BatchResult> brs = mailSenderManager.batchSend(messages);
+
+                for (BatchResult br : brs) {
+                    final TinyMailMessage msg = br.getTinyMessage();
+                    final WinMailSender po = freshPo.get(msg.getBizId()); // must not null
+                    final AsyncMail am = mails.get(po.getId());
+                    if (am == null) continue; // never null
+
+                    long nxt = saveSendResult(po, br.getCostMillis(), br.getExitMillis(), br.getException(), am.retry);
+                    if (nxt > 0) {
+                        nexts.add(new AsyncMail(po.getId(), nxt, am.retry, am.check, null, msg));
+                    }
+                }
+
+                planAsyncMail(nexts);
             }
         }
         finally {
-            final int size = asyncMails.size();
-            if (size > 0) {
-                final long next = start + tinyMailServiceProp.getTryNext().toMillis();
-                taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(next));
-                if (size > tinyMailServiceProp.getWarnSize()) {
-                    log.warn("plan next war-size={}, idle={}", size, tinyMailServiceProp.getTryNext());
+            final int ws = tinyMailServiceProp.getWarnSize();
+            final int qs;
+            synchronized (asyncMailQueue) {
+                qs = asyncMailQueue.size();
+            }
+            if (qs > 0) {
+                planAsyncMail(start + tinyMailServiceProp.getTryNext().toMillis());
+                if (qs > ws) {
+                    log.warn("plan tiny-mail queue-size={}, idle={}", qs, tinyMailServiceProp.getTryNext());
                 }
                 else {
-                    log.debug("plan next size={}, idle={}", size, tinyMailServiceProp.getTryNext());
+                    log.debug("plan tiny-mail queue-size={}, idle={}", qs, tinyMailServiceProp.getTryNext());
                 }
             }
         }
@@ -694,7 +1080,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String[] elz) {
-        return notValue(str)
+        return invalid(str)
             ? (elz == null || elz.length == 0
                    ? null
                    : String.join(",", elz))
@@ -703,46 +1089,40 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     @Nullable
     private String toString(String str, String elz) {
-        return notValue(str) ? elz : str;
-    }
-
-    @SneakyThrows
-    @NotNull
-    private String toString(Map<String, Resource> file) {
-        if (file == null || file.isEmpty()) return Null.Str;
-        Map<String, String> nameUrl = new LinkedHashMap<>(file.size());
-        for (Map.Entry<String, Resource> en : file.entrySet()) {
-            nameUrl.put(en.getKey(), CommonPropHelper.toString(en.getValue()));
-        }
-        return JacksonHelper.string(nameUrl, true);
-    }
-
-    @SneakyThrows
-    @NotNull
-    private String toStringMap(Map<String, String> file) {
-        if (file == null || file.isEmpty()) return Null.Str;
-        return JacksonHelper.string(file, true);
+        return invalid(str) ? elz : str;
     }
 
     @Nullable
-    private String toStrOrNull(String str) {
-        return (str == null || str.isEmpty()) ? null : str;
+    private String toString(Map<String, String> file) {
+        if (file == null || file.isEmpty()) return null;
+        return FastJsonHelper.string(file);
+    }
+
+    @Nullable
+    private String stringResource(Map<String, Resource> file) {
+        if (file == null || file.isEmpty()) return null;
+
+        Map<String, String> nameUrl = new LinkedHashMap<>();
+        for (Map.Entry<String, Resource> en : file.entrySet()) {
+            nameUrl.put(en.getKey(), PropHelper.stringResource(en.getValue()));
+        }
+        return toString(nameUrl);
     }
 
     @NotNull
-    private Map<String, Resource> toResource(String map) {
-        if (map == null || map.isEmpty()) return Collections.emptyMap();
+    private Map<String, Resource> resourceString(String jsonMap) {
+        if (EmptySugar.asEmptyValue(jsonMap)) return Collections.emptyMap();
+
         final Map<String, Resource> rst = new LinkedHashMap<>();
-        final Iterator<Map.Entry<String, JsonNode>> node = JacksonHelper.object(map).fields();
-        while (node.hasNext()) {
-            final Map.Entry<String, JsonNode> en = node.next();
-            rst.put(en.getKey(), resourceLoader.getResource(en.getValue().asText()));
+        Map<String, String> map = FastJsonHelper.object(jsonMap, Map.class, String.class, String.class);
+        for (Map.Entry<String, String> en : map.entrySet()) {
+            rst.put(en.getKey(), PropHelper.resourceString(en.getValue(), resourceLoader));
         }
         return rst;
     }
 
     @Data
-    private static class AsyncMail implements Comparable<AsyncMail> {
+    public static class AsyncMail implements Comparable<AsyncMail> {
         private final long id;
         private final long next;
         private final boolean retry;
@@ -760,6 +1140,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     public enum Jane {
         Insert,
-        Update
+        Update,
+        Lazify
     }
 }

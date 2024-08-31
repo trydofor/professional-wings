@@ -1,18 +1,19 @@
 {
   "groups": [
-    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf"},
-    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean"}
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf"}
   ],
   "properties": [
-    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf.SilencerAutoConfiguration", "type": "java.lang.Boolean"},
-
     {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerConfiguration.applicationInspectRunner", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerConfiguration.messageSourceHelper", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerConfiguration.wingsReorderProcessor", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.bean-reorder for short."},
 
     {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerRunnerConfiguration", "type": "java.lang.Boolean"},
     {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerRunnerConfiguration$ReadyEvent", "type": "java.lang.Boolean"},
-    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerRunnerConfiguration$StartedEvent", "type": "java.lang.Boolean"}
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerRunnerConfiguration$StartedEvent", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf.SilencerAutoConfiguration", "type": "java.lang.Boolean"}
   ],
   "hints": []
 }

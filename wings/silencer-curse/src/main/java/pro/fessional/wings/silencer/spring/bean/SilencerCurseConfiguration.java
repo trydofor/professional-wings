@@ -8,21 +8,23 @@ import ch.qos.logback.core.ConsoleAppender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.enhance.ThisLazyPostProcessor;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
-import pro.fessional.wings.silencer.spring.help.VersionInfoHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerRuntimeProp;
+import pro.fessional.wings.silencer.support.InspectHelper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -82,19 +84,20 @@ public class SilencerCurseConfiguration {
     public ApplicationInspectRunner infoGitJvmRunner(ApplicationContext context) {
         log.info("Silencer spring-runs infoGitJvmRunner");
         return new ApplicationInspectRunner(WingsOrdered.Lv1Config, args -> {
-
-
-            log.info("jvm-name=" + VersionInfoHelper.jvmName());
-            log.info("jvm-version=" + VersionInfoHelper.jvmVersion());
-            log.info("jvm-vendor=" + VersionInfoHelper.jvmVendor());
-
             var git = context.getBean(GitProperties.class);
-            log.info("git-branch=" + VersionInfoHelper.branch(git));
-            log.info("git-id=" + VersionInfoHelper.commitId(git));
-            log.info("git-time=" + VersionInfoHelper.commitDateTime(git));
-            log.info("git-build=" + VersionInfoHelper.buildDateTime(git));
-            log.info("git-version=" + VersionInfoHelper.buildVersion(git));
-            log.info("git-message=" + VersionInfoHelper.commitMessage(git));
+            log.info("git-branch=" + InspectHelper.branch(git));
+            log.info("git-id=" + InspectHelper.commitId(git));
+            log.info("git-time=" + InspectHelper.commitDateTime(git));
+            log.info("git-build=" + InspectHelper.buildDateTime(git));
+            log.info("git-version=" + InspectHelper.buildVersion(git));
+            log.info("git-message=" + InspectHelper.commitMessage(git));
+
+            log.info("jvm-name=" + InspectHelper.jvmName());
+            log.info("jvm-version=" + InspectHelper.jvmVersion());
+            log.info("jvm-vendor=" + InspectHelper.jvmVendor());
+
+            log.info("app-ApiMode=" + RuntimeMode.getApiMode());
+            log.info("app-RunMode=" + RuntimeMode.getRunMode());
         });
     }
 
@@ -154,9 +157,15 @@ public class SilencerCurseConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public RuntimeMode runtimeMode(SilencerRuntimeProp prop) {
+    public static BeanPostProcessor thisLazyAwarePostProcessor() {
+        log.info("Silencer spring-auto thisLazyAwarePostProcessor");
+        return new ThisLazyPostProcessor();
+    }
 
-        log.info("Silencer spring-auto runtimeMode");
+    @Bean
+    @ConditionalWingsEnabled
+    public RuntimeMode runtimeMode(SilencerRuntimeProp prop) {
+        log.info("Silencer spring-auto RuntimeMode, runMode=" + prop.getRunMode() + ", apiMode=" + prop.getApiMode());
         return new RuntimeMode(prop.getRunMode(), prop.getApiMode()) {};
     }
 }

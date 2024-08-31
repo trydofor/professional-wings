@@ -23,4 +23,12 @@ public class TinyTaskExecProp {
      */
     private boolean dryrun = false;
     public static final String Key$dryrun = Key + ".dryrun";
+
+    /**
+     * prefix of notice subject
+     *
+     * @see #Key$noticePrefix
+     */
+    private String noticePrefix = "tiny-task";
+    public static final String Key$noticePrefix = Key + ".notice-prefix";
 }

@@ -62,15 +62,6 @@ public class WarlockApiAuthProp {
     public static final String Key$digestMax = Key + ".digest-max";
 
     /**
-     * whether it must be signed, compatible with the old api.
-     *
-     * @see #Key$mustSignature
-     */
-    private boolean mustSignature = true;
-    public static final String Key$mustSignature = Key + ".must-signature";
-
-
-    /**
      * if there is both a file and a json,
      * use this name for the json body and submit it as a File.
      *

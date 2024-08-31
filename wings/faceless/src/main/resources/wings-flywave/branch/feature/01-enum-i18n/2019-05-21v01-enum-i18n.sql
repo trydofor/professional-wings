@@ -1,5 +1,5 @@
 CREATE TABLE `sys_constant_enum` (
-    `id`   INT(11)      NOT NULL COMMENT 'id: 9+ digits for dynamic, 8 digits for static, 3-2-2 (table-column-value) segments, SUPER end with 00',
+    `id`   INT          NOT NULL COMMENT 'id: 9+ digits for dynamic, 8 digits for static, 3-2-2 (table-column-value) segments, SUPER end with 00',
     `type` VARCHAR(100) NOT NULL COMMENT 'enum group: same type for same enum, auto Pascal naming',
     `code` VARCHAR(100) NOT NULL COMMENT 'enum name: Fixed [code|id] for SUPER, external key, coding friendly',
     `hint` VARCHAR(100) NOT NULL COMMENT 'display message',
@@ -179,3 +179,5 @@ VALUES ('sys_constant_enum', 'hint', 'standard_language.zh_CN', 'zh_CN', '简体
 
        ('sys_constant_enum', 'hint', 'standard_language.en_US', 'en_US', 'English(US)'),
        ('sys_constant_enum', 'hint', 'standard_language.en_US', 'zh_CN', '美国英语');
+
+-- CALL FLYWAVE('2019-05-21v01-enum-i18n.sql');

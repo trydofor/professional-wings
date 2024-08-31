@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * okhttp as one word in string/config
@@ -130,4 +132,13 @@ public class SlardarOkhttpProp {
      */
     private boolean redirectNop = false;
     public static final String Key$redirectNop = Key + ".redirect-nop";
+
+    /**
+     * do NOT intercept if the token contained in URL
+     *
+     * @see #Key$interceptNop
+     */
+    private Map<String, String> interceptNop = Collections.emptyMap();
+    public static final String Key$interceptNop = Key + ".intercept-nop";
+
 }

@@ -2,7 +2,9 @@ package pro.fessional.wings.silencer.modulate;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.cond.StaticFlag;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -11,31 +13,22 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class RuntimeMode {
 
-    private static final AtomicReference<Boolean> unitTest = new AtomicReference<>(null);
+    private static volatile @NotNull RunMode runMode = RunMode.Nothing;
+    private static volatile @NotNull ApiMode apiMode = ApiMode.Nothing;
+
+    private static final ConcurrentHashMap<String, Boolean> runVote = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Boolean> apiVote = new ConcurrentHashMap<>();
 
     protected RuntimeMode(@Nullable RunMode run, @Nullable ApiMode api) {
-        if (run != null) runMode = run;
-        if (api != null) apiMode = api;
-    }
-
-    public static boolean isUnitTest() {
-        Boolean b = unitTest.get();
-        if (b == null) {
-            b = false;
-            for (StackTraceElement el : new RuntimeException().getStackTrace()) {
-                if (el.getClassName().startsWith("org.junit.")) {
-                    b = true;
-                    break;
-                }
-            }
-            unitTest.set(b);
+        if (run != null) {
+            runMode = run;
+            runVote.clear();
         }
-        return b;
+        if (api != null) {
+            apiMode = api;
+            apiVote.clear();
+        }
     }
-
-    @NotNull
-    private static RunMode runMode = RunMode.Nothing;
-
 
     @NotNull
     public static RunMode getRunMode() {
@@ -56,7 +49,7 @@ public class RuntimeMode {
 
     public static boolean isRunMode(CharSequence mode) {
         if (mode == null) return false;
-        return contains(mode.toString(), runMode.name());
+        return StaticFlag.vote(runMode.name(), mode.toString()) > 0;
     }
 
     public static boolean hasRunMode(CharSequence... modes) {
@@ -66,8 +59,9 @@ public class RuntimeMode {
         return false;
     }
 
-    @NotNull
-    private static ApiMode apiMode = ApiMode.Nothing;
+    public static boolean voteRunMode(String votes) {
+        return runVote.computeIfAbsent(votes, k -> StaticFlag.hasVote(runMode.name(), k));
+    }
 
     @NotNull
     public static ApiMode getApiMode() {
@@ -88,7 +82,7 @@ public class RuntimeMode {
 
     public static boolean isApiMode(CharSequence mode) {
         if (mode == null) return false;
-        return contains(mode.toString(), apiMode.name());
+        return StaticFlag.vote(apiMode.name(), mode.toString()) > 0;
     }
 
     public static boolean hasApiMode(CharSequence... modes) {
@@ -98,22 +92,27 @@ public class RuntimeMode {
         return false;
     }
 
-    private static boolean contains(String tstr, String ostr) {
-        final int tlen = tstr.length();
-        int toff = 0;
-        for (int i = 0; i < tlen; i++) {
-            if (Character.isJavaIdentifierPart(tstr.charAt(i))) {
-                toff = i;
-                break;
-            }
-        }
-
-        final int olen = ostr.length();
-        if (tstr.regionMatches(true, toff, ostr, 0, olen)) {
-            final int idx = toff + olen;
-            return idx == tlen || !Character.isJavaIdentifierPart(tstr.charAt(idx));
-        }
-
-        return false;
+    public static boolean voteApiMode(String votes) {
+        return apiVote.computeIfAbsent(votes, k -> StaticFlag.hasVote(apiMode.name(), k));
     }
+
+    // //
+
+    private static final AtomicReference<Boolean> unitTest = new AtomicReference<>(null);
+
+    public static boolean isUnitTest() {
+        Boolean b = unitTest.get();
+        if (b == null) {
+            b = false;
+            for (StackTraceElement el : new RuntimeException().getStackTrace()) {
+                if (el.getClassName().startsWith("org.junit.")) {
+                    b = true;
+                    break;
+                }
+            }
+            unitTest.set(b);
+        }
+        return b;
+    }
+
 }

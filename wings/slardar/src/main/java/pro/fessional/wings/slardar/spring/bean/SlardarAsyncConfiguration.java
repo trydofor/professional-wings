@@ -123,10 +123,7 @@ public class SlardarAsyncConfiguration {
         @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler scheduled,
         ThreadPoolTaskSchedulerBuilder scheduledBuilder) {
         log.info("Slardar spring-bean taskSchedulerHelper");
-        return new TaskSchedulerHelper(scheduled, fast) {{
-            FastBuilder = fastSchedulerBuilder;
-            ScheduledBuilder = scheduledBuilder;
-        }};
+        return new TaskSchedulerHelper(scheduled, fast, fastSchedulerBuilder, scheduledBuilder) {};
     }
 
     @Bean
@@ -143,9 +140,6 @@ public class SlardarAsyncConfiguration {
         final Executor exec = TtlExecutors.getTtlExecutor(executor);
         AsyncTaskExecutor liteExecutor = new ConcurrentTaskExecutor(exec);
 
-        return new AsyncHelper(asyncExec, appExec) {{
-            ExecutorBuilder = executorBuilder;
-            LiteExecutor = liteExecutor;
-        }};
+        return new AsyncHelper(asyncExec, appExec, executorBuilder, liteExecutor) {};
     }
 }

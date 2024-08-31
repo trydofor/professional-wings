@@ -154,7 +154,7 @@ class DefaultRevisionManager(
 
             // check and handle boundary
             if (isUptoSql) { // revision is from low to high, inconsistent and non-exist are important
-                if (reviText.last.first != revision) {
+                if (reviText.last().first != revision) {
                     interactive.log(WARN, here, "skip the diff upgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
@@ -164,7 +164,7 @@ class DefaultRevisionManager(
                     continue
                 }
             } else {  // revision is from high to low
-                if (reviText.last.first != revision) {
+                if (reviText.last().first != revision) {
                     interactive.log(WARN, here, "skip the diff downgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
@@ -364,17 +364,17 @@ class DefaultRevisionManager(
                 continue
             }
 
-            val reviSql = applySqls.first
+            val reviSql = applySqls.first()
             val notAppd = isUnapply(reviSql.second)
             val msgAly = applyMessage(reviSql.second)
 
             if (isUpto && !notAppd) {
-                interactive.log(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=true, db=$plainName")
                 continue
             }
 
             if (!isUpto && notAppd) {
-                interactive.log(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=false, db=$plainName")
                 continue
             }
 

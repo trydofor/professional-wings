@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.task.schedule.exec;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public class ExecHolder {
     }
 
     @Contract("_,true->!null")
-    public static NoticeExec<?> getNotice(String bean, boolean nonnull) {
+    public static NoticeExec<?> getNotice(@Nullable String bean, boolean nonnull) {
         final NoticeExec<?> exec = StringUtils.isEmpty(bean) ? null : Notice.get(bean);
         if (nonnull && exec == null) {
             throw new IllegalStateException("notice not found, bean=" + bean);
@@ -30,17 +31,29 @@ public class ExecHolder {
         return exec;
     }
 
+    @Nullable
+    public static NoticeExec<?> delNotice(@NotNull String bean) {
+        return Notice.remove(bean);
+    }
+
+
     @NotNull
     public static TaskerExec getTasker(@NotNull String prop, @NotNull Function<String, TaskerExec> exec) {
         return Tasker.computeIfAbsent(prop, exec);
     }
 
     @Contract("_,true->!null")
-    public static TaskerExec getTasker(String prop, boolean nonnull) {
+    public static TaskerExec getTasker(@Nullable String prop, boolean nonnull) {
         final TaskerExec exec = StringUtils.isEmpty(prop) ? null : Tasker.get(prop);
         if (nonnull && exec == null) {
             throw new IllegalStateException("tasker not found, prop=" + prop);
         }
         return exec;
     }
+
+    @Nullable
+    public static TaskerExec delTasker(@NotNull String prop) {
+        return Tasker.remove(prop);
+    }
+
 }
