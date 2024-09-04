@@ -21,7 +21,7 @@
 
     <properties>
         <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
-        <revision>3.2.130-SNAPSHOT</revision>
+        <revision>3.2.131-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.8</spring-boot.version>
         <!--  -->
