@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-08-08
+THIS_VERSION=2024-09-06
 
 cat <<EOF
 #################################################
@@ -145,18 +145,17 @@ function build_web() {
         echo -e "\033[31mWARN: skip unknown command $_cmd \033[0m"
     fi
 
-    # git hash
-    echo -e "\033[37;42;1m ==== GitHash $WORK_DIR ==== \033[0m"
+    # build hash
+    echo -e "\033[37;42;1m ==== BuildInfo $WORK_DIR ==== \033[0m"
     check_cmd git
-    _ver=$(git log --pretty=format:'%H - %ad %d' -1)
+    _inf="build-info.js"
+    _gid=$(git show --quiet --format="%H")
+    _udt=$(date -u +'%Y-%m-%d %H:%M:%S')
     for _jar in $PACK_JAR; do
         if [[ -d "$_jar" ]]; then
-            find "$_jar" -maxdepth 1 -name 'index.html' | while read -r _idx; do
-                echo -e "append git hash to $_idx"
-                echo "<!-- WingsGitHash $_ver -->" >>"$_idx"
-            done
+            echo "{\"gitid\":\"$_gid\",\"build\":\"$_udt\"}" > "$_jar/$_inf"
         else
-            echo "skip append git hash to $_jar"
+            echo "skip to make $_inf to $_jar"
         fi
     done
 
@@ -276,7 +275,9 @@ case "$1" in
         check_cmd git
 
         echo -e "\033[37;42;1m ==== PULL $WORK_DIR ==== \033[0m"
-        git pull --force
+        git fetch
+        git reset --hard '@{u}'
+        git clean -fd
         echo -e "\033[37;42;1m ==== DONE $WORK_DIR ==== \033[0m"
         git status
         git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
