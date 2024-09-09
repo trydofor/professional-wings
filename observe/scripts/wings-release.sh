@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-09-06
+THIS_VERSION=2024-09-09
 
 cat <<EOF
 #################################################
@@ -192,6 +192,15 @@ function build_auto() {
     echo -e "\033[31mERROR: unknown build type \033[0m"
 }
 
+function git_stat() {
+    echo -e "\033[37;42;1m ==== STAT $WORK_DIR ==== \033[0m"
+    echo -e "\033[32m --pretty=format:'%h - %an, %ad %d : %s' --graph -15 \033[0m"
+    git --no-pager log --date=iso-strict --pretty=format:'%h - %an, %ad %d : %s' --graph -15
+    echo
+    echo -e "\033[32m --stat --graph -3 \033[0m"
+    git --no-pager log --date=iso-strict --stat --graph -3
+}
+
 #############
 # load env
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
@@ -271,6 +280,10 @@ case "$1" in
             fi
         fi
         ;;
+    stat)
+        check_cmd git
+        git_stat
+        ;;
     pull)
         check_cmd git
 
@@ -278,9 +291,8 @@ case "$1" in
         git fetch
         git reset --hard '@{u}'
         git clean -fd
-        echo -e "\033[37;42;1m ==== DONE $WORK_DIR ==== \033[0m"
-        git status
-        git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
+
+        git_stat
         ;;
     pack)
         echo -e "\033[37;42;1m ==== BUILD $WORK_DIR ==== \033[0m"
@@ -366,6 +378,7 @@ case "$1" in
     *)
         echo -e '\033[37;42;1mNOTE: help info, use the following\033[0m'
         echo -e '\033[32m last \033[0m last release info'
+        echo -e '\033[32m stat \033[0m git log last 15/3 stat'
         echo -e '\033[32m pull \033[0m git pull remote'
         echo -e '\033[32m pack \033[0m auto mvn/npm/yarn/pnpm '
         echo -e '\033[32m pack mvn \033[0m mvn clean compile package'
