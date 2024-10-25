@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+  ],
+  "ignorePaths": [
+    "example/**",
+    "observe/**",
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "apache/maven",
+        "java-jdk",
+        "pro.fessional**",
+      ],
+      "enabled": false
+    }
+  ],
+}
