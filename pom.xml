@@ -44,7 +44,7 @@
         <commons-io.version>2.16.1</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/changes-report.html -->
         <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
         <commons-text.version>1.12.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
-        <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
+        <joda-convert.version>2.2.4</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
         <mirana.version>2.7.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.5.1</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
