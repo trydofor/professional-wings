@@ -44,6 +44,9 @@ class MemLoginTest {
     @TmsLink("C14047")
     public void testUsernameLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
+        final String ok0 = OkHttpClientHelper.postJson(okHttpClient, host + "/auth/session/check.json", "");
+        Assertions.assertTrue(ok0.contains("\"success\":false"));
+
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
                 .url(host + "/auth/username/login.json?username=trydofor&password=moMxVKXxA8Pe9XX9"), false);
         String login = OkHttpClientHelper.extractString(r2, false);
@@ -85,6 +88,10 @@ class MemLoginTest {
                 .header("Accept-Language", "en_US"), false);
         String er7 = OkHttpClientHelper.extractString(r7, false);
         Assertions.assertTrue(er7.contains("test should not empty"));
+
+        final String ok6 = OkHttpClientHelper.postJson(okHttpClient, host + "/auth/session/check.json", "");
+        Assertions.assertTrue(ok6.contains("\"success\":true"));
+        Assertions.assertTrue(ok6.contains("\"zoneid\":"));
     }
 
     @Test
@@ -92,6 +99,9 @@ class MemLoginTest {
     @TmsLink("C14048")
     public void testEmailLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
+        final String ok0 = OkHttpClientHelper.postJson(okHttpClient, host + "/auth/session/check.json", "");
+        Assertions.assertTrue(ok0.contains("\"success\":false"));
+
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
                 .url(host + "/auth/email/login.json?username=trydofor@qq.com&password=3bvlPy7oQbds28c1"), false);
         String login = OkHttpClientHelper.extractString(r2, false);
@@ -119,6 +129,11 @@ class MemLoginTest {
                 .url(host + "/auth/current-principal.json"), false);
         String au5 = OkHttpClientHelper.extractString(r5, false);
         log.info("current-principal={}", au5);
+
+        final String ok6 = OkHttpClientHelper.postJson(okHttpClient, host + "/auth/session/check.json", "");
+        log.info("testLogin /auth/session/check.json = {}",ok6);
+        Assertions.assertTrue(ok6.contains("\"success\":true"));
+        Assertions.assertTrue(ok6.contains("\"zoneid\":"));
     }
 
     @Test

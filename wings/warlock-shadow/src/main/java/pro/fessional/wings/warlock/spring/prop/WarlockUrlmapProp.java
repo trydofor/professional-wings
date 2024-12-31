@@ -51,6 +51,14 @@ public class WarlockUrlmapProp {
     public static final String Key$authNonceCheck = Key + ".auth-nonce-check";
 
     /**
+     * check current session, return basic info if valid
+     *
+     * @see #Key$authSessionCheck
+     */
+    private String authSessionCheck = "";
+    public static final String Key$authSessionCheck = Key + ".auth-session-check";
+
+    /**
      * simple authorization code.
      *
      * @see #Key$oauthAuthorize

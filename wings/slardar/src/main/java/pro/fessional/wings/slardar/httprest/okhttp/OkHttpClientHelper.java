@@ -259,7 +259,7 @@ public class OkHttpClientHelper {
     }
 
     public static String executeJson(@NotNull Call.Factory callFactory, @NotNull String url, @Nullable CharSequence json, @NotNull String method) {
-        okhttp3.RequestBody body = json == null ? null : RequestBody.create(json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
+        okhttp3.RequestBody body = RequestBody.create(json == null ? "" : json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
         Request.Builder builder = new okhttp3.Request.Builder()
             .url(url)
             .method(method, body);

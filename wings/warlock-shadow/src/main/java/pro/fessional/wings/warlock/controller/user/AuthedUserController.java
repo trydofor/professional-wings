@@ -77,7 +77,7 @@ public class AuthedUserController {
         ## Returns
         * @return {200 | Result(Dto)} logined user and basis info
         * @return {200 | Result(false)} not logined and the URL without perm
-        * @return {401} logined and no perm to the URL""")
+        * @return {403} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -109,7 +109,6 @@ public class AuthedUserController {
         dto.setOffset(ZonedDateTime.now(zid).getOffset().getTotalSeconds());
     }
 
-
     @Data
     @Schema(description = "Check the perm/role of login user")
     public static class Ins {
@@ -135,7 +134,7 @@ public class AuthedUserController {
         * @return {200 | Result(string[])} logined and perms
         * @return {200 | Result(false)} not logined and the URL without perm
         * @return {200 | Result(false,string[])} check fail, return failed perm and invalidate session
-        * @return {401} logined and no perm to the URL""")
+        * @return {403} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(HttpServletRequest request, @RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -206,7 +205,7 @@ public class AuthedUserController {
         ## Returns
         * @return {200 | Result(Dto)} logined and basis info
         * @return {200 | Result(false)} not logined and the URL without perm
-        * @return {401} logined and no perm to the URL""")
+        * @return {403} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userListSession + "}")
     public R<List<Ses>> listSession() {
         final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
@@ -244,7 +243,7 @@ public class AuthedUserController {
         ## Returns
         * @return {200 | Result(Dto)} logined
         * @return {200 | Result(false)} not logined and the URL without perm
-        * @return {401} logined and no perm to the URL""")
+        * @return {403} logined and no perm to the URL""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
     public R<Boolean> dropSession(@RequestBody Sid sid) {
         final boolean b = wingsSessionHelper.dropSession(sid.sid);
