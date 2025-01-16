@@ -76,7 +76,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
         final String handler = winConfRuntimeDao.fetchOne(String.class, t, t.Key.eq(key), t.Handler);
         ConversionService service = handlerMap.get(handler);
         final String str = service.convert(value, String.class);
-        AssertArgs.notNull(str, "can not covert value to string, key={}", key);
+        AssertArgs.notNull(str, "configKey", "can not covert value to string, key={}", key);
 
         final int rc = winConfRuntimeDao
             .ctx()
@@ -98,7 +98,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
 
     @Override
     public boolean newObject(@NotNull String key, @NotNull Object value, String comment, String handler, ResolvableType structs) {
-        AssertArgs.notEmpty(key, "empty key");
+        AssertArgs.notEmpty(key, "configKey", "empty key");
         final Class<?> valClaz = value.getClass();
 
         ConversionService service = null;
@@ -121,7 +121,7 @@ public class RuntimeConfServiceImpl extends ThisLazy<RuntimeConfServiceImpl> imp
         if (service == null) return false;
 
         final String str = service.convert(value, String.class);
-        AssertArgs.notNull(str, "can not covert value to string, key={}", key);
+        AssertArgs.notNull(str, "configKey", "can not covert value to string, key={}", key);
 
         if (structs == null) structs = ResolvableType.forClass(valClaz);
 

@@ -66,6 +66,8 @@ public class ConstantEnumI18nTest {
         String men = messageSource.getMessage(zhCn.getI18nCode(), Null.StrArr, enUs.toLocale());
         assertEquals("简体中文", mcn);
         assertEquals("Simplified Chinese", men);
+        String men2 = messageSource.getMessage("null", new Object[]{"hello"}, "{0} world", enUs.toLocale());
+        assertEquals("hello world", men2);
     }
 
     void execWingsSql(JdbcTemplate jdbcTemplate, String path) {

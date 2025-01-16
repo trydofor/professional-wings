@@ -103,7 +103,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
         @SneakyThrows
         protected String handle(DataResult<?> dre) {
-            final R<?> ng = R.ng(dre.getMessage(), dre.getCode(), dre.getData());
+            final R<?> ng = R.ng(dre.getData(), dre.getCode(), dre.getMessage());
             return objectMapper.writeValueAsString(ng);
         }
 

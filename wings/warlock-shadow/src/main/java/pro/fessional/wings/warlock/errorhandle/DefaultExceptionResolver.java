@@ -110,7 +110,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
 
     @SneakyThrows
     protected SimpleResponse handle(DataResult<?> dre) {
-        final R<?> ng = R.ng(dre.getMessage(), dre.getCode(), dre.getData());
+        final R<?> ng = R.ng(dre.getData(), dre.getCode(), dre.getMessage());
         final String body = objectMapper.writeValueAsString(ng);
         return new SimpleResponse(defaultResponse.getHttpStatus(), defaultResponse.getContentType(), body);
     }

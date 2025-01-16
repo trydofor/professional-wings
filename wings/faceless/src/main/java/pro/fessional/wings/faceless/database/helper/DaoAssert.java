@@ -1,6 +1,6 @@
 package pro.fessional.wings.faceless.database.helper;
 
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.text.FormatUtil;
 

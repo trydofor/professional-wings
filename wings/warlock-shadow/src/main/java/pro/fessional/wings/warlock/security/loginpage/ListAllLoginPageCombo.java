@@ -34,6 +34,6 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         return ResponseEntity
             .status(status)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(R.okData(warlockSecurityProp.getAuthType().keySet()));
+            .body(R.ok(warlockSecurityProp.getAuthType().keySet()));
     }
 }

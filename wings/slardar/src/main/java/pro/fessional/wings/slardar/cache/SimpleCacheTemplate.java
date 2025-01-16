@@ -234,16 +234,16 @@ public class SimpleCacheTemplate<T> {
         if (status == -1) {
             synchronized (caches) {
                 if (status == -1) {
-                    AssertArgs.notNull(manager, "empty manager={}", manager);
+                    AssertArgs.notNull(manager, "cacheManager", "empty manager={}", manager);
                     CacheManager cacheManager = beanFactory == null
                         ? ApplicationContextHelper.getBean(manager)
                         : beanFactory.getBean(manager, CacheManager.class);
 
-                    AssertArgs.notNull(cacheManager, "cacheManager not found, manager={}", manager);
-                    AssertArgs.notNull(names, "cache is null");
+                    AssertArgs.notNull(cacheManager, "cacheManager", "cacheManager not found, manager={}", manager);
+                    AssertArgs.notNull(names, "cacheNames", "cache is null");
                     for (int i = 0; i < names.length; i++) {
                         caches[i] = cacheManager.getCache(names[i]);
-                        AssertArgs.notNull(caches[i], "cache not found,name={}, manager={}", names[i], manager);
+                        AssertArgs.notNull(caches[i], "cache", "cache not found,name={}, manager={}", names[i], manager);
                     }
                 }
                 status = 0;

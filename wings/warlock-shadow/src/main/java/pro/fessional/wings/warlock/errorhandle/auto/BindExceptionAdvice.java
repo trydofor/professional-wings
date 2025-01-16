@@ -34,7 +34,7 @@ public class BindExceptionAdvice {
 
     @ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
     public ResponseEntity<R<?>> bindException(BindException ex) {
-        final R<?> body = R.ng(allErrors(ex.getBindingResult()));
+        final R<?> body = R.ngMessage(allErrors(ex.getBindingResult()));
         return ResponseEntity.ok(body);
     }
 
@@ -47,7 +47,7 @@ public class BindExceptionAdvice {
         else {
             msg = msg + "\n" + ex.getMessage();
         }
-        final R<?> body = R.ng(msg);
+        final R<?> body = R.ngMessage(msg);
         return ResponseEntity.ok(body);
     }
 }

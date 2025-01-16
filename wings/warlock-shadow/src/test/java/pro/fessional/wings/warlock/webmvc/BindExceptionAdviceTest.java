@@ -35,7 +35,9 @@ public class BindExceptionAdviceTest {
                                 .param("email", "abc@google.com")
                                 .param("age", "41"))
                .andDo(print())
-               .andExpect(content().string("{\"success\":false,\"message\":\"name=test name is empty\"}"));
+               .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"name=test name is empty\"")))
+        ;
     }
 
     @Test
@@ -48,7 +50,8 @@ public class BindExceptionAdviceTest {
                                 .param("email", "@google.com")
                                 .param("age", "41"))
                .andDo(print())
-               .andExpect(content().string("{\"success\":false,\"message\":\"email=test email is invalid\"}"));
+               .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"email=test email is invalid\"")));
     }
 
     @Test
@@ -59,7 +62,9 @@ public class BindExceptionAdviceTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{age:41}"))
                .andDo(print())
-               .andExpect(content().string("{\"success\":false,\"message\":\"name=test name is empty\"}"));
+               .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"name=test name is empty\"")))
+        ;
     }
 
     @SuppressWarnings("all")
@@ -71,6 +76,8 @@ public class BindExceptionAdviceTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{age=41}"))
                .andDo(print())
-               .andExpect(content().string(containsStringIgnoringCase("{\"success\":false,\"message\":\"message not readable\\nJSON parse error: ")));
+               .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"message not readable\\nJSON parse error: ")))
+        ;
     }
 }

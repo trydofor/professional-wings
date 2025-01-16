@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.servlet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 

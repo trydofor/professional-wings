@@ -7,11 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,6 +33,9 @@ public class I18nLocaleResolverTest {
     @Setter(onMethod_ = {@Autowired})
     private MockMvc mockMvc;
 
+    @Setter(onMethod_ = {@Autowired})
+    private MessageSource messageSource;
+
     @Test
     @TmsLink("C13102")
     public void localeByHeader() throws Exception {
@@ -39,6 +46,9 @@ public class I18nLocaleResolverTest {
         testHeader("zh", "密码错误|zh");
         testHeader("zh-CN", "密码错误|zh-CN");
         testHeader("zh_CN", "密码错误|zh-CN");
+
+        String men2 = messageSource.getMessage("null", new Object[]{"hello"}, "{0} world", Locale.US);
+        assertEquals("hello world", men2);
     }
 
     private void testHeader(String lang, String output) throws Exception {

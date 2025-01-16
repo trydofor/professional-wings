@@ -40,7 +40,7 @@ public class MailSendController {
     @ResponseBody
     public R<Long> sendMail(@RequestBody TinyMailPlain mail) {
         final long ms = tinyMailService.auto(mail);
-        return R.okData(ms);
+        return R.ok(ms);
     }
 
 
@@ -56,7 +56,7 @@ public class MailSendController {
     @ResponseBody
     public R<Long> sendSave(@RequestBody TinyMailPlain mail) {
         final long id = tinyMailService.save(mail);
-        return R.okData(id);
+        return R.ok(id);
     }
 
 
@@ -70,7 +70,7 @@ public class MailSendController {
     @ResponseBody
     public R<Integer> sendScan() {
         final int cnt = tinyMailService.scan();
-        return R.okData(cnt);
+        return R.ok(cnt);
     }
 
     @Data
@@ -102,6 +102,6 @@ public class MailSendController {
     @ResponseBody
     public R<Boolean> sendRetry(@RequestBody Ins mail) {
         final boolean ok = tinyMailService.send(mail.id, mail.retry, mail.check);
-        return R.okData(ok);
+        return R.ok(ok);
     }
 }

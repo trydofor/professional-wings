@@ -77,6 +77,6 @@ public class TestJsonController {
         json.setHello("hello");
         json.setUserZoneId(zid);
         json.setSystemZoneId(ThreadNow.sysZoneId());
-        return R.okData(json);
+        return R.ok(json);
     }
 }

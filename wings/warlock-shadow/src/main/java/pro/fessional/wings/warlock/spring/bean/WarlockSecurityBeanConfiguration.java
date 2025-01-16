@@ -240,10 +240,10 @@ public class WarlockSecurityBeanConfiguration {
         log.info("WarlockShadow spring-bean nonceUserDetailsCombo");
         final String cn = WingsCache.Naming.join(prop.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
         final CacheManager cm = managers.get(prop.getNonceCacheManager());
-        AssertState.notNull(cn, "nonce cache name must not be null");
-        AssertState.notNull(cm, "nonce cache manager must not be null");
+        AssertState.notNull(cn, "cacheName", "nonce cache name must not be null");
+        AssertState.notNull(cm, "cacheManager", "nonce cache manager must not be null");
         final Cache cache = cm.getCache(cn);
-        AssertState.notNull(cache, "nonce cache must not be null");
+        AssertState.notNull(cache, "cacheName", "nonce cache must not be null");
         final NonceUserDetailsCombo bean = new NonceUserDetailsCombo(cache);
         bean.setOrder(OrderNonceUserDetailsCombo);
         bean.setAcceptNonceType(prop.mapNonceAuthEnum());

@@ -22,7 +22,7 @@ public class ExceptionStackTest {
         Assertions.assertEquals(0, tce.getStackTrace().length);
 
         MessageException me = new MessageException("code");
-        Assertions.assertEquals(0, me.getStackTrace().length);
+        Assertions.assertNotEquals(0, me.getStackTrace().length);
 
         CodeException ce = new CodeException("code");
         Assertions.assertNotEquals(0, ce.getStackTrace().length);

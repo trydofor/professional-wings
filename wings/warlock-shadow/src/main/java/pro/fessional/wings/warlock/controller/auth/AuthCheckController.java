@@ -112,6 +112,6 @@ public class AuthCheckController {
         final Enum<?> at = wd.getAuthType();
         if (at != null) dto.setAuthtype(at.name());
 
-        return R.okData(dto);
+        return R.ok(dto);
     }
 }

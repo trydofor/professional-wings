@@ -45,7 +45,7 @@ public class TestLoadController {
         jn.busyMs = biz;
         jn.sleepMs = ms - biz;
         jn.loopCnt = cnt;
-        return R.okData(jn);
+        return R.ok(jn);
     }
 
     @Operation(summary = "test speed")

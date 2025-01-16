@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.errcode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 
 /**
  * org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider

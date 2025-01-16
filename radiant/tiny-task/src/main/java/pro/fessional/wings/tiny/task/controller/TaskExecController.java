@@ -31,7 +31,7 @@ public class TaskExecController {
     @ResponseBody
     public R<Boolean> taskCancel(@RequestBody Q.Id ins) {
         final boolean cancel = tinyTaskExecService.cancel(ins.getId());
-        return R.okData(cancel);
+        return R.ok(cancel);
     }
 
     @Operation(summary = "start a task.")
@@ -39,7 +39,7 @@ public class TaskExecController {
     @ResponseBody
     public R<Boolean> taskLaunch(@RequestBody Q.Id ins) {
         final boolean cancel = tinyTaskExecService.launch(ins.getId());
-        return R.okData(cancel);
+        return R.ok(cancel);
     }
 
     @Operation(summary = "force to start a task.")
@@ -47,6 +47,6 @@ public class TaskExecController {
     @ResponseBody
     public R<Boolean> taskForce(@RequestBody Q.Id ins) {
         final boolean cancel = tinyTaskExecService.force(ins.getId());
-        return R.okData(cancel);
+        return R.ok(cancel);
     }
 }

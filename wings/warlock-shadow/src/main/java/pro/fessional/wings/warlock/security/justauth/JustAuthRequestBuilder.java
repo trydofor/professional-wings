@@ -90,7 +90,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         AuthRequest ar = buildRequest(authType, request);
         if (ar == null) return null;
         final String state = request.getParameter("state");
-        AssertArgs.notEmpty(state, CommonErrorEnum.AssertNotFound1, "state");
+        AssertArgs.notEmpty(state, "state", CommonErrorEnum.AssertNotFound1, "state");
 
         AuthCallback callback = new AuthCallback();
         callback.setAuth_code(request.getParameter("auth_code"));

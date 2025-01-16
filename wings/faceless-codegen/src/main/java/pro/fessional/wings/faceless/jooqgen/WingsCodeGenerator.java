@@ -16,7 +16,7 @@ import org.jooq.meta.jaxb.Logging;
 import org.jooq.meta.jaxb.Strategy;
 import org.jooq.meta.jaxb.Target;
 import org.springframework.util.StringUtils;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.pain.IORuntimeException;

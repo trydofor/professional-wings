@@ -93,7 +93,7 @@ public class AuthedUserController {
             }
             dto.setToken(sid);
         }
-        return R.okData(dto);
+        return R.ok(dto);
     }
 
     private void fillDetail(WingsUserDetails wd, Dto dto) {
@@ -156,7 +156,7 @@ public class AuthedUserController {
             int ns = ng.size();
             if ((ns > 0 && !ins.any) || (ins.any && ns == ck.size())) {
                 request.getSession().invalidate();
-                return R.ngData(ng);
+                return R.ng(ng);
             }
         }
 
@@ -187,7 +187,7 @@ public class AuthedUserController {
             }
         }
 
-        return R.okData(res);
+        return R.ok(res);
     }
 
     @Schema(description = "Session info of logined user")
@@ -227,7 +227,7 @@ public class AuthedUserController {
             return ses;
         }).collect(Collectors.toList());
 
-        return R.okData(sess);
+        return R.ok(sess);
     }
 
     @Data
@@ -247,6 +247,6 @@ public class AuthedUserController {
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
     public R<Boolean> dropSession(@RequestBody Sid sid) {
         final boolean b = wingsSessionHelper.dropSession(sid.sid);
-        return R.okData(b);
+        return R.ok(b);
     }
 }

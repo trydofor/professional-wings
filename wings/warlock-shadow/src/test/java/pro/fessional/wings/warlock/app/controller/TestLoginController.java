@@ -77,7 +77,7 @@ public class TestLoginController {
     public R<WingsUserDetails> currentPrincipal(@Parameter(hidden = true) @AuthenticationPrincipal WingsUserDetails principal) {
         final Authentication authn = SecurityContextHolder.getContext().getAuthentication();
         log.info("current Authentication={}", authn);
-        return R.okData(principal);
+        return R.ok(principal);
     }
 
     @Data

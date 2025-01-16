@@ -25,6 +25,10 @@ class InspectHelperTest {
     @Setter(onMethod_ = {@Autowired})
     private GitProperties gitProperties;
 
+    /**
+     * No qualifying bean of type 'org.springframework.boot.info.BuildProperties' available
+     * MUST maven compile to produce info file
+     */
     @Test
     @TmsLink("C11004")
     public void infoBuildAndGit() {

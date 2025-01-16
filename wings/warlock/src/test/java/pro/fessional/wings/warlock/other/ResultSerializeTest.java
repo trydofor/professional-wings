@@ -55,7 +55,7 @@ public class ResultSerializeTest {
         r1.setData("data");
         r1.setCode("code");
         r1.setCause("cause");
-        r1.setI18nMessage("i18nCode", "1");
+        r1.setI18nCode("i18nCode").setI18nArgs("a");
 
         log.info("toString={}", r1);
         ObjectMapper om = new ObjectMapper();
@@ -64,8 +64,8 @@ public class ResultSerializeTest {
         final R<Object> r2 = om.readValue(json, R.class);
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
-        Assertions.assertNull(r2.getI18nArgs());
-        Assertions.assertNull(r2.getI18nCode());
+        Assertions.assertArrayEquals(new Object[]{ "a" }, r2.getI18nArgs());
+        Assertions.assertEquals("i18nCode", r2.getI18nCode());
     }
 
     @SneakyThrows
@@ -73,23 +73,25 @@ public class ResultSerializeTest {
     @TmsLink("C14004")
     public void testFastjson() {
         final R<Object> r1 = R
-                .ok()
-                .setMessage("message")
-                .setData("data")
-                .setCode("code")
-                .setCause("cause")
-                .setI18nMessage("i18nCode", "1");
+            .ok()
+            .setData("data")
+            .setCode("code")
+            .setCause("cause")
+            .setMessage("message")
+            .setI18nCode("i18nCode")
+            .setI18nArgs("a")
+            .cast();
         final String json = FastJsonHelper.string(r1);
         log.info(json);
         final R<Object> r2 = FastJsonHelper.object(json, R.class);
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
-        Assertions.assertNull(r2.getI18nArgs());
-        Assertions.assertNull(r2.getI18nCode());
+        Assertions.assertArrayEquals(new Object[]{ "a" }, r2.getI18nArgs());
+        Assertions.assertEquals("i18nCode", r2.getI18nCode());
 
         PageResult<String> p1 = new PageResult<String>()
-                .addData("1")
-                .setTotalInfo(30, 20);
+            .addData("1")
+            .setTotalInfo(30, 20);
         log.info(FastJsonHelper.string(p1));
         log.info(FastJsonHelper.string(p1.addMeta("left", 10)));
     }
@@ -100,12 +102,14 @@ public class ResultSerializeTest {
     @TmsLink("C14005")
     public void testKryo() {
         final R<Object> r1 = R
-                .ok()
-                .setMessage("message")
-                .setData("data")
-                .setCode("code")
-                .setCause("cause")
-                .setI18nMessage("i18nCode", "1");
+            .ok()
+            .setData("data")
+            .setCode("code")
+            .setCause("cause")
+            .setMessage("message")
+            .setI18nCode("i18nCode")
+            .setI18nArgs("1")
+            .cast();
         final Kryo kryo = KryoSimple.getKryo();
         final Output output = KryoSimple.getOutput();
         kryo.writeClassAndObject(output, r1);
@@ -123,12 +127,14 @@ public class ResultSerializeTest {
     @TmsLink("C14006")
     public void testSerial() {
         final R<Object> r1 = R
-                .ok()
-                .setMessage("message")
-                .setData("data")
-                .setCode("code")
-                .setCause("cause")
-                .setI18nMessage("i18nCode", "1");
+            .ok()
+            .setData("data")
+            .setCode("code")
+            .setCause("cause")
+            .setMessage("message")
+            .setI18nCode("i18nCode")
+            .setI18nArgs("1")
+            .cast();
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);

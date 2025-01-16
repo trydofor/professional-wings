@@ -49,18 +49,18 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
             I18nString i18n = (I18nString) value;
             if (enabled) {
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull();
-                String text = messageSource.getMessage(i18n.getCode(), i18n.getArgs(), locale);
-                if (text.equalsIgnoreCase(i18n.getCode())) {
-                    text = i18n.toString(locale);
+                String text = i18n.toString(locale, messageSource::getMessage);
+                if (text == null || text.equalsIgnoreCase(i18n.getI18nCode())) {
+                    text = i18n.toString();
                 }
                 generator.writeString(text);
             }
             else {
                 generator.writeStartObject();
-                generator.writeStringField("code", i18n.getCode());
-                generator.writeStringField("hint", i18n.getHint());
+                generator.writeStringField("code", i18n.getI18nCode());
+                generator.writeStringField("hint", i18n.getI18nHint());
                 generator.writeFieldName("args");
-                generator.writeObject(i18n.getArgs());
+                generator.writeObject(i18n.getI18nArgs());
                 generator.writeEndObject();
             }
         }
