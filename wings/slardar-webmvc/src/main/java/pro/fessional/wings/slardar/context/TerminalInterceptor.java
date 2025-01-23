@@ -65,7 +65,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
             // in CompletableFuture<String> mapping, request set twice
             // (1) normal requst
             // (2) WebAsyncManager: "ASYNC" dispatch
-            request.setAttribute(AttrTerminalLogin, Boolean.TRUE);
+            request.setAttribute(AttrTerminalLogin.value, Boolean.TRUE);
             final Context ctx = builder.build();
             TerminalContext.login(ctx);
             return ctx;
@@ -82,9 +82,9 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
      */
     @Nullable
     public Context logoutTerminal(@NotNull HttpServletRequest request) {
-        if (request.getAttribute(AttrTerminalLogin) == Boolean.TRUE) {
+        if (request.getAttribute(AttrTerminalLogin.value) == Boolean.TRUE) {
             Context ctx = TerminalContext.logout();
-            request.removeAttribute(AttrTerminalLogin);
+            request.removeAttribute(AttrTerminalLogin.value);
             return ctx;
         }
         else {

@@ -9,9 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.time.StopWatch.Watch;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.watch.Watches;
-import pro.fessional.wings.slardar.constants.SlardarServletConst;
 
 import java.util.function.BiConsumer;
+
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrStopWatch;
 
 /**
  * @author trydofor
@@ -42,7 +43,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
         if (thresholdMillis < 0) return true;
 
         final Watch watch = Watches.acquire(request.getRequestURI());
-        request.setAttribute(SlardarServletConst.AttrStopWatch, watch);
+        request.setAttribute(AttrStopWatch.value, watch);
 
         return true;
     }
@@ -51,7 +52,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
-        final Watch watch = (Watch) request.getAttribute(SlardarServletConst.AttrStopWatch);
+        final Watch watch = (Watch) request.getAttribute(AttrStopWatch.value);
         if (watch == null) return;
 
         watch.close();

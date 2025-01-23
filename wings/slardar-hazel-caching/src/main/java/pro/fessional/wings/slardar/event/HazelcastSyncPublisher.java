@@ -31,7 +31,7 @@ public class HazelcastSyncPublisher implements ApplicationEventPublisher, Messag
 
     public HazelcastSyncPublisher(@NotNull HazelcastInstance instance, @NotNull ApplicationEventPublisher publisher) {
         this.publisher = publisher;
-        topic = instance.getTopic(TopicApplicationEvent);
+        topic = TopicApplicationEvent.get(instance::getTopic, true);
         uuid = topic.addMessageListener(this);
     }
 

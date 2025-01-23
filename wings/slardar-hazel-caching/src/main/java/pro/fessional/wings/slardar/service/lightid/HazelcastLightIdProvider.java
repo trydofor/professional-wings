@@ -31,7 +31,7 @@ public class HazelcastLightIdProvider implements LightIdProvider {
 
     public HazelcastLightIdProvider(Loader loader, HazelcastInstance hazelcastInstance) {
         this.loader = loader;
-        this.mapper = hazelcastInstance.getMap(MapLightId);
+        this.mapper = MapLightId.get(hazelcastInstance::getMap, true);
     }
 
     @Override

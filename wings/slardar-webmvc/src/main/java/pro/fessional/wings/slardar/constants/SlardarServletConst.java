@@ -1,16 +1,20 @@
 package pro.fessional.wings.slardar.constants;
 
+import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import pro.fessional.mirana.best.TypedRef;
+import pro.fessional.mirana.time.StopWatch;
+
 /**
  * @author trydofor
  * @since 2020-09-28
  */
 public interface SlardarServletConst {
 
-    String AttrDomainExtend = "WINGS.ATTR.DOMAIN_EXTEND";
-    String AttrI18nContext = "WINGS.ATTR.I18N_CONTEXT";
-    String AttrRemoteIp = "WINGS.ATTR.REMOTE_IP";
-    String AttrAgentInfo = "WINGS.ATTR.AGENT_INFO";
-    String AttrTerminalLogin = "WINGS.ATTR.TERMINAL_LOGIN";
-    String AttrUserId = "WINGS.ATTR.USER_ID";
-    String AttrStopWatch = "WINGS.ATTR.STOP_WATCH";
+    TypedRef<String, String> AttrDomainExtend = new TypedRef<>("WINGS.ATTR.DOMAIN_EXTEND");
+    TypedRef<String, TimeZoneAwareLocaleContext> AttrI18nContext = new TypedRef<>("WINGS.ATTR.I18N_CONTEXT");
+    TypedRef<String, String> AttrRemoteIp = new TypedRef<>("WINGS.ATTR.REMOTE_IP");
+    TypedRef<String, String> AttrAgentInfo = new TypedRef<>("WINGS.ATTR.AGENT_INFO");
+    TypedRef<String, Boolean> AttrTerminalLogin = new TypedRef<>("WINGS.ATTR.TERMINAL_LOGIN");
+    TypedRef<String, Long> AttrUserId = new TypedRef<>("WINGS.ATTR.USER_ID");
+    TypedRef<String, StopWatch.Watch> AttrStopWatch = new TypedRef<>("WINGS.ATTR.STOP_WATCH");
 }

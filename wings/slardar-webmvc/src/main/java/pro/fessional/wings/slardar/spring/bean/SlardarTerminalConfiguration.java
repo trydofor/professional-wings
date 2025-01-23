@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.context.TerminalInterceptor.TerminalBuilder;
@@ -28,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrUserId;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
@@ -61,7 +61,7 @@ public class SlardarTerminalConfiguration {
             final WingsUserDetails details = SecurityContextUtil.getUserDetails(authn);
 
             if (details == null) {
-                final Long userId = (Long) request.getAttribute(SlardarServletConst.AttrUserId);
+                final Long userId = (Long) request.getAttribute(AttrUserId.value);
                 final var locale = resolver.resolveI18nContext(request, userId);
                 builder.locale(locale.getLocale())
                        .timeZone(locale.getTimeZone())

@@ -52,7 +52,7 @@ public class WingsRemoteResolver {
 
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
-        Object atr = request.getAttribute(AttrRemoteIp);
+        Object atr = request.getAttribute(AttrRemoteIp.value);
         if (atr instanceof String ip) {
             return ip;
         }
@@ -66,7 +66,7 @@ public class WingsRemoteResolver {
             ip = request.getRemoteAddr();
         }
 
-        request.setAttribute(AttrRemoteIp, ip);
+        request.setAttribute(AttrRemoteIp.value, ip);
         return ip;
     }
 
@@ -88,7 +88,7 @@ public class WingsRemoteResolver {
 
     @NotNull
     public String resolveAgentInfo(HttpServletRequest request) {
-        Object atr = request.getAttribute(AttrAgentInfo);
+        Object atr = request.getAttribute(AttrAgentInfo.value);
         if (atr instanceof String ai) {
             return ai;
         }
@@ -98,8 +98,8 @@ public class WingsRemoteResolver {
             String h = request.getHeader(s);
             if (h != null) sb.append(h).append(";");
         }
-        String info = sb.toString();
-        request.setAttribute(AttrAgentInfo, info);
-        return info;
+        String ai = sb.toString();
+        request.setAttribute(AttrAgentInfo.value, ai);
+        return ai;
     }
 }
