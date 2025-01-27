@@ -36,7 +36,8 @@ public class BindExceptionAdviceTest {
                                 .param("age", "41"))
                .andDo(print())
                .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
-               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"name=test name is empty\"")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"test name is empty\"")))
+               .andExpect(content().string(containsStringIgnoringCase("\"errors\":[{\"message\":\"test name is empty\"")))
         ;
     }
 
@@ -51,7 +52,9 @@ public class BindExceptionAdviceTest {
                                 .param("age", "41"))
                .andDo(print())
                .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
-               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"email=test email is invalid\"")));
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"test email is invalid\"")))
+               .andExpect(content().string(containsStringIgnoringCase("\"errors\":[{\"message\":\"test email is invalid\"")))
+        ;
     }
 
     @Test
@@ -63,7 +66,8 @@ public class BindExceptionAdviceTest {
                                 .content("{age:41}"))
                .andDo(print())
                .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
-               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"name=test name is empty\"")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"test name is empty\"")))
+               .andExpect(content().string(containsStringIgnoringCase("\"errors\":[{\"message\":\"test name is empty\"")))
         ;
     }
 
@@ -77,7 +81,8 @@ public class BindExceptionAdviceTest {
                                 .content("{age=41}"))
                .andDo(print())
                .andExpect(content().string(containsStringIgnoringCase("\"success\":false")))
-               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"message not readable\\nJSON parse error: ")))
+               .andExpect(content().string(containsStringIgnoringCase("\"message\":\"message not readable")))
+               .andExpect(content().string(containsStringIgnoringCase("\"errors\":[{\"message\":\"message not readable")))
         ;
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
-import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nAware;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
@@ -37,7 +37,7 @@ import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
-import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nMessagePropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.jackson.ResourceSerializer;
@@ -180,7 +180,7 @@ public class SlardarJacksonWebConfiguration {
         return builder -> {
             if (StringUtils.hasText(prop.getEmptyDate()) || prop.isEmptyMap() || prop.isEmptyList()) {
                 log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
-                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
+                builder.mixIn(EmptyValuePropertyFilter.MixinClass, EmptyValuePropertyFilter.EmptyValueMixin.class);
             }
         };
     }
@@ -237,9 +237,10 @@ public class SlardarJacksonWebConfiguration {
         return builder -> {
             if (prop.isI18nResult()) {
                 log.info("SlardarWebmvc conf I18nResultPropertyFilter's I18nResultMixin");
-                builder.serializerByType(I18nString.class, new I18nStringSerializer(source, true));
-                builder.serializerByType(CharSequence.class, new I18nStringSerializer(source, false));
-                builder.mixIn(R.class, I18nResultPropertyFilter.I18nResultMixin.class);
+                I18nAware.I18nSource i18nSource = source::getMessage;
+                builder.serializerByType(I18nString.class, new I18nStringSerializer(i18nSource, true));
+                builder.serializerByType(CharSequence.class, new I18nStringSerializer(i18nSource, false));
+                builder.mixIn(I18nMessagePropertyFilter.MixinClass, I18nMessagePropertyFilter.I18nMessageMixin.class);
             }
         };
     }

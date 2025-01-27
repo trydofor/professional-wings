@@ -4,7 +4,9 @@ import lombok.Getter;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
-import pro.fessional.mirana.data.DataResult;
+import pro.fessional.mirana.data.DataAware;
+import pro.fessional.mirana.i18n.CodeEnum;
+import pro.fessional.mirana.i18n.I18nAware;
 
 /**
  * @author trydofor
@@ -12,20 +14,30 @@ import pro.fessional.mirana.data.DataResult;
  * @since 2023-07-10
  */
 @Getter
-public class FailureWaitingInternalAuthenticationServiceException extends InternalAuthenticationServiceException implements DataResult<Integer> {
+public class FailureWaitingInternalAuthenticationServiceException extends InternalAuthenticationServiceException implements DataAware<Integer>, I18nAware {
 
-    private final String code;
     private final Integer data;
+    private final String i18nCode;
+    private final String i18nHint;
+    private final Object[] i18nArgs;
 
-    public FailureWaitingInternalAuthenticationServiceException(int wait, String code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
+    public FailureWaitingInternalAuthenticationServiceException(Throwable cause, int wait, String code, String hint, Object... args) {
+        super(hint, cause);
         this.data = wait;
+        this.i18nCode = code;
+        this.i18nHint = hint;
+        this.i18nArgs = args;
     }
 
-    public FailureWaitingInternalAuthenticationServiceException(int wait, String code, String message) {
-        super(message);
-        this.code = code;
+    public FailureWaitingInternalAuthenticationServiceException(int wait, String code, String hint, Object... args) {
+        super(hint);
         this.data = wait;
+        this.i18nCode = code;
+        this.i18nHint = hint;
+        this.i18nArgs = args;
+    }
+
+    public FailureWaitingInternalAuthenticationServiceException(int wait, CodeEnum code, Object... args) {
+        this(wait, code.getCode(), code.getHint(), args);
     }
 }

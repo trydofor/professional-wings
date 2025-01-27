@@ -3,9 +3,9 @@ package pro.fessional.wings.slardar.autodto;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.context.MessageSource;
 import pro.fessional.mirana.anti.BeanVisitor;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.i18n.I18nAware.I18nSource;
 import pro.fessional.mirana.i18n.I18nString;
 
 import java.lang.annotation.Annotation;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
 
-    private final MessageSource messageSource;
+    private final I18nSource i18nSource;
     private final Supplier<Locale> localeSupplier;
 
     @Override
@@ -36,12 +36,12 @@ public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
     @Override
     @Nullable
     protected Object amendValue(@NotNull Field field, @NotNull Annotation[] annos, @Nullable Object obj) {
-        if (obj instanceof String) {
-            return messageSource.getMessage((String) obj, Null.Objects, localeSupplier.get());
+        if (obj instanceof String str) {
+            return i18nSource.getMessage(str, Null.Objects, str, localeSupplier.get());
         }
-        if (obj instanceof final I18nString s) {
-            s.setI18nCacheBy(localeSupplier.get(), messageSource::getMessage);
-            return s;
+        if (obj instanceof final I18nString str) {
+            str.setI18nCacheBy(localeSupplier.get(), i18nSource);
+            return str;
         }
         return obj;
     }

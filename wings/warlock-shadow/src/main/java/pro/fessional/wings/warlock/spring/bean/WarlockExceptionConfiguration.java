@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.spring.bean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -24,8 +23,8 @@ public class WarlockExceptionConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public DefaultExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource, ObjectMapper objectMapper) {
+    public DefaultExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, ObjectMapper objectMapper) {
         log.info("WarlockShadow spring-bean defaultExceptionResolver");
-        return new DefaultExceptionResolver(prop.getDefaultException(), messageSource, objectMapper);
+        return new DefaultExceptionResolver(prop.getDefaultException(), objectMapper);
     }
 }

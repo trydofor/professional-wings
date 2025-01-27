@@ -27,6 +27,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nMessage;
+import pro.fessional.mirana.i18n.I18nNotice;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
@@ -222,6 +224,18 @@ public class WingsJacksonMapperTest {
                 "hint" : "",
                 "args" : [ "textDisabled" ]
               },
+              "i18nMessage" : {
+                "message" : "i18nMessage can not be empty",
+                "i18nCode" : "base.not-empty",
+                "i18nArgs" : [ "i18nMessage" ]
+              },
+              "i18nNotice" : {
+                "message" : "i18nMessage can not be empty",
+                "i18nCode" : "base.not-empty",
+                "i18nArgs" : [ "i18nMessage" ],
+                "type" : "testing",
+                "target" : "trydofor"
+              },
               "longIgnore" : 0,
               "mapIgnore" : {
                 "ikey" : "ival"
@@ -249,6 +263,8 @@ public class WingsJacksonMapperTest {
         private I18nString textAuto = new I18nString("base.not-empty", "", "textAuto");
         @AutoI18nString(false) // disable
         private I18nString textDisabled = new I18nString("base.not-empty", "", "textDisabled");
+        private I18nMessage i18nMessage = new I18nMessage().setMessage("").setI18nCode("base.not-empty").setI18nArgs("i18nMessage");
+        private I18nNotice i18nNotice = I18nNotice.of(i18nMessage).setTarget("trydofor").setType("testing");
         @AutoI18nString // invalid
         private Long longIgnore = 0L;
         @AutoI18nString // invalid
@@ -279,6 +295,18 @@ public class WingsJacksonMapperTest {
                   "code" : "base.not-empty",
                   "hint" : "",
                   "args" : [ "textDisabled" ]
+                },
+                "i18nMessage" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ]
+                },
+                "i18nNotice" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ],
+                  "type" : "testing",
+                  "target" : "trydofor"
                 },
                 "longIgnore" : 0,
                 "mapIgnore" : {
@@ -313,6 +341,18 @@ public class WingsJacksonMapperTest {
                   "code" : "base.not-empty",
                   "hint" : "",
                   "args" : [ "textDisabled" ]
+                },
+                "i18nMessage" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ]
+                },
+                "i18nNotice" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ],
+                  "type" : "testing",
+                  "target" : "trydofor"
                 },
                 "longIgnore" : 0,
                 "mapIgnore" : {
@@ -354,6 +394,22 @@ public class WingsJacksonMapperTest {
                                 <item>textDisabled</item>
                               </args>
                             </textDisabled>
+                            <i18nMessage>
+                              <message>i18nMessagecannotbeempty</message>
+                              <i18nCode>base.not-empty</i18nCode>
+                              <i18nArgs>
+                                <i18nArgs>i18nMessage</i18nArgs>
+                              </i18nArgs>
+                            </i18nMessage>
+                            <i18nNotice>
+                              <message>i18nMessagecannotbeempty</message>
+                              <i18nCode>base.not-empty</i18nCode>
+                              <i18nArgs>
+                                <i18nArgs>i18nMessage</i18nArgs>
+                              </i18nArgs>
+                              <type>testing</type>
+                              <target>trydofor</target>
+                            </i18nNotice>
                             <longIgnore>0</longIgnore>
                             <mapIgnore>
                               <ikey>ival</ikey>
@@ -408,7 +464,7 @@ public class WingsJacksonMapperTest {
         StringMapGenerator t2 = StringMapGenerator.linkMap();
         objectMapper.writeValue(t1, i18nJson);
         objectMapper.writeValue(t2, jsonIt);
-        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree()
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", t1.getResultTree()
                                                                                                                                                                                                                 .toString()
                                                                                                                                                                                                                 .trim());
         assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=List, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
@@ -425,9 +481,9 @@ public class WingsJacksonMapperTest {
         Map<String, String> x1 = StringMapHelper.jaxb(i18nJson);
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
 
-        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=List, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
-        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, i18nHint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, i18nHint=, key=ikey, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, type=testing, value=ival}", x1.toString());
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=List, longVal=9223372036854775806, value=1}", x2.toString());
     }
 

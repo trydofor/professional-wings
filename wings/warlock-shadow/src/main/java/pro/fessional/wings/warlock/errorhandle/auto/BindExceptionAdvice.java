@@ -1,8 +1,7 @@
 package pro.fessional.wings.warlock.errorhandle.auto;
 
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,11 +11,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nNotice;
+import pro.fessional.wings.warlock.errorhandle.I18nAwareHelper;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
-import pro.fessional.wings.slardar.servlet.MessageHelper;
 import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 
-import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allErrors;
+import java.util.List;
+
 
 /**
  * @author trydofor
@@ -25,29 +26,34 @@ import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allError
 
 @ControllerAdvice(annotations = RestController.class)
 @Order(BindExceptionAdvice.ORDER)
+@Slf4j
 public class BindExceptionAdvice {
 
     public static final int ORDER = WingsOrdered.Lv4Application;
 
-    @Setter(onMethod_ = { @Autowired })
-    protected MessageSource messageSource;
-
+    /**
+     * binding valid failed
+     */
     @ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
-    public ResponseEntity<R<?>> bindException(BindException ex) {
-        final R<?> body = R.ngMessage(allErrors(ex.getBindingResult()));
+    public ResponseEntity<R<?>> bindException(BindException ex, HttpServletRequest request) {
+        log.warn("bindException Advice", ex);
+        List<I18nNotice> notices = I18nAwareHelper.notices(ex);
+        final R<?> body = R.ngError(notices);
+        body.setMessageByErrors();
         return ResponseEntity.ok(body);
     }
 
+    /**
+     * body read failed
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<R<?>> httpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        String msg = MessageHelper.get(messageSource, CommonErrorEnum.MessageUnreadable);
-        if (msg.isEmpty()) {
-            msg = ex.getMessage();
-        }
-        else {
-            msg = msg + "\n" + ex.getMessage();
-        }
-        final R<?> body = R.ngMessage(msg);
+    public ResponseEntity<R<?>> httpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.warn("httpMessageNotReadableException Advice", ex);
+        I18nNotice ntc = I18nNotice.of(CommonErrorEnum.MessageUnreadable);
+        ntc.setType(I18nNotice.Type.Validation.name());
+        ntc.setTarget("body");
+        final R<?> body = R.ngError(ntc);
+        body.setMessageByErrors();
         return ResponseEntity.ok(body);
     }
 }

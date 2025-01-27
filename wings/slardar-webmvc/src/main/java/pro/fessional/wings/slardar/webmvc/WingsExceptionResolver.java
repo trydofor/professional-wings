@@ -45,7 +45,7 @@ public abstract class WingsExceptionResolver<T extends Exception> implements Han
         @NotNull Exception ex) {
 
         if (acceptClass.isInstance(ex)) {
-            final SimpleResponse body = resolve((T) ex);
+            final SimpleResponse body = resolve((T) ex, request);
             if (body == null) return null;
 
             ModelAndView mav = new ModelAndView();
@@ -65,5 +65,5 @@ public abstract class WingsExceptionResolver<T extends Exception> implements Han
      * @return null if not support
      */
     @Nullable
-    protected abstract SimpleResponse resolve(@NotNull T ex);
+    protected abstract SimpleResponse resolve(@NotNull T ex, @NotNull HttpServletRequest request);
 }

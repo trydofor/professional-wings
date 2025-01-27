@@ -12,7 +12,7 @@ import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
-import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nMessagePropertyFilter;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 
 import java.time.LocalDate;
@@ -32,9 +32,9 @@ public class SlardarJacksonConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public AutoRegisterPropertyFilter i18nResultPropertyFilter(MessageSource messageSource) {
-        log.info("Slardar spring-bean i18nResultPropertyFilter");
-        return new I18nResultPropertyFilter(messageSource);
+    public AutoRegisterPropertyFilter i18nMessagePropertyFilter(MessageSource messageSource) {
+        log.info("Slardar spring-bean i18nMessagePropertyFilter");
+        return new I18nMessagePropertyFilter(messageSource::getMessage);
     }
 
     @Bean

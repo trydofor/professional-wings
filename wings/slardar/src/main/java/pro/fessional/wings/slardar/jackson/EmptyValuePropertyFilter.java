@@ -34,8 +34,9 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
     public static final String Id = "EmptyValue";
 
     @JsonFilter(Id)
-    public static class EmptyDateMixin {
+    public static class EmptyValueMixin {
     }
+    public static final Class<?> MixinClass = Object.class;
 
     private final LocalDate emptyDate;
     private final LocalDateTime emptyDateMin;
