@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.best.ReadOnly;
 import pro.fessional.mirana.i18n.I18nAware;
 import pro.fessional.mirana.i18n.I18nMessage;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
@@ -39,7 +39,7 @@ public class I18nMessagePropertyFilter implements AutoRegisterPropertyFilter {
     @Override
     public void serializeAsField(Object pojo, JsonGenerator gen, SerializerProvider prov, PropertyWriter writer) throws Exception {
 
-        if (!(pojo instanceof R.Immutable)) {
+        if (!(pojo instanceof ReadOnly)) {
             Locale locale = LocaleZoneIdUtil.LocaleNonnull();
             ((I18nMessage) pojo).setMessageBy(locale, i18nSource);
         }

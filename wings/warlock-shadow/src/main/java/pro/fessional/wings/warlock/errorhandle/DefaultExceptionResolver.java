@@ -79,7 +79,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
             }
 
             // handler
-            if (response == null && handler != null) {
+            if (handler != null) {
                 // use original exception if response is null, otherwise the cause
                 response = handler.handle(exception, response);
             }
