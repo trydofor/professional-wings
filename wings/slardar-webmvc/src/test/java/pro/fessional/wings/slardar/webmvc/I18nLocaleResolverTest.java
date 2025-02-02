@@ -39,8 +39,8 @@ public class I18nLocaleResolverTest {
     @Test
     @TmsLink("C13102")
     public void localeByHeader() throws Exception {
-        testHeader("en", "Bad credentials|en");
-        testHeader("en_US", "Bad credentials|en-US");
+        testHeader("en", "bad credentials|en");
+        testHeader("en_US", "bad credentials|en-US");
         testHeader("zh_TW", "密码错误|zh-TW");
         testHeader("zh-TW", "密码错误|zh-TW");
         testHeader("zh", "密码错误|zh");
@@ -64,8 +64,8 @@ public class I18nLocaleResolverTest {
     @Test
     @TmsLink("C13103")
     public void localeByCookie() throws Exception {
-        testCookie("en", "Bad credentials|en");
-        testCookie("en_US", "Bad credentials|en-US");
+        testCookie("en", "bad credentials|en");
+        testCookie("en_US", "bad credentials|en-US");
         testCookie("zh_TW", "密码错误|zh-TW");
         testCookie("zh-TW", "密码错误|zh-TW");
         testCookie("zh", "密码错误|zh");
@@ -85,8 +85,8 @@ public class I18nLocaleResolverTest {
     @Test
     @TmsLink("C13104")
     public void localeByParam() throws Exception {
-        testParam("en", "Bad credentials|en");
-        testParam("en_US", "Bad credentials|en-US");
+        testParam("en", "bad credentials|en");
+        testParam("en_US", "bad credentials|en-US");
         testParam("zh_TW", "密码错误|zh-TW");
         testParam("zh-TW", "密码错误|zh-TW");
         testParam("zh", "密码错误|zh");

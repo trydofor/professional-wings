@@ -8,10 +8,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
+import pro.fessional.mirana.best.AssertCrud;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.DaoAssert;
 import pro.fessional.wings.faceless.database.helper.TransactionHelper;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -79,7 +79,7 @@ public class DefaultJournalService implements JournalService {
         if (dummyId == null) {
             TransactionHelper.template(propagation).executeWithoutResult(ignore -> {
                 int rc = journalModify.insert(journal);
-                DaoAssert.assertEq1(rc, "failed to insert Journal={}", journal);
+                AssertCrud.affectEq(rc, 1, "failed to insert Journal={}", journal);
             });
         }
         else {

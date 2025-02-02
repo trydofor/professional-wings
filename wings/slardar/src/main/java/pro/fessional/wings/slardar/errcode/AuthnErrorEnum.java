@@ -16,14 +16,14 @@ import pro.fessional.mirana.i18n.CodeEnum;
 @RequiredArgsConstructor
 public enum AuthnErrorEnum implements CodeEnum {
 
-    Unauthorized("error.authn.unauthorized", "Unauthorized request"),
-    OnlyUserPass("error.authn.onlyUserPass", "Support username password only"),
-    BadCredentials("error.authn.badCredentials", "Bad credentials"),
-    Locked("error.authn.locked", "User account is locked"),
-    Disabled("error.authn.disabled", "User account is disabled"),
-    Expired("error.authn.expired", "User account has expired"),
-    CredentialsExpired("error.authn.credentialsExpired", "User credentials have expired"),
-    FailureWaiting("error.authn.failureWaiting", "Bad credentials, retry after {0}s"),
+    Unauthorized("error.authn.unauthorized", "unauthorized request"),
+    OnlyUserPass("error.authn.onlyUserPass", "support username password only"),
+    BadCredentials("error.authn.badCredentials", "bad credentials"),
+    Locked("error.authn.locked", "user account is locked"),
+    Disabled("error.authn.disabled", "user account is disabled"),
+    Expired("error.authn.expired", "user account has expired"),
+    CredentialsExpired("error.authn.credentialsExpired", "user credentials have expired"),
+    FailureWaiting1("error.authn.failureWaiting1", "bad credentials, retry after {0}s"),
     ;
 
     private final @NotNull String code;

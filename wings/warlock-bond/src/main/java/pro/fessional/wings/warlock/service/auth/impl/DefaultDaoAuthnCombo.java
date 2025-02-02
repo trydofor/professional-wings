@@ -23,7 +23,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 import pro.fessional.wings.warlock.spring.prop.WarlockDangerProp;
 
-import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.FailureWaiting;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.FailureWaiting1;
 
 /**
  * @author trydofor
@@ -66,7 +66,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         if (block > 0) {
             throw new FailureWaitingInternalAuthenticationServiceException(
                 block,
-                FailureWaiting,
+                FailureWaiting1,
                 block);
         }
 

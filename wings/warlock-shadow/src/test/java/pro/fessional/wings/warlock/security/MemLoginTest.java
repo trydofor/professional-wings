@@ -87,7 +87,7 @@ class MemLoginTest {
                 .url(host + "/test/code-exception.json")
                 .header("Accept-Language", "en_US"), false);
         String er7 = OkHttpClientHelper.extractString(r7, false);
-        Assertions.assertTrue(er7.contains("test should not empty"));
+        Assertions.assertTrue(er7.contains("test should not be empty"));
 
         final String ok6 = OkHttpClientHelper.postJson(okHttpClient, host + "/auth/session/check.json", "");
         Assertions.assertTrue(ok6.contains("\"success\":true"));
