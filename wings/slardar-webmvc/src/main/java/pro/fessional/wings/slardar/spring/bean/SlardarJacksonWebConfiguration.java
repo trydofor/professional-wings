@@ -179,7 +179,7 @@ public class SlardarJacksonWebConfiguration {
         log.info("SlardarWebmvc spring-bean customizeJacksonEmpty");
         return builder -> {
             if (StringUtils.hasText(prop.getEmptyDate()) || prop.isEmptyMap() || prop.isEmptyList()) {
-                log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
+                log.info("SlardarWebmvc conf EmptyValuePropertyFilter");
                 builder.mixIn(EmptyValuePropertyFilter.MixinClass, EmptyValuePropertyFilter.EmptyValueMixin.class);
             }
         };

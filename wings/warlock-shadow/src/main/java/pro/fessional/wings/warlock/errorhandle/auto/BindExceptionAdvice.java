@@ -38,7 +38,6 @@ public class BindExceptionAdvice {
         log.warn("bindException Advice", ex);
         List<I18nNotice> notices = I18nAwareHelper.notices(ex);
         final R<?> body = R.ngError(notices);
-        body.setMessageByErrors();
         return ResponseEntity.ok(body);
     }
 
@@ -52,7 +51,6 @@ public class BindExceptionAdvice {
         ntc.setType(I18nNotice.Type.Validation.name());
         ntc.setTarget("body");
         final R<?> body = R.ngError(ntc);
-        body.setMessageByErrors();
         return ResponseEntity.ok(body);
     }
 }

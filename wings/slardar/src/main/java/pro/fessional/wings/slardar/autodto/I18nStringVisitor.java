@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.anti.BeanVisitor;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.i18n.I18nAware.I18nSource;
+import pro.fessional.mirana.i18n.I18nMessage;
 import pro.fessional.mirana.i18n.I18nString;
 
 import java.lang.annotation.Annotation;
@@ -41,8 +42,11 @@ public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
         }
         if (obj instanceof final I18nString str) {
             str.setI18nCacheBy(localeSupplier.get(), i18nSource);
-            return str;
         }
+        else if (obj instanceof I18nMessage msg) {
+            msg.setMessageBy(localeSupplier.get(), i18nSource);
+        }
+
         return obj;
     }
 }

@@ -59,4 +59,16 @@ public class SlardarJacksonProp {
      */
     private boolean i18nResult = true;
     public static final String Key$i18nResult = Key + ".i18n-result";
+
+    /**
+     * <pre>
+     * whether to set 1st error to message in R.
+     * * 0, null - disable
+     * * 1 - only message
+     * * 2 - message, i18nCode and i18nArgs
+     * </pre>
+     * @see #Key$i18nResultCompatible
+     */
+    private Integer i18nResultCompatible = null;
+    public static final String Key$i18nResultCompatible = Key + ".i18n-result-compatible";
 }

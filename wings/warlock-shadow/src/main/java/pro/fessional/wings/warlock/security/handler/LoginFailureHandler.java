@@ -107,7 +107,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         protected String handleI18nAware(AuthenticationException dre, Locale lang) {
             final R<?> ng = R.ngError(dre, "Authentication");
             ng.setMessageBy(lang, messageSource::getMessage); // locale message
-            ng.setMessageByErrors();
             return objectMapper.writeValueAsString(ng);
         }
 

@@ -36,6 +36,8 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
     @JsonFilter(Id)
     public static class EmptyValueMixin {
     }
+    // must not (1) interface (2) abstract class (3) JavaTimeModule
+    // https://github.com/FasterXML/jackson-docs/wiki/JacksonMixInAnnotations
     public static final Class<?> MixinClass = Object.class;
 
     private final LocalDate emptyDate;
@@ -72,10 +74,9 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
 
     @Override
     public void serializeAsField(Object pojo, JsonGenerator gen, SerializerProvider prov, PropertyWriter writer) throws Exception {
-        final JavaType rt = writer.getType();
-        if (writer instanceof BeanPropertyWriter) {
+        if (writer instanceof BeanPropertyWriter wt) {
             try {
-                BeanPropertyWriter wt = (BeanPropertyWriter) writer;
+                final JavaType rt = wt.getType();
                 if ((emptyDate != null && dealEmptyDate(pojo, gen, prov, wt, rt)) ||
                     (emptyList && dealEmptyList(pojo, gen, prov, wt, rt)) ||
                     (emptyMap && dealEmptyMap(pojo, gen, prov, wt, rt))) {
@@ -124,11 +125,11 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
              rt.isTypeOrSubTypeOf(Date.class))
         ) {
             final Object v = writer.get(pojo);
-            if ((v instanceof LocalDate && emptyDate((LocalDate) v)) ||
-                (v instanceof LocalDateTime && emptyDateTime((LocalDateTime) v)) ||
-                (v instanceof ZonedDateTime && emptyDateTime(((ZonedDateTime) v).toLocalDateTime())) ||
-                (v instanceof OffsetDateTime && emptyDateTime(((OffsetDateTime) v).toLocalDateTime())) ||
-                (v instanceof Date && emptyDateTime((Date) v))
+            if ((v instanceof LocalDate lt && emptyDate(lt)) ||
+                (v instanceof LocalDateTime ldt && emptyDateTime(ldt)) ||
+                (v instanceof ZonedDateTime zdt && emptyDateTime(zdt.toLocalDateTime())) ||
+                (v instanceof OffsetDateTime odt && emptyDateTime(odt.toLocalDateTime())) ||
+                (v instanceof Date dt && emptyDateTime(dt))
             ) {
                 return skipEmpty(pojo, gen, prov, writer);
             }

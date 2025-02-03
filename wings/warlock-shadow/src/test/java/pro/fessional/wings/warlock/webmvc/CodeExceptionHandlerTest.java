@@ -16,7 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author trydofor
  * @since 2020-06-03
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+    "wings.slardar.jackson.i18n-result-compatible=1",
+})
 @AutoConfigureMockMvc
 public class CodeExceptionHandlerTest {
 

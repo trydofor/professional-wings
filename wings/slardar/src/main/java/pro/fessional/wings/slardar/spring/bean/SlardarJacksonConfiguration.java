@@ -32,9 +32,9 @@ public class SlardarJacksonConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public AutoRegisterPropertyFilter i18nMessagePropertyFilter(MessageSource messageSource) {
+    public AutoRegisterPropertyFilter i18nMessagePropertyFilter(MessageSource messageSource, SlardarJacksonProp prop) {
         log.info("Slardar spring-bean i18nMessagePropertyFilter");
-        return new I18nMessagePropertyFilter(messageSource::getMessage);
+        return new I18nMessagePropertyFilter(messageSource::getMessage, prop.getI18nResultCompatible());
     }
 
     @Bean
