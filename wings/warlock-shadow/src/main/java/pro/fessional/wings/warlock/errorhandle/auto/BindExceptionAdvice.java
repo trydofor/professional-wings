@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.errorhandle.auto;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nNotice;
-import pro.fessional.wings.warlock.errorhandle.I18nAwareHelper;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.errorhandle.I18nAwareHelper;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class BindExceptionAdvice {
      * binding valid failed
      */
     @ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
-    public ResponseEntity<R<?>> bindException(BindException ex, HttpServletRequest request) {
+    public ResponseEntity<R<?>> bindException(BindException ex) {
         log.warn("bindException Advice", ex);
         List<I18nNotice> notices = I18nAwareHelper.notices(ex);
         final R<?> body = R.ngError(notices);
@@ -47,7 +46,7 @@ public class BindExceptionAdvice {
      * body read failed
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<R<?>> httpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+    public ResponseEntity<R<?>> httpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.warn("httpMessageNotReadableException Advice", ex);
         I18nNotice ntc = I18nNotice.of(CommonErrorEnum.MessageUnreadable);
         ntc.setType(I18nNotice.Type.Validation.name());

@@ -83,26 +83,26 @@ public class WingsCacheHelper {
     @NotNull
     public static Cache getMemoryCache(String name) {
         final Cache cache = MemoryManager.getCache(name);
-        AssertState.notNull(cache, "cacheName", "memory cache is null, name={}", name);
+        AssertState.notNull(cache, "memory cache is null, name={}", name);
         return cache;
     }
 
     @NotNull
     public static Cache getServerCache(String name) {
         final Cache cache = ServerManager.getCache(name);
-        AssertState.notNull(cache, "cacheName", "server cache is null, name={}", name);
+        AssertState.notNull(cache, "server cache is null, name={}", name);
         return cache;
     }
 
     @NotNull
     public static CacheManager getMemory() {
-        AssertState.notNull(MemoryManager, "cacheManager", "Memory CacheManager is null");
+        AssertState.notNull(MemoryManager, "Memory CacheManager is null");
         return MemoryManager;
     }
 
     @NotNull
     public static CacheManager getServer() {
-        AssertState.notNull(ServerManager, "cacheManager", "Server CacheManager is null");
+        AssertState.notNull(ServerManager, "Server CacheManager is null");
         return ServerManager;
     }
 
@@ -133,7 +133,7 @@ public class WingsCacheHelper {
             if (managerName.isEmpty()) {
                 for (String nm : MngRlvCache.keySet()) {
                     final CacheManager m = getCacheManager(nm);
-                    AssertState.notNull(m, "cacheManager", "no CacheManager for {}", nm);
+                    AssertState.notNull(m, "no CacheManager for {}", nm);
                     managerName.put(m, getManagerNames(m));
                 }
             }
@@ -150,7 +150,7 @@ public class WingsCacheHelper {
                 for (Map.Entry<String, Set<String>> en : MngRlvCache.entrySet()) {
                     String k = en.getKey();
                     final CacheManager m = getCacheManager(k);
-                    AssertState.notNull(m, "cacheManager", "no CacheManager for {}", k);
+                    AssertState.notNull(m, "no CacheManager for {}", k);
                     Set<Cache> st = new HashSet<>();
                     for (String c : en.getValue()) {
                         st.add(m.getCache(c));

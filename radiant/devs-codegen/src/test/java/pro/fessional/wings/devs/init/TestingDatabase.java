@@ -51,7 +51,7 @@ public class TestingDatabase {
         long revi = 0;
         for (WingsRevision rv : include) {
             Path path = testingPropertyHelper.modulePath(rv.getRoot(), rv.getPath());
-            AssertState.notNull(path, "path", "path={} not found", path);
+            AssertState.notNull(path, "path={} not found", path);
             String abp = path.toFile().getCanonicalPath();
             helper.path("file://" + abp + REVISION_PATH_REVIFILE_TAIL);
             log.info("revi-path={}", abp);
