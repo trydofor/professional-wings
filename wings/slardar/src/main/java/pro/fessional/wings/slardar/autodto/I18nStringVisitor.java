@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.anti.BeanVisitor;
+import pro.fessional.mirana.best.ReadOnly;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.i18n.I18nAware;
 import pro.fessional.mirana.i18n.I18nAware.I18nSource;
-import pro.fessional.mirana.i18n.I18nMessage;
-import pro.fessional.mirana.i18n.I18nString;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -40,13 +40,9 @@ public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
         if (obj instanceof String str) {
             return i18nSource.getMessage(str, Null.Objects, str, localeSupplier.get());
         }
-        if (obj instanceof final I18nString str) {
-            str.setI18nCacheBy(localeSupplier.get(), i18nSource);
+        if (obj instanceof final I18nAware ia && !(obj instanceof ReadOnly)) {
+            ia.applyLocale(localeSupplier.get(), i18nSource);
         }
-        else if (obj instanceof I18nMessage msg) {
-            msg.setMessageBy(localeSupplier.get(), i18nSource);
-        }
-
         return obj;
     }
 }

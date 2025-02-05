@@ -3,6 +3,8 @@ package pro.fessional.wings.slardar.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.LocalDate;
+
 /**
  * The following will cause serialization and deserialization inconsistencies.
  *
@@ -22,7 +24,7 @@ public class SlardarJacksonProp {
      *
      * @see #Key$emptyDate
      */
-    private String emptyDate = null;
+    private LocalDate emptyDate = null;
     public static final String Key$emptyDate = Key + ".empty-date";
 
     /**
@@ -33,24 +35,6 @@ public class SlardarJacksonProp {
      */
     private int emptyDateOffset = 12;
     public static final String Key$emptyDateOffset = Key + ".empty-date-offset";
-
-    /**
-     * whether to ouptut `empty` list.
-     * Includes `empty` of Array and java.util.Collection. disabled by default for 3rd unfriendly.
-     * eg. spring-boot-admin's js use `.length` and `key` to check value existence.
-     *
-     * @see #Key$emptyList
-     */
-    private boolean emptyList = true;
-    public static final String Key$emptyList = Key + ".empty-list";
-
-    /**
-     * whether to ouptut `empty` map, includes java.util.Map
-     *
-     * @see #Key$emptyMap
-     */
-    private boolean emptyMap = true;
-    public static final String Key$emptyMap = Key + ".empty-map";
 
     /**
      * whether to handle message of I18nResult

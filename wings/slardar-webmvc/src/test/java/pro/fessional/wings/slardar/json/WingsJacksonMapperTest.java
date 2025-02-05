@@ -37,6 +37,7 @@ import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.jackson.AesString;
+import pro.fessional.wings.slardar.jackson.JacksonIncludeValue;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -49,6 +50,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,8 +73,6 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
 @SpringBootTest(properties = {
     "wings.slardar.datetime.zoned.auto=true",
     "wings.slardar.jackson.empty-date=1970-01-01",
-    "wings.slardar.jackson.empty-list=true",
-    "wings.slardar.jackson.empty-map=true",
 })
 @Slf4j
 public class WingsJacksonMapperTest {
@@ -110,7 +110,7 @@ public class WingsJacksonMapperTest {
         }
     }
 
-    @SuppressWarnings("LombokGetterMayBeUsed")
+    @SuppressWarnings({ "LombokGetterMayBeUsed", "LombokSetterMayBeUsed" })
     public static class NamingManual {
         private boolean primaryType = true;
         private Boolean objectType = true;
@@ -162,8 +162,7 @@ public class WingsJacksonMapperTest {
 
         assertEquals(json, json2);
         assertEquals(obj, obj2);
-        assertFalse(json.contains("Null"));
-        assertFalse(json.contains("Empty"));
+        assertEquals("{\"intVal\":2147483646,\"longVal\":\"9223372036854775806\",\"floatVal\":\"1.1\",\"doubleVal\":\"2.2\",\"decimalVal\":\"3.3\",\"localDateTimeVal\":\"2020-06-01 12:34:46\",\"localDateVal\":\"2020-06-01\",\"localTimeVal\":\"12:34:46\",\"zonedDateTimeVal\":\"2020-06-01 13:34:46 Asia/Tokyo\",\"zonedDateTimeValV\":\"2020-06-01 13:34:46.000 Asia/Tokyo\",\"zonedDateTimeValZ\":\"2020-06-01 13:34:46.000 +0900\",\"instantVal\":\"2020-06-01T12:34:46Z\",\"listVal\":[\"String\",\"List\"],\"mapVal\":{\"Map\":1},\"listEmpty\":[],\"mapEmpty\":{},\"integerArrEmpty\":[],\"intArrEmpty\":[],\"bool-val\":false}", json);
     }
 
     @Data
@@ -200,7 +199,7 @@ public class WingsJacksonMapperTest {
         private OffsetDateTime offsetDateTimeEmpty = localDateTimeEmpty.atOffset(ZoneOffset.UTC);
         private List<String> listNull = null;
         private Map<String, Long> mapNull = null;
-        private List<String> listEmpty = Collections.emptyList();
+        private ArrayList<String> listEmpty = new ArrayList<>();
         private Map<String, Long> mapEmpty = Collections.emptyMap();
         private Integer[] integerArrNull = null;
         private Integer[] integerArrEmpty = new Integer[0];
@@ -378,6 +377,11 @@ public class WingsJacksonMapperTest {
         ObjectMapper xmlMapper = jackson2ObjectMapperBuilder
             .createXmlMapper(true)
             .build();
+
+        JacksonIncludeValue.configNonEmptyValue(xmlMapper,
+            I18nJson.class,
+            JsonIt.class);
+
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
         String i18n = xmlMapper.writeValueAsString(i18nJson);
@@ -465,8 +469,8 @@ public class WingsJacksonMapperTest {
         objectMapper.writeValue(t1, i18nJson);
         objectMapper.writeValue(t2, jsonIt);
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", t1.getResultTree()
-                                                                                                                                                                                                                .toString()
-                                                                                                                                                                                                                .trim());
+                                                                                                                                                                                                                                                                                                                                    .toString()
+                                                                                                                                                                                                                                                                                                                                    .trim());
         assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=List, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
     }
 

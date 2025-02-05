@@ -122,7 +122,7 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
     @SneakyThrows
     protected SimpleResponse handleI18nAware(Locale lang, Throwable cex) {
         R<?> r = R.ngError(cex, resolveErrorType(cex));
-        r.setMessageBy(lang, MessageSourceHelper.i18nSource()); // locale message
+        r.applyLocale(lang, MessageSourceHelper.i18nSource()); // locale message
         final String body = objectMapper.writeValueAsString(r);
         return new SimpleResponse(defaultResponse.getHttpStatus(), defaultResponse.getContentType(), body);
     }
