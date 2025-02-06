@@ -53,6 +53,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -197,6 +198,8 @@ public class WingsJacksonMapperTest {
         private LocalDate localDateEmpty = localDateTimeEmpty.toLocalDate();
         private ZonedDateTime zonedDateTimeEmpty = localDateTimeEmpty.atZone(systemTz.toZoneId());
         private OffsetDateTime offsetDateTimeEmpty = localDateTimeEmpty.atOffset(ZoneOffset.UTC);
+        private Date utilDateEmpty = Date.from(offsetDateTimeEmpty.toInstant());
+        private java.sql.Date sqlDateEmpty = java.sql.Date.valueOf(localDateEmpty);
         private List<String> listNull = null;
         private Map<String, Long> mapNull = null;
         private ArrayList<String> listEmpty = new ArrayList<>();
@@ -484,6 +487,7 @@ public class WingsJacksonMapperTest {
 
         Map<String, String> x1 = StringMapHelper.jaxb(i18nJson);
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
+        x2.remove("utilDateEmpty");
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=List, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());

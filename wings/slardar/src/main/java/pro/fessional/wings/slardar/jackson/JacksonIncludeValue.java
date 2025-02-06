@@ -100,7 +100,6 @@ public class JacksonIncludeValue {
             else {
                 emptyDateMin = dt.minusHours(offsetHours);
                 emptyDateMax = dt.plusHours(offsetHours);
-
             }
         }
 
