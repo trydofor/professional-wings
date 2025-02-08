@@ -56,7 +56,7 @@
         <bouncycastle.version>1.79</bouncycastle.version> <!-- https://www.bouncycastle.org/download/bouncy-castle-java/#release-notes -->
         <justauth.version>1.16.7</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- sharding jdbc -->
-        <shardingsphere.version>5.5.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <shardingsphere.version>5.5.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
         <servicecomb.version>3.2.4</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
