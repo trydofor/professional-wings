@@ -16,7 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author trydofor
  * @since 2020-06-03
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+    "wings.slardar.jackson.i18n-result-compatible=1",
+})
 @AutoConfigureMockMvc
 public class CodeExceptionHandlerTest {
 
@@ -29,7 +32,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/code-exception.json")
                        .header("Accept-Language", "en_US"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should not empty\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty1\",\"message\":\"test should not be empty\"}"));
     }
 
     @Test
@@ -38,7 +41,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/code-exception.json")
                        .header("Accept-Language", "zh_CN"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test不能为空\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty1\",\"message\":\"test不能为空\"}"));
     }
 
     @Test
@@ -47,7 +50,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/message-exception.json")
                        .header("Accept-Language", "en_US"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should not empty\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty1\",\"message\":\"test should not be empty\"}"));
     }
 
     @Test
@@ -56,7 +59,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/message-exception.json")
                        .header("Accept-Language", "zh_CN"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test不能为空\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty1\",\"message\":\"test不能为空\"}"));
     }
 
     @Test
@@ -65,6 +68,6 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/future-exception.json")
                        .header("Accept-Language", "zh_CN"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test不能为空\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty1\",\"message\":\"test不能为空\"}"));
     }
 }

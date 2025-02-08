@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.service.wini18n;
 
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 

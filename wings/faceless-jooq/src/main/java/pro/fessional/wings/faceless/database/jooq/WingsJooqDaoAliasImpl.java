@@ -27,7 +27,7 @@ import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.TableImpl;
-import pro.fessional.mirana.best.AssertState;
+import pro.fessional.mirana.best.AssertCrud;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -327,7 +327,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             rs2 = dsl.selectFrom(table)
                      .where(cond)
                      .fetch();
-            AssertState.aEqb(1, rs2.size(), "should find 1 record after insert");
+            AssertCrud.selectEq(rs2.size(), 1);
             JournalDiffHelper.helpInsert(diff, rs2);
         }
 
@@ -1445,7 +1445,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                     .where(cond)
                     .execute();
 
-        AssertState.aEqb(rc, size, "delete mismatched records. cond={}", cond);
+        AssertCrud.affectEq(rc, size, "delete mismatched records. cond={}", cond);
         JournalDiffHelper.helpDelete(diff, rs1);
         return diff;
     }
@@ -1477,7 +1477,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                     .where(cond)
                     .execute();
 
-        AssertState.aEqb(rc, size, "update mismatched records. cond={}", cond);
+        AssertCrud.affectEq(rc, size, "update mismatched records. cond={}", cond);
         final Result<Record> rs2 = select.fetch();
 
         JournalDiffHelper.helpUpdate(diff, rs1, rs2);

@@ -53,7 +53,7 @@ public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ord
 
         HttpServletRequest wrap = request;
         if (domain != null) {
-            request.setAttribute(AttrDomainExtend, domain);
+            request.setAttribute(AttrDomainExtend.value, domain);
             wrap = domainRequestMatcher.match(request, domain);
         }
 

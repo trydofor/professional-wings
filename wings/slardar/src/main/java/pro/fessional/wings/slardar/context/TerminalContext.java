@@ -341,7 +341,7 @@ public class TerminalContext {
          */
         @Nullable
         public <T> T getTerminal(@NotNull TypedKey<T> key) {
-            return key.get(terminal);
+            return key.tryOr(terminal, null);
         }
 
         /**
@@ -351,7 +351,7 @@ public class TerminalContext {
          */
         @Contract("_,true->!null")
         public <T> T getTerminal(@NotNull TypedKey<T> key, boolean notnull) {
-            final T t = key.get(terminal);
+            final T t = key.tryOr(terminal, null);
             if (t == null && notnull) {
                 throw new NullPointerException("Terminal Key " + key + " returned null");
             }

@@ -44,7 +44,7 @@ public class SilencerConfiguration {
     @ConditionalWingsEnabled
     public MessageSourceHelper messageSourceHelper(MessageSource messageSource) {
         var bean = new MessageSourceHelper(messageSource) {};
-        if (MessageSourceHelper.hasCombine) {
+        if (MessageSourceHelper.hasCombine()) {
             log.info("Silencer spring-auto MessageSourceHelper parent to CombinableMessageSource");
         }
         else {

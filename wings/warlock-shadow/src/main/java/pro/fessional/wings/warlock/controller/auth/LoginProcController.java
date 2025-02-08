@@ -32,7 +32,7 @@ public class LoginProcController {
         """)
     @GetMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}")
     public R<Void> logout() {
-        return R.ng("handler by filter, never here");
+        return R.ngMessage("handler by filter, never here");
     }
 
 
@@ -54,6 +54,6 @@ public class LoginProcController {
                          @RequestParam("username") String username,
                          @RequestParam("password") String password) {
         log.debug("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
-        return R.ng("handler by filter, never here");
+        return R.ngMessage("handler by filter, never here");
     }
 }

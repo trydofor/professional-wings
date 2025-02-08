@@ -105,19 +105,19 @@ public class TestJsonController {
     @GetMapping("/test/json-dec.json")
     public R<Dec> jsonDec() {
         // {"success":true,"data":{"dec":"12345.67","str":"string"}}
-        return R.okData(new Dec());
+        return R.ok(new Dec());
     }
 
     @GetMapping("/test/json-sub.json")
     public R<Dec> jsonSub() {
         // {"success":true,"data":{"dec":"12,345.67","str":"string"}}
-        return R.okData(DecToSubMapper.into(new Dec()));
+        return R.ok(DecToSubMapper.into(new Dec()));
     }
 
     @GetMapping("/test/json-api.json")
     @JsonView(Vi.Api.class)
     public R<Vi> jsonApi() {
         // {"success":true,"data":{"key":"12,345.67"}}
-        return R.okData(new Vi());
+        return R.ok(new Vi());
     }
 }

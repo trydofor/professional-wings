@@ -6,14 +6,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.Wildcard;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
 
 import java.io.BufferedReader;
@@ -24,8 +26,12 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
+
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrI18nContext;
 
 /**
  * Type-safe to get the value in the request.
@@ -35,28 +41,35 @@ import java.util.Set;
  */
 public class RequestHelper {
 
-    /**
-     * Construct all error messages in `\n` delimited `(error=)?message` format.
-     *
-     * @param error error message
-     * @return null if no error
-     */
-    public static String allErrors(@NotNull BindingResult error) {
-        if (!error.hasErrors()) return null;
-        StringBuilder sb = new StringBuilder();
-
-        for (ObjectError err : error.getAllErrors()) {
-            sb.append("\n");
-            if (err instanceof FieldError fe) {
-                sb.append(fe.getField()).append("=");
-            }
-            sb.append(err.getDefaultMessage());
+    @Contract("_,true->!null")
+    public static Locale getLocale(@NotNull HttpServletRequest request, boolean nonnull) {
+        Locale locale = null;
+        Object obj = request.getAttribute(AttrI18nContext.value);
+        if (obj instanceof LocaleContext alc) {
+            locale = alc.getLocale();
         }
-        return sb.substring(1);
+        if (locale == null && nonnull) {
+            locale = LocaleContextHolder.getLocale();
+//            locale = TerminalContext.defaultLocale();
+        }
+        return locale;
+    }
+
+    @Contract("_,true->!null")
+    public static TimeZone getTimeZone(@NotNull HttpServletRequest request, boolean nonnull) {
+        TimeZone timeZone = null;
+        Object obj = request.getAttribute(AttrI18nContext.value);
+        if (obj instanceof TimeZoneAwareLocaleContext alc) {
+            timeZone = alc.getTimeZone();
+        }
+        if (timeZone == null && nonnull) {
+            timeZone = TerminalContext.defaultTimeZone();
+        }
+        return timeZone;
     }
 
     @Nullable
-    public static String getCookieValue(HttpServletRequest request, String name) {
+    public static String getCookieValue(@NotNull HttpServletRequest request, String name) {
         final Cookie[] cookies = request.getCookies();
         if (cookies == null) return null;
         for (Cookie ck : cookies) {
@@ -66,7 +79,7 @@ public class RequestHelper {
     }
 
     @NotNull
-    public static Map<String, String> mapCookieValue(HttpServletRequest request) {
+    public static Map<String, String> mapCookieValue(@NotNull HttpServletRequest request) {
         final Cookie[] cookies = request.getCookies();
         if (cookies == null || cookies.length == 0) return Collections.emptyMap();
         HashMap<String, String> map = new HashMap<>();
@@ -77,7 +90,7 @@ public class RequestHelper {
     }
 
     @NotNull
-    public static Map<String, Set<String>> allCookieValue(HttpServletRequest request) {
+    public static Map<String, Set<String>> allCookieValue(@NotNull HttpServletRequest request) {
         final Cookie[] cookies = request.getCookies();
         if (cookies == null || cookies.length == 0) return Collections.emptyMap();
         HashMap<String, Set<String>> map = new HashMap<>();
@@ -89,13 +102,13 @@ public class RequestHelper {
     }
 
     @Nullable
-    public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz) {
+    public static <T> T getAttribute(@NotNull HttpServletRequest request, String name, Class<T> claz) {
         Object obj = request.getAttribute(name);
         return TypedCastUtil.castObject(obj, claz);
     }
 
     @Nullable
-    public static <T> T getAttribute(HttpServletRequest request, String name) {
+    public static <T> T getAttribute(@NotNull HttpServletRequest request, String name) {
         Object obj = request.getAttribute(name);
         return TypedCastUtil.castObject(obj, null);
     }
@@ -123,7 +136,7 @@ public class RequestHelper {
     }
 
     @NotNull
-    public static String getRemoteIp(HttpServletRequest request, String... header) {
+    public static String getRemoteIp(@NotNull HttpServletRequest request, String... header) {
         if (header != null) {
             for (String h : header) {
                 String ip = request.getHeader(h);
@@ -140,7 +153,7 @@ public class RequestHelper {
      * @param path path pattern, return false if null or empty
      * @return whether matches
      */
-    public static boolean matchIgnoreCase(HttpServletRequest req, String path) {
+    public static boolean matchIgnoreCase(@NotNull HttpServletRequest req, String path) {
         if (path == null || path.isEmpty()) return false;
 
         String uri = req.getRequestURI();
@@ -159,7 +172,7 @@ public class RequestHelper {
      * @param path path patterns, return false if null or empty
      * @return whether matches any
      */
-    public static boolean matchIgnoreCase(HttpServletRequest req, String... path) {
+    public static boolean matchIgnoreCase(@NotNull HttpServletRequest req, String... path) {
         if (path == null) return false;
 
         String uri = req.getRequestURI();
@@ -225,7 +238,7 @@ public class RequestHelper {
      * if there is more than one token, take the last one.
      */
     @Nullable
-    public static String getAccessToken(HttpServletRequest request) {
+    public static String getAccessToken(@NotNull HttpServletRequest request) {
         String auth = request.getHeader("Authorization");
         String token = null;
         if (auth != null) {
@@ -251,12 +264,12 @@ public class RequestHelper {
         return token;
     }
 
-    public static boolean isForwarding(HttpServletRequest request) {
+    public static boolean isForwarding(@NotNull HttpServletRequest request) {
         return request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) != null;
     }
 
     @SneakyThrows
-    public static InputStream tryCircleInputStream(ServletRequest request) {
+    public static InputStream tryCircleInputStream(@NotNull ServletRequest request) {
         final ReuseStreamRequestWrapper inf = ReuseStreamRequestWrapper.infer(request);
         if (inf != null && inf.circleInputStream(true)) {
             return inf.getInputStream();
@@ -265,7 +278,7 @@ public class RequestHelper {
     }
 
     @SneakyThrows
-    public static BufferedReader tryCircleBufferedReader(ServletRequest request) {
+    public static BufferedReader tryCircleBufferedReader(@NotNull ServletRequest request) {
         final ReuseStreamRequestWrapper inf = ReuseStreamRequestWrapper.infer(request);
         if (inf != null && inf.circleInputStream(true)) {
             return inf.getReader();

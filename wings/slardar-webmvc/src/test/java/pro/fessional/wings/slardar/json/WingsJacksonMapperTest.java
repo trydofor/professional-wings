@@ -27,6 +27,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nMessage;
+import pro.fessional.mirana.i18n.I18nNotice;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
@@ -35,6 +37,7 @@ import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.jackson.AesString;
+import pro.fessional.wings.slardar.jackson.JacksonIncludeValue;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -47,8 +50,10 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -67,10 +72,8 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @since 2019-06-26
  */
 @SpringBootTest(properties = {
-        "wings.slardar.datetime.zoned.auto=true",
-        "wings.slardar.jackson.empty-date=1970-01-01",
-        "wings.slardar.jackson.empty-list=true",
-        "wings.slardar.jackson.empty-map=true",
+    "wings.slardar.datetime.zoned.auto=true",
+    "wings.slardar.jackson.empty-date=1970-01-01",
 })
 @Slf4j
 public class WingsJacksonMapperTest {
@@ -78,10 +81,10 @@ public class WingsJacksonMapperTest {
     final static TimeZone systemTz = TimeZone.getTimeZone("Asia/Shanghai");
     final static TimeZone userTz = TimeZone.getTimeZone("Asia/Tokyo");
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private ObjectMapper objectMapper;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     private Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder;
 
     @BeforeEach
@@ -91,11 +94,11 @@ public class WingsJacksonMapperTest {
         // user timezone
         TimeZone.setDefault(systemTz);
         TerminalContext.Builder builder = new TerminalContext.Builder()
-                .locale(Locale.US)
-                .timeZone(userTz)
-                .terminal(TerminalAddr, "localhost")
-                .terminal(TerminalAgent, "test")
-                .user(1);
+            .locale(Locale.US)
+            .timeZone(userTz)
+            .terminal(TerminalAddr, "localhost")
+            .terminal(TerminalAgent, "test")
+            .user(1);
         TerminalContext.login(builder.build());
     }
 
@@ -108,7 +111,7 @@ public class WingsJacksonMapperTest {
         }
     }
 
-    @SuppressWarnings("LombokGetterMayBeUsed")
+    @SuppressWarnings({ "LombokGetterMayBeUsed", "LombokSetterMayBeUsed" })
     public static class NamingManual {
         private boolean primaryType = true;
         private Boolean objectType = true;
@@ -160,8 +163,7 @@ public class WingsJacksonMapperTest {
 
         assertEquals(json, json2);
         assertEquals(obj, obj2);
-        assertFalse(json.contains("Null"));
-        assertFalse(json.contains("Empty"));
+        assertEquals("{\"intVal\":2147483646,\"longVal\":\"9223372036854775806\",\"floatVal\":\"1.1\",\"doubleVal\":\"2.2\",\"decimalVal\":\"3.3\",\"localDateTimeVal\":\"2020-06-01 12:34:46\",\"localDateVal\":\"2020-06-01\",\"localTimeVal\":\"12:34:46\",\"zonedDateTimeVal\":\"2020-06-01 13:34:46 Asia/Tokyo\",\"zonedDateTimeValV\":\"2020-06-01 13:34:46.000 Asia/Tokyo\",\"zonedDateTimeValZ\":\"2020-06-01 13:34:46.000 +0900\",\"instantVal\":\"2020-06-01T12:34:46Z\",\"listVal\":[\"String\",\"List\"],\"mapVal\":{\"Map\":1},\"listEmpty\":[],\"mapEmpty\":{},\"integerArrEmpty\":[],\"intArrEmpty\":[],\"bool-val\":false}", json);
     }
 
     @Data
@@ -196,9 +198,11 @@ public class WingsJacksonMapperTest {
         private LocalDate localDateEmpty = localDateTimeEmpty.toLocalDate();
         private ZonedDateTime zonedDateTimeEmpty = localDateTimeEmpty.atZone(systemTz.toZoneId());
         private OffsetDateTime offsetDateTimeEmpty = localDateTimeEmpty.atOffset(ZoneOffset.UTC);
+        private Date utilDateEmpty = Date.from(offsetDateTimeEmpty.toInstant());
+        private java.sql.Date sqlDateEmpty = java.sql.Date.valueOf(localDateEmpty);
         private List<String> listNull = null;
         private Map<String, Long> mapNull = null;
-        private List<String> listEmpty = Collections.emptyList();
+        private ArrayList<String> listEmpty = new ArrayList<>();
         private Map<String, Long> mapEmpty = Collections.emptyMap();
         private Integer[] integerArrNull = null;
         private Integer[] integerArrEmpty = new Integer[0];
@@ -213,30 +217,42 @@ public class WingsJacksonMapperTest {
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
         String json = jackson.writeValueAsString(obj);
         assertEquals("""
-                {
-                  "codeManual" : "{0} can not be empty",
-                  "codeIgnore" : "base.not-empty",
-                  "textAuto" : "textAuto can not be empty",
-                  "textDisabled" : {
-                    "code" : "base.not-empty",
-                    "hint" : "",
-                    "args" : [ "textDisabled" ]
-                  },
-                  "longIgnore" : 0,
-                  "mapIgnore" : {
-                    "ikey" : "ival"
-                  },
-                  "mapDisabled" : {
-                    "i18n" : {
-                      "code" : "base.not-empty",
-                      "hint" : "",
-                      "args" : [ "textDisabled" ]
-                    }
-                  },
-                  "mapAuto" : {
-                    "i18n" : "textAuto can not be empty"
-                  }
-                }""", json.trim());
+            {
+              "codeManual" : "{0} can not be empty",
+              "codeIgnore" : "base.not-empty",
+              "textAuto" : "textAuto can not be empty",
+              "textDisabled" : {
+                "code" : "base.not-empty",
+                "hint" : "",
+                "args" : [ "textDisabled" ]
+              },
+              "i18nMessage" : {
+                "message" : "i18nMessage can not be empty",
+                "i18nCode" : "base.not-empty",
+                "i18nArgs" : [ "i18nMessage" ]
+              },
+              "i18nNotice" : {
+                "message" : "i18nMessage can not be empty",
+                "i18nCode" : "base.not-empty",
+                "i18nArgs" : [ "i18nMessage" ],
+                "type" : "testing",
+                "target" : "trydofor"
+              },
+              "longIgnore" : 0,
+              "mapIgnore" : {
+                "ikey" : "ival"
+              },
+              "mapDisabled" : {
+                "i18n" : {
+                  "code" : "base.not-empty",
+                  "hint" : "",
+                  "args" : [ "textDisabled" ]
+                }
+              },
+              "mapAuto" : {
+                "i18n" : "textAuto can not be empty"
+              }
+            }""", json.trim());
     }
 
     @Data
@@ -249,6 +265,8 @@ public class WingsJacksonMapperTest {
         private I18nString textAuto = new I18nString("base.not-empty", "", "textAuto");
         @AutoI18nString(false) // disable
         private I18nString textDisabled = new I18nString("base.not-empty", "", "textDisabled");
+        private I18nMessage i18nMessage = new I18nMessage().setMessage("").setI18nCode("base.not-empty").setI18nArgs("i18nMessage");
+        private I18nNotice i18nNotice = I18nNotice.of(i18nMessage).setTarget("trydofor").setType("testing");
         @AutoI18nString // invalid
         private Long longIgnore = 0L;
         @AutoI18nString // invalid
@@ -265,133 +283,180 @@ public class WingsJacksonMapperTest {
     public void testI18nResult() throws IOException {
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
 
-        R<I18nJson> r1 = R.ok("This is a message", new I18nJson());
+        R<I18nJson> r1 = R.ok(new I18nJson(), null, "This is a message");
         String j1 = jackson.writeValueAsString(r1);
         assertEquals("""
-                {
-                  "success" : true,
-                  "message" : "This is a message",
-                  "data" : {
-                    "codeManual" : "{0} can not be empty",
-                    "codeIgnore" : "base.not-empty",
-                    "textAuto" : "textAuto can not be empty",
-                    "textDisabled" : {
-                      "code" : "base.not-empty",
-                      "hint" : "",
-                      "args" : [ "textDisabled" ]
-                    },
-                    "longIgnore" : 0,
-                    "mapIgnore" : {
-                      "ikey" : "ival"
-                    },
-                    "mapDisabled" : {
-                      "i18n" : {
-                        "code" : "base.not-empty",
-                        "hint" : "",
-                        "args" : [ "textDisabled" ]
-                      }
-                    },
-                    "mapAuto" : {
-                      "i18n" : "textAuto can not be empty"
-                    }
+            {
+              "message" : "This is a message",
+              "success" : true,
+              "data" : {
+                "codeManual" : "{0} can not be empty",
+                "codeIgnore" : "base.not-empty",
+                "textAuto" : "textAuto can not be empty",
+                "textDisabled" : {
+                  "code" : "base.not-empty",
+                  "hint" : "",
+                  "args" : [ "textDisabled" ]
+                },
+                "i18nMessage" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ]
+                },
+                "i18nNotice" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ],
+                  "type" : "testing",
+                  "target" : "trydofor"
+                },
+                "longIgnore" : 0,
+                "mapIgnore" : {
+                  "ikey" : "ival"
+                },
+                "mapDisabled" : {
+                  "i18n" : {
+                    "code" : "base.not-empty",
+                    "hint" : "",
+                    "args" : [ "textDisabled" ]
                   }
-                }""", j1);
+                },
+                "mapAuto" : {
+                  "i18n" : "textAuto can not be empty"
+                }
+              }
+            }""", j1);
 
-        R<I18nJson> r2 = r1.setI18nMessage("base.not-empty", "Param1");
+        R<I18nJson> r2 = r1.setI18nCode("base.not-empty").setI18nArgs("Param1").cast();
         String j2 = jackson.writeValueAsString(r2);
         assertEquals("""
-                {
-                  "success" : true,
-                  "message" : "Param1 can not be empty",
-                  "data" : {
-                    "codeManual" : "{0} can not be empty",
-                    "codeIgnore" : "base.not-empty",
-                    "textAuto" : "textAuto can not be empty",
-                    "textDisabled" : {
-                      "code" : "base.not-empty",
-                      "hint" : "",
-                      "args" : [ "textDisabled" ]
-                    },
-                    "longIgnore" : 0,
-                    "mapIgnore" : {
-                      "ikey" : "ival"
-                    },
-                    "mapDisabled" : {
-                      "i18n" : {
-                        "code" : "base.not-empty",
-                        "hint" : "",
-                        "args" : [ "textDisabled" ]
-                      }
-                    },
-                    "mapAuto" : {
-                      "i18n" : "textAuto can not be empty"
-                    }
+            {
+              "message" : "Param1 can not be empty",
+              "i18nCode" : "base.not-empty",
+              "i18nArgs" : [ "Param1" ],
+              "success" : true,
+              "data" : {
+                "codeManual" : "{0} can not be empty",
+                "codeIgnore" : "base.not-empty",
+                "textAuto" : "textAuto can not be empty",
+                "textDisabled" : {
+                  "code" : "base.not-empty",
+                  "hint" : "",
+                  "args" : [ "textDisabled" ]
+                },
+                "i18nMessage" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ]
+                },
+                "i18nNotice" : {
+                  "message" : "i18nMessage can not be empty",
+                  "i18nCode" : "base.not-empty",
+                  "i18nArgs" : [ "i18nMessage" ],
+                  "type" : "testing",
+                  "target" : "trydofor"
+                },
+                "longIgnore" : 0,
+                "mapIgnore" : {
+                  "ikey" : "ival"
+                },
+                "mapDisabled" : {
+                  "i18n" : {
+                    "code" : "base.not-empty",
+                    "hint" : "",
+                    "args" : [ "textDisabled" ]
                   }
-                }""", j2);
+                },
+                "mapAuto" : {
+                  "i18n" : "textAuto can not be empty"
+                }
+              }
+            }""", j2);
     }
 
     @Test
     @TmsLink("C13071")
     public void testXml() throws IOException {
         ObjectMapper xmlMapper = jackson2ObjectMapperBuilder
-                .createXmlMapper(true)
-                .build();
+            .createXmlMapper(true)
+            .build();
+
+        JacksonIncludeValue.configNonEmptyValue(xmlMapper,
+            I18nJson.class,
+            JsonIt.class);
+
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
         String i18n = xmlMapper.writeValueAsString(i18nJson);
         String json = xmlMapper.writeValueAsString(jsonIt);
         assertEquals(("""
-                              <I18nJson>
-                                <codeManual>{0} can not be empty</codeManual>
-                                <codeIgnore>base.not-empty</codeIgnore>
-                                <textAuto>textAuto can not be empty</textAuto>
-                                <textDisabled>
-                                  <code>base.not-empty</code>
-                                  <hint></hint>
-                                  <args>
-                                    <item>textDisabled</item>
-                                  </args>
-                                </textDisabled>
-                                <longIgnore>0</longIgnore>
-                                <mapIgnore>
-                                  <ikey>ival</ikey>
-                                </mapIgnore>
-                                <mapDisabled>
-                                  <i18n>
-                                    <code>base.not-empty</code>
-                                    <hint></hint>
-                                    <args>
-                                      <item>textDisabled</item>
-                                    </args>
-                                  </i18n>
-                                </mapDisabled>
-                                <mapAuto>
-                                  <i18n>textAuto can not be empty</i18n>
-                                </mapAuto>
-                              </I18nJson>""").replaceAll("\\s", ""), i18n.replaceAll("\\s", ""));
+                          <I18nJson>
+                            <codeManual>{0} can not be empty</codeManual>
+                            <codeIgnore>base.not-empty</codeIgnore>
+                            <textAuto>textAuto can not be empty</textAuto>
+                            <textDisabled>
+                              <code>base.not-empty</code>
+                              <hint></hint>
+                              <args>
+                                <item>textDisabled</item>
+                              </args>
+                            </textDisabled>
+                            <i18nMessage>
+                              <message>i18nMessagecannotbeempty</message>
+                              <i18nCode>base.not-empty</i18nCode>
+                              <i18nArgs>
+                                <i18nArgs>i18nMessage</i18nArgs>
+                              </i18nArgs>
+                            </i18nMessage>
+                            <i18nNotice>
+                              <message>i18nMessagecannotbeempty</message>
+                              <i18nCode>base.not-empty</i18nCode>
+                              <i18nArgs>
+                                <i18nArgs>i18nMessage</i18nArgs>
+                              </i18nArgs>
+                              <type>testing</type>
+                              <target>trydofor</target>
+                            </i18nNotice>
+                            <longIgnore>0</longIgnore>
+                            <mapIgnore>
+                              <ikey>ival</ikey>
+                            </mapIgnore>
+                            <mapDisabled>
+                              <i18n>
+                                <code>base.not-empty</code>
+                                <hint></hint>
+                                <args>
+                                  <item>textDisabled</item>
+                                </args>
+                              </i18n>
+                            </mapDisabled>
+                            <mapAuto>
+                              <i18n>textAuto can not be empty</i18n>
+                            </mapAuto>
+                          </I18nJson>""").replaceAll("\\s", ""), i18n.replaceAll("\\s", ""));
         assertEquals(("""
-                              <JsonIt>
-                                <intVal>2147483646</intVal>
-                                <longVal>9223372036854775806</longVal>
-                                <floatVal>1.1</floatVal>
-                                <doubleVal>2.2</doubleVal>
-                                <decimalVal>3.3</decimalVal>
-                                <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>
-                                <localDateVal>2020-06-01</localDateVal>
-                                <localTimeVal>12:34:46</localTimeVal>
-                                <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>
-                                <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>
-                                <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>
-                                <instantVal>2020-06-01T12:34:46Z</instantVal>
-                                <listVal>
-                                  <listVal>String</listVal>
-                                  <listVal>List</listVal>
-                                </listVal>
-                                <mapVal>
-                                  <Map>1</Map>
-                                </mapVal>
-                                <bool-val>false</bool-val>
-                              </JsonIt>""").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
+                          <JsonIt>
+                            <intVal>2147483646</intVal>
+                            <longVal>9223372036854775806</longVal>
+                            <floatVal>1.1</floatVal>
+                            <doubleVal>2.2</doubleVal>
+                            <decimalVal>3.3</decimalVal>
+                            <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>
+                            <localDateVal>2020-06-01</localDateVal>
+                            <localTimeVal>12:34:46</localTimeVal>
+                            <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>
+                            <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>
+                            <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>
+                            <instantVal>2020-06-01T12:34:46Z</instantVal>
+                            <listVal>
+                              <listVal>String</listVal>
+                              <listVal>List</listVal>
+                            </listVal>
+                            <mapVal>
+                              <Map>1</Map>
+                            </mapVal>
+                            <bool-val>false</bool-val>
+                          </JsonIt>""").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
 
         JsonIt xmlJsonIt = xmlMapper.readValue(json, JsonIt.class);
         log.info("it={}", xmlJsonIt);
@@ -406,9 +471,9 @@ public class WingsJacksonMapperTest {
         StringMapGenerator t2 = StringMapGenerator.linkMap();
         objectMapper.writeValue(t1, i18nJson);
         objectMapper.writeValue(t2, jsonIt);
-        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree()
-                                                                                                                                                                                                                .toString()
-                                                                                                                                                                                                                .trim());
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", t1.getResultTree()
+                                                                                                                                                                                                                                                                                                                                    .toString()
+                                                                                                                                                                                                                                                                                                                                    .trim());
         assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=List, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
     }
 
@@ -422,10 +487,11 @@ public class WingsJacksonMapperTest {
 
         Map<String, String> x1 = StringMapHelper.jaxb(i18nJson);
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
+        x2.remove("utilDateEmpty");
 
-        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, ikey=ival, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, textAuto=textAuto can not be empty, type=testing}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=List, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
-        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, i18nArgs=i18nMessage, i18nCode=base.not-empty, i18nHint=, key=ikey, longIgnore=0, message=i18nMessage can not be empty, target=trydofor, type=testing, value=ival}", x1.toString());
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=List, longVal=9223372036854775806, value=1}", x2.toString());
     }
 
@@ -527,8 +593,8 @@ public class WingsJacksonMapperTest {
     @TmsLink("C13077")
     public void testMsNamingXml() throws JsonProcessingException {
         final XmlMapper xmlMapper = jackson2ObjectMapperBuilder
-                .createXmlMapper(true)
-                .build();
+            .createXmlMapper(true)
+            .build();
         xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 
         final MsNamingXml xmlOri = new MsNamingXml();
@@ -540,11 +606,11 @@ public class WingsJacksonMapperTest {
         log.info("testMsNamingXml={}", xmlStr);
 
         final String xmlStrUpper = """
-                <XmlRoot>
-                    <Amount>3.14</Amount>
-                    <Soap>str</Soap>
-                </XmlRoot>
-                """.replaceAll("\\s", "");
+            <XmlRoot>
+                <Amount>3.14</Amount>
+                <Soap>str</Soap>
+            </XmlRoot>
+            """.replaceAll("\\s", "");
         final String xmlStrLower = xmlStrUpper.replace("Soap", "soap");
         assertEquals(xmlStrLower, xmlStr); // filed name is lowercase by getter naming
 

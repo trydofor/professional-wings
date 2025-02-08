@@ -7,11 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,16 +33,22 @@ public class I18nLocaleResolverTest {
     @Setter(onMethod_ = {@Autowired})
     private MockMvc mockMvc;
 
+    @Setter(onMethod_ = {@Autowired})
+    private MessageSource messageSource;
+
     @Test
     @TmsLink("C13102")
     public void localeByHeader() throws Exception {
-        testHeader("en", "Bad credentials|en");
-        testHeader("en_US", "Bad credentials|en-US");
+        testHeader("en", "bad credentials|en");
+        testHeader("en_US", "bad credentials|en-US");
         testHeader("zh_TW", "密码错误|zh-TW");
         testHeader("zh-TW", "密码错误|zh-TW");
         testHeader("zh", "密码错误|zh");
         testHeader("zh-CN", "密码错误|zh-CN");
         testHeader("zh_CN", "密码错误|zh-CN");
+
+        String men2 = messageSource.getMessage("null", new Object[]{"hello"}, "{0} world", Locale.US);
+        assertEquals("hello world", men2);
     }
 
     private void testHeader(String lang, String output) throws Exception {
@@ -54,8 +64,8 @@ public class I18nLocaleResolverTest {
     @Test
     @TmsLink("C13103")
     public void localeByCookie() throws Exception {
-        testCookie("en", "Bad credentials|en");
-        testCookie("en_US", "Bad credentials|en-US");
+        testCookie("en", "bad credentials|en");
+        testCookie("en_US", "bad credentials|en-US");
         testCookie("zh_TW", "密码错误|zh-TW");
         testCookie("zh-TW", "密码错误|zh-TW");
         testCookie("zh", "密码错误|zh");
@@ -75,8 +85,8 @@ public class I18nLocaleResolverTest {
     @Test
     @TmsLink("C13104")
     public void localeByParam() throws Exception {
-        testParam("en", "Bad credentials|en");
-        testParam("en_US", "Bad credentials|en-US");
+        testParam("en", "bad credentials|en");
+        testParam("en_US", "bad credentials|en-US");
         testParam("zh_TW", "密码错误|zh-TW");
         testParam("zh-TW", "密码错误|zh-TW");
         testParam("zh", "密码错误|zh");

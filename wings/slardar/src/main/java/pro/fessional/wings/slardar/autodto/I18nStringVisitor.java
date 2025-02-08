@@ -3,10 +3,11 @@ package pro.fessional.wings.slardar.autodto;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.context.MessageSource;
 import pro.fessional.mirana.anti.BeanVisitor;
+import pro.fessional.mirana.best.ReadOnly;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.mirana.i18n.I18nAware;
+import pro.fessional.mirana.i18n.I18nAware.I18nSource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -20,7 +21,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
 
-    private final MessageSource messageSource;
+    private final I18nSource i18nSource;
     private final Supplier<Locale> localeSupplier;
 
     @Override
@@ -36,13 +37,11 @@ public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
     @Override
     @Nullable
     protected Object amendValue(@NotNull Field field, @NotNull Annotation[] annos, @Nullable Object obj) {
-        if (obj instanceof String) {
-            return messageSource.getMessage((String) obj, Null.Objects, localeSupplier.get());
+        if (obj instanceof String str) {
+            return i18nSource.getMessage(str, Null.Objects, str, localeSupplier.get());
         }
-        if (obj instanceof final I18nString s) {
-            final String n = messageSource.getMessage(s.getI18nCode(), s.getI18nArgs(), localeSupplier.get());
-            s.setI18n(n);
-            return s;
+        if (obj instanceof final I18nAware ia && !(obj instanceof ReadOnly)) {
+            ia.applyLocale(localeSupplier.get(), i18nSource);
         }
         return obj;
     }

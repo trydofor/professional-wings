@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.enums;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.math.AnyIntegerUtil;
 

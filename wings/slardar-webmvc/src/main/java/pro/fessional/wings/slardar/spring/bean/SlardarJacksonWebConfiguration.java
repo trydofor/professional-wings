@@ -18,8 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.util.StringUtils;
-import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nAware;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
@@ -34,10 +33,10 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
-import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
+import pro.fessional.wings.slardar.jackson.JacksonIncludeValue;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
-import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nAwarePropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.jackson.ResourceSerializer;
@@ -178,9 +177,10 @@ public class SlardarJacksonWebConfiguration {
     public Jackson2ObjectMapperBuilderCustomizer customizeJacksonEmpty(SlardarJacksonProp prop) {
         log.info("SlardarWebmvc spring-bean customizeJacksonEmpty");
         return builder -> {
-            if (StringUtils.hasText(prop.getEmptyDate()) || prop.isEmptyMap() || prop.isEmptyList()) {
-                log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
-                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
+            if (prop.getEmptyDate() != null) {
+                log.info("SlardarWebmvc conf EmptyValuePropertyFilter");
+                new JacksonIncludeValue(prop.getEmptyDate(), prop.getEmptyDateOffset()){};
+                builder.postConfigurer(JacksonIncludeValue::configNonEmptyDates);
             }
         };
     }
@@ -237,20 +237,23 @@ public class SlardarJacksonWebConfiguration {
         return builder -> {
             if (prop.isI18nResult()) {
                 log.info("SlardarWebmvc conf I18nResultPropertyFilter's I18nResultMixin");
-                builder.serializerByType(I18nString.class, new I18nStringSerializer(source, true));
-                builder.serializerByType(CharSequence.class, new I18nStringSerializer(source, false));
-                builder.mixIn(R.class, I18nResultPropertyFilter.I18nResultMixin.class);
+                I18nAware.I18nSource i18nSource = source::getMessage;
+                builder.serializerByType(I18nString.class, new I18nStringSerializer(i18nSource, true));
+                builder.serializerByType(CharSequence.class, new I18nStringSerializer(i18nSource, false));
+                builder.mixIn(I18nAwarePropertyFilter.MixinClass, I18nAwarePropertyFilter.I18nAwareMixin.class);
             }
         };
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizerFilter(FilterProvider filterProvider) {
+    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizerFilter(List<FilterProvider> filterProviders) {
         log.info("SlardarWebmvc spring-bean jacksonCustomizerFilter");
         return builder -> {
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer filters");
-            builder.filters(filterProvider);
+            for (FilterProvider fp : filterProviders) {
+                builder.filters(fp);
+            }
         };
     }
 

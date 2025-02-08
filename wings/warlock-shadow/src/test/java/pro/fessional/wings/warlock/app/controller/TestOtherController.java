@@ -80,13 +80,13 @@ public class TestOtherController {
     @RequestMapping("/test/binding-error-from.json")
     public R<?> bindingErrorFrom(@Valid Ins ins) {
         log.info(">>>" + ins.toString());
-        return R.okData(ins);
+        return R.ok(ins);
     }
 
     @RequestMapping("/test/binding-error-json.json")
     public R<?> bindingErrorJson(@Valid @RequestBody Ins ins) {
         log.info(">>>" + ins.toString());
-        return R.okData(ins);
+        return R.ok(ins);
     }
 
     @RequestMapping("/test/secured-create.json")

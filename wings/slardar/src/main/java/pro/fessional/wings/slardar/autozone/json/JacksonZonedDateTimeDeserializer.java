@@ -21,8 +21,12 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature.ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS;
+import static com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature.NORMALIZE_DESERIALIZED_ZONE_ID;
+
 /**
  * @author trydofor
+ * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-09-01
  */
 public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> implements AutoZoneAware {
@@ -42,7 +46,9 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
             a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
             a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
             (zonedDateTime, zoneId) -> zonedDateTime,
-            false // keep zero offset and Z separate since zones explicitly supported
+            false, // keep zero offset and Z separate since zones explicitly supported
+            NORMALIZE_DESERIALIZED_ZONE_ID.enabledByDefault(),
+            ALWAYS_ALLOW_STRINGIFIED_DATE_TIMESTAMPS.enabledByDefault()
         );
         this.formats = formats;
         this.autoZone = auto;

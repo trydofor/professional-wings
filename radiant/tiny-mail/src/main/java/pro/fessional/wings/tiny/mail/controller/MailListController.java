@@ -86,6 +86,6 @@ public class MailListController {
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$loadDetail + "}")
     @ResponseBody
     public R<TinyMailPlain> loadDetail(@RequestBody Q.Id ins) {
-        return R.okData(tinyMailListService.loadDetail(ins.getId()));
+        return R.ok(tinyMailListService.loadDetail(ins.getId()));
     }
 }

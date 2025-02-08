@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.database.helper.JdbcTemplateHelper;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -68,6 +69,7 @@ public class JooqDeleteListenerTest {
     @Test
     @TmsLink("C12096")
     public void test2HelperSeeLog() {
+        JdbcTemplateHelper.initSafeTable("tst_sharding");
         JournalJooqHelper.deleteByIds(dsl, TstShardingTable.TstSharding, 12L, 1L, 2L);
         JournalJooqHelper.deleteByIds(tmpl, "`tst_sharding`", 34L, 3L, 4L);
         testcaseNotice(

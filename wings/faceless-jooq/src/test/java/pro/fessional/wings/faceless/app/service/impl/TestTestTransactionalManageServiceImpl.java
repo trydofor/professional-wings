@@ -8,9 +8,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import pro.fessional.mirana.best.AssertCrud;
 import pro.fessional.wings.faceless.app.service.TestTransactionalClauseService;
 import pro.fessional.wings.faceless.app.service.TestTransactionalManageService;
-import pro.fessional.wings.faceless.database.helper.DaoAssert;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,19 +22,19 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class TestTestTransactionalManageServiceImpl implements TestTransactionalManageService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected TestTransactionalClauseService testTransactionalClauseService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = { @Autowired })
     protected PlatformTransactionManager transactionManager;
 
     @Override
     public void declarativeTx(AtomicLong oid, boolean insErr, boolean updErr, boolean delError) {
         final long id = testTransactionalClauseService.createIntOneTx(oid, insErr);
         final int uc = testTransactionalClauseService.increaseIntTx(id, updErr);
-        DaoAssert.assertGe1(uc, "must update one");
+        AssertCrud.affectGe(uc, 1, "must update one");
         final int dc = testTransactionalClauseService.deleteTx(id, delError);
-        DaoAssert.assertEq1(dc, "must delete one");
+        AssertCrud.affectEq(dc, 1, "must delete one");
     }
 
     @Override
@@ -48,9 +48,9 @@ public class TestTestTransactionalManageServiceImpl implements TestTransactional
         try {
             final long id = testTransactionalClauseService.createIntOneTx(oid, insErr);
             final int uc = testTransactionalClauseService.increaseIntTx(id, updErr);
-            DaoAssert.assertGe1(uc, "must update one");
+            AssertCrud.affectGe(uc, 1, "must update one");
             final int dc = testTransactionalClauseService.deleteTx(id, delError);
-            DaoAssert.assertEq1(dc, "must delete one");
+            AssertCrud.affectEq(dc, 1, "must delete one");
 
             if (rollback) {
                 log.info("rollback programmatic manual");
@@ -73,9 +73,9 @@ public class TestTestTransactionalManageServiceImpl implements TestTransactional
     public void withoutTx(AtomicLong oid, boolean insErr, boolean updErr, boolean delError) {
         final long id = testTransactionalClauseService.createIntOne(oid, insErr);
         final int uc = testTransactionalClauseService.increaseInt(id, updErr);
-        DaoAssert.assertGe1(uc, "must update one");
+        AssertCrud.affectGe(uc, 1, "must update one");
         final int dc = testTransactionalClauseService.delete(id, delError);
-        DaoAssert.assertEq1(dc, "must delete one");
+        AssertCrud.affectEq(dc, 1, "must delete one");
     }
 
 

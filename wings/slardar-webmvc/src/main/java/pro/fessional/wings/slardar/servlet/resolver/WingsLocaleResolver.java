@@ -87,7 +87,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     @NotNull
     public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request, Long userId) {
 
-        Object obj = request.getAttribute(AttrI18nContext);
+        Object obj = request.getAttribute(AttrI18nContext.value);
         if (obj instanceof TimeZoneAwareLocaleContext alc) {
             return alc;
         }
@@ -132,16 +132,16 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        SimpleTimeZoneAwareLocaleContext context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
-        request.setAttribute(AttrI18nContext, context);
+        var ctx = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
+        request.setAttribute(AttrI18nContext.value, ctx);
 
-        return context;
+        return ctx;
     }
 
     @Override
     public void setLocaleContext(@NotNull HttpServletRequest request, HttpServletResponse response, LocaleContext context) {
-        if (context instanceof TimeZoneAwareLocaleContext) {
-            request.setAttribute(AttrI18nContext, context);
+        if (context instanceof TimeZoneAwareLocaleContext ctx) {
+            request.setAttribute(AttrI18nContext.value, ctx);
             return;
         }
 
@@ -158,8 +158,8 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             timeZone = TerminalContext.defaultTimeZone();
         }
 
-        context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
-        request.setAttribute(AttrI18nContext, context);
+        var ctx = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
+        request.setAttribute(AttrI18nContext.value, ctx);
     }
 
     // /////////////////
@@ -221,33 +221,5 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         }
 
         return null;
-    }
-
-    public static class Context implements TimeZoneAwareLocaleContext {
-
-        private final Locale locale;
-        private final TimeZone timeZone;
-        private final ZoneId zoneId;
-
-        public Context(Locale locale, TimeZone timeZone, ZoneId zoneId) {
-            this.locale = locale;
-            this.timeZone = timeZone;
-            this.zoneId = zoneId;
-        }
-
-        @Override
-        public TimeZone getTimeZone() {
-            return timeZone;
-        }
-
-        @Override
-        public Locale getLocale() {
-            return locale;
-        }
-
-        @NotNull
-        public ZoneId getZoneId() {
-            return zoneId;
-        }
     }
 }

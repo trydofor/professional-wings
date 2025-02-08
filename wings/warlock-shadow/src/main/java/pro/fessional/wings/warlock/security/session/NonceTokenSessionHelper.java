@@ -44,7 +44,7 @@ public class NonceTokenSessionHelper {
     public static void bindNonceSession(String token, String sid) {
         if (token == null || token.isEmpty()) return;
         final SidData data = () -> sid;
-        final R<?> result = R.okData(data);
+        final R<?> result = R.ok(data);
         bindNonceResult(token, result);
     }
 

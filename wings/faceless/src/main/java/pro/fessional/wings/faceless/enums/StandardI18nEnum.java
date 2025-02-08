@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.enums;
 
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 
 /**
  * Enum from sys_standard_i18n table.

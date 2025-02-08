@@ -80,28 +80,31 @@ public class JdbcTemplateHelper {
         int pos0 = name.indexOf('`');
         if (pos0 >= 0) {
             int pos1 = name.lastIndexOf('`');
-            if(pos0 == 0 && pos1 == name.length() -1) {
+            if (pos0 == 0 && pos1 == name.length() - 1) {
                 int pos = name.indexOf('`', pos0 + 1, pos1);
-                if(pos < 0) return name;
+                if (pos < 0) return name;
             }
-            name = name.replace("`","");
+            name = name.replace("`", "");
         }
         return "`" + name + "`";
     };
 
     public static void initSafeTable(JdbcTemplate tmpl) {
         tmpl.query(ShowTableSql, rs -> {
-            String tbl = rs.getString(1);
-            log.info("init safe table={}", tbl);
-
-            String lc = tbl.toLowerCase();
-            String uc = tbl.toUpperCase();
-            SafeTables.add(lc);
-            SafeTables.add(uc);
-
-            QuotedTables.add(Quotes.apply(lc));
-            QuotedTables.add(Quotes.apply(uc));
+            initSafeTable(rs.getString(1));
         });
+    }
+
+    public static void initSafeTable(String tbl) {
+        log.info("init safe table={}", tbl);
+
+        String lc = tbl.toLowerCase();
+        String uc = tbl.toUpperCase();
+        SafeTables.add(lc);
+        SafeTables.add(uc);
+
+        QuotedTables.add(Quotes.apply(lc));
+        QuotedTables.add(Quotes.apply(uc));
     }
 
     /**

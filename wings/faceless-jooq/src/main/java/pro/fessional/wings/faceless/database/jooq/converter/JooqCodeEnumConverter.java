@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.database.jooq.converter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Converter;
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.wings.faceless.converter.CodeEnumConverter;
 
 /**

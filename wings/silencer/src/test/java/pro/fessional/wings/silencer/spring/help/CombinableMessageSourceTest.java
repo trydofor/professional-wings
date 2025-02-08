@@ -28,8 +28,8 @@ public class CombinableMessageSourceTest {
     @TmsLink("C11010")
     public void dynamicCombineMessage() {
 
-        assertTrue(MessageSourceHelper.hasPrimary);
-        assertTrue(MessageSourceHelper.hasCombine);
+        assertTrue(MessageSourceHelper.hasPrimary());
+        assertTrue(MessageSourceHelper.hasCombine());
 
         Object[] args = {};
         String m1 = messageSource.getMessage("test.MyTest", args, Locale.CHINA);

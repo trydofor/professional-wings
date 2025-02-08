@@ -14,8 +14,10 @@
 
     <name>Radiant::Devs::Mvndeps</name>
     <description>
-        (1) mvn -U versions:display-dependency-updates versions:display-plugin-updates
+        (1) mvn -U versions:display-dependency-updates
         (2) cat target/dependency-updates.txt
+        (3) mvn -U versions:display-plugin-updates
+        (4) cat target/dependency-updates.txt
     </description>
 
     <properties>
@@ -155,7 +157,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
             <version>${druid.version}</version>
         </dependency>
         <dependency>
@@ -209,7 +211,7 @@
                         <include>io.sentry:sentry-spring-boot-starter-jakarta</include>
                         <include>com.squareup.retrofit2:retrofit</include>
                         <include>io.qameta.allure:allure-java-commons</include>
-                        <include>com.alibaba:druid-spring-boot-starter</include>
+                        <include>com.alibaba:druid-spring-boot-3-starter</include>
                         <include>org.openjdk.jmh:jmh-core</include>
                     </dependencyIncludes>
                 </configuration>

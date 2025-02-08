@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * <pre>
- * Auto I18n Convert for I18nString and CharSequence
- * `I18nString` - auto convert, use @JsonI18nString to disable.
+ * Auto I18n Convert for I18nAware and CharSequence
+ * `I18nAware` - auto convert, use @JsonI18nString to disable.
  * `CharSequence` - If contains i18nCode, use @JsonI18nString to enable.
  * </pre>
  *

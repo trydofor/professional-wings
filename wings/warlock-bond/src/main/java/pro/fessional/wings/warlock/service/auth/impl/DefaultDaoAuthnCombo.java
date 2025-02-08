@@ -6,13 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
@@ -26,7 +23,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 import pro.fessional.wings.warlock.spring.prop.WarlockDangerProp;
 
-import java.util.Locale;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.FailureWaiting1;
 
 /**
  * @author trydofor
@@ -58,9 +55,6 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
     protected JournalService journalService;
 
     @Setter(onMethod_ = { @Autowired })
-    protected MessageSource messageSource;
-
-    @Setter(onMethod_ = { @Autowired })
     protected WarlockDangerProp warlockDangerProp;
 
     @Setter(onMethod_ = { @Autowired })
@@ -70,10 +64,10 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
     public WarlockAuthnService.Details load(@NotNull Enum<?> authType, String username) {
         final int block = warlockDangerService.check(authType, username);
         if (block > 0) {
-            final Locale locale = LocaleContextHolder.getLocale();
-            final String code = AuthnErrorEnum.FailureWaiting.getCode();
-            final String message = messageSource.getMessage(code, new Object[]{ block }, locale);
-            throw new FailureWaitingInternalAuthenticationServiceException(block, code, message);
+            throw new FailureWaitingInternalAuthenticationServiceException(
+                block,
+                FailureWaiting1,
+                block);
         }
 
         if (winUserBasisDao.notTableExist() || winUserAuthnDao.notTableExist()) return null;

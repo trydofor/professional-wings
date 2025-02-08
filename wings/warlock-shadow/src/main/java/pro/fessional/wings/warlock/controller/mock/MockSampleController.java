@@ -95,7 +95,7 @@ public class MockSampleController {
     public R<Integer> mockDoubler(@RequestParam(value = "sleep", required = false) Integer sleep) {
         if (sleep == null || sleep <= 0) sleep = 30;
         Sleep.ignoreInterrupt(sleep * 1000L);
-        return R.okData(sleep);
+        return R.ok(sleep);
     }
 
     @Operation(summary = "Tamper-proof, GET edit header (Right-Editor)", description = """
@@ -112,7 +112,7 @@ public class MockSampleController {
     @Righter(false)
     public R<String> mockRighterView(@RequestParam("data") String data) {
         RighterContext.setAllow(data);
-        return R.okData(data);
+        return R.ok(data);
     }
 
     @SuppressWarnings("UastIncorrectHttpHeaderInspection")

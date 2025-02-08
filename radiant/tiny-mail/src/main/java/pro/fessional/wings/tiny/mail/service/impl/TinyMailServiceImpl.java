@@ -260,7 +260,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     public long save(@NotNull TinyMailPlain msg, boolean check) {
         final String conf = msg.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
+        AssertArgs.notNull(config, "mailConfig", "skip tiny-mail conf={} not found", conf);
 
         final WinMailSender po = new WinMailSender();
         final boolean isNew = msg.getId() == null || msg.getId() <= 0;
@@ -584,7 +584,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected long doSend(boolean sync, @NotNull TinyMail message, boolean retry) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "skip tiny-mail conf={} not found", conf);
+        AssertArgs.notNull(config,"mailConfig",  "skip tiny-mail conf={} not found", conf);
 
         final WinMailSender po = saveMailSender(config, message);
 
@@ -609,11 +609,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         final WinMailSender po = winMailSenderDao.fetchOneById(id);
-        AssertArgs.notNull(po, "skip tiny-mail not found by id={}", id);
+        AssertArgs.notNull(po, "id", "skip tiny-mail not found by id={}", id);
 
         final String conf = po.getMailConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        AssertArgs.notNull(config, "skip tiny-mail conf={} not found, id={}", conf, id);
+        AssertArgs.notNull(config, "id", "skip tiny-mail conf={} not found, id={}", conf, id);
 
         final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
         if (sync) {

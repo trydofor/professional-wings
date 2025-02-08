@@ -93,7 +93,7 @@ class JsonConversionTest {
     @TmsLink("C13017")
     void fastjsonGenerics() {
         Dto dto = new Dto();
-        R<Dto> rd = R.okData(dto);
+        R<Dto> rd = R.ok(dto);
         String rd0 = FastJsonHelper.string(rd);
         //
         R<Dto> rd1 = FastJsonHelper.object(rd0, R.class, Dto.class);

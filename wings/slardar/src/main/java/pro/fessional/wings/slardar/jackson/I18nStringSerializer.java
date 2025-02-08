@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import org.springframework.context.MessageSource;
+import lombok.RequiredArgsConstructor;
+import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.i18n.I18nAware.I18nSource;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
@@ -18,16 +20,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author trydofor
  * @since 2019-09-19
  */
+@RequiredArgsConstructor
 public class I18nStringSerializer extends JsonSerializer<Object> implements ContextualSerializer {
 
     private final AtomicReference<I18nStringSerializer> oppositeOne = new AtomicReference<>();
-    private final MessageSource messageSource;
+    private final I18nSource i18nSource;
     private final boolean enabled;
-
-    public I18nStringSerializer(MessageSource messageSource, boolean enabled) {
-        this.messageSource = messageSource;
-        this.enabled = enabled;
-    }
 
     @Override
     public void serialize(Object value, JsonGenerator generator, SerializerProvider provider) throws IOException {
@@ -41,7 +39,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
             String text = value.toString();
             if (enabled) {
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull();
-                text = messageSource.getMessage(text, new Object[]{}, locale);
+                text = i18nSource.getMessage(text, Null.Objects, text, locale);
             }
             generator.writeString(text);
         }
@@ -49,18 +47,18 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
             I18nString i18n = (I18nString) value;
             if (enabled) {
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull();
-                String text = messageSource.getMessage(i18n.getCode(), i18n.getArgs(), locale);
-                if (text.equalsIgnoreCase(i18n.getCode())) {
-                    text = i18n.toString(locale);
+                String text = i18n.toString(locale, i18nSource);
+                if (text == null || text.equalsIgnoreCase(i18n.getI18nCode())) {
+                    text = i18n.toString();
                 }
                 generator.writeString(text);
             }
             else {
                 generator.writeStartObject();
-                generator.writeStringField("code", i18n.getCode());
-                generator.writeStringField("hint", i18n.getHint());
+                generator.writeStringField("code", i18n.getI18nCode());
+                generator.writeStringField("hint", i18n.getI18nHint());
                 generator.writeFieldName("args");
-                generator.writeObject(i18n.getArgs());
+                generator.writeObject(i18n.getI18nArgs());
                 generator.writeEndObject();
             }
         }
@@ -75,7 +73,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
         I18nStringSerializer that = oppositeOne.get();
         // No sync required, no impact on results
         if (that == null) {
-            that = new I18nStringSerializer(messageSource, !enabled);
+            that = new I18nStringSerializer(i18nSource, !enabled);
             oppositeOne.set(that);
         }
         return that;

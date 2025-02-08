@@ -115,11 +115,11 @@ class FastJsonTest {
     @TmsLink("C13126")
     public void testJsonPath() {
         CollectionValue data = new CollectionValue().defaults();
-        R<CollectionValue> r = R.ok("You're fired", data);
+        R<CollectionValue> r = R.ok(data,"You're fired");
         String json = FastJsonHelper.string(r);
         JSONObject obj = FastJsonHelper.object(json);
 
-        String json2 = FastJsonHelper.string(r,null);
+        String json2 = FastJsonHelper.string(r, (com.alibaba.fastjson2.filter.Filter[]) null);
         Assertions.assertEquals(json, json2);
 
         JSONPath p1 = FastJsonHelper.path("$.success");

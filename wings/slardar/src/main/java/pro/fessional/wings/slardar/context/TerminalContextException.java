@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.context;
 
-import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.i18n.CodeEnum;
 import pro.fessional.mirana.pain.MessageException;
 
 /**

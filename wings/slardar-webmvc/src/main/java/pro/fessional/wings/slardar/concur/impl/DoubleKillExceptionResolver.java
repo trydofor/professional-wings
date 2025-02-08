@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.text.StringTemplate;
@@ -22,7 +23,7 @@ public class DoubleKillExceptionResolver extends SimpleExceptionResolver<DoubleK
     }
 
     @Override
-    protected SimpleResponse resolve(@NotNull DoubleKillException e) {
+    protected SimpleResponse resolve(@NotNull DoubleKillException e, @NotNull HttpServletRequest request) {
         final String body = StringTemplate
             .dyn(defaultResponse.getResponseBody())
             .bindStr("{key}", e.getProgressKey())

@@ -71,16 +71,18 @@ public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
             return new CircleServletInputStream(request.getInputStream());
         }
 
-        final String contentType = req.getContentType();
         boolean multip = false;
         boolean simple = true;
         if ("POST".equalsIgnoreCase(req.getMethod())) {
-            if (contentType.contains("multipart/form-data")) {
-                multip = true;
-                simple = false;
-            }
-            else if (contentType.contains("application/x-www-form-urlencoded")) {
-                simple = false;
+            final String contentType = req.getContentType();
+            if (contentType != null) {
+                if (contentType.contains("multipart/form-data")) {
+                    multip = true;
+                    simple = false;
+                }
+                else if (contentType.contains("application/x-www-form-urlencoded")) {
+                    simple = false;
+                }
             }
         }
 

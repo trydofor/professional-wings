@@ -4,30 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
-import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
-import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -45,10 +36,6 @@ public class LoginPageController {
 
     private final WingsAuthPageHandler wingsAuthPageHandler;
     private final WingsAuthTypeParser wingsAuthTypeParser;
-    private final WingsRemoteResolver wingsRemoteResolver;
-
-    @Setter(onMethod_ = { @Autowired(required = false) })
-    private HttpSessionIdResolver httpSessionIdResolver;
 
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "Default integrated login page, return list of supported types", description = """
@@ -125,38 +112,4 @@ public class LoginPageController {
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
-    @SuppressWarnings("UastIncorrectHttpHeaderInspection")
-    @Operation(summary = "Verify that the one-time token is valid", description = """
-        # Usage
-        Use Oauth2 state as the token and require the same ip, agent and other header as the original client.
-        After successful verification, the session and cookie are in the header as a normal login
-        ## Params
-        * @param token - RequestHeader Oauth2 state as token
-        ## Returns
-        * @return {401} token is not-found, expired, or failed
-        * @return {200 | Result(false, message='authing')} in authing
-        * @return {200 | Result(true, data=sessionId)} success
-        * @return {200 | Result(true, code='xxx', data=object)} other code/object
-        """)
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
-    public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
-        final R<?> result = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
-        if (result == null) {
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(R.NG());
-        }
-
-        R<?> body = result;
-        if (result.isSuccess()) {
-            if (httpSessionIdResolver != null && body.getData() instanceof NonceTokenSessionHelper.SidData sd) {
-                httpSessionIdResolver.setSessionId(request, response, sd.getSid());
-            }
-            return ResponseEntity.ok(body);
-        }
-        else {
-            body = R.ng("authing");
-        }
-        return ResponseEntity.ok(body);
-    }
 }

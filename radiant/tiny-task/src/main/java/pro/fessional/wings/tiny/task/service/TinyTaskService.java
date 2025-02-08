@@ -107,7 +107,7 @@ public interface TinyTaskService {
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
     default Task schedule(@NotNull Lam.Ref lambdaRefer, @Nullable Object taskerPara) {
-        AssertArgs.notNull(lambdaRefer.object, "schedule object is null");
+        AssertArgs.notNull(lambdaRefer.object,"lambdaRefer",  "schedule object is null");
         return schedule(lambdaRefer.object, lambdaRefer.method, taskerPara);
     }
 

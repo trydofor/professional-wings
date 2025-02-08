@@ -9,15 +9,15 @@
 >
 > English 🇺🇸 | [中文 🇨🇳](readme-zh.md)
 
-* [![SpringBoot-3.2](https://img.shields.io/badge/springboot-3.2-green?logo=springboot)](https://spring.io/projects/spring-boot) Philosophy and Conventions, Non-Intrusion Enhancement 🌱 [Apache2]
+* [![SpringBoot-3.3](https://img.shields.io/badge/springboot-3.3-green?logo=springboot)](https://spring.io/projects/spring-boot) Philosophy and Conventions, Non-Intrusion Enhancement 🌱 [Apache2]
 * [![Java-21](https://img.shields.io/badge/java-21-gold)](https://adoptium.net/temurin/releases/?version=11) Main business language, OpenJDK long-time running ☕️ [GPLv2+CE]
 * [![Kotlin-1.9](https://img.shields.io/badge/kotlin-1.9-gold)](https://kotlinlang.org/docs/reference/) Assisted language, as a better Java [Apache2]
-* [![Jooq-3.18](https://img.shields.io/badge/jooq-3.18-cyan)](https://www.jooq.org/download/)  The main type-safe SqlMapping 🏅 [Apache2]
+* [![Jooq-3.19](https://img.shields.io/badge/jooq-3.19-cyan)](https://www.jooq.org/download/)  The main type-safe SqlMapping 🏅 [Apache2]
 * [![Mysql-8.0](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) Main business database, recommend 8.0.31 💡 [GPLv2]
 * [![H2Database-2.2](https://img.shields.io/badge/h2db-2.2-blue)](https://h2database.com/html/main.html) Standalone database for offline and disconnected operations [MPL2] or [EPL1]
-* [![Hazelcast-5.3](https://img.shields.io/badge/hazelcast-5.3-violet)](https://docs.hazelcast.com/hazelcast/) Distributed caching, messaging, streaming, etc. [Apache2]
-* [![ServiceComb-3.0](https://img.shields.io/badge/servicecomb-3.0-violet)](https://servicecomb.apache.org) more engineering and compact miscroservice solution [Apache2]
-* [![ShardingSphere-5.4](https://img.shields.io/badge/shardingsphere-5.4-violet)](https://shardingsphere.apache.org) Database RW splitting, data sharding and elastic scaling [Apache2]
+* [![Hazelcast-5.4](https://img.shields.io/badge/hazelcast-5.4-violet)](https://docs.hazelcast.com/hazelcast/) Distributed caching, messaging, streaming, etc. [Apache2]
+* [![ServiceComb-3.2](https://img.shields.io/badge/servicecomb-3.2-violet)](https://servicecomb.apache.org) more engineering and compact miscroservice solution [Apache2]
+* [![ShardingSphere-5.5](https://img.shields.io/badge/shardingsphere-5.5-violet)](https://shardingsphere.apache.org) Database RW splitting, data sharding and elastic scaling [Apache2]
 
 [Apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [GPLv2+CE]: https://openjdk.org/legal/gplv2+ce.html

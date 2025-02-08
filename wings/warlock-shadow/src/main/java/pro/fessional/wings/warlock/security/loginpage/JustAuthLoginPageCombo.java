@@ -59,7 +59,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         else {
             return ResponseEntity.status(status)
                                  .contentType(mediaType == null ? MediaType.APPLICATION_JSON : mediaType)
-                                 .body(R.okData(authorize));
+                                 .body(R.ok(authorize));
         }
     }
 }

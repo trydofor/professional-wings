@@ -185,7 +185,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         final TinyTasker anno = referAnno(r2.value1(), r2.value2());
-        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "id", "database without TinyTasker, id={}", id);
 
         return property(r2.value1(), anno);
     }
@@ -194,10 +194,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     @NotNull
     public LinkedHashMap<String, Diff.V<?>> diffProp(long id) {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
-        AssertArgs.notNull(po, "database tiny-task is null, id={}", id);
+        AssertArgs.notNull(po, "id", "database tiny-task is null, id={}", id);
 
         final TinyTasker anno = referAnno(po.getPropkey(), po.getTaskerBean());
-        AssertArgs.notNull(anno, "database without tiny-task, id={}", id);
+        AssertArgs.notNull(anno, "id", "database without tiny-task, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);

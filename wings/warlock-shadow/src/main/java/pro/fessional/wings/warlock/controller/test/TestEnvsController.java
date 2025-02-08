@@ -29,7 +29,7 @@ public class TestEnvsController {
     @ResponseBody
     public R<String> testRunMode() {
         final RunMode rm = RuntimeMode.getRunMode();
-        return R.okData(rm.name());
+        return R.ok(rm.name());
     }
 
     @Operation(summary = "Get system Timestamp", description = """
@@ -40,7 +40,7 @@ public class TestEnvsController {
     @ResponseBody
     public R<Long> testSystemMills() {
         final Long ms = System.currentTimeMillis();
-        return R.okData(ms);
+        return R.ok(ms);
     }
 
     @Operation(summary = "Get thread Timestamp", description = """
@@ -51,6 +51,6 @@ public class TestEnvsController {
     @ResponseBody
     public R<Long> testThreadMills() {
         final Long ms = Now.millis();
-        return R.okData(ms);
+        return R.ok(ms);
     }
 }

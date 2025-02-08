@@ -31,7 +31,7 @@ public class HazelcastGlobalLock implements GlobalLock {
     private final IMap<Object, Object> hazelcastMap;
 
     public HazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
-        hazelcastMap = hazelcastInstance.getMap(MapGlobalLock);
+        hazelcastMap = MapGlobalLock.get(hazelcastInstance::getMap, true);
     }
 
     @Override

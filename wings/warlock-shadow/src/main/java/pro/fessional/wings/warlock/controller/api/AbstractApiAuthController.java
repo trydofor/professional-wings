@@ -17,7 +17,6 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.CircleInputStream;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.text.FormatUtil;
-import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalContext.Context;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
@@ -40,6 +39,7 @@ import java.util.TreeMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrUserId;
 import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.downloadFile;
 import static pro.fessional.wings.warlock.controller.api.AbstractApiAuthController.ApiError.DigestBodyInvalid;
 
@@ -119,7 +119,7 @@ public abstract class AbstractApiAuthController {
             return;
         }
 
-        request.setAttribute(SlardarServletConst.AttrUserId, pass.getUserId());
+        request.setAttribute(AttrUserId.value, pass.getUserId());
         // NOTE can build authPerm by scope
         final Context ctx = terminalInterceptor.loginTerminal(request);
         boolean handled = false;

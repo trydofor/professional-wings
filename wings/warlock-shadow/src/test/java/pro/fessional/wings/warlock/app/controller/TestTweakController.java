@@ -37,6 +37,6 @@ public class TestTweakController {
     public R<LocalDateTime> clockNow() {
         final LocalDateTime ldt = Now.localDateTime();
         log.warn("clockNow >>>>> ldt={}", ldt);
-        return R.okData(ldt);
+        return R.ok(ldt);
     }
 }

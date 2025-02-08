@@ -53,7 +53,7 @@ public class SlardarSessionConfiguration {
         final List<HttpSessionIdResolver> resolvers = new ArrayList<>();
         if (StringUtils.hasText(prop.getCookieName())) {
             final ServerProperties server = serverProperties.getIfAvailable();
-            AssertArgs.notNull(server, "need `server.servlet.session.*` config");
+            AssertArgs.notNull(server, "sessionConfig", "need `server.servlet.session.*` config");
             Cookie cookie = server.getServlet().getSession().getCookie();
             final String propName = prop.getCookieName();
             final String servName = cookie.getName();

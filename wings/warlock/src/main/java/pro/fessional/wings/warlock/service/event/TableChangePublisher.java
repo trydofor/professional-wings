@@ -78,7 +78,7 @@ public interface TableChangePublisher {
     //
     default <R extends Record, F> void publish(int cud, @NotNull Class<?> source, @NotNull TableField<R, F> field, @NotNull List<F> value) {
         final Table<R> table = field.getTable();
-        AssertArgs.notNull(table, "field's table is null. field=" + field);
+        AssertArgs.notNull(table, "tableField", "field's table is null. field=" + field);
         publish(cud, source, table.getName(), singletonMap(field.getName(), value));
     }
 

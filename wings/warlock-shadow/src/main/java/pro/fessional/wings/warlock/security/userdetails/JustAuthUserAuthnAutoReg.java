@@ -24,7 +24,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     @Override
     protected Long beforeSave(@NotNull Basis basis, String username, WingsAuthDetails details) {
         AuthUser user = (AuthUser) details.getRealData();
-        AssertArgs.notNull(user, "need JustAuth User");
+        AssertArgs.notNull(user, "username", "need JustAuth User");
         basis.setNickname(user.getNickname());
         basis.setAvatar(user.getAvatar());
         final AuthUserGender aug = user.getGender();
@@ -47,7 +47,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     @Override
     protected Long beforeSave(@NotNull Authn authn, String username, WingsAuthDetails details, long userId) {
         AuthUser user = (AuthUser) details.getRealData();
-        AssertArgs.notNull(user, "need JustAuth User");
+        AssertArgs.notNull(user, "username","need JustAuth User");
         authn.setUsername(user.getUuid());
         authn.setExtraPara(FastJsonHelper.string(user.getToken()));
         authn.setExtraUser(FastJsonHelper.string(user.getRawUserInfo()));

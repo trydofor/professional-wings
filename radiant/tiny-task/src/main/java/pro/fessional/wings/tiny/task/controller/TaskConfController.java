@@ -43,7 +43,7 @@ public class TaskConfController {
     @ResponseBody
     public R<Boolean> taskEnable(@RequestBody In1 ins) {
         final boolean ok = tinyTaskConfService.enable(ins.id, tinyTaskConfService.enable(ins.id, ins.enable));
-        return R.okData(ok);
+        return R.ok(ok);
     }
 
     @EqualsAndHashCode(callSuper = true)
@@ -57,7 +57,7 @@ public class TaskConfController {
     @ResponseBody
     public R<Boolean> taskPropSave(@RequestBody In2 ins) {
         final boolean ok = tinyTaskConfService.replace(ins.id, ins);
-        return R.okData(ok);
+        return R.ok(ok);
     }
 
     @Operation(summary = "load the task config.")
@@ -65,7 +65,7 @@ public class TaskConfController {
     @ResponseBody
     public R<TaskerProp> taskPropLoad(@RequestBody Q.Id ins) {
         final TaskerProp pp = tinyTaskConfService.database(ins.getId(), false);
-        return R.okData(pp);
+        return R.ok(pp);
     }
 
     @Operation(summary = "show the prop of task conf.")
@@ -73,7 +73,7 @@ public class TaskConfController {
     @ResponseBody
     public R<TaskerProp> taskPropConf(@RequestBody Q.Id ins) {
         final TaskerProp pp = tinyTaskConfService.property(ins.getId(), false);
-        return R.okData(pp);
+        return R.ok(pp);
     }
 
     @Operation(summary = "show the diff of task conf.")
@@ -81,6 +81,6 @@ public class TaskConfController {
     @ResponseBody
     public R<Map<String, Diff.V<?>>> taskPropDiff(@RequestBody Q.Id ins) {
         LinkedHashMap<String, Diff.V<?>> df = tinyTaskConfService.diffProp(ins.getId());
-        return R.okData(df);
+        return R.ok(df);
     }
 }
