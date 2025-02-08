@@ -36,7 +36,7 @@
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
-        <annotations.version>26.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
+        <annotations.version>26.0.2</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.6.3</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version> <!-- https://mapstruct.org/documentation/1.6/reference/html/#_set_up -->
