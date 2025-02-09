@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.7</version> <!-- https://github.com/spring-projects/spring-boot/wiki -->
+        <version>3.4.2</version> <!-- https://github.com/spring-projects/spring-boot/wiki -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -23,7 +23,7 @@
         <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
         <revision>3.3.140-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-        <spring-boot.version>3.3.7</spring-boot.version>
+        <spring-boot.version>3.4.2</spring-boot.version>
         <!--  -->
         <wings.version>${revision}</wings.version>
         <!--suppress UnresolvedMavenProperty fulfill by directory-maven-plugin -->
