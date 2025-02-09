@@ -3,6 +3,8 @@
   "extends": [
     "config:recommended",
   ],
+  "branchPrefix": "renovate/dev-",
+  "baseBranches": ["develop"],
   "ignorePaths": [
     "example/**",
     "observe/**",
