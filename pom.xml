@@ -58,7 +58,7 @@
         <!-- sharding jdbc -->
         <shardingsphere.version>5.5.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>3.2.4</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>3.2.5</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>2.6.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases #springboot-3.3 -->
         <boot-admin.version>3.3.6</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
