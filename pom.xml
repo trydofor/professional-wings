@@ -61,7 +61,7 @@
         <servicecomb.version>3.2.4</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>2.6.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases #springboot-3.3 -->
-        <boot-admin.version>3.3.6</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <boot-admin.version>3.4.5</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
         <sentry.version>7.20.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases #buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.11.0</retrofit.version> <!-- https://github.com/square/retrofit/releases -->
         <allure.version>2.29.1</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
