@@ -14,10 +14,14 @@
 
     <name>Radiant::Devs::Mvndeps</name>
     <description>
-        (1) mvn -U versions:display-dependency-updates
-        (2) cat target/dependency-updates.txt
-        (3) mvn -U versions:display-plugin-updates
-        (4) cat target/dependency-updates.txt
+        (1.1) mvn versions:display-dependency-updates
+        (1.2) cat target/dependency-updates.txt
+        (2.1) mvn -P deps-minor versions:display-dependency-updates
+        (2.2) cat target/dependency-updates.txt-minor
+        (3.1) mvn -P deps-major versions:display-dependency-updates
+        (3.2) cat target/dependency-updates.txt-major
+        (4.1) mvn versions:display-plugin-updates
+        (4.2) cat target/dependency-updates.txt
     </description>
 
     <properties>
@@ -44,6 +48,11 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok-mapstruct-binding</artifactId>
+            <version>${lombok-mapstruct-binding.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -171,6 +180,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
                 <configuration>
                     <outputFile>${dependency-updates-file}</outputFile>
                     <outputLineWidth>100</outputLineWidth>
@@ -186,34 +196,6 @@
                         <ignoredVersion>\d{8,}\.\d{6,}</ignoredVersion>
                         <ignoredVersion>.*-b.*</ignoredVersion>
                     </ignoredVersions>
-                    <dependencyIncludes>
-                        <include>org.springframework.boot:spring-boot</include>
-                        <include>org.jetbrains:annotations</include>
-                        <include>org.mapstruct:mapstruct-processor</include>
-                        <include>com.google.guava:guava</include>
-                        <include>commons-io:commons-io</include>
-                        <include>org.apache.commons:commons-collections4</include>
-                        <include>org.apache.commons:commons-text</include>
-                        <include>org.joda:joda-convert</include>
-                        <include>pro.fessional:mirana</include>
-                        <include>pro.fessional:meepo</include>
-                        <include>pro.fessional:kaptcha</include>
-                        <include>com.alibaba.fastjson2:fastjson2</include>
-                        <include>com.alibaba:fastjson</include>
-                        <include>com.esotericsoftware:kryo</include>
-                        <include>com.alibaba:transmittable-thread-local</include>
-                        <include>org.bouncycastle:bcpkix-jdk18on</include>
-                        <include>me.zhyd.oauth:JustAuth</include>
-                        <include>org.apache.shardingsphere:shardingsphere-jdbc</include>
-                        <include>org.apache.servicecomb:java-chassis-core</include>
-                        <include>org.springdoc:springdoc-openapi-starter-webmvc-ui</include>
-                        <include>de.codecentric:spring-boot-admin-starter-client</include>
-                        <include>io.sentry:sentry-spring-boot-starter-jakarta</include>
-                        <include>com.squareup.retrofit2:retrofit</include>
-                        <include>io.qameta.allure:allure-java-commons</include>
-                        <include>com.alibaba:druid-spring-boot-3-starter</include>
-                        <include>org.openjdk.jmh:jmh-core</include>
-                    </dependencyIncludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -237,11 +219,6 @@
                 <version>${nexus-staging-plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-maven-plugin.version}</version>
-            </plugin>
-            <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>${coveralls-maven-plugin.version}</version>
@@ -262,11 +239,6 @@
                 <version>${dokka-maven-plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>io.github.git-commit-id</groupId>
-                <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>${git-commit-id-maven-plugin.version}</version>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${exec-maven-plugin.version}</version>
@@ -283,4 +255,72 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deps-minor</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <version>${versions-maven-plugin.version}</version>
+                        <configuration>
+                            <outputFile>${dependency-updates-file}-minor</outputFile>
+                            <allowMinorUpdates>false</allowMinorUpdates>
+                            <dependencyIncludes>
+                                <include>org.springframework.boot:spring-boot</include>
+                                <include>org.apache.servicecomb:java-chassis-core</include>
+                                <include>org.springdoc:springdoc-openapi-starter-webmvc-ui</include>
+                                <include>de.codecentric:spring-boot-admin-starter-client</include>
+                                <include>io.sentry:sentry-spring-boot-starter-jakarta</include>
+                            </dependencyIncludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deps-major</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <version>${versions-maven-plugin.version}</version>
+                        <configuration>
+                            <outputFile>${dependency-updates-file}-major</outputFile>
+                            <dependencyIncludes>
+                                <include>org.jetbrains:annotations</include>
+                                <include>org.mapstruct:mapstruct-processor</include>
+                                <include>com.google.guava:guava</include>
+                                <include>commons-io:commons-io</include>
+                                <include>org.apache.commons:commons-collections4</include>
+                                <include>org.apache.commons:commons-text</include>
+                                <include>org.joda:joda-convert</include>
+                                <include>pro.fessional:mirana</include>
+                                <include>pro.fessional:meepo</include>
+                                <include>pro.fessional:kaptcha</include>
+                                <include>com.alibaba.fastjson2:fastjson2</include>
+                                <include>com.alibaba:fastjson</include>
+                                <include>com.esotericsoftware:kryo</include>
+                                <include>com.alibaba:transmittable-thread-local</include>
+                                <include>org.bouncycastle:bcpkix-jdk18on</include>
+                                <include>me.zhyd.oauth:JustAuth</include>
+                                <include>org.apache.shardingsphere:shardingsphere-jdbc</include>
+                                <include>com.squareup.retrofit2:retrofit</include>
+                                <include>io.qameta.allure:allure-java-commons</include>
+                                <include>com.alibaba:druid-spring-boot-3-starter</include>
+                                <include>org.openjdk.jmh:jmh-core</include>
+                                <include>com.google.cloud.tools:jib-layer-filter-extension-maven</include>
+                            </dependencyIncludes>
+                            <pluginManagementDependencyExcludes>
+                                <exclude>org.jetbrains.kotlin:*</exclude>
+                                <exclude>org.springframework.boot:*</exclude>
+                            </pluginManagementDependencyExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

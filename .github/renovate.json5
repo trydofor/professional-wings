@@ -1,0 +1,45 @@
+// npx --yes --package renovate -- renovate-config-validator
+// https://docs.renovatebot.com/getting-started/installing-onboarding/
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+  ],
+  "branchPrefix": "renovate/dev-",
+  "baseBranches": ["develop"],
+  "ignorePaths": [
+    "example/**",
+    "observe/**",
+  ],
+  // https://docs.renovatebot.com/configuration-options/#packagerules
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "apache/maven",
+        "java-jdk",
+        "pro.fessional**",
+      ],
+      "enabled": false,
+    },
+    {
+      "matchPackageNames": ["*"],
+      "allowedVersions": "!/android/",
+    },
+    {
+      "matchPackageNames": [
+        "io.sentry:*",
+        "org.springdoc:*",
+        "de.codecentric:*", // boot-admin
+        "org.apache.servicecomb:*",
+      ],
+      "matchUpdateTypes": ["minor", "patch"],
+    },
+    {
+      "matchPackageNames": [
+        "org.jetbrains.kotlin:*",
+        "org.springframework.boot:*",
+      ],
+      "matchUpdateTypes": ["patch"],
+    },
+  ],
+}
