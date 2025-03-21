@@ -7,47 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
-import me.zhyd.oauth.config.AuthSource;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
-import me.zhyd.oauth.request.AuthAlipayRequest;
-import me.zhyd.oauth.request.AuthAliyunRequest;
-import me.zhyd.oauth.request.AuthBaiduRequest;
-import me.zhyd.oauth.request.AuthCodingRequest;
-import me.zhyd.oauth.request.AuthDingTalkRequest;
-import me.zhyd.oauth.request.AuthDouyinRequest;
-import me.zhyd.oauth.request.AuthElemeRequest;
-import me.zhyd.oauth.request.AuthFacebookRequest;
-import me.zhyd.oauth.request.AuthFeishuRequest;
-import me.zhyd.oauth.request.AuthGiteeRequest;
-import me.zhyd.oauth.request.AuthGithubRequest;
-import me.zhyd.oauth.request.AuthGitlabRequest;
-import me.zhyd.oauth.request.AuthGoogleRequest;
-import me.zhyd.oauth.request.AuthHuaweiRequest;
-import me.zhyd.oauth.request.AuthJdRequest;
-import me.zhyd.oauth.request.AuthKujialeRequest;
-import me.zhyd.oauth.request.AuthLinkedinRequest;
-import me.zhyd.oauth.request.AuthMeituanRequest;
-import me.zhyd.oauth.request.AuthMiRequest;
-import me.zhyd.oauth.request.AuthMicrosoftRequest;
-import me.zhyd.oauth.request.AuthOschinaRequest;
-import me.zhyd.oauth.request.AuthPinterestRequest;
-import me.zhyd.oauth.request.AuthQqRequest;
-import me.zhyd.oauth.request.AuthRenrenRequest;
 import me.zhyd.oauth.request.AuthRequest;
-import me.zhyd.oauth.request.AuthStackOverflowRequest;
-import me.zhyd.oauth.request.AuthTaobaoRequest;
-import me.zhyd.oauth.request.AuthTeambitionRequest;
-import me.zhyd.oauth.request.AuthToutiaoRequest;
-import me.zhyd.oauth.request.AuthTwitterRequest;
-import me.zhyd.oauth.request.AuthWeChatEnterpriseQrcodeRequest;
-import me.zhyd.oauth.request.AuthWeChatEnterpriseWebRequest;
-import me.zhyd.oauth.request.AuthWeChatMpRequest;
-import me.zhyd.oauth.request.AuthWeChatOpenRequest;
-import me.zhyd.oauth.request.AuthWeiboRequest;
-import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
@@ -133,55 +98,36 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         }
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * @see me.zhyd.oauth.AuthRequestBuilder
+     * @return  null if not support
+     */
+    @Nullable
     public AuthRequest buildRequest(Enum<?> authType, HttpServletRequest request) {
-        if (!(authType instanceof AuthSource)) return null;
-
-        AuthConfig config = authConfigMap.get(authType);
+        AuthConfig config = buildConfig(authType, request);
         if (config == null) return null;
 
+        if (!(authType instanceof AuthDefaultSource justAuthType)) return null;
+        var targetClass = justAuthType.getTargetClass();
+        if (null == targetClass) return null;
+
+        try {
+            return targetClass.getDeclaredConstructor(AuthConfig.class, AuthStateCache.class)
+                       .newInstance(config, authStateCache);
+        }
+        catch (Exception e) {
+            log.error("failed to build auth request, type=" + authType, e);
+            return null;
+        }
+    }
+
+    @Nullable
+    protected AuthConfig buildConfig(Enum<?> authType, HttpServletRequest request){
+        AuthConfig config = authConfigMap.get(authType);
         if (config instanceof AuthConfigWrapper) {
             config = ((AuthConfigWrapper) config).wrap(request);
         }
-
-        return switch ((AuthDefaultSource) authType) {
-            case GITHUB -> new AuthGithubRequest(config, authStateCache);
-            case WEIBO -> new AuthWeiboRequest(config, authStateCache);
-            case GITEE -> new AuthGiteeRequest(config, authStateCache);
-            case DINGTALK -> new AuthDingTalkRequest(config, authStateCache);
-            case BAIDU -> new AuthBaiduRequest(config, authStateCache);
-            case CODING -> new AuthCodingRequest(config, authStateCache);
-            case OSCHINA -> new AuthOschinaRequest(config, authStateCache);
-            case ALIPAY -> new AuthAlipayRequest(config, authStateCache);
-            case QQ -> new AuthQqRequest(config, authStateCache);
-            case WECHAT_MP -> new AuthWeChatMpRequest(config, authStateCache);
-            case WECHAT_OPEN -> new AuthWeChatOpenRequest(config, authStateCache);
-            case WECHAT_ENTERPRISE -> new AuthWeChatEnterpriseQrcodeRequest(config, authStateCache);
-            case WECHAT_ENTERPRISE_WEB -> new AuthWeChatEnterpriseWebRequest(config, authStateCache);
-            case TAOBAO -> new AuthTaobaoRequest(config, authStateCache);
-            case GOOGLE -> new AuthGoogleRequest(config, authStateCache);
-            case FACEBOOK -> new AuthFacebookRequest(config, authStateCache);
-            case DOUYIN -> new AuthDouyinRequest(config, authStateCache);
-            case LINKEDIN -> new AuthLinkedinRequest(config, authStateCache);
-            case MICROSOFT -> new AuthMicrosoftRequest(config, authStateCache);
-            case MI -> new AuthMiRequest(config, authStateCache);
-            case TOUTIAO -> new AuthToutiaoRequest(config, authStateCache);
-            case TEAMBITION -> new AuthTeambitionRequest(config, authStateCache);
-            case RENREN -> new AuthRenrenRequest(config, authStateCache);
-            case PINTEREST -> new AuthPinterestRequest(config, authStateCache);
-            case STACK_OVERFLOW -> new AuthStackOverflowRequest(config, authStateCache);
-            case HUAWEI -> new AuthHuaweiRequest(config, authStateCache);
-            case GITLAB -> new AuthGitlabRequest(config, authStateCache);
-            case KUJIALE -> new AuthKujialeRequest(config, authStateCache);
-            case ELEME -> new AuthElemeRequest(config, authStateCache);
-            case MEITUAN -> new AuthMeituanRequest(config, authStateCache);
-            case TWITTER -> new AuthTwitterRequest(config, authStateCache);
-            case FEISHU -> new AuthFeishuRequest(config, authStateCache);
-            case JD -> new AuthJdRequest(config, authStateCache);
-            case ALIYUN -> new AuthAliyunRequest(config, authStateCache);
-            case XMLY -> new AuthXmlyRequest(config, authStateCache);
-            default -> null;
-        };
+        return config;
     }
 
     public interface SuccessHandler extends Ordered {
