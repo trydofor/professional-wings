@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +25,8 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+
+import static pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper.CodeSession;
 
 /**
  * @author trydofor
@@ -50,29 +51,17 @@ public class AuthCheckController {
         ## Params
         * @param token - RequestHeader Oauth2 state as token
         ## Returns
-        * @return {401} token is not-found, expired, or failed
-        * @return {200 | Result(false, message='authing')} in authing
-        * @return {200 | Result(true, data=sessionId)} success
+        * @return {200 | Result(false))
+        * @return {200 | Result(false, code='authing', message='authing')} in authing
+        * @return {200 | Result(true, code='session', data=sessionId)}
         * @return {200 | Result(true, code='xxx', data=object)} other code/object
         """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
-        final R<?> result = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
-        if (result == null) {
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(R.NG());
-        }
+        final R<?> body = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
 
-        R<?> body = result;
-        if (result.isSuccess()) {
-            if (httpSessionIdResolver != null && body.getData() instanceof NonceTokenSessionHelper.SidData sd) {
-                httpSessionIdResolver.setSessionId(request, response, sd.getSid());
-            }
-            return ResponseEntity.ok(body);
-        }
-        else {
-            body = R.ng("authing");
+        if (body.isSuccess() && httpSessionIdResolver != null && body.getCode() instanceof String sid && CodeSession.equals(body.getCode())) {
+            httpSessionIdResolver.setSessionId(request, response, sid);
         }
         return ResponseEntity.ok(body);
     }
