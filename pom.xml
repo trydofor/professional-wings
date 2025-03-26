@@ -55,6 +55,7 @@
         <transmittable.version>2.14.5</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.80</bouncycastle.version> <!-- https://www.bouncycastle.org/download/bouncy-castle-java/#release-notes -->
         <justauth.version>1.16.7</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <jjwt.version>0.12.6</jjwt.version> <!-- justauth@0.12.x https://github.com/jwtk/jjwt/releases -->
         <!-- sharding jdbc -->
         <shardingsphere.version>5.5.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
@@ -428,6 +429,21 @@
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
             <!-- Argon2PasswordEncoder -->
             <dependency>
