@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhyd.oauth.request.AuthRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
-import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
+import pro.fessional.wings.warlock.security.justauth.JustAuthRequestManager;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 /**
@@ -31,7 +30,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = { @Autowired })
-    protected JustAuthRequestBuilder justAuthRequestBuilder;
+    protected JustAuthRequestManager justAuthRequestManager;
 
     @Setter(onMethod_ = { @Autowired })
     protected WingsRemoteResolver wingsRemoteResolver;
@@ -42,13 +41,12 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request,
                                       @NotNull HttpServletResponse response, @NotNull HttpStatus status) {
-        final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType, request);
-        if (ar == null) return null;
+        if (!justAuthRequestManager.accept(authType)) return null;
 
         final String state = authStateBuilder.buildState(request);
+        final String authorize = justAuthRequestManager.authorize(authType, request, state);
         NonceTokenSessionHelper.initNonce(state, wingsRemoteResolver.resolveRemoteKey(request));
 
-        final String authorize = ar.authorize(state);
         if (mediaType != null && mediaType.getSubtype().contains("html")) {
             // response.sendRedirect(url); 302
             return ResponseEntity.status(HttpStatus.FOUND)
