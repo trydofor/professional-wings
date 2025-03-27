@@ -60,7 +60,7 @@ public class AuthCheckController {
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
         final R<?> body = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
 
-        if (body.isSuccess() && httpSessionIdResolver != null && body.getCode() instanceof String sid && CodeSession.equals(body.getCode())) {
+        if (httpSessionIdResolver != null && body.isSuccess() && body.getData() instanceof String sid && CodeSession.equals(body.getCode())) {
             httpSessionIdResolver.setSessionId(request, response, sid);
         }
         return ResponseEntity.ok(body);
