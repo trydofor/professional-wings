@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
     "wings.faceless.journal.alive=1"
 })
 @Slf4j
+@DependsOnDatabaseInitialization
 class DefaultJournalServiceTest {
 
     @Setter(onMethod_ = { @Autowired })

@@ -49,7 +49,7 @@ public class AdminAuthnController {
         * @param authType - auth type to reset
         ## Returns
         * @return {401} if not authed
-        * @return {200} ok or redirect
+        * @return {200 | Result(true)} ok or redirect
         """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminAuthnDanger + "}")
     @ResponseBody

@@ -2,7 +2,7 @@ package pro.fessional.wings.warlock.security.session;
 
 
 import org.cache2k.Cache;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
@@ -18,6 +18,9 @@ import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
  * @since 2021-07-01
  */
 public class NonceTokenSessionHelper {
+
+    public static final String CodeAuthing = "authing";
+    public static final String CodeSession = "session";
 
     private static final Cache<String, Sf> cache = WingsCache2k
         .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, 0, String.class, Sf.class)
@@ -43,13 +46,12 @@ public class NonceTokenSessionHelper {
      */
     public static void bindNonceSession(String token, String sid) {
         if (token == null || token.isEmpty()) return;
-        final SidData data = () -> sid;
-        final R<?> result = R.ok(data);
+        final R<?> result = R.ok(sid, CodeSession);
         bindNonceResult(token, result);
     }
 
     /**
-     * bind token to result
+     * bind token to result, for user specified binding
      */
     public static void bindNonceResult(String token, R<?> result) {
         if (token == null || token.isEmpty()) return;
@@ -69,27 +71,22 @@ public class NonceTokenSessionHelper {
 
     /**
      * <pre>
-     * null - authn not exist
-     * empty - authn in action
-     * sid - authn success, (auto remove and return only once)
+     * check auth result by token in nonce
+     *  * Result(false) - authn not exist
+     *  * Result(false, code='authing', message='authing')} - authing
+     *  * Result(true, code='session', data=sessionId)} - bind session
+     *  * Result(true, code='xxx', data=object)} other code/object
      * </pre>
-     *
-     * @param token one-time token
-     * @return null|empty|sid
      */
-    @Nullable
+    @NotNull
     public static R<?> authNonce(String token, String ip) {
-        if (token == null || token.isEmpty()) return null;
+        if (token == null || token.isEmpty()) return R.NG();
 
         final Sf s = cache.get(token);
-        if (s == null) return null;
-        if (s.result == null) return R.NG();
+        if (s == null) return R.NG();
+        if (s.result == null) return R.ng(null, CodeAuthing, CodeAuthing);
 
         invalidNonce(token);
-        return s.ip.equals(ip) ? s.result : null;
-    }
-
-    public interface SidData {
-        String getSid();
+        return s.ip.equals(ip) ? s.result : R.NG();
     }
 }

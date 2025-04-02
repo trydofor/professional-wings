@@ -4,6 +4,7 @@ import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 2024-02-15
  */
 @SpringBootTest
+@DependsOnDatabaseInitialization
 class JdbcTemplateHelperTest {
 
     @Setter(onMethod_ = {@Autowired})

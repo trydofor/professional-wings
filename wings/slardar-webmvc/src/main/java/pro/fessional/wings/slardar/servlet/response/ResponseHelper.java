@@ -25,7 +25,6 @@ import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
-import javax.annotation.WillClose;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -109,9 +108,9 @@ public class ResponseHelper {
      *
      * @param response HttpServletResponse
      * @param fileName File name prompted during download
-     * @param stream   input stream
+     * @param stream   inputStream close at this method
      */
-    public static void downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull @WillClose InputStream stream) {
+    public static void downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
         try {
             OutputStream outputStream = downloadFile(response, fileName);
             IOUtils.copy(stream, outputStream, 1024);
@@ -148,7 +147,13 @@ public class ResponseHelper {
         downloadFile(response, file.getName(), new FileInputStream(file));
     }
 
-    public static void downloadFileWithZip(@NotNull HttpServletResponse response, @NotNull @WillClose Map<String, InputStream> files, @Nullable String fileName) {
+    /**
+     * zip all file to download
+     * @param response HttpServletResponse
+     * @param files files to zip, inputStream close at this method
+     * @param fileName download filename
+     */
+    public static void downloadFileWithZip(@NotNull HttpServletResponse response, @NotNull Map<String, InputStream> files, @Nullable String fileName) {
         if (fileName == null) fileName = "download.zip";
 
         try {
@@ -172,10 +177,10 @@ public class ResponseHelper {
      *
      * @param response HttpServletResponse
      * @param fileName the PDF filename to preview
-     * @param stream   input stream
+     * @param stream   inputStream close at this method
      */
     @SneakyThrows
-    public static void previewPDF(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull @WillClose InputStream stream) {
+    public static void previewPDF(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
         final String contentType = getDownloadContentType(fileName);
         if (!APPLICATION_PDF_VALUE.equals(contentType)) {
             throw new IllegalArgumentException("The parameter 'fileName' must be a pdf file");
