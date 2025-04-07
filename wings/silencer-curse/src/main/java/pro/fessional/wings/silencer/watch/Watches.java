@@ -1,12 +1,14 @@
 package pro.fessional.wings.silencer.watch;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.time.StopWatch;
+import pro.fessional.mirana.time.StopWatch.Watch;
 
 import java.util.function.BiConsumer;
 
@@ -37,8 +39,13 @@ public class Watches {
     }
 
     @NotNull
-    public static StopWatch.Watch acquire(String name) {
+    public static Watch acquire(String name) {
         return acquire().start(name);
+    }
+
+    @NotNull
+    public static Threshold threshold(String name, long mills) {
+        return new Threshold(acquire().start(name), mills);
     }
 
     /**
@@ -53,7 +60,7 @@ public class Watches {
      * Get the StopWatch at the current thread.
      */
     @Nullable
-    public static StopWatch.Watch current(String name) {
+    public static Watch current(String name) {
         final StopWatch watch = StopWatches.get();
         return watch == null ? null : watch.start(name);
     }
@@ -104,11 +111,33 @@ public class Watches {
      *
      * @param handler token and StopWatch are not null
      */
+    @SuppressWarnings("LombokSetterMayBeUsed")
     public static void setWatchHandler(BiConsumer<String, StopWatch> handler) {
         WatchHandler = handler;
     }
 
-    private static volatile BiConsumer<String, StopWatch> WatchHandler = (token, watch) -> {
-        log.warn("Watching {} {}", token, watch);
-    };
+    private static volatile BiConsumer<String, StopWatch> WatchHandler = (token, watch) -> log.warn("Watching {} {}", token, watch);
+
+    @Data
+    public static class Threshold {
+        public final Watch watch;
+        public final long millis;
+
+        private volatile long elapse = -1;
+
+        /**
+         * whether the ElapseMs ge threshold
+         */
+        public boolean reach() {
+            if (elapse < 0) {
+                watch.close();
+                elapse = watch.getElapseMs();
+            }
+            return elapse >= millis;
+        }
+
+        public long elapse() {
+            return elapse;
+        }
+    }
 }

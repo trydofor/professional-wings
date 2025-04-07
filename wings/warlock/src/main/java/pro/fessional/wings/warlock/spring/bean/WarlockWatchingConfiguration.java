@@ -42,6 +42,7 @@ public class WarlockWatchingConfiguration {
         log.info("Warlock spring-bean watchingAround, threshold=" + ms);
         final WatchingAround bean = new WatchingAround();
         bean.setThresholdMillis(ms);
+        bean.setThresholdName(prop.getServiceThresholdName());
         return bean;
     }
 }

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-        "spring.wings.warlock.enabled.watching=true",
+        "wings.enabled.warlock.watching=true",
         "wings.warlock.watching.jooq-threshold=0",
         "wings.warlock.watching.service-threshold=0",
         "wings.warlock.watching.controller-threshold=0",

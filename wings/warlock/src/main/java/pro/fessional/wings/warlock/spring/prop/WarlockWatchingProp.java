@@ -3,6 +3,9 @@ package pro.fessional.wings.warlock.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * <pre>
  * wings-warlock-watching-77.properties
@@ -41,10 +44,26 @@ public class WarlockWatchingProp {
     public static final String Key$serviceThreshold = Key + ".service-threshold";
 
     /**
+     * threshold millis for Watching annotation whose name is matched by AntPathMatcher('.')
+     *
+     * @see #Key$serviceThresholdName
+     */
+    private Map<String,Long> serviceThresholdName = Collections.emptyMap();
+    public static final String Key$serviceThresholdName = Key + ".service-threshold-name";
+
+    /**
      * threshold millis for Controller.
      *
      * @see #Key$controllerThreshold
      */
     private long controllerThreshold = -1;
     public static final String Key$controllerThreshold = Key + ".controller-threshold";
+
+    /**
+     * threshold millis for WebMvc Controller whose uri is matched by AntPathMatcher('/')
+     *
+     * @see #Key$controllerThresholdUri
+     */
+    private Map<String,Long> controllerThresholdUri = Collections.emptyMap();
+    public static final String Key$controllerThresholdUri = Key + ".controller-threshold-uri";
 }

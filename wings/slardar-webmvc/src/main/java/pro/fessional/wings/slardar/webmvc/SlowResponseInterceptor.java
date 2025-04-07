@@ -6,10 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.time.StopWatch.Watch;
+import org.springframework.util.AntPathMatcher;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.tweak.AntMatcherMap;
 import pro.fessional.wings.silencer.watch.Watches;
+import pro.fessional.wings.silencer.watch.Watches.Threshold;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrStopWatch;
@@ -19,31 +22,55 @@ import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrStop
  * @since 2019-11-16
  */
 @Slf4j
-@Getter @Setter
 public class SlowResponseInterceptor implements AutoRegisterInterceptor {
 
     public static final int ORDER = WingsOrdered.Lv5Supervisor + 1_000;
 
+    @Getter @Setter
     private int order = ORDER;
 
     /**
      * The slow threshold in ms, `-1` means disable
      */
-    private long thresholdMillis = -1;
+    @Getter @Setter
+    private volatile long thresholdMillis = -1;
+    private final AntMatcherMap<Long> antThreshold = new AntMatcherMap<>(new AntPathMatcher());
+
+    public void setThresholdUri(Map<String, Long> thresholds) {
+        antThreshold.putAll(thresholds);
+    }
+
+    public void setThresholdUri(String name, long ms) {
+        antThreshold.put(name, ms);
+    }
 
     /**
      * Instead of logging, handle time-consuming and SQL yourself
      */
+    @Setter
     private BiConsumer<Long, HttpServletRequest> costAndReqConsumer = (c, r) -> log.warn("SLOW-RES cost={}ms, uri={}", c, r.getRequestURI());
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
-        if (thresholdMillis < 0) return true;
+        final String uri = request.getRequestURI();
+        long maxMs = thresholdMillis;
+        if (maxMs < 0) return true;
 
-        final Watch watch = Watches.acquire(request.getRequestURI());
-        request.setAttribute(AttrStopWatch.value, watch);
+        // key threshold over ant matcher
+        final Long keyMs = antThreshold.get(uri);
+        if (keyMs != null) {
+            if (keyMs < 0) {
+                return true;
+            }
+            else {
+                maxMs = keyMs;
+            }
+        }
+
+        final Threshold threshold = Watches.threshold(uri, maxMs);
+        request.setAttribute(AttrStopWatch.value, threshold);
 
         return true;
     }
@@ -52,15 +79,13 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
-        final Watch watch = (Watch) request.getAttribute(AttrStopWatch.value);
-        if (watch == null) return;
+        final Threshold threshold = (Threshold) request.getAttribute(AttrStopWatch.value);
+        if (threshold == null) return;
 
-        watch.close();
-        final long cost = watch.getElapseMs();
-        final boolean slow = cost >= thresholdMillis;
+        final boolean slow = threshold.reach();
         try {
             if (slow) {
-                costAndReqConsumer.accept(cost, request);
+                costAndReqConsumer.accept(threshold.elapse(), request);
             }
         }
         finally {

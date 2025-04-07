@@ -28,6 +28,7 @@ public class WarlockWatching2Configuration {
         log.info("Warlock spring-bean slowResponseInterceptor, threshold=" + ms);
         SlowResponseInterceptor bean = new SlowResponseInterceptor();
         bean.setThresholdMillis(ms);
+        bean.setThresholdUri(prop.getControllerThresholdUri());
         return bean;
     }
 }
