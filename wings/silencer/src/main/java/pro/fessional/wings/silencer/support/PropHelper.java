@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.springframework.boot.context.config.ConfigDataLocation.OPTIONAL_PREFIX;
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
@@ -190,6 +191,11 @@ public class PropHelper {
         return delimitedString(items, ",", false, false);
     }
 
+    @Contract("!null,_ -> !null")
+    public static String commaString(Object[] items, Function<Object, String> convert) {
+        return delimitedString(items, ",", false, false, convert);
+    }
+
     /**
      * parse comma-delimited-list string, no strip item, no drop
      */
@@ -198,9 +204,19 @@ public class PropHelper {
         return delimitedString(items, ",", false, false);
     }
 
+    @Contract("!null,_ -> !null")
+    public static String commaString(Collection<?> items, Function<Object, String> convert) {
+        return delimitedString(items, ",", false, false, convert);
+    }
+
     @Contract("!null,_,_ -> !null")
     public static String commaString(Object[] items, boolean strip, boolean drop) {
         return delimitedString(items, ",", strip, drop);
+    }
+
+    @Contract("!null,_,_,_ -> !null")
+    public static String commaString(Object[] items, boolean strip, boolean drop, Function<Object, String> convert) {
+        return delimitedString(items, ",", strip, drop, convert);
     }
 
     @Contract("!null,_,_ -> !null")
@@ -209,19 +225,36 @@ public class PropHelper {
     }
 
     @Contract("!null,_,_,_ -> !null")
+    public static String commaString(Collection<?> items, boolean strip, boolean drop, Function<Object, String> convert) {
+        return delimitedString(items, ",", strip, drop, convert);
+    }
+
+    @Contract("!null,_,_,_ -> !null")
     public static String delimitedString(Object[] items, String delimiter, boolean strip, boolean drop) {
         Collection<?> its = items == null ? null : Arrays.asList(items);
         return delimitedString(its, delimiter, strip, drop);
     }
 
+    @Contract("!null,_,_,_,_ -> !null")
+    public static String delimitedString(Object[] items, String delimiter, boolean strip, boolean drop, Function<Object, String> convert) {
+        Collection<?> its = items == null ? null : Arrays.asList(items);
+        return delimitedString(its, delimiter, strip, drop, convert);
+    }
+
     @Contract("!null,_,_,_ -> !null")
     public static String delimitedString(Collection<?> items, String delimiter, boolean strip, boolean drop) {
+        return delimitedString(items, delimiter, strip, drop, null);
+    }
+
+    @Contract("!null,_,_,_,_ -> !null")
+    public static String delimitedString(Collection<?> items, String delimiter, boolean strip, boolean drop, Function<Object, String> convert) {
         if (items == null) return null;
 
         StringBuilder sb = new StringBuilder();
         boolean empty = true;
         for (Object obj : items) {
-            if (obj == null) {
+            String str = obj == null ? null : convert == null ? obj.toString() : convert.apply(obj);
+            if (str == null) {
                 if (!drop) {
                     empty = false;
                     sb.append(delimiter);
@@ -229,7 +262,6 @@ public class PropHelper {
                 continue;
             }
 
-            String str = obj.toString();
             if (strip) str = str.strip();
 
             if (!(drop && invalid(str))) {
@@ -265,6 +297,11 @@ public class PropHelper {
         return commaList(commaString, true, true);
     }
 
+    @NotNull
+    public static <T> List<T> commaList(String commaString, Function<String, T> convert) {
+        return commaList(commaString, true, true, convert);
+    }
+
     /**
      * parse comma-delimited-list string, whether to strip item, whether to drop invalid
      */
@@ -273,34 +310,51 @@ public class PropHelper {
         return delimitedList(commaString, ",", strip, drop);
     }
 
+    @NotNull
+    public static <T> List<T> commaList(String commaString, boolean strip, boolean drop, Function<String, T> convert) {
+        return delimitedList(commaString, ",", strip, drop, convert);
+    }
+
     /**
      * parse delimiter(comma if empty) delimited-list string, whether to strip item, whether to drop invalid
      */
     @NotNull
     public static List<String> delimitedList(String delimitedString, String delimiter, boolean strip, boolean drop) {
+        return delimitedList(delimitedString, delimiter, strip, drop, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public static <T> List<T> delimitedList(String delimitedString, String delimiter, boolean strip, boolean drop, Function<String, T> convert) {
         if (delimitedString == null || delimitedString.isBlank() && drop) return Collections.emptyList();
 
         if (delimiter == null || delimiter.isEmpty()) delimiter = ",";
         final int len = delimiter.length();
 
-        List<String> result = new ArrayList<>();
+        List<Object> result = new ArrayList<>();
         int offset = 0;
         int curIdx;
         while ((curIdx = delimitedString.indexOf(delimiter, offset)) != -1) {
-            addValue(result, delimitedString.substring(offset, curIdx), strip, drop);
+            addValue(result, delimitedString.substring(offset, curIdx), strip, drop, convert);
             offset = curIdx + len;
 
         }
         if (offset <= delimitedString.length()) {
-            addValue(result, delimitedString.substring(offset), strip, drop);
+            addValue(result, delimitedString.substring(offset), strip, drop, convert);
         }
 
-        return result;
+        return (List<T>) result;
     }
 
-    private static void addValue(List<String> result, String str, boolean strip, boolean drop) {
+    private static void addValue(List<Object> result, String str, boolean strip, boolean drop, Function<String, ?> convert) {
         if (strip) str = str.strip();
         if (drop && invalid(str)) return;
-        result.add(str);
+
+        if (convert != null) {
+            result.add(convert.apply(str));
+        }
+        else {
+            result.add(str);
+        }
     }
 }
