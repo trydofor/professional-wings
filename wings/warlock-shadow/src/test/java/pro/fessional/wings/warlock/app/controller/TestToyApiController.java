@@ -16,17 +16,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.app.service.TestWatchingService;
 import pro.fessional.wings.warlock.controller.api.AbstractApiAuthController;
-import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +44,6 @@ public class TestToyApiController extends AbstractApiAuthController {
     protected TestWatchingService testWatchingService;
     @Setter(onMethod_ = { @Autowired })
     private SlardarSessionProp slardarSessionProp;
-    @Setter(onMethod_ = { @Autowired })
-    protected WarlockApiAuthProp warlockApiAuthProp;
 
     @PostMapping(value = "/api/test.json", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testJsonApi(
@@ -56,6 +53,7 @@ public class TestToyApiController extends AbstractApiAuthController {
         @RequestParam Map<String, String> para,
         @RequestBody String body
     ) {
+        log.info("testJsonApi: {}, {}, {}, {}, {}", client, signature, timestamp, para, body);
         return ResponseEntity.ok("ok");
     }
 
@@ -67,12 +65,14 @@ public class TestToyApiController extends AbstractApiAuthController {
         @RequestParam Map<String, String> para,
         @RequestParam Map<String, MultipartFile> files
     ) {
+        log.info("testFileApi: {}, {}, {}, {}, {}", client, signature, timestamp, para, files);
         return ResponseEntity.ok("ok");
     }
 
     @PostMapping(value = "/api/dummy.json")
     public ResponseEntity<String> testDummyApi(@NotNull HttpServletRequest request) {
         final ApiEntity api = parse(request, false);
+        log.info("testDummyApi: {}", api);
         return ResponseEntity.ok("ok");
     }
 
@@ -132,7 +132,7 @@ public class TestToyApiController extends AbstractApiAuthController {
         for (Map.Entry<String, Part> en : entity.getReqFile().entrySet()) {
             final Part pt = en.getValue();
             head.put(ReqFileKey, en.getKey());
-            head.put(ReqFileName, URLEncoder.encode(pt.getSubmittedFileName(), UTF_8));
+            head.put(ReqFileName, UriUtils.encode(pt.getSubmittedFileName(), UTF_8));
             head.put(ReqFileBody, InputStreams.readText(pt.getInputStream()));
         }
         entity.setResHead(head);

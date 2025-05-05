@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ContentDisposition;
+import org.springframework.web.util.UriUtils;
 import pro.fessional.mirana.bits.HmacHelp;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.data.Null;
@@ -29,7 +30,6 @@ import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -83,7 +83,7 @@ class ApiAuthControllerTest {
     private final String jsonBody = "{\"try\": \"dofor\"}";
     private final String fileKey = "file1";
     private final String fileSum = fileKey + ".sum";
-    private final String fileName = "豆腐.exe";
+    private final String fileName = "臭 +豆*腐.exe";
     private final String fileBody = "try and do this for that";
     private final String userId = "79";
 
@@ -258,7 +258,9 @@ class ApiAuthControllerTest {
         Assertions.assertEquals(fileKey, r2.header(ReqFileKey));
         final String rfn = r2.header(ReqFileName);
         Assertions.assertNotNull(rfn);
-        Assertions.assertEquals(fileName, URLDecoder.decode(rfn, UTF_8));
+        Assertions.assertEquals("%E8%87%AD%20%2B%E8%B1%86%2A%E8%85%90.exe", rfn);
+        String fn = UriUtils.decode(rfn, UTF_8);
+        Assertions.assertEquals(fileName, fn);
         Assertions.assertEquals(fileBody, r2.header(ReqFileBody));
         final ResponseBody resBody = r2.body();
         Assertions.assertNotNull(resBody);

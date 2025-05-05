@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -76,7 +77,7 @@ public class ResponseHelper {
         }
         else {
             dis.append(fileName);
-            final String enc = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+            final String enc = UriUtils.encode(fileName, StandardCharsets.UTF_8);
             dis.append(";filename*=UTF-8''").append(enc);
         }
         return dis.toString();

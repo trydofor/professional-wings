@@ -6,13 +6,13 @@ import org.springframework.security.config.annotation.web.AbstractRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.pattern.PathPattern;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.servlet.dummy.DummyHttpServletRequest;
 import pro.fessional.wings.slardar.servlet.dummy.DummyServletContext;
 import pro.fessional.wings.slardar.spring.conf.WingsBindAuthnConfigurer;
 
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,7 +45,7 @@ public class SecurityConfigHelper {
         }
 
         public static MatcherHelper of(ApplicationContext context, AtomicReference<RequestMatcher> ref) {
-            return new MatcherHelper(context, it -> ref.set(it.get(0)));
+            return new MatcherHelper(context, it -> ref.set(it.getFirst()));
         }
 
         public static MatcherHelper of(ApplicationContext context, RequestMatcher[] ref) {
@@ -65,9 +65,7 @@ public class SecurityConfigHelper {
      */
     @NotNull
     public static String encodePathPattern(@NotNull String path) {
-        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
-        path = path.replace("%2F", "/");
-        return path;
+        return UriUtils.encodePath(path, StandardCharsets.UTF_8);
     }
 
     /**
@@ -88,10 +86,7 @@ public class SecurityConfigHelper {
      */
     @NotNull
     public static DummyHttpServletRequest dummyMatcherRequest(@NotNull String path, String servletName) {
-        path = encodePathPattern(path);
-        DummyHttpServletRequest request = new DummyHttpServletRequest();
-        request.setPathInfo(path);
-        request.setRequestURI(path);
+        DummyHttpServletRequest request = dummyMatcherRequest(path);
         request.setServletContext(new DummyServletContext());
         if (servletName != null) {
             request.getHttpServletMapping().setServletName(servletName);
