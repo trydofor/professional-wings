@@ -479,7 +479,8 @@ public class PageJooqHelper extends PageJdbcHelper {
 
         public IntoJooq<R> fetch() {
             if (context.total < 0) {
-                context.total = context.dsl.fetchCount(context.wrap);
+                // DeriveTable #336 https://github.com/jOOQ/jOOQ/issues/14412
+                context.total = context.dsl.fetchCount(context.wrap.asTable());
             }
 
             if (context.total > 0) {

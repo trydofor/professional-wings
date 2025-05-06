@@ -508,12 +508,12 @@ public class TestJooqMostSelectSample {
         /////////////////////
 
         testcaseNotice("wrap count",
-                "select count(*) as `c` from (select `id` from `tst_sharding` where `id` > ?) as `q`",
+                "select count(*) as `c` from (select `id` from `tst_sharding` where `id` > ?) as `alias_42722066`",
                 "select `id` from `tst_sharding` where `id` > ?");
         SelectConditionStep<Record1<Long>> qry1 = dsl.select(t.Id).from(t).where(t.Id.gt(1L));
         SelectOrderByStep<Record1<Long>> qry = dsl.select(t.Id).from(t).where(t.Id.gt(1L)).groupBy(t.Id);
-        int cnt0 = dsl.fetchCount(qry);
-        int cnt00 = dsl.fetchCount(qry1);
+        int cnt0 = dsl.fetchCount(qry.asTable()); // MUST use `asTable()` to auto alias derive table
+        int cnt00 = dsl.fetchCount(qry1.asTable());
         List<TstSharding> lst0 = qry.fetch().into(TstSharding.class);
 
         testcaseNotice("single table count",

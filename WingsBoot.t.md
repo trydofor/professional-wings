@@ -196,6 +196,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12149 FormatSugarTest: format datetime and number
 * 12150 SetterSugarTest: one line setter sugar
 * 12151 DefaultJournalServiceTest: journal transaction test
+* 12152 PageJooqHelperTest: derivedTable AutoAlias
 
 ## 13 Slardar
 
