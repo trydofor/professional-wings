@@ -100,6 +100,7 @@ class TinyTrackServiceTest {
     }
 
     private void waitCodeKey(String... cks) {
+        Sleep.ignoreInterrupt(1_000); // wait for mvc done
         for (String ck : cks) {
             while (TestTrackCollectorImpl.CodeKeys.containsKey(ck)) {
                 log.info("wait key={}", ck);

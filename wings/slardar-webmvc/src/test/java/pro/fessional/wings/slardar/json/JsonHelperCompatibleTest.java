@@ -407,6 +407,12 @@ public class JsonHelperCompatibleTest {
                 .replace("\"byteArrValue\":\"gH8=\"", "\"byteArrValue\":[-128, 127]")
                 .replace("\"byteArrEmpty\":\"\"", "\"byteArrEmpty\":[]");
         }
+        else if (clz == OffsetDateTime.class || clz == CommonValue.class) {
+            // 2023-04-05 06:07:08 -04:00 -> 2023-04-05 06:07:08-04:00
+            return json
+                .replace(" -0", "-0")
+                .replace(" +0", "+0");
+        }
         return json;
     }
 }

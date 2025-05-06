@@ -26,7 +26,7 @@ public class TypeSugarTest {
 
     @Test
     @TmsLink("C11035")
-    void test() throws ClassNotFoundException {
+    void test() {
 
         // Map<String, List<Long[]>
         var a0 = ResolvableType.forClassWithGenerics(Map.class,
@@ -130,7 +130,7 @@ public class TypeSugarTest {
     private void testStructs(ResolvableType rt) {
         String str = TypeSugar.outline(rt);
         log.info("structs={}", str);
-        ResolvableType rt1 = TypeSugar.resolve(str);
+        ResolvableType rt1 = TypeSugar.resolveNew(str);
         Assertions.assertEquals(rt, rt1);
     }
 }

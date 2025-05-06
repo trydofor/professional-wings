@@ -89,7 +89,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
             }
         }
         finally {
-            Watches.release(true, slow ? "SlowResponseInterceptor" : null);
+            Watches.release(true, slow ? "SlowResponseInterceptor, uri="+ request.getRequestURI() : null);
         }
     }
 }

@@ -70,7 +70,7 @@ public class WatchingAround {
         }
         finally {
             boolean slow = threshold.reach();
-            Watches.release(true, slow ? "WatchingAround" : null);
+            Watches.release(true, slow ? "WatchingAround, name=" + name : null);
         }
     }
 }
