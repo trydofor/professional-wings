@@ -21,7 +21,7 @@
 
     <properties>
         <!-- (#.#).(##)(#) (SPRING-MINOR).(MINOR)(PATCH) https://maven.apache.org/maven-ci-friendly.html -->
-        <revision>3.2.130-SNAPSHOT</revision>
+        <revision>3.2.132-SNAPSHOT</revision>
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
         <spring-boot.version>3.2.8</spring-boot.version>
         <!--  -->
@@ -54,7 +54,8 @@
         <kryo.version>5.6.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.5</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.78.1</bouncycastle.version> <!-- https://www.bouncycastle.org/download/bouncy-castle-java/#release-notes -->
-        <justauth.version>1.16.6</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <justauth.version>1.16.7</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <jjwt.version>0.12.6</jjwt.version> <!-- justauth@0.12.x https://github.com/jwtk/jjwt/releases -->
         <!-- sharding jdbc -->
         <shardingsphere.version>5.5.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
@@ -137,6 +138,8 @@
     </developers>
 
     <scm>
+        <connection>scm:git:git://github.com/trydofor/professional-wings.git</connection>
+        <developerConnection>scm:git:git://github.com/trydofor/professional-wings.git</developerConnection>
         <url>https://github.com/trydofor/pro.fessional.wings</url>
     </scm>
 
@@ -427,6 +430,21 @@
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
             <!-- Argon2PasswordEncoder -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
@@ -514,7 +532,7 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
@@ -1229,9 +1247,9 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <delete dir="${deploy.old.todir}" failonerror="false"/>
+                                        <delete dir="${deploy.old.todir}" failonerror="false" />
                                         <copy todir="${deploy.old.todir}" overwrite="true">
-                                            <fileset dir="${project.build.directory}" includes="${deploy.old.files}"/>
+                                            <fileset dir="${project.build.directory}" includes="${deploy.old.files}" />
                                         </copy>
                                     </target>
                                 </configuration>
@@ -1246,7 +1264,7 @@
                                 <configuration>
                                     <target>
                                         <copy todir="${project.build.directory}" overwrite="true">
-                                            <fileset dir="${deploy.old.todir}" includes="${deploy.old.files}" erroronmissingdir="false"/>
+                                            <fileset dir="${deploy.old.todir}" includes="${deploy.old.files}" erroronmissingdir="false" />
                                         </copy>
                                     </target>
                                 </configuration>
