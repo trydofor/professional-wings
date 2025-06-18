@@ -1,5 +1,5 @@
 #!/bin/bash -e
-THIS_VERSION=2024-09-09
+THIS_VERSION=2025-06-18
 
 cat <<EOF
 #################################################
@@ -120,14 +120,22 @@ function build_web() {
     _pre_pack
 
     _cmd=$1
-    if [[ "$_cmd" == "" ]]; then
-        if [[ -f "pnpm-lock.yaml" ]]; then
-            _cmd=pnpm
-        elif [[ -f "yarn.lock" ]]; then
-            _cmd=yarn
-        elif [[ -f "package-lock.json" ]]; then
-            _cmd=npm
+    if [[ -z "$_cmd" ]]; then
+      _cw="$PWD"
+      for _ in {0..3}; do
+        if [[ -f "$_cw/pnpm-lock.yaml" ]]; then
+          _cmd=pnpm
+          break
+        elif [[ -f "$_cw/yarn.lock" ]]; then
+          _cmd=yarn
+          break
+        elif [[ -f "$_cw/package-lock.json" ]]; then
+          _cmd=npm
+          break
+        else
+          _cw="$(dirname "$_cw")"
         fi
+      done
     fi
 
     # build
@@ -174,9 +182,15 @@ function build_auto() {
     fi
 
     ## https://asdf-vm.com
-    if [[ -f ".tool-versions" ]]; then
+    _cw="$PWD"
+    for _ in {0..3}; do
+      if [[ -f "$_cw/.tool-versions" ]]; then
         check_cmd asdf "$HOME/.asdf/asdf.sh" && asdf install
-    fi
+        break
+      else
+        _cw="$(dirname "$_cw")"
+      fi
+    done
 
     # mvn
     if [[ -f "pom.xml" || "$1" == "mvn" ]]; then
