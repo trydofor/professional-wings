@@ -59,7 +59,7 @@
         <!-- sharding jdbc -->
         <shardingsphere.version>5.5.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>3.2.5</servicecomb.version> <!-- boot@3.3.5 https://github.com/apache/servicecomb-java-chassis/blob/3.2.5/pom.xml -->
+        <servicecomb.version>3.3.0</servicecomb.version> <!-- boot@3.3.5 https://github.com/apache/servicecomb-java-chassis/blob/3.2.5/pom.xml -->
         <!-- others -->
         <springdoc.version>2.6.0</springdoc.version> <!-- boot@3.3.0 https://github.com/springdoc/springdoc-openapi/blob/v2.6.0/pom.xml -->
         <boot-admin.version>3.3.6</boot-admin.version> <!-- boot@3.3.5 https://github.com/codecentric/spring-boot-admin/blob/3.3.6/pom.xml -->
