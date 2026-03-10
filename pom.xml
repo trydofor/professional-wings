@@ -66,7 +66,7 @@
         <sentry.version>7.22.3</sentry.version> <!-- boot@3.3.2 https://github.com/getsentry/sentry-java/blob/7.22.3/buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.11.0</retrofit.version> <!-- https://github.com/square/retrofit/releases -->
         <allure.version>2.29.1</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
-        <druid.version>1.2.24</druid.version> <!-- https://github.com/alibaba/druid/releases -->
+        <druid.version>1.2.28</druid.version> <!-- https://github.com/alibaba/druid/releases -->
         <jmh.version>1.37</jmh.version> <!-- https://github.com/openjdk/jmh/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases -->
