@@ -77,7 +77,7 @@
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version> <!-- https://www.jacoco.org/jacoco/trunk/doc/maven.html -->
         <dokka-maven-plugin.version>2.0.0</dokka-maven-plugin.version> <!-- https://github.com/Kotlin/dokka/releases -->
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version> <!-- https://github.com/awhitford/lombok.maven -->
-        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
+        <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version> <!-- https://github.com/mojohaus/exec-maven-plugin/releases -->
         <jib-maven-plugin.version>3.4.5</jib-maven-plugin.version> <!-- https://github.com/GoogleContainerTools/jib/releases -->
         <jib-layer-filter.version>0.3.0</jib-layer-filter.version> <!-- https://github.com/GoogleContainerTools/jib-extensions/blob/master/first-party/jib-layer-filter-extension-maven/README.md -->
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version> <!-- https://maven.apache.org/enforcer/maven-enforcer-plugin/ -->
